@@ -1,6 +1,3 @@
-
-# ALIAS TERMUX #
-
 alias setalias='nano $HOME/.oh-my-zsh/custom/aliases.zsh'
 alias getalias='bat $HOME/.oh-my-zsh/custom/aliases.zsh'
 alias l='eza -1 --icons'
