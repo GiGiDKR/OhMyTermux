@@ -1,7 +1,7 @@
 
 # ALIAS TERMUX #
 
-alias setalias="nano $HOME/.oh-my-zsh/custom/aliases.zsh"
+alias setalias='nano $HOME/.oh-my-zsh/custom/aliases.zsh'
 alias getalias='bat $HOME/.oh-my-zsh/custom/aliases.zsh'
 alias l='eza -1 --icons'
 alias ls='eza --icons'
@@ -12,7 +12,7 @@ alias lta='eza --icons --tree -lgha'
 alias dir='eza -lF --icons'
 alias ..='cd ..'
 alias q='exit'
-alias c='clear'
+alias cls='clear'
 alias md='mkdir'
 alias cat='bat '
 alias apt='nala '
@@ -29,5 +29,5 @@ alias tmx='cd $HOME/.termux'
 alias cm='chmod +x'
 alias clone='git clone'
 alias push="git pull && git add . && git commit -m 'mobile push' && git push"
-alias zshconfig="nano ~/.zshrc"
-alias ohmyzsh="nano ~/.oh-my-zsh"
+alias zshconfig='nano ~/.zshrc'
+alias ohmyzsh='nano ~/.oh-my-zsh'
