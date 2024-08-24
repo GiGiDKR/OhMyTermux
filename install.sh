@@ -670,6 +670,45 @@ else
   fi
 fi
 
+# Fonction pour exécuter un script sélectionné
+execute_script() {
+  local script="$1"
+  if [ -x "$script" ]; then
+    "$script"
+  else
+    echo "Le fichier $script n'est pas exécutable."
+  fi
+}
+
+if [ -d "$HOME/OhMyTermuxScript" ]; then
+  while true; do
+    if $USE_GUM; then
+      if gum confirm "  Exécuter un des scripts ?"; then
+        scripts=("$HOME/OhMyTermuxScript"/*.sh)
+        script_choice=$(gum choose "${scripts[@]}")
+        execute_script "$script_choice"
+      else
+        break
+      fi
+    else
+      echo ". Exécuter un des scripts ? (o/n)"
+      read choice
+      if [ "$choice" = "o" ]; then
+        scripts=("$HOME/OhMyTermuxScript"/*.sh)
+        echo "Choisissez un script à exécuter :"
+        select script_choice in "${scripts[@]}"; do
+          [ -n "$script_choice" ] && execute_script "$script_choice"
+          break
+        done
+      else
+        break
+      fi
+    fi
+  done
+else
+  echo "OhMyTermuxScript n'est pas installé."
+fi
+
 # Message final
 show_banner
 if $USE_GUM; then
