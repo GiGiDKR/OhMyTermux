@@ -641,15 +641,6 @@ else
     fi
 fi
 
-# Finalisation de la configuration
-source $PREFIX/etc/bash.bashrc
-termux-reload-settings
-
-rm xfce.sh
-rm proot.sh
-rm utils.sh
-rm install.sh
-
 # Installer OhMyTermuxScript
 install_oh_my_termux_script() {
   pkg update -y && pkg install git -y
@@ -708,6 +699,15 @@ if [ -d "$HOME/OhMyTermuxScript" ]; then
 else
   echo "OhMyTermuxScript n'est pas installé."
 fi
+
+# Finalisation de la configuration
+source $PREFIX/etc/bash.bashrc
+termux-reload-settings
+
+rm xfce.sh
+rm proot.sh
+rm utils.sh
+rm install.sh
 
 # Message final
 show_banner
