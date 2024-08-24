@@ -650,6 +650,26 @@ rm proot.sh
 rm utils.sh
 rm install.sh
 
+# Installer OhMyTermuxScript
+install_oh_my_termux_script() {
+  pkg update -y && pkg install git -y
+  git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript"
+  chmod +x "$HOME/OhMyTermuxScript"/*.sh
+}
+
+if $USE_GUM; then
+  if gum confirm ". Installer OhMyTermuxScript ?"; then
+    gum spin --title "Installation de OhMyTermuxScript..." -- install_oh_my_termux_script >/dev/null 2>&1
+  fi
+else
+  echo ". Installer OhMyTermuxScript ? (o/n)"
+  read choice
+  if [ "$choice" = "o" ]; then
+    echo "Installation de OhMyTermuxScript..."
+    install_oh_my_termux_script >/dev/null 2>&1
+  fi
+fi
+
 # Message final
 show_banner
 if $USE_GUM; then
