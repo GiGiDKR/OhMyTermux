@@ -7,7 +7,7 @@
 **Installation optional from [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) : a collection of useful scripts, executable from the main script or later. [^1]**
 
 > [!NOTE]
-> To choose between different items when running the script, it is recommended to use [gum](https://github.com/charmbracelet/gum) which provides a command line interface where the selection is simplified.
+> To choose between different items when running the script, it is recommended to use [gum](https://github.com/charmbracelet/gum) which provides a command line interface where the selection is simplified (Space for multiple selections and Enter to validate).
 
 
 ## Installation
