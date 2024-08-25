@@ -115,12 +115,12 @@ You only need to pick your username and follow the prompts.
 > [!IMPORTANT]
 > This will take roughly 4GB of storage space
 
----
+&nbsp;
 
 ## Starting the desktop
 
   
-Yu will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
+You will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
 
 Use the command ```start``` to initiate a Termux-X11 session.
 
@@ -145,10 +145,7 @@ Also note, you do not need to set display in Debian proot as it is already set. 
 
 To enter proot use the command ```debian```, from there you can install aditional software with apt and use cp2menu in termux to copy the menu items over to termux xfce menu.
 
-&nbsp;
-
-
-There are two scripts available for this setup as well
+There are two scripts available for this setup as well :
 
 ```prun```  Running this followed by a command you want to run from the debian proot install will allow you to run stuff from the termux terminal without running ```debian``` to get into the proot itself.
 
@@ -176,17 +173,20 @@ There are two scripts available for this setup as well
 > 
 > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 
----
+
+&nbsp;
 
 ## 💻 Update log
 
-- Version 1.0.0 : Initial upload
+- Version 1.0.0 :
+    - Initial upload
 - Version 1.0.1 :
     - Command line interface changes
     - Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1] (Alpha)
-- Version 1.0.2 : 
+- Version 1.0.2 :
+  - WIP
 
----
+&nbsp;
 
 ## ⏺️ To Do
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
