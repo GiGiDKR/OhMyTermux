@@ -80,9 +80,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - Custom aliases
 - Symlink to internal storage user directories [^1]
 
-[^1]: Coming in version 1.1 
 
-🧊 **Directory of various scipts :**
+🧊 **Collection of useful scripts : [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1] :**
 
 - Theme Selector
 - Nerd Fonts Installer
@@ -93,6 +92,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - Oh-My-Posh
 - Electron (in Termux)
 - XDRP (native Termux or proot-distro)
+
+[^1]: Coming in version 1.1 with the integration of OhMyTermuxScript 
+
 
 🔥 **XFCE and Debian :**
 
