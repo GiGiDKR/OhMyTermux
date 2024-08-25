@@ -7,7 +7,7 @@
 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) : A collection of useful scripts, executable from the main script or later. [^1]**
 
 > [!TIP]
-> To choose between different items when running the script, it is recommended to use [gum](https://github.com/charmbracelet/gum) which provides a command line interface where the selection is simplified (Space for multiple selections and Enter to validate).
+> To choose between different items it is recommended to use [gum](https://github.com/charmbracelet/gum) which provides a simplified selection (Space for multiple selections and Enter to validate).
 
 &nbsp;
 
@@ -178,7 +178,7 @@ There are two scripts available for this setup as well
 
 ---
 
-## Update log
+## 💻 Update log
 
 - Version 1.0.0 : Initial upload
 - Version 1.0.1 :
@@ -188,7 +188,7 @@ There are two scripts available for this setup as well
 
 ---
 
-## To Do
+## ⏺️ To Do
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
 - [ ] Add more selectable packages and Python modules
 - [ ] Integrate in main script theme selection (Color schemes)
