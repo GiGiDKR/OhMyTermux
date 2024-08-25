@@ -182,3 +182,5 @@ Once it connects run this command :
 - [ ] Integrate the theme selection script (Color schemes)
 - [ ] Separate XFCE / Debian install to run native Termux XFCE
 - [ ] Added options for Debian (Themes, Fonts, Wallpapers)
+
+---
