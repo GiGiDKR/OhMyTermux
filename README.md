@@ -81,7 +81,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - Symlink to internal storage user directories [^1]
 
 
-🧊 **Collection of useful scripts : [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1] :**
+🧊 **Collection of useful scripts - [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
 
 - Theme Selector
 - Nerd Fonts Installer
