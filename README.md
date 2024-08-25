@@ -1,6 +1,10 @@
 # OhMyTermux 🧊
 
-**Automated and custom installation and configuration of Termux with an XFCE graphical interface and a customized Debian distribution.**
+**Automated and custom installation of [Termux](https://github.com/termux) (shell, plugins. packages, fonts and themes selectable).**
+
+**[XFCE](https://www.xfce.org/) graphical interface and a customized [Debian](https://www.debian.org/) proot-distro.**
+
+**Installation optional from [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) : a collection of useful scripts, executable from the main script or later. [^1]y**
 
 
 ## Installation
@@ -26,7 +30,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [curl](https://github.com/curl/curl)
 - [git](https://github.com/git/git)
 - [zsh](https://github.com/zsh-users/zsh)
-- unzip
+- [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
 🧊 **Individually selectable packages :**
 
@@ -85,15 +89,16 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 - Theme Selector
 - Nerd Fonts Installer
-- Custom Debian proot-distro with XFCE4 on Termux-X11
-- App-Installer (VSCODE, PyCharm, Obsidian ...)
+- Custom Debian proot-distro with XFCE4 on Termux-X11 [^2]
+- App-Installer (VSCode, PyCharm, Obsidian...) [^2]
 - Native Termux XFCE4 on Termux-X11
-- Oh-My-Zsh (Default installation)
-- Oh-My-Posh
-- Electron (in Termux)
+- Oh-My-Zsh [^2]
+- Oh-My-Posh [^1]
+- Electron Node.js in Termux
 - XDRP (native Termux or proot-distro)
 
 [^1]: Coming in version 1.1 with the integration of OhMyTermuxScript 
+[^2]: Optionally integrated into the main script
 
 
 🔥 **XFCE and Debian :**
@@ -173,14 +178,18 @@ Once it connects run this command :
 ## Update log
 
 - Version 1.0.0 : Initial upload
+- Version 1.0.1 :
+    - Command line interface changesinitial integration of CLI changes
+    - Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1] (Alpha)
+- Version 1.0.2 : 
 
 ---
 
 ## To Do
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
-- [ ] Add more selectable packages Python modules
-- [ ] Integrate the theme selection script (Color schemes)
+- [ ] Add more selectable packages and Python modules
+- [ ] Integrate in main script theme selection (Color schemes)
 - [ ] Separate XFCE / Debian install to run native Termux XFCE
-- [ ] Added options for Debian (Themes, Fonts, Wallpapers)
+- [ ] Add options for Debian (Themes, Fonts, Wallpapers)
 
 ---
