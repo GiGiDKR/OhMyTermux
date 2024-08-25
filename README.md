@@ -90,7 +90,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - Symlink to internal storage user directories [^1]
 
 
-🧊 **Collection of useful scripts - [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+🧊 **Useful scripts [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
 
 - Theme Selector
 - Nerd Fonts Installer
@@ -117,13 +117,12 @@ You only need to pick your username and follow the prompts.
 
 ---
 
-## Starting the desktop
+## Starting the desktop (if OhMyTermuxXFCE is selected during install)
 
   
+Yu will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
 
-During install you will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
-
-Use the command ```start``` to initiate a Termux-X11 session
+Use the command ```start``` to initiate a Termux-X11 session.
 
 This will start the termux-x11 server, XFCE4 desktop and open the Termux-X11 app right into the desktop.
 
