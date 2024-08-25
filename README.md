@@ -1,12 +1,12 @@
 # OhMyTermux 🧊
 
-**Automated and custom installation of [Termux](https://github.com/termux) (shell, plugins. packages, fonts and themes selectable).**
+**Automated and custom installation of [Termux](https://github.com/termux) : Packages, Shell, Plugins, Prompts, Fontsw Themes selectable).**
 
-**[XFCE](https://www.xfce.org/) graphical interface and a customized [Debian](https://www.debian.org/) proot-distro.**
+**[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-) : A customized [Debian](https://www.debian.org/) proot-distro and [XFCE](https://www.xfce.org/) desktop .**
 
-**Installation optional from [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) : a collection of useful scripts, executable from the main script or later. [^1]**
+**[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) : A collection of useful scripts, executable from the main script or later. [^1]**
 
-> [!NOTE]
+> [!TIP]
 > To choose between different items when running the script, it is recommended to use [gum](https://github.com/charmbracelet/gum) which provides a command line interface where the selection is simplified (Space for multiple selections and Enter to validate).
 
 &nbsp;
@@ -96,7 +96,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - Nerd Fonts Installer
 - Custom Debian proot-distro with XFCE4 on Termux-X11 [^2]
 - App-Installer (VSCode, PyCharm, Obsidian...) [^2]
-- Native Termux XFCE4 on Termux-X11
+- Native Termux XFCE4 desktop on Termux-X11
 - Oh-My-Zsh [^2]
 - Oh-My-Posh [^1]
 - Electron Node.js in Termux
@@ -106,7 +106,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 [^2]: Optionally integrated into the main script
 
 
-🔥 **XFCE and Debian :**
+# 🔥 **XFCE and Debian :**
 
 Sets up a termux XFCE desktop and a Debian proot install.
 This setup uses Termux-X11, the termux-x11 server will be installed and you will be prompted to allow termux to install the Android APK.
@@ -117,7 +117,7 @@ You only need to pick your username and follow the prompts.
 
 ---
 
-## Starting the desktop (if OhMyTermuxXFCE is selected during install)
+## Starting the desktop
 
   
 Yu will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
@@ -159,23 +159,22 @@ There are two scripts available for this setup as well
 &nbsp;
 
   
-
-## Process completed (signal 9) - press Enter
-
-  
-
-Install LADB from [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) or from [GitHub](https://github.com/hyperio546/ladb-builds/releases)
-
-Connect to WIFI.  
-
-In split screen have one side LADB and the other side showing developer settings.
-
-In developer settings, enable wireless debugging then click into there to get the port number then click pair device to get the pairing code.
-
-Enter both those values into LADB.
-
-Once it connects run this command :
-```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+> [!CAUTION]
+> Process completed (signal 9) - press Enter
+>
+> Install LADB from [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) or from [GitHub](https://github.com/hyperio546/ladb-builds/releases).
+> 
+> Connect to WIFI.  
+>
+> In split screen have one side LADB and the other side showing developer settings.
+>
+> In developer settings, enable wireless debugging then click into there to get the port number then click pair device to get the pairing code.
+>
+> Enter both those values into LADB.
+>
+> Once it connects run this command :
+> 
+> ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 
 ---
 
@@ -183,7 +182,7 @@ Once it connects run this command :
 
 - Version 1.0.0 : Initial upload
 - Version 1.0.1 :
-    - Command line interface changesinitial integration of CLI changes
+    - Command line interface changes
     - Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1] (Alpha)
 - Version 1.0.2 : 
 
@@ -196,4 +195,3 @@ Once it connects run this command :
 - [ ] Separate XFCE / Debian install to run native Termux XFCE
 - [ ] Add options for Debian (Themes, Fonts, Wallpapers)
 
----
