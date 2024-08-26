@@ -36,6 +36,22 @@ show_banner() {
     fi
 }
 
+# Fonction de fin pour gérer les erreurs
+finish() {
+    local ret=$?
+    if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
+        echo
+        if command -v gum &> /dev/null; then
+            gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
+        else
+            echo -e "\e[38;5;196mERREUR: Installation de OhMyTermux impossible.\e[0m"
+        fi
+        echo -e "\e[38;5;33mVeuillez vous référer au(x) message(s) d'erreur ci-dessus.\e[0m"
+    fi
+}
+
+trap finish EXIT
+
 # Installation de gum
 show_banner
 if ! command -v gum &> /dev/null; then
