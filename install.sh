@@ -45,9 +45,9 @@ done
 # Fonction pour vérifier et installer gum
 check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
-		   bash_banner
+        bash_banner
         echo "Installation de gum..."
-        pkg update -y && pkg install gum -y
+        pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 }
 
