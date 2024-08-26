@@ -3,19 +3,17 @@
 # Fonction pour afficher la bannière sans gum
 bash_banner() {
     clear
-    COLOR="\e[38;5;212m"
+    COLOR="\e[38;5;33m"
 
     TOP_BORDER="╔════════════════════════════════════════╗"
     BOTTOM_BORDER="╚════════════════════════════════════════╝"
     EMPTY_LINE="║                                        ║"
     TEXT_LINE="║              OHMYTERMUX                ║"
-    SUBTEXT_LINE="║                 XFCE                   ║"
 
     echo
     echo -e "${COLOR}${TOP_BORDER}"
     echo -e "${COLOR}${EMPTY_LINE}"
     echo -e "${COLOR}${TEXT_LINE}"
-    echo -e "${COLOR}${SUBTEXT_LINE}"
     echo -e "${COLOR}${EMPTY_LINE}"
     echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
     echo
@@ -26,20 +24,17 @@ show_banner() {
     clear
     if $USE_GUM; then
         gum style \
-            --foreground 212 \
-            --border-foreground 212 \
+            --foreground 33 \
+            --border-foreground 33 \
             --border double \
             --align center \
             --width 40 \
-            --margin "1 2" \
-            "OHMYTERMUX" \
-            "XFCE"
+            --margin "1 1 1 0" \
+            "" "OHMYTERMUX" ""
     else
-        bash_banner
+       bash_banner
     fi
 }
-
-clear
 
 # Installation de gum
 show_banner
@@ -57,9 +52,9 @@ pkgs=('git' 'virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies'
 # Installation des paquets nécessaires
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation des paquets..." -- pkg install "${pkgs[@]}" -y > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation des paquets XFCE..." -- pkg install "${pkgs[@]}" -y > /dev/null 2>&1
 else
-    echo -e "\e[38;5;33mInstallation des paquets nécessaires...\e[0m"
+    echo -e "\e[38;5;33mInstallation des paquets XFCE...\e[0m"
     pkg install "${pkgs[@]}" -y > /dev/null 2>&1
 fi
 
@@ -107,7 +102,7 @@ alias push=\"git pull && git add . && git commit -m 'mobile push' && git push\"
 alias bashconfig='nano $PREFIX/etc/bash.bashrc'
 \e[0m" >> $PREFIX/etc/bash.bashrc
 
-# Téléchargement de l'image de fond
+# Téléchargement fond d'écran 
 show_banner
 if command -v gum &> /dev/null; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title "Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png > /dev/null 2>&1
@@ -149,7 +144,7 @@ fi
     rm 2024-02-25.zip
 } > /dev/null 2>&1
 
-# Configuration
+# Installation des fichiers de configuration
 show_banner
 if command -v gum &> /dev/null; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation des fichiers de configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
