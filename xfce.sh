@@ -44,7 +44,7 @@ clear
 # Installation de gum
 show_banner
 if ! command -v gum &> /dev/null; then
-    echo "Installation de gum..."
+    echo -e "\e[38;5;33mInstallation de gum...\e[0m"
     pkg update -y > /dev/null 2>&1
     pkg install -y gum > /dev/null 2>&1
 fi
@@ -57,9 +57,9 @@ pkgs=('git' 'virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies'
 # Installation des paquets nécessaires
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --title "Installation des paquets..." -- pkg install "${pkgs[@]}" -y > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation des paquets..." -- pkg install "${pkgs[@]}" -y > /dev/null 2>&1
 else
-    echo "Installation des paquets nécessaires..."
+    echo -e "\e[38;5;33mInstallation des paquets nécessaires...\e[0m"
     pkg install "${pkgs[@]}" -y > /dev/null 2>&1
 fi
 
@@ -72,7 +72,7 @@ show_banner
 
 # Définir les alias
 show_banner
-echo "
+echo -e "\e[38;5;33m
 # Aliases
 alias l='eza --icons'
 alias ls='eza -1 --icons'
@@ -105,14 +105,14 @@ alias cm='chmod +x'
 alias clone='git clone'
 alias push=\"git pull && git add . && git commit -m 'mobile push' && git push\"
 alias bashconfig='nano $PREFIX/etc/bash.bashrc'
-" >> $PREFIX/etc/bash.bashrc
+\e[0m" >> $PREFIX/etc/bash.bashrc
 
 # Téléchargement de l'image de fond
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --title "Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title "Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png > /dev/null 2>&1
 else
-    echo "Téléchargement du fond d'écran..."
+    echo -e "\e[38;5;33mTéléchargement du fond d'écran...\e[0m"
     wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png > /dev/null 2>&1
 fi
 mv mac_waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
@@ -120,9 +120,9 @@ mv mac_waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
 # Installation du thème WhiteSur-Dark
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --title "Installation du thème WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation du thème WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip > /dev/null 2>&1
 else
-    echo "Installation du thème WhiteSur-Dark..."
+    echo -e "\e[38;5;33mInstallation du thème WhiteSur-Dark...\e[0m"
     wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip > /dev/null 2>&1
 fi
 {
@@ -136,9 +136,9 @@ fi
 # Installation du thème d'icônes Fluent Cursor
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --title "Installation du thème Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation du thème Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip > /dev/null 2>&1
 else
-    echo "Installation du thème Fluent Cursor..."
+    echo -e "\e[38;5;33mInstallation du thème Fluent Cursor...\e[0m"
     wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip > /dev/null 2>&1
 fi
 {
@@ -152,9 +152,9 @@ fi
 # Configuration
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --title "Installation des fichiers de configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation des fichiers de configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
 else
-    echo "Installation des fichiers de configuration..."
+    echo -e "\e[38;5;33mInstallation des fichiers de configuration...\e[0m"
     wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
 fi
 {
