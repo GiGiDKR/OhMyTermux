@@ -57,7 +57,7 @@ pkgs=('git' 'virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies'
 # Installation des paquets nécessaires
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --title "Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y > /dev/null 2>&1
+    gum spin --title "Installation des paquets..." -- pkg install "${pkgs[@]}" -y > /dev/null 2>&1
 else
     echo "Installation des paquets nécessaires..."
     pkg install "${pkgs[@]}" -y > /dev/null 2>&1
