@@ -19,6 +19,23 @@ bash_banner() {
     echo
 }
 
+# Fonction pour afficher la bannière avec ou sans gum
+show_banner() {
+    clear
+    if $USE_GUM; then
+        gum style \
+            --foreground 33 \
+            --border-foreground 33 \
+            --border double \
+            --align center \
+            --width 40 \
+            --margin "1 1 1 0" \
+            "" "OHMYTERMUX" ""
+    else
+       bash_banner
+    fi
+}
+
 bash_banner
 
 echo -e "\e[38;5;33mChanger le répertoire de sources ? (o/n)\e[0m"
@@ -49,32 +66,15 @@ check_and_install_gum() {
     fi
 }
 
-# Fonction pour afficher la bannière avec ou sans gum
-show_banner() {
-    clear
-    if $USE_GUM; then
-        gum style \
-            --foreground 33 \
-            --border-foreground 33 \
-            --border double \
-            --align center \
-            --width 40 \
-            --margin "1 1 1 0" \
-            "" "OHMYTERMUX" ""
-    else
-       bash_banner
-    fi
-}
-
 # Fonction de fin pour gérer les erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
         echo
         if $USE_GUM; then
-            gum style --foreground 196 "ERREUR: Installation de XFCE dans Termux impossible."
+            gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
         else
-            echo -e "\e[38;5;196mERREUR: Installation de XFCE dans Termux impossible.\e[0m"
+            echo -e "\e[38;5;196mERREUR: Installation de OhMyTermux impossible.\e[0m"
         fi
         echo -e "\e[38;5;33mVeuillez vous référer au(x) message(s) d'erreur ci-dessus.\e[0m"
     fi
