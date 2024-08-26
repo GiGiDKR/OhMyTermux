@@ -2,23 +2,21 @@
 
 # Fonction pour afficher la bannière sans gum
 bash_banner() {
-        clear
-        COLOR="\e[38;5;212m"
+    clear
+    COLOR="\e[38;5;33m"
 
-        TOP_BORDER="╔════════════════════════════════════════╗"
-        BOTTOM_BORDER="╚════════════════════════════════════════╝"
-        EMPTY_LINE="║                                        ║"
-        TEXT_LINE="║              OHMYTERMUX                ║"
-        SUBTEXT_LINE="║                 XFCE                   ║"
+    TOP_BORDER="╔════════════════════════════════════════╗"
+    BOTTOM_BORDER="╚════════════════════════════════════════╝"
+    EMPTY_LINE="║                                        ║"
+    TEXT_LINE="║              OHMYTERMUX                ║"
 
-        echo
-        echo -e "${COLOR}${TOP_BORDER}"
-        echo -e "${COLOR}${EMPTY_LINE}"
-        echo -e "${COLOR}${TEXT_LINE}"
-        echo -e "${COLOR}${SUBTEXT_LINE}"
-        echo -e "${COLOR}${EMPTY_LINE}"
-        echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
-        echo
+    echo
+    echo -e "${COLOR}${TOP_BORDER}"
+    echo -e "${COLOR}${EMPTY_LINE}"
+    echo -e "${COLOR}${TEXT_LINE}"
+    echo -e "${COLOR}${EMPTY_LINE}"
+    echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
+    echo
 }
 
 # Fonction pour afficher la bannière avec ou sans gum
@@ -26,20 +24,17 @@ show_banner() {
     clear
     if $USE_GUM; then
         gum style \
-            --foreground 212 \
-            --border-foreground 212 \
+            --foreground 33 \
+            --border-foreground 33 \
             --border double \
             --align center \
             --width 40 \
-            --margin "1 2" \
-            "OHMYTERMUX" \
-            "XFCE"
+            --margin "1 1 1 0" \
+            "" "OHMYTERMUX" ""
     else
-        bash_banner
+       bash_banner
     fi
 }
-
-clear
 
 # Installation de gum
 show_banner
