@@ -50,23 +50,23 @@ username="$1"
 pkgs=('git' 'virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies' 'eza' 'pavucontrol-qt' 'bat' 'jq' 'nala' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly' 'eza')
 
 # Installation des paquets nécessaires
-show_banner
-if command -v gum &> /dev/null; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation des paquets XFCE..." -- pkg install "${pkgs[@]}" -y > /dev/null 2>&1
-else
-    echo -e "\e[38;5;33mInstallation des paquets XFCE...\e[0m"
-    pkg install "${pkgs[@]}" -y > /dev/null 2>&1
-fi
+for pkg in "${pkgs[@]}"; do
+    show_banner
+    if command -v gum &> /dev/null; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation de $pkg..." -- pkg install "$pkg" -y > /dev/null 2>&1
+    else
+        echo -e "\e[38;5;33mInstallation de $pkg...\e[0m"
+        pkg install "$pkg" -y > /dev/null 2>&1
+    fi
+done
 
 # Placer l'icône de Firefox sur le bureau
-show_banner
 {
     cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop
     chmod +x $HOME/Desktop/firefox.desktop
 } > /dev/null 2>&1
 
 # Définir les alias
-show_banner
 echo -e "\e[38;5;33m
 # Aliases
 alias l='eza --icons'
