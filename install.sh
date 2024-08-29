@@ -149,14 +149,18 @@ else
     sed -i 's/^# fullscreen = true/fullscreen = true/' "$file_path"
 fi
 
+###
 # Suppression du fichier motd après sauvegarde
-MOTD_PATH="/data/data/com.termux/files/usr/etc/motd"
-MOTD_BACKUP_PATH="/data/data/com.termux/files/usr/etc/motd.bak"
-if [ -f "$MOTD_PATH" ]; then
-    mv "$MOTD_PATH" "$MOTD_BACKUP_PATH"
-else
-    echo -e "\e[38;5;33mLe fichier motd n'existe pas !\e[0m"
-fi
+# MOTD_PATH="/data/data/com.termux/files/usr/etc/motd"
+# MOTD_BACKUP_PATH="/data/data/com.termux/files/usr/etc/motd.bak"
+# if [ -f "$MOTD_PATH" ]; then
+#    mv "$MOTD_PATH" "$MOTD_BACKUP_PATH"
+# else
+#    echo -e "\e[38;5;33mLe fichier motd n'existe pas !\e[0m"
+#fi
+###
+
+touch .hushlogin
 
 termux-reload-settings
 
