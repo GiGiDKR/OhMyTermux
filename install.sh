@@ -125,7 +125,7 @@ EOL
 fi
 
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title "Téléchargement police par défaut..." -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut..." -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
 else
     echo -e "\e[38;5;33mTéléchargement police par défaut...\e[0m"
     curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
@@ -185,7 +185,7 @@ case $shell_choice in
         ;;
     "zsh")
         if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" "Installation de ZSH..." -- pkg install -y zsh
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de ZSH..." -- pkg install -y zsh
         else
             echo -e "\e[38;5;33mInstallation de ZSH...\e[0m"
             pkg install -y zsh
@@ -193,8 +193,8 @@ case $shell_choice in
         show_banner
         if $USE_GUM; then
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?" && {
-                gum spin --spinner.foreground="33" --title.foreground="33" "Installation des prérequis..." -- pkg install -y wget curl git unzip
-                gum spin --spinner.foreground="33" --title.foreground="33" "Installation de Oh My Zsh..." -- git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des prérequis..." -- pkg install -y wget curl git unzip
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Oh My Zsh..." -- git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
                 cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$HOME/.zshrc"
             }
         else
@@ -212,12 +212,12 @@ case $shell_choice in
         show_banner
         if $USE_GUM; then
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?" && {
-                gum spin --spinner.foreground="33" --title.foreground="33" "Installation de PowerLevel10k..." -- git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k..." -- git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
                 echo 'source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme' >> "$HOME/.zshrc"
 
                 show_banner
                 if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" "Téléchargement prompt PowerLevel10k..." -- curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k..." -- curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                 fi
@@ -291,7 +291,7 @@ case $shell_choice in
 
         # Afficher la liste des plugins avec ou sans gum
         if $USE_GUM; then
-          gum spin --title "Installation des plugins..." -- bash -c 'plugins_list'
+          gum spin --title="Installation des plugins..." -- bash -c 'plugins_list'
         else
           plugins_list
         fi
@@ -323,8 +323,8 @@ case $shell_choice in
         # Télécharger les fichiers de configuration depuis GitHub
         show_banner
         if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" "Téléchargement des fichiers de conf..." -- curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh
-            gum spin --spinner.foreground="33" --title.foreground="33" "Téléchargement du fichier zshrc..." -- curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement des fichiers de conf..." -- curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fichier zshrc..." -- curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc
         else
             echo -e "\e[38;5;33mTéléchargement des fichiers de conf...\e[0m"
             curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh
@@ -337,7 +337,7 @@ case $shell_choice in
         ;;
         "fish")
         if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" "Installation de Fish..." -- pkg install -y fish
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Fish..." -- pkg install -y fish
         else
             echo -e "\e[38;5;33mInstallation de Fish...\e[0m"
             pkg install -y fish
@@ -359,7 +359,7 @@ if $USE_GUM; then
 
         mkdir -p $CONFIG $COLORS_DIR_TERMUXSTYLE $COLORS_DIR_TERMUX $COLORS_DIR_XFCE4TERMINAL
 
-        gum spin --spinner.foreground="33" --title.foreground="33" "Installation des thèmes" -- bash -c '
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des thèmes" -- bash -c '
             curl -L -o $HOME/.termux/colors.zip https://github.com/GiGiDKR/OhMyTermux/raw/main/files/colors.zip &&
             unzip -o "$HOME/.termux/colors.zip" -d "$HOME/.termux/"
         '
@@ -508,7 +508,7 @@ show_banner
 if [ -n "$PACKAGES" ]; then
     for PACKAGE in $PACKAGES; do
         if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" "Installation de $PACKAGE..." -- pkg install -y $PACKAGE
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $PACKAGE..." -- pkg install -y $PACKAGE
         else
             echo -e "\e[38;5;33mInstallation de $PACKAGE...\e[0m"
             pkg install -y $PACKAGE
@@ -566,7 +566,7 @@ pkgs=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulsea
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" "Installation des pré-requis" -- pkg install ncurses-ui-libs && pkg uninstall dbus -y
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des pré-requis" -- pkg install ncurses-ui-libs && pkg uninstall dbus -y
 else
     echo -e "\e[38;5;33mInstallation des pré-requis...\e[0m"
     pkg install ncurses-ui-libs && pkg uninstall dbus -y
@@ -574,7 +574,7 @@ fi
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" "Mise à jour des paquets" -- pkg update -y
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- pkg update -y
 else
     echo -e "\e[38;5;33mMise à jour des paquets...\e[0m"
     pkg update -y
@@ -582,7 +582,7 @@ fi
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" "Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y
 else
     echo -e "\e[38;5;33mInstallation des paquets nécessaires...\e[0m"
     pkg install "${pkgs[@]}" -y
@@ -591,7 +591,7 @@ fi
 # Téléchargement et exécution des scripts
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" "Téléchargement des scripts" -- bash -c "
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement des scripts" -- bash -c "
         wget https://github.com/GiGiDKR/OhMyTermux/raw/main/xfce.sh &&
         wget https://github.com/GiGiDKR/OhMyTermux/raw/main/proot.sh &&
         wget https://github.com/GiGiDKR/OhMyTermux/raw/main/utils.sh
@@ -619,7 +619,7 @@ show_banner
 if $USE_GUM; then
     if gum confirm --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
         show_banner
-        gum spin --spinner.foreground="33" --title.foreground="33" "Téléchargement de Termux-X11 APK" -- wget https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Termux-X11 APK" -- wget https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk
         mv app-arm64-v8a-debug.apk $HOME/storage/downloads/
         termux-open $HOME/storage/downloads/app-arm64-v8a-debug.apk
         rm $HOME/storage/downloads/app-arm64-v8a-debug.apk
@@ -646,13 +646,13 @@ install_oh_my_termux_script() {
 
 if $USE_GUM; then
   if gum confirm --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
-    gum spin --spinner.foreground="33" --title.foreground="33" "Installation de OhMyTermuxScript..." -- install_oh_my_termux_script >/dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript..." -- install_oh_my_termux_script >/dev/null 2>&1
   fi
 else
   echo -e "\e[38;5;33mInstaller OhMyTermuxScript ? (o/n)\e[0m"
   read choice
     if [ "$choice" = "o" ]; then
-    echo -e "\e[38;5;33mInstallation de OhMyTermuxScript...\e[0m"
+    echo -e "\e[38;5;33mInstallation de OhMyTermuxScript...\e[0m
     install_oh_my_termux_script >/dev/null 2>&1
   fi
 fi
