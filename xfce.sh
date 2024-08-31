@@ -69,7 +69,7 @@ pkgs=('git' 'virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies'
 for pkg in "${pkgs[@]}"; do
     show_banner
     if command -v gum &> /dev/null; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation de $pkg..." -- pkg install "$pkg" -y > /dev/null 2>&1
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg..." -- pkg install "$pkg" -y
     else
         echo -e "\e[38;5;33mInstallation de $pkg...\e[0m"
         pkg install "$pkg" -y > /dev/null 2>&1
@@ -121,7 +121,7 @@ alias bashconfig='nano $PREFIX/etc/bash.bashrc'
 # Téléchargement fond d'écran 
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title "Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png
 else
     echo -e "\e[38;5;33mTéléchargement du fond d'écran...\e[0m"
     wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png > /dev/null 2>&1
@@ -131,7 +131,7 @@ mv mac_waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
 # Installation du thème WhiteSur-Dark
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation du thème WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation du thème WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip
 else
     echo -e "\e[38;5;33mInstallation du thème WhiteSur-Dark...\e[0m"
     wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip > /dev/null 2>&1
@@ -147,7 +147,7 @@ fi
 # Installation du thème d'icônes Fluent Cursor
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation du thème Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation du thème Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip
 else
     echo -e "\e[38;5;33mInstallation du thème Fluent Cursor...\e[0m"
     wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip > /dev/null 2>&1
@@ -163,7 +163,7 @@ fi
 # Installation des fichiers de configuration
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title "Installation des fichiers de configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des fichiers de configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip
 else
     echo -e "\e[38;5;33mInstallation des fichiers de configuration...\e[0m"
     wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
