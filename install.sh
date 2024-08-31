@@ -617,7 +617,7 @@ fi
 # Installation de Termux-X11
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "    Installer Termux-X11 ?"; then
         show_banner
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Termux-X11 APK" -- wget https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk
         mv app-arm64-v8a-debug.apk $HOME/storage/downloads/
@@ -625,7 +625,7 @@ if $USE_GUM; then
         rm $HOME/storage/downloads/app-arm64-v8a-debug.apk
     fi
 else
-    echo -e "\e[38;5;33mInstaller Termux-X11 ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m    Installer Termux-X11 ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         show_banner
@@ -646,13 +646,13 @@ install_oh_my_termux_script() {
 
 if $USE_GUM; then
   if gum confirm --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript..." -- install_oh_my_termux_script >/dev/null 2>&1
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript..." -- install_oh_my_termux_script
   fi
 else
   echo -e "\e[38;5;33mInstaller OhMyTermuxScript ? (o/n)\e[0m"
   read choice
     if [ "$choice" = "o" ]; then
-    echo -e "\e[38;5;33mInstallation de OhMyTermuxScript...\e[0m
+    echo -e "\e[38;5;33mInstallation de OhMyTermuxScript...\e[0m"
     install_oh_my_termux_script >/dev/null 2>&1
   fi
 fi
