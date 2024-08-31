@@ -195,3 +195,5 @@ There are two scripts available for this setup as well :
 - [ ] Separate XFCE / Debian install to run native Termux XFCE
 - [ ] Add options for Debian (Themes, Fonts, Wallpapers)
 
+&nbsp;
+
