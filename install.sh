@@ -294,15 +294,23 @@ if [[ "$PLUGINS" == *"Tout installer"* ]]; then
   PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
 fi
 
+# Fonction pour afficher la liste des plugins
+plugins_list() {
+  echo -e "\e[38;5;33mInstallation des plugins :\e[0m"
+  for PLUGIN in $PLUGINS; do
+    echo -e "\e[38;5;33m- $PLUGIN\e[0m"
+  done
+}
+
+# Afficher la liste des plugins avec ou sans gum
+if $USE_GUM; then
+  gum spin --title "Installation des plugins..." -- bash -c 'plugins_list'
+else
+  plugins_list
+fi
+
 # Installation des plugins
 for PLUGIN in $PLUGINS; do
-  if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" "Installation de $PLUGIN..." -- sleep 2
-  else
-    echo -e "\e[38;5;33mInstallation de $PLUGIN...\e[0m"
-    sleep 2
-  fi
-
   case $PLUGIN in
     "zsh-autosuggestions")
       git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" >/dev/null 2>&1 || true
