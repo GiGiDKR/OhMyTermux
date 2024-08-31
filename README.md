@@ -188,7 +188,7 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
-## ⏺️ To Do
+## 📖 To Do
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
 - [ ] Add more selectable packages and Python modules
 - [ ] Integrate in main script theme selection (Color schemes)
