@@ -244,81 +244,103 @@ case $shell_choice in
         show_banner
 
         # Fonction de sélection des plugins
-        select_plugins() {
-            if $USE_GUM; then
-                PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
-            else
-                echo -e "\e[38;5;33mSélectionner les plugins à installer (séparés par des espaces) :\e[0m"
-                echo -e "\e[38;5;33m1) zsh-autosuggestions\e[0m"
-                echo -e "\e[38;5;33m2) zsh-syntax-highlighting\e[0m"
-                echo -e "\e[38;5;33m3) zsh-completions\e[0m"
-                echo -e "\e[38;5;33m4) you-should-use\e[0m"
-                echo -e "\e[38;5;33m5) zsh-abbr\e[0m"
-                echo -e "\e[38;5;33m6) zsh-alias-finder\e[0m"
-                echo -e "\e[38;5;33m7) Tout installer\e[0m"
-                read -p "Entrez les numéros des plugins : " plugin_choices
-                # Convertir les choix en noms de plugins
-                PLUGINS=""
-                for choice in $plugin_choices; do
-                    case $choice in
-                        1) PLUGINS+="zsh-autosuggestions " ;;
-                        2) PLUGINS+="zsh-syntax-highlighting " ;;
-                        3) PLUGINS+="zsh-completions " ;;
-                        4) PLUGINS+="you-should-use " ;;
-                        5) PLUGINS+="zsh-abbr " ;;
-                        6) PLUGINS+="zsh-alias-finder " ;;
-                        7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
-                    esac
-                done
-            fi
-        }
-
-        # Appel de la fonction pour sélectionner les plugins
-        select_plugins
-
-        # Vérification des plugins sélectionnés
-        if [[ "$PLUGINS" == *"Tout installer"* ]]; then
-          PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
-        fi
-
-        # Fonction pour afficher la liste des plugins
-        plugins_list() {
-          echo -e "\e[38;5;33mInstallation des plugins :\e[0m"
-          for PLUGIN in $PLUGINS; do
-            echo -e "\e[38;5;33m- $PLUGIN\e[0m"
-          done
-        }
-
-        # Afficher la liste des plugins avec ou sans gum
-        if $USE_GUM; then
-          gum spin --title="Installation des plugins..." -- bash -c 'plugins_list'
-        else
-          plugins_list
-        fi
-
-        # Installation des plugins
-        for PLUGIN in $PLUGINS; do
-          case $PLUGIN in
-            "zsh-autosuggestions")
-              git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" >/dev/null 2>&1 || true
-              ;;
-            "zsh-syntax-highlighting")
-              git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" >/dev/null 2>&1 || true
-              ;;
-            "zsh-completions")
-              git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" >/dev/null 2>&1 || true
-              ;;
-            "you-should-use")
-              git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" >/dev/null 2>&1 || true
-              ;;
-            "zsh-abbr")
-              git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" >/dev/null 2>&1 || true
-              ;;
-            "zsh-alias-finder")
-              git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" >/dev/null 2>&1 || true
-              ;;
-          esac
+select_plugins() {
+    if $USE_GUM; then
+        PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
+    else
+        echo -e "\e[38;5;33mSélectionner les plugins à installer (séparés par des espaces) :\e[0m"
+        echo -e "\e[38;5;33m1) zsh-autosuggestions\e[0m"
+        echo -e "\e[38;5;33m2) zsh-syntax-highlighting\e[0m"
+        echo -e "\e[38;5;33m3) zsh-completions\e[0m"
+        echo -e "\e[38;5;33m4) you-should-use\e[0m"
+        echo -e "\e[38;5;33m5) zsh-abbr\e[0m"
+        echo -e "\e[38;5;33m6) zsh-alias-finder\e[0m"
+        echo -e "\e[38;5;33m7) Tout installer\e[0m"
+        read -p "Entrez les numéros des plugins : " plugin_choices
+        # Convertir les choix en noms de plugins
+        PLUGINS=""
+        for choice in $plugin_choices; do
+            case $choice in
+                1) PLUGINS+="zsh-autosuggestions " ;;
+                2) PLUGINS+="zsh-syntax-highlighting " ;;
+                3) PLUGINS+="zsh-completions " ;;
+                4) PLUGINS+="you-should-use " ;;
+                5) PLUGINS+="zsh-abbr " ;;
+                6) PLUGINS+="zsh-alias-finder " ;;
+                7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
+            esac
         done
+    fi
+}
+
+# Appel de la fonction pour sélectionner les plugins
+select_plugins
+
+# Vérification des plugins sélectionnés
+if [[ "$PLUGINS" == *"Tout installer"* ]]; then
+  PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
+fi
+
+# Installation des plugins
+for PLUGIN in $PLUGINS; do
+  show_banner
+  case $PLUGIN in
+    "zsh-autosuggestions")
+      if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-autosuggestions" -- \
+        git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" || true
+      else
+        echo -e "\e[38;5;33mInstallation de zsh-autosuggestions...\e[0m"
+        git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" >/dev/null 2>&1 || true
+      fi
+      ;;
+    "zsh-syntax-highlighting")
+      if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-syntax-highlighting" -- \
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" || true
+      else
+        echo -e "\e[38;5;33mInstallation de zsh-syntax-highlighting...\e[0m"
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" >/dev/null 2>&1 || true
+      fi
+      ;;
+    "zsh-completions")
+      if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-completions" -- \
+        git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" || true
+      else
+        echo -e "\e[38;5;33mInstallation de zsh-completions...\e[0m"
+        git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" >/dev/null 2>&1 || true
+      fi
+      ;;
+    "you-should-use")
+      if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de you-should-use" -- \
+        git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" || true
+      else
+        echo -e "\e[38;5;33mInstallation de you-should-use...\e[0m"
+        git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" >/dev/null 2>&1 || true
+      fi
+      ;;
+    "zsh-abbr")
+      if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-abbr" -- \
+        git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" || true
+      else
+        echo -e "\e[38;5;33mInstallation de zsh-abbr...\e[0m"
+        git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" >/dev/null 2>&1 || true
+      fi
+      ;;
+    "zsh-alias-finder")
+      if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-alias-finder" -- \
+        git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" || true
+      else
+        echo -e "\e[38;5;33mInstallation de zsh-alias-finder...\e[0m"
+        git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" >/dev/null 2>&1 || true
+      fi
+      ;;
+  esac
+done
 
         # Télécharger les fichiers de configuration depuis GitHub
         show_banner
