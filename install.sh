@@ -194,7 +194,7 @@ case $shell_choice in
         show_banner
         if $USE_GUM; then
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?" && {
-                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des prérequis" -- pkg install -y wget curl git unzip
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des pré-requis" -- pkg install -y wget curl git unzip
                 gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Oh My Zsh" -- git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
                 cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$HOME/.zshrc"
             }
@@ -202,7 +202,7 @@ case $shell_choice in
             echo -e "\e[38;5;33mVoulez-vous installer Oh My Zsh ? (o/n)\e[0m"
             read choice
             if [ "$choice" = "o" ]; then
-                echo -e "\e[38;5;33mInstallation des prérequis...\e[0m"
+                echo -e "\e[38;5;33mInstallation des pré-requis...\e[0m"
                 pkg install -y wget curl git unzip
                 echo -e "\e[38;5;33mInstallation de Oh My Zsh...\e[0m"
                 git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
