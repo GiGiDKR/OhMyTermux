@@ -93,7 +93,7 @@ done
 {
     cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop
     chmod +x $HOME/Desktop/firefox.desktop
-} > /dev/null 2>&1
+}
 
 # Définir les alias
 echo -e "\e[38;5;33m
