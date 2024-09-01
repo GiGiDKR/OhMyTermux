@@ -91,6 +91,7 @@ done
 
 # Placer l'icône de Firefox sur le bureau
 {
+    mkdir -p $HOME/Desktop
     cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop
     chmod +x $HOME/Desktop/firefox.desktop
 }
