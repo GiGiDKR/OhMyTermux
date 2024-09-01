@@ -661,14 +661,13 @@ fi
 
 # Installer OhMyTermuxScript
 install_oh_my_termux_script() {
-  pkg update -y && pkg install git -y
   git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript"
   chmod +x "$HOME/OhMyTermuxScript"/*.sh
 }
 
 if $USE_GUM; then
   if gum confirm --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript..." -- install_oh_my_termux_script
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript" -- install_oh_my_termux_script
   fi
 else
   echo -e "\e[38;5;33mInstaller OhMyTermuxScript ? (o/n)\e[0m"
