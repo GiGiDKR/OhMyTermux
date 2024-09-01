@@ -1,41 +1,5 @@
 #!/bin/bash
 
-# Fonction pour afficher la bannière sans gum
-bash_banner() {
-    clear
-    COLOR="\e[38;5;33m"
-
-    TOP_BORDER="╔════════════════════════════════════════╗"
-    BOTTOM_BORDER="╚════════════════════════════════════════╝"
-    EMPTY_LINE="║                                        ║"
-    TEXT_LINE="║              OHMYTERMUX                ║"
-
-    echo
-    echo -e "${COLOR}${TOP_BORDER}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${TEXT_LINE}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
-    echo
-}
-
-# Fonction pour afficher la bannière avec ou sans gum
-show_banner() {
-    clear
-    if $USE_GUM; then
-        gum style \
-            --foreground 33 \
-            --border-foreground 33 \
-            --border double \
-            --align center \
-            --width 40 \
-            --margin "1 1 1 0" \
-            "" "OHMYTERMUX" ""
-    else
-       bash_banner
-    fi
-}
-
 # Variable pour déterminer si gum doit être utilisé
 USE_GUM=false
 
@@ -73,6 +37,43 @@ finish() {
 }
 
 trap finish EXIT
+
+
+# Fonction pour afficher la bannière sans gum
+bash_banner() {
+    clear
+    COLOR="\e[38;5;33m"
+
+    TOP_BORDER="╔════════════════════════════════════════╗"
+    BOTTOM_BORDER="╚════════════════════════════════════════╝"
+    EMPTY_LINE="║                                        ║"
+    TEXT_LINE="║              OHMYTERMUX                ║"
+
+    echo
+    echo -e "${COLOR}${TOP_BORDER}"
+    echo -e "${COLOR}${EMPTY_LINE}"
+    echo -e "${COLOR}${TEXT_LINE}"
+    echo -e "${COLOR}${EMPTY_LINE}"
+    echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
+    echo
+}
+
+# Fonction pour afficher la bannière avec ou sans gum
+show_banner() {
+    clear
+    if $USE_GUM; then
+        gum style \
+            --foreground 33 \
+            --border-foreground 33 \
+            --border double \
+            --align center \
+            --width 40 \
+            --margin "1 1 1 0" \
+            "" "OHMYTERMUX" ""
+    else
+       bash_banner
+    fi
+}
 
 check_and_install_gum
 show_banner
@@ -125,7 +126,7 @@ EOL
 fi
 
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut..." -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut" -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
 else
     echo -e "\e[38;5;33mTéléchargement police par défaut...\e[0m"
     curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
@@ -185,7 +186,7 @@ case $shell_choice in
         ;;
     "zsh")
         if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de ZSH..." -- pkg install -y zsh
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de ZSH" -- pkg install -y zsh
         else
             echo -e "\e[38;5;33mInstallation de ZSH...\e[0m"
             pkg install -y zsh
@@ -193,8 +194,8 @@ case $shell_choice in
         show_banner
         if $USE_GUM; then
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?" && {
-                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des prérequis..." -- pkg install -y wget curl git unzip
-                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Oh My Zsh..." -- git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des prérequis" -- pkg install -y wget curl git unzip
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Oh My Zsh" -- git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
                 cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$HOME/.zshrc"
             }
         else
@@ -212,12 +213,12 @@ case $shell_choice in
         show_banner
         if $USE_GUM; then
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?" && {
-                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k..." -- git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k" -- git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
                 echo 'source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme' >> "$HOME/.zshrc"
 
                 show_banner
                 if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k..." -- curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k" -- curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                 fi
@@ -248,7 +249,7 @@ select_plugins() {
     if $USE_GUM; then
         PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
     else
-        echo -e "\e[38;5;33mSélectionner les plugins à installer (séparés par des espaces) :\e[0m"
+        echo -e "\e[38;5;33mSélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :\e[0m"
         echo -e "\e[38;5;33m1) zsh-autosuggestions\e[0m"
         echo -e "\e[38;5;33m2) zsh-syntax-highlighting\e[0m"
         echo -e "\e[38;5;33m3) zsh-completions\e[0m"
@@ -345,21 +346,20 @@ done
         # Télécharger les fichiers de configuration depuis GitHub
         show_banner
         if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement des fichiers de conf..." -- curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fichier zshrc..." -- curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement des fichiers de configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc'
+fi
         else
-            echo -e "\e[38;5;33mTéléchargement des fichiers de conf...\e[0m"
-            curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh
-            echo -e "\e[38;5;33mTéléchargement du fichier zshrc...\e[0m"
-            curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc
-        fi
-
+    echo -e "\e[38;5;33mTéléchargement des fichiers de configuration...\e[0m"
+    (curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
+     curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc) || 
+    echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
+fi
         echo "alias help='glow \$HOME/.config/OhMyTermux/Help.md'" >> "$HOME/.zshrc"
         chsh -s zsh
         ;;
         "fish")
         if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Fish..." -- pkg install -y fish
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Fish" -- pkg install -y fish
         else
             echo -e "\e[38;5;33mInstallation de Fish...\e[0m"
             pkg install -y fish
@@ -530,7 +530,7 @@ show_banner
 if [ -n "$PACKAGES" ]; then
     for PACKAGE in $PACKAGES; do
         if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $PACKAGE..." -- pkg install -y $PACKAGE
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $PACKAGE" -- pkg install -y $PACKAGE
         else
             echo -e "\e[38;5;33mInstallation de $PACKAGE...\e[0m"
             pkg install -y $PACKAGE
