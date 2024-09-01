@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# Variable pour déterminer si gum doit être utilisé
+USE_GUM=false
+
+# Vérification des arguments
+for arg in "$@"; do
+    case $arg in
+        --gum|-g)
+            USE_GUM=true
+            shift
+            ;;
+    esac
+done
+
 # Fonction pour afficher la bannière sans gum
 bash_banner() {
     clear
@@ -41,7 +54,7 @@ finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
         echo
-        if command -v gum &> /dev/null; then
+        if $USE_GUM; then
             gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
         else
             echo -e "\e[38;5;196mERREUR: Installation de OhMyTermux impossible.\e[0m"
@@ -52,9 +65,9 @@ finish() {
 
 trap finish EXIT
 
-# Installation de gum
+# Installation de gum si nécessaire
 show_banner
-if ! command -v gum &> /dev/null; then
+if $USE_GUM && ! command -v gum &> /dev/null; then
     echo -e "\e[38;5;33mInstallation de gum...\e[0m"
     pkg update -y > /dev/null 2>&1
     pkg install -y gum > /dev/null 2>&1
@@ -67,10 +80,10 @@ pkgs=('git' 'virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies'
 
 # Installation des paquets nécessaires
 for pkg in "${pkgs[@]}"; do
-    show_banner
-    if command -v gum &> /dev/null; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg..." -- pkg install "$pkg" -y
+    if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- pkg install "$pkg" -y
     else
+        show_banner
         echo -e "\e[38;5;33mInstallation de $pkg...\e[0m"
         pkg install "$pkg" -y > /dev/null 2>&1
     fi
@@ -120,7 +133,7 @@ alias bashconfig='nano $PREFIX/etc/bash.bashrc'
 
 # Téléchargement fond d'écran 
 show_banner
-if command -v gum &> /dev/null; then
+if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png
 else
     echo -e "\e[38;5;33mTéléchargement du fond d'écran...\e[0m"
@@ -130,7 +143,7 @@ mv mac_waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
 
 # Installation du thème WhiteSur-Dark
 show_banner
-if command -v gum &> /dev/null; then
+if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation du thème WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip
 else
     echo -e "\e[38;5;33mInstallation du thème WhiteSur-Dark...\e[0m"
@@ -146,7 +159,7 @@ fi
 
 # Installation du thème d'icônes Fluent Cursor
 show_banner
-if command -v gum &> /dev/null; then
+if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation du thème Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip
 else
     echo -e "\e[38;5;33mInstallation du thème Fluent Cursor...\e[0m"
@@ -162,7 +175,7 @@ fi
 
 # Installation des fichiers de configuration
 show_banner
-if command -v gum &> /dev/null; then
+if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des fichiers de configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip
 else
     echo -e "\e[38;5;33mInstallation des fichiers de configuration...\e[0m"
