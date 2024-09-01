@@ -120,44 +120,42 @@ fi
 # Création de l'utilisateur
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Création de l'utilisateur" -- {
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Création de l'utilisateur" -- bash -c '
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash "$username"
-    }
+    '
 else
     echo -e "\e[38;5;33mCréation de l'utilisateur...\e[0m"
-    {
-        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
-        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
-        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash "$username"
-    } > /dev/null 2>&1
+    proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
+    proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
+    proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash "$username"
 fi
 
 # Ajout de l'utilisateur à sudoers
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Ajout des droits utilisateur" -- {
-        chmod u+rw $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
-        echo "$username ALL=(ALL) NOPASSWD:ALL" | tee -a $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
-        chmod u-w $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
-    }
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Ajout des droits utilisateur" -- bash -c '
+        chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+        echo "$username ALL=(ALL) NOPASSWD:ALL" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+        chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+    '
 else
     echo -e "\e[38;5;33mAjout des droits utilisateur...\e[0m"
-    {
-        chmod u+rw $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
-        echo "$username ALL=(ALL) NOPASSWD:ALL" | tee -a $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
-        chmod u-w $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
-    } > /dev/null 2>&1
+    chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+    echo "$username ALL=(ALL) NOPASSWD:ALL" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+    chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
 fi
 
 # Configuration de l'affichage proot
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Configuration de la distribution" -- bash -c 'echo "export DISPLAY=:1.0" >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc'
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Configuration de la distribution" -- bash -c '
+        echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
+    '
 else
     echo -e "\e[38;5;33mConfiguration de la distribution...\e[0m"
-    echo "export DISPLAY=:1.0" >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc
+    echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
 fi
 
 # Configuration des alias proot
