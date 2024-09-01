@@ -545,7 +545,7 @@ fi
 # Installation de OhMyTermuxXFCE
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "Installer OhMyTermux XFCE ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "   Installer OhMyTermux XFCE ?"; then
         # Demande du nom d'utilisateur avec gum
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
@@ -561,7 +561,7 @@ if $USE_GUM; then
         exit 0
     fi
 else
-    echo -e "\e[38;5;33mInstaller OhMyTermux XFCE ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m   Installer OhMyTermux XFCE ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         # Demande du nom d'utilisateur avec read
