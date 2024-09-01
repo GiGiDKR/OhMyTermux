@@ -153,8 +153,12 @@ fi
 
 # Configuration de l'affichage proot
 show_banner
-echo -e "\e[38;5;33mConfiguration de la distribution...\e[0m"
-echo "export DISPLAY=:1.0" >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc
+if $USE_GUM; then
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Configuration de la distribution" -- bash -c 'echo "export DISPLAY=:1.0" >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc'
+else
+    echo -e "\e[38;5;33mConfiguration de la distribution...\e[0m"
+    echo "export DISPLAY=:1.0" >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc
+fi
 
 # Configuration des alias proot
 cat << EOF >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc
