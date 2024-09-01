@@ -627,8 +627,8 @@ chmod +x *.sh
 
 show_banner
 if $USE_GUM; then
-    ./xfce.sh "$username" --gum
-    ./proot.sh "$username" --gum
+    ./xfce.sh --gum "$username"
+    ./proot.sh --gum "$username"
 else
     ./xfce.sh "$username"
     ./proot.sh "$username"
