@@ -155,9 +155,9 @@ termux-reload-settings
 # Accès au stockage externe
 show_banner
 if $USE_GUM; then
-    gum confirm --prompt.foreground="33" --selected.background="33" "Autoriser l'accès au stockage ?" && termux-setup-storage
+    gum confirm --prompt.foreground="33" --selected.background="33" "  Autoriser l'accès au stockage ?" && termux-setup-storage
 else
-    echo -e "\e[38;5;33mAutoriser l'accès au stockage ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m  Autoriser l'accès au stockage ? (o/n)\e[0m"
     read choice
     [ "$choice" = "o" ] && termux-setup-storage
 fi
