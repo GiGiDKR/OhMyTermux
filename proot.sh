@@ -76,12 +76,17 @@ fi
 # Mise à jour des paquets
 show_banner
 if command -v gum &> /dev/null; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- pd login debian --shared-tmp -- env DISPLAY=:1.0 apt update
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Recherche de mise à jour" -- pd login debian --shared-tmp -- env DISPLAY=:1.0 apt update
 else
-    echo -e "\e[38;5;33mMise à jour des paquets...\e[0m"
+    echo -e "\e[38;5;33mRecherche de mise à jour...\e[0m"
     pd login debian --shared-tmp -- env DISPLAY=:1.0 apt update > /dev/null 2>&1
 fi
-pd login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y > /dev/null 2>&1
+if command -v gum &> /dev/null; then
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- pd login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y
+else
+    echo -e "\e[38;5;33mMise à jour des paquets...\e[0m"
+    pd login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y > /dev/null 2>&1
+fi
 
 # Installation des paquets
 show_banner
@@ -106,7 +111,7 @@ else
         pd login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
         pd login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
         pd login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash "$username"
-    } > /dev/null 2>&1
+    }
 fi
 
 # Ajout de l'utilisateur à sudoers
@@ -121,19 +126,17 @@ else
     echo -e "\e[38;5;33mAjout des droits utilisateur...\e[0m"
     {
         chmod u+rw $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
-        echo "$username ALL=(ALL) NOPASSWD:ALL" | tee -a $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers > /dev/null
+        echo "$username ALL=(ALL) NOPASSWD:ALL" | tee -a $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
         chmod u-w $PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers
-    } > /dev/null 2>&1
+    }
 fi
 
 # Configuration de l'affichage proot
 show_banner
-echo -e "\e[38;5;33mConfiguration de l'affichage proot...\e[0m"
+echo -e "\e[38;5;33mConfiguration de la distribution...\e[0m"
 echo "export DISPLAY=:1.0" >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc
 
 # Configuration des alias proot
-show_banner
-echo -e "\e[38;5;33mConfiguration des alias proot...\e[0m"
 echo "
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform '
 alias hud='GALLIUM_HUD=fps '
@@ -164,26 +167,22 @@ alias bashconfig='nano $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home
 " >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc
 
 # Configuration du fuseau horaire proot
-show_banner
-echo -e "\e[38;5;33mConfiguration du fuseau horaire...\e[0m"
 timezone=$(getprop persist.sys.timezone)
 {
     pd login debian --shared-tmp -- env DISPLAY=:1.0 rm /etc/localtime
     pd login debian --shared-tmp -- env DISPLAY=:1.0 cp /usr/share/zoneinfo/$timezone /etc/localtime
-} > /dev/null 2>&1
+}
 
 # Application du thème de xfce à proot
-show_banner
-echo -e "\e[38;5;33mApplication du thème XFCE...\e[0m"
 cd $PREFIX/share/icons
-find dist-dark | cpio -pdm $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons > /dev/null 2>&1
+find dist-dark | cpio -pdm $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
 
 cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
 Xcursor.theme: dist-dark
 EOF
 
-mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.fonts/ > /dev/null 2>&1
-mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.themes/ > /dev/null 2>&1
+mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.fonts/
+mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.themes/
 
 # Configuration de l'accélération matérielle
 show_banner
@@ -193,4 +192,10 @@ else
     echo -e "\e[38;5;33mTéléchargement de Mesa-Vulkan...\e[0m"
     pd login debian --shared-tmp -- env DISPLAY=:1.0 wget https://github.com/GiGiDKR/OhMyTermux/raw/main/mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb > /dev/null 2>&1
 fi
-pd login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb > /dev/null 2>&1
+
+if command -v gum &> /dev/null; then
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Mesa-Vulkan" -- pd login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb
+else
+    echo -e "\e[38;5;33mInstallation de Mesa-Vulkan...\e[0m"
+    pd login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb > /dev/null 2>&1
+fi
