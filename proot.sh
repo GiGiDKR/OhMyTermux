@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# Variable pour déterminer si gum doit être utilisé
 USE_GUM=false
 
-# Vérification des arguments
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -13,7 +11,6 @@ for arg in "$@"; do
     esac
 done
 
-# Fonction pour afficher la bannière sans gum
 bash_banner() {
     clear
     COLOR="\e[38;5;33m"
@@ -32,7 +29,6 @@ bash_banner() {
     echo
 }
 
-# Fonction pour afficher la bannière avec ou sans gum
 show_banner() {
     clear
     if $USE_GUM; then
@@ -49,7 +45,6 @@ show_banner() {
     fi
 }
 
-# Fonction pour vérifier et installer gum
 check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
         bash_banner
@@ -58,10 +53,8 @@ check_and_install_gum() {
     fi
 }
 
-# Vérification et installation de gum
 check_and_install_gum
 
-# Fonction de fin pour gérer les erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -77,7 +70,6 @@ finish() {
 
 trap finish EXIT
 
-# Vérification de l'argument username
 if [ $# -eq 0 ]; then
     echo "Erreur: Veuillez fournir un nom d'utilisateur en argument."
     exit 1
@@ -87,7 +79,6 @@ username="$1"
 
 pkgs_proot=('sudo' 'wget' 'nala' 'jq')
 
-# Installation de Debian
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Debian proot" -- proot-distro install debian
@@ -96,7 +87,6 @@ else
     proot-distro install debian > /dev/null 2>&1
 fi
 
-# Mise à jour des paquets
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Recherche de mise à jour" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update
@@ -108,7 +98,6 @@ else
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y > /dev/null 2>&1
 fi
 
-# Installation des paquets
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "${pkgs_proot[@]}" -y
@@ -117,7 +106,6 @@ else
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "${pkgs_proot[@]}" -y > /dev/null 2>&1
 fi
 
-# Création de l'utilisateur
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Création de l'utilisateur" -- bash -c '
@@ -132,7 +120,6 @@ else
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash "$username"
 fi
 
-# Ajout de l'utilisateur à sudoers
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Ajout des droits utilisateur" -- bash -c '
@@ -147,7 +134,6 @@ else
     chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
 fi
 
-# Configuration de l'affichage proot
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Configuration de la distribution" -- bash -c '
@@ -158,7 +144,6 @@ else
     echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
 fi
 
-# Configuration des alias proot
 cat << EOF >> $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc
 
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform '
@@ -189,14 +174,12 @@ alias push="git pull && git add . && git commit -m 'mobile push' && git push"
 alias bashconfig='nano $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc'
 EOF
 
-# Configuration du fuseau horaire proot
 timezone=$(getprop persist.sys.timezone)
 {
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 rm /etc/localtime
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 cp /usr/share/zoneinfo/$timezone /etc/localtime
 } > /dev/null 2>&1
 
-# Application du thème de xfce à proot
 cd $PREFIX/share/icons
 find dist-dark | cpio -pdm $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons > /dev/null 2>&1
 
@@ -207,7 +190,6 @@ EOF
 mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.fonts/
 mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.themes/
 
-# Configuration de l'accélération matérielle
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Mesa-Vulkan" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget https://github.com/GiGiDKR/OhMyTermux/raw/main/mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb
