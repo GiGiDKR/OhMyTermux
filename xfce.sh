@@ -88,7 +88,7 @@ done
 }
 
 echo '
-# Aliases
+
 alias l="eza --icons"
 alias ls="eza -1 --icons"
 alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
@@ -118,6 +118,7 @@ alias cm="chmod +x"
 alias clone="git clone"
 alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"
 alias bashconfig="nano $PREFIX/etc/bash.bashrc"
+
 ' >> $PREFIX/etc/bash.bashrc
 
 show_banner
