@@ -174,7 +174,8 @@ There are two scripts available for this setup as well :
 &nbsp;
 
 ## 📖 To Do
-- [X] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
+- [X] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Partial)
+- [ ] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Full)
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
 - [ ] Add more selectable packages and Python modules
 - [ ] Integrate in main script theme selection (Color schemes)
