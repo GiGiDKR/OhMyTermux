@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# Variable pour déterminer si gum doit être utilisé
 USE_GUM=false
 
-# Vérification des arguments
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -13,7 +11,6 @@ for arg in "$@"; do
     esac
 done
 
-# Fonction pour afficher la bannière sans gum
 bash_banner() {
     clear
     COLOR="\e[38;5;33m"
@@ -32,7 +29,6 @@ bash_banner() {
     echo
 }
 
-# Fonction pour afficher la bannière avec ou sans gum
 show_banner() {
     clear
     if $USE_GUM; then
@@ -49,7 +45,6 @@ show_banner() {
     fi
 }
 
-# Fonction de fin pour gérer les erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -65,7 +60,6 @@ finish() {
 
 trap finish EXIT
 
-# Installation de gum si nécessaire
 show_banner
 if $USE_GUM && ! command -v gum &> /dev/null; then
     echo -e "\e[38;5;33mInstallation de gum...\e[0m"
@@ -75,10 +69,8 @@ fi
 
 username="$1"
 
-# Liste des paquets nécessaires
 pkgs=('git' 'virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies' 'eza' 'pavucontrol-qt' 'bat' 'jq' 'nala' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly' 'eza')
 
-# Installation des paquets nécessaires
 for pkg in "${pkgs[@]}"; do
     if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- pkg install "$pkg" -y
@@ -89,14 +81,12 @@ for pkg in "${pkgs[@]}"; do
     fi
 done
 
-# Placer l'icône de Firefox sur le bureau
 {
     mkdir -p $HOME/Desktop
     cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop
     chmod +x $HOME/Desktop/firefox.desktop
 }
 
-# Définir les alias
 echo -e "\e[38;5;33m
 # Aliases
 alias l='eza --icons'
@@ -111,8 +101,6 @@ alias q='exit'
 alias c='clear'
 alias md='mkdir'
 alias debian='proot-distro login debian --user $username --shared-tmp'
-#alias zrun='proot-distro login debian --user $username --shared-tmp -- env DISPLAY=:1.0 MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform '
-#alias zrunhud='proot-distro login debian --user $username --shared-tmp -- env DISPLAY=:1.0 MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform GALLIUM_HUD=fps '
 alias hud='GALLIUM_HUD=fps '
 alias cat='bat '
 alias apt='nala '
@@ -132,7 +120,6 @@ alias push=\"git pull && git add . && git commit -m 'mobile push' && git push\"
 alias bashconfig='nano $PREFIX/etc/bash.bashrc'
 \e[0m" >> $PREFIX/etc/bash.bashrc
 
-# Téléchargement fond d'écran 
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png
@@ -142,7 +129,6 @@ else
 fi
 mv mac_waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
 
-# Installation du thème WhiteSur-Dark
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation du thème WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip
@@ -158,7 +144,6 @@ fi
     rm 2024-05-01.zip
 } > /dev/null 2>&1
 
-# Installation du thème d'icônes Fluent Cursor
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation du thème Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip
@@ -174,7 +159,6 @@ fi
     rm 2024-02-25.zip
 } > /dev/null 2>&1
 
-# Installation des fichiers de configuration
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des fichiers de configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip
