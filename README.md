@@ -167,14 +167,14 @@ There are two scripts available for this setup as well :
     - Initial upload
 - Version 1.0.1 :
     - Command line interface changes
-    - Integration partial of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript[^1]
+    - Integration partial of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
 - Version 1.1 : 
   - In development
 
 &nbsp;
 
 ## 📖 To Do
-- [X] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript
+- [X] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
 - [ ] Add more selectable packages and Python modules
 - [ ] Integrate in main script theme selection (Color schemes)
