@@ -182,7 +182,7 @@ There are two scripts available for this setup as well :
     - Initial upload
 - Version 1.0.1 :
     - Command line interface changes
-    - Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1] (Alpha)
+    - Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
 - Version 1.0.2 :
   - WIP
 
