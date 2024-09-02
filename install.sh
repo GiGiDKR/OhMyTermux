@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Variable pour déterminer si gum doit être utilisé
 USE_GUM=false
 
 # Vérification des arguments
@@ -13,7 +12,6 @@ for arg in "$@"; do
     esac
 done
 
-# Fonction pour vérifier et installer gum
 check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
         bash_banner
@@ -22,7 +20,6 @@ check_and_install_gum() {
     fi
 }
 
-# Fonction de fin pour gérer les erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -38,8 +35,6 @@ finish() {
 
 trap finish EXIT
 
-
-# Fonction pour afficher la bannière sans gum
 bash_banner() {
     clear
     COLOR="\e[38;5;33m"
@@ -58,7 +53,6 @@ bash_banner() {
     echo
 }
 
-# Fonction pour afficher la bannière avec ou sans gum
 show_banner() {
     clear
     if $USE_GUM; then
@@ -84,7 +78,6 @@ if [ "$change_repo_choice" = "o" ]; then
     termux-change-repo
 fi
 
-# Configuration du répertoire $HOME/.termux
 termux_dir="$HOME/.termux"
 file_path="$termux_dir/colors.properties"
 if [ ! -f "$file_path" ]; then
@@ -152,7 +145,6 @@ touch .hushlogin
 
 termux-reload-settings
 
-# Accès au stockage externe
 show_banner
 if $USE_GUM; then
     gum confirm --prompt.foreground="33" --selected.background="33" "  Autoriser l'accès au stockage ?" && termux-setup-storage
@@ -162,7 +154,6 @@ else
     [ "$choice" = "o" ] && termux-setup-storage
 fi
 
-# Menu de choix du shell
 show_banner
 if $USE_GUM; then
     shell_choice=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=5 --header="Choisissez le shell à installer :" "bash" "zsh" "fish")
@@ -244,7 +235,6 @@ case $shell_choice in
 
         show_banner
 
-        # Fonction de sélection des plugins
 select_plugins() {
     if $USE_GUM; then
         PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
@@ -274,15 +264,12 @@ select_plugins() {
     fi
 }
 
-# Appel de la fonction pour sélectionner les plugins
 select_plugins
 
-# Vérification des plugins sélectionnés
 if [[ "$PLUGINS" == *"Tout installer"* ]]; then
   PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
 fi
 
-# Installation des plugins
 for PLUGIN in $PLUGINS; do
   show_banner
   case $PLUGIN in
@@ -343,7 +330,6 @@ for PLUGIN in $PLUGINS; do
   esac
 done
 
-        # Télécharger les fichiers de configuration depuis GitHub
         show_banner
         if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc'
@@ -368,7 +354,6 @@ fi
         ;;
 esac
 
-# Installation de thèmes
 show_banner
 if $USE_GUM; then
     if gum confirm --prompt.foreground="33" --selected.background="33" "Installer des thèmes pour Termux ?"; then
@@ -405,7 +390,6 @@ fi
 
 rm "$HOME/.termux/colors.zip"
 
-# Fonction pour installer les polices
 install_font() {
     local font_url="$1"
     curl -L -o "$HOME/.termux/font.ttf" "$font_url" >/dev/null 2>&1
@@ -413,7 +397,6 @@ install_font() {
 
 show_banner
 
-# Menu de sélection de police
 if $USE_GUM; then
     FONT=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=14 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
 else
@@ -486,7 +469,6 @@ case $FONT in
         ;;
 esac
 
-# Menu de sélection des packages
 show_banner
 if $USE_GUM; then
     PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "bat" "lf" "fzf" "glow" "python" "lsd" "micro" "tsu" "Tout installer")
@@ -524,8 +506,7 @@ fi
 
 installed_packages=""
 
-show_banner 
-
+show_banner
 if [ -n "$PACKAGES" ]; then
     for PACKAGE in $PACKAGES; do
         if $USE_GUM; then
@@ -542,7 +523,10 @@ else
     echo -e "\e[38;5;33mAucun package sélectionné. Poursuite du script ...\e[0m"
 fi
 
-# Installation de OhMyTermuxXFCE
+##################
+# OhMyTermuxXFCE #
+##################
+
 show_banner
 if $USE_GUM; then
     if gum confirm --prompt.foreground="33" --selected.background="33" "   Installer OhMyTermux XFCE ?"; then
@@ -609,7 +593,6 @@ else
     pkg install "${pkgs[@]}" -y
 fi
 
-# Téléchargement et exécution des scripts
 show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement des scripts" -- bash -c "
@@ -635,7 +618,10 @@ else
 fi
 ./utils.sh
 
-# Installation de Termux-X11
+##############
+# Termux-X11 #
+##############
+
 show_banner
 if $USE_GUM; then
     if gum confirm --prompt.foreground="33" --selected.background="33" "       Installer Termux-X11 ?"; then
@@ -658,7 +644,10 @@ else
     fi
 fi
 
-# Installation OhMyTermuxScript
+####################
+# OhMyTermuxScript #
+####################
+
 if $USE_GUM; then
   if gum confirm --prompt.foreground="33" --selected.background="33" "    Installer OhMyTermuxScript ?"; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript" -- bash -c 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh'
@@ -721,14 +710,16 @@ else
   fi
 fi
 
-# Finalisation de la configuration
+#################
+# End of script #
+#################
+
 source $PREFIX/etc/bash.bashrc
 termux-reload-settings
 
 # Nettoyage des fichiers temporaires
 rm -f xfce.sh proot.sh utils.sh install.sh
 
-# Message final
 show_banner
 if $USE_GUM; then
     if gum confirm --prompt.foreground="33" --selected.background="33" "       Exécuter OhMyTermux ?"; then
