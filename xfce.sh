@@ -87,38 +87,38 @@ done
     chmod +x $HOME/Desktop/firefox.desktop
 }
 
-echo -e "\e[38;5;33m
+echo '
 # Aliases
-alias l='eza --icons'
-alias ls='eza -1 --icons'
-alias ll='eza -lF -a --icons --total-size --no-permissions --no-time --no-user'
-alias la='eza --icons -lgha --group-directories-first'
-alias lt='eza --icons --tree'
-alias lta='eza --icons --tree -lgha'
-alias dir='eza -lF --icons'
-alias ..='cd ..'
-alias q='exit'
-alias c='clear'
-alias md='mkdir'
-alias debian='proot-distro login debian --user $username --shared-tmp'
-alias hud='GALLIUM_HUD=fps '
-alias cat='bat '
-alias apt='nala '
-alias install='nala install -y '
-alias uninstall='nala remove -y '
-alias update='nala update'
-alias upgrade='nala upgrade -y'
-alias search='nala search '
-alias list='nala list --upgradeable'
-alias show='nala show'
-alias n='nano'
-alias prop='nano $HOME/.termux/termux.properties'
-alias tmx='cd $HOME/.termux'
-alias cm='chmod +x'
-alias clone='git clone'
-alias push=\"git pull && git add . && git commit -m 'mobile push' && git push\"
-alias bashconfig='nano $PREFIX/etc/bash.bashrc'
-\e[0m" >> $PREFIX/etc/bash.bashrc
+alias l="eza --icons"
+alias ls="eza -1 --icons"
+alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
+alias la="eza --icons -lgha --group-directories-first"
+alias lt="eza --icons --tree"
+alias lta="eza --icons --tree -lgha"
+alias dir="eza -lF --icons"
+alias ..="cd .."
+alias q="exit"
+alias c="clear"
+alias md="mkdir"
+alias debian="proot-distro login debian --user $username --shared-tmp"
+alias hud="GALLIUM_HUD=fps "
+alias cat="bat "
+alias apt="nala "
+alias install="nala install -y "
+alias uninstall="nala remove -y "
+alias update="nala update"
+alias upgrade="nala upgrade -y"
+alias search="nala search "
+alias list="nala list --upgradeable"
+alias show="nala show"
+alias n="nano"
+alias prop="nano $HOME/.termux/termux.properties"
+alias tmx="cd $HOME/.termux"
+alias cm="chmod +x"
+alias clone="git clone"
+alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"
+alias bashconfig="nano $PREFIX/etc/bash.bashrc"
+' >> $PREFIX/etc/bash.bashrc
 
 show_banner
 if $USE_GUM; then
