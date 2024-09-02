@@ -665,11 +665,11 @@ install_oh_my_termux_script() {
 }
 
 if $USE_GUM; then
-  if gum confirm --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
+  if gum confirm --prompt.foreground="33" --selected.background="33" " "   Installer OhMyTermuxScript ?"; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript" -- bash -c 'install_oh_my_termux_script'
   fi
 else
-  echo -e "\e[38;5;33mInstaller OhMyTermuxScript ? (o/n)\e[0m"
+  echo -e "\e[38;5;33m   Installer OhMyTermuxScript ? (o/n)\e[0m"
   read -r choice
   if [ "$choice" = "o" ]; then
     echo -e "\e[38;5;33mInstallation de OhMyTermuxScript...\e[0m"
