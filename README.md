@@ -102,7 +102,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - Electron Node.js in Termux
 - XDRP (native Termux or proot-distro)
 
-[^1]: Coming in version 1.1 with the integration of OhMyTermuxScript 
+[^1]: Coming in version 1.1 with the full integration of OhMyTermuxScript 
 [^2]: Optionally integrated into the main script
 
 
@@ -182,9 +182,9 @@ There are two scripts available for this setup as well :
     - Initial upload
 - Version 1.0.1 :
     - Command line interface changes
-    - Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
-- Version 1.0.2 :
-  - WIP
+    - Integration partial of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
+- Version 1.1 : 
+  - In development
 
 &nbsp;
 
