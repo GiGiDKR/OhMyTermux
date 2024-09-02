@@ -94,17 +94,16 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 - Theme Selector
 - Nerd Fonts Installer
-- Custom Debian proot-distro with XFCE4 on Termux-X11 [^2]
 - App-Installer (VSCode, PyCharm, Obsidian...) [^2]
-- Native Termux XFCE4 desktop on Termux-X11
+- Native Termux XFCE4 desktop on Termux-X11 [^3]
 - Oh-My-Zsh [^2]
 - Oh-My-Posh [^1]
-- Electron Node.js in Termux
+- Electron Node.js
 - XDRP (native Termux or proot-distro)
 
 [^1]: Coming in version 1.1 with the full integration of OhMyTermuxScript 
 [^2]: Optionally integrated into the main script
-
+[^3]: In development (no release date yet)
 
 # 🔥 **XFCE and Debian :**
 
@@ -119,29 +118,19 @@ You only need to pick your username and follow the prompts.
 
 ## Starting the desktop
 
-  
 You will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
 
 Use the command ```start``` to initiate a Termux-X11 session.
 
 This will start the termux-x11 server, XFCE4 desktop and open the Termux-X11 app right into the desktop.
 
-  
-
 To enter the Debian proot install from terminal use the command ```debian```
-
-  
 
 Also note, you do not need to set display in Debian proot as it is already set. This means you can use the terminal to start any GUI application and it will startup.
 
-  
-
 &nbsp;
 
-  
-
 ## Debain Proot
-
 
 To enter proot use the command ```debian```, from there you can install aditional software with apt and use cp2menu in termux to copy the menu items over to termux xfce menu.
 
@@ -151,11 +140,8 @@ There are two scripts available for this setup as well :
 
 ```cp2menu``` Running this will pop up a window allowing you to copy .desktop files from debian proot into the termux xfce "start" menu so you won't need to launch them from terminal. A launcher is available in the System menu section.
 
-  
-
 &nbsp;
 
-  
 > [!CAUTION]
 > Process completed (signal 9) - press Enter
 >
@@ -172,7 +158,6 @@ There are two scripts available for this setup as well :
 > Once it connects run this command :
 > 
 > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
-
 
 &nbsp;
 
@@ -196,4 +181,3 @@ There are two scripts available for this setup as well :
 - [ ] Add options for Debian (Themes, Fonts, Wallpapers)
 
 &nbsp;
-
