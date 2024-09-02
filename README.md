@@ -1,6 +1,6 @@
 # OhMyTermux 🧊
 
-**Automated and custom installation of [Termux](https://github.com/termux) : Packages, Shell, Plugins, Prompts, Fontsw Themes selectable).**
+**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
 
 **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-) : A customized [Debian](https://www.debian.org/) proot-distro and [XFCE](https://www.xfce.org/) desktop .**
 
