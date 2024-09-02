@@ -658,62 +658,18 @@ else
     fi
 fi
 
-# Installer OhMyTermuxScript
-install_oh_my_termux_script() {
-  git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript"
-  find "$HOME/OhMyTermuxScript" -name "*.sh" -type f -exec chmod +x {} \;
-}
-
+# Installation OhMyTermuxScript
 if $USE_GUM; then
-  if gum confirm --prompt.foreground="33" --selected.background="33" " "    Installer OhMyTermuxScript ?"; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript" -- bash -c 'install_oh_my_termux_script'
+  if gum confirm --prompt.foreground="33" --selected.background="33" "    Installer OhMyTermuxScript ?"; then
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript" -- bash -c 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh'
   fi
 else
   echo -e "\e[38;5;33m    Installer OhMyTermuxScript ? (o/n)\e[0m"
   read -r choice
   if [ "$choice" = "o" ]; then
     echo -e "\e[38;5;33mInstallation de OhMyTermuxScript...\e[0m"
-    install_oh_my_termux_script
+    git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh
   fi
-fi
-
-# Fonction pour exécuter un script sélectionné
-execute_script() {
-  local script="$1"
-  if [ -x "$script" ]; then
-    bash "$script"
-  else
-    echo -e "\e[38;5;33mLe fichier $script n'est pas exécutable.\e[0m"
-  fi
-}
-
-if [ -d "$HOME/OhMyTermuxScript" ]; then
-  while true; do
-    if $USE_GUM; then
-      if gum confirm --prompt.foreground="33" --selected.background="33" "Exécuter un des scripts ?"; then
-        mapfile -t scripts < <(find "$HOME/OhMyTermuxScript" -name "*.sh" -type f)
-        script_choice=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" "${scripts[@]}")
-        [ -n "$script_choice" ] && execute_script "$script_choice"
-      else
-        break
-      fi
-    else
-      echo -e "\e[38;5;33mExécuter un des scripts ? (o/n)\e[0m"
-      read -r choice
-      if [ "$choice" = "o" ]; then
-        mapfile -t scripts < <(find "$HOME/OhMyTermuxScript" -name "*.sh" -type f)
-        echo -e "\e[38;5;33mChoisissez un script à exécuter :\e[0m"
-        select script_choice in "${scripts[@]}"; do
-          [ -n "$script_choice" ] && execute_script "$script_choice"
-          break
-        done
-      else
-        break
-      fi
-    fi
-  done
-else
-  echo -e "\e[38;5;33mOhMyTermuxScript n'est pas installé.\e[0m"
 fi
 
 # Finalisation de la configuration
