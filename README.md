@@ -168,6 +168,8 @@ There are two scripts available for this setup as well :
 - Version 1.0.1 :
     - Command line interface changes
     - Integration partial of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
+- Version 1.0.2 :
+    - Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 - Version 1.1 : 
   - In development
 
@@ -176,6 +178,7 @@ There are two scripts available for this setup as well :
 ## 📖 To Do
 - [X] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Partial)
 - [ ] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Full)
+- [ ] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
 - [ ] Add more selectable packages and Python modules
 - [ ] Integrate in main script theme selection (Color schemes)
