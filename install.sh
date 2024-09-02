@@ -672,6 +672,55 @@ else
   fi
 fi
 
+SCRIPT_DIR="$HOME/OhMyTermuxScript"
+
+execute_script() {
+  if [ -d "$SCRIPT_DIR" ]; then
+    mapfile -t scripts < <(find "$SCRIPT_DIR" -name "*.sh" -type f)
+    
+    script_names=()
+    for script in "${scripts[@]}"; do
+      script_names+=("$(basename "$script")")
+    done
+    
+    echo -e "\e[38;5;33m            Sélection de script\n\e[0m"
+
+    if $USE_GUM; then
+      script_choice=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" "${script_names[@]}")
+    else
+      select script_choice in "${script_names[@]}"; do
+        break
+      done
+    fi
+    
+    for script in "${scripts[@]}"; do
+      if [ "$(basename "$script")" == "$script_choice" ]; then
+        selected_script="$script"
+        break
+      fi
+    done
+    
+    if [ -n "$selected_script" ]; then
+      bash "$selected_script"
+    else
+      echo "Aucun script sélectionné."
+    fi
+  else
+    echo "Le répertoire $SCRIPT_DIR n'existe pas."
+  fi
+}
+
+if $USE_GUM; then
+  if gum confirm --prompt.foreground="33" --selected.background="33" "        Exécuter un script ?"; then
+    execute_script
+  fi
+else
+  read -p "        Exécuter un script ? (o/n) " choice
+  if [ "$choice" = "o" ]; then
+    execute_script
+  fi
+fi
+
 # Finalisation de la configuration
 source $PREFIX/etc/bash.bashrc
 termux-reload-settings
