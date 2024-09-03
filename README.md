@@ -2,25 +2,37 @@
 
 **Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
 
-**[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-) : A customized [Debian](https://www.debian.org/) proot-distro and [XFCE](https://www.xfce.org/) desktop .**
+**[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro and [XFCE](https://www.xfce.org/) desktop .
 
-**[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) : A collection of useful scripts, executable from the main script or later. [^1]**
+**[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : A collection of useful scripts, executable from the main script or later. [^1]
 
-> [!TIP]
-> To choose between different items it is recommended to use [gum](https://github.com/charmbracelet/gum) which provides a simplified selection (Space for multiple selections and Enter to validate).
+**[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Sync Obsidian on Android using Termux and Git
 
 &nbsp;
 
+> [!IMPORTANT]
+> This project is under active development but to facilitate progress the French language is preferred to provide the user CLI.
+> 
+> Several languages ​​will be available in a future version.
+> 
+> A French version of this text is available : [README-FR.md](README-FR.md)
+
+&nbsp;
 
 ## Installation
 
-🧊 To install with [gum](https://github.com/charmbracelet/gum)
+> [!TIP]
+> **[Gum](https://github.com/charmbracelet/gum)** allows simplified use of CLI scripts like multiple selection with Space.
+>
+> It is recommended to use it by adding the --gum or -g parameter to the command.
+
+🧊 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
 
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
-Or install without
+Or without
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
@@ -161,7 +173,7 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
-## 💻 Update log
+## 💻 Version history
 
 - Version 1.0.0 :
     - Initial upload
