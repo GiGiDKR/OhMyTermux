@@ -165,40 +165,25 @@ Deux scripts sont également disponibles pour cette configuration :
 ## 💻 Historique des versions
 
 - Version 1.0.0 :
-
-- Téléchargement initial
+  - Téléchargement initial
 
 - Version 1.0.1 :
-
-- Modifications de l'interface en ligne de commande
-
-- Intégration partielle de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
+  - Modifications de l'interface en ligne de commande
+  - Intégration partielle de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
 
 - Version 1.0.2 :
-
-- Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
+  - Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 
 - Version 1.1 :
-
-- En développement
+  - En développement
 
 ## 📖 À faire
 
 - [X] Intégration de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Partielle)
-
 - [ ] Intégration de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Complète)
-
-- [ ] Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
-
-- [ ] Intégrer la configuration Fish (Plugins, Invites, Alias)
-
+- [X] Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
+- [ ] Intégrer la configuration Fish (Plugins, Prompts, Alias)
 - [ ] Ajouter plus de packages sélectionnables et de modules Python
-
 - [ ] Intégrer dans le script principal la sélection de thèmes (Schémas de couleurs)
-
 - [ ] Séparer l'installation XFCE / Debian pour exécuter XFCE natif de Termux
-
 - [ ] Ajouter des options pour Debian (Thèmes, Polices, Fonds d'écran)
-
-Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/26048324/1ad5eb2f-a0eb-4e09-8c8d-7e60c6494eac/paste.txt
