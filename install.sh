@@ -722,6 +722,23 @@ else
   fi
 fi
 
+################
+# OhMyObsidian #
+################
+if $USE_GUM; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" " Installer OhMyObsidian ?"; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyObsidian" -- \
+        bash -c 'curl -o $HOME/install.sh https://raw.githubusercontent.com/GiGiDKR/OhMyObsidian/main/install.sh && chmod +x $HOME/install.sh && $HOME/install.sh'
+    fi
+else
+    echo -e "\e[38;5;33m Installer OhMyObsidian ? (o/n)\e[0m"
+    read -r choice
+    if [ "$choice" = "o" ]; then
+        echo -e "\e[38;5;33mInstallation de OhMyObsidian...\e[0m"
+        curl -o $HOME/install.sh https://raw.githubusercontent.com/GiGiDKR/OhMyObsidian/main/install.sh && chmod +x $HOME/install.sh && $HOME/install.sh
+    fi
+fi
+
 #################
 # End of script #
 #################
