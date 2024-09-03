@@ -41,7 +41,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 ## About this program 
 
-🧊 **Packages installed :**
+🧊 **Packages installed by default :**
 
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
@@ -152,6 +152,8 @@ There are two scripts available for this setup as well :
 ```prun```  Running this followed by a command you want to run from the debian proot install will allow you to run stuff from the termux terminal without running ```debian``` to get into the proot itself.
 
 ```cp2menu``` Running this will pop up a window allowing you to copy .desktop files from debian proot into the termux xfce "start" menu so you won't need to launch them from terminal. A launcher is available in the System menu section.
+
+&nbsp;
 
 > [!CAUTION]
 > Process completed (signal 9) - press Enter
