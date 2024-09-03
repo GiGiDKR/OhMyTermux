@@ -24,7 +24,7 @@
 > [!TIP]
 > **[Gum](https://github.com/charmbracelet/gum)** allows simplified use of CLI scripts like multiple selection with Space.
 >
-> It is recommended to use it by adding the --gum or -g parameter to the command.
+> It is recommended to use it by adding the `--gum` or `-g` parameter to the command.
 
 🧊 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
 
