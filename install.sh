@@ -534,7 +534,7 @@ if $USE_GUM; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
         show_banner
-        if gum confirm --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
+        if gum confirm --prompt.foreground="33" --selected.background="33" "       Exécuter OhMyTermux ?"; then
             termux-reload-settings
             clear
             exec $shell_choice
@@ -552,7 +552,7 @@ else
         read -p "Entrez votre nom d'utilisateur : " username
     else
         show_banner
-        echo -e "\e[38;5;33mExécuter OhMyTermux ? (o/n)\e[0m"
+        echo -e "\e[38;5;33m       Exécuter OhMyTermux ? (o/n)\e[0m"
         read choice
         if [ "$choice" = "o" ]; then
             termux-reload-settings
