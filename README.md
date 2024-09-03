@@ -191,7 +191,7 @@ There are two scripts available for this setup as well :
 ## 📖 To Do
 - [X] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Partial)
 - [ ] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Full)
-- [ ] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
+- [X] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
 - [ ] Add more selectable packages and Python modules
 - [ ] Integrate in main script theme selection (Color schemes)
