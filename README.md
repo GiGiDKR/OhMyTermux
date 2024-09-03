@@ -15,7 +15,7 @@
 > 
 > Several languages ​​will be available in a future version.
 > 
-> A French version of this text is available : [README-FR.md](README-FR.md)
+> A French version of this text is [available](README-FR.md).
 
 &nbsp;
 
@@ -54,12 +54,15 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [nala](https://github.com/volitank/nala)
 - [eza](https://github.com/eza-community/eza)
 - [lsd](https://github.com/lsd-rs/lsd)
+- [logo-ls](https://github.com/Yash-Handa/logo-ls)
 - [bat](https://github.com/sharkdp/bat)
 - [lf](https://github.com/gokcehan/lf)
 - [fzf](https://github.com/junegunn/fzf)
 - [glow](https://github.com/charmbracelet/glow)
 - [python](https://github.com/python)
 - [micro](https://github.com/zyedidia/micro)
+- [vim](https://github.com/vim/vim)
+- [open-ssh](https://www.openssh.com/)
 
 
 🧊 **Shell selection :**
@@ -80,15 +83,15 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
   🧊 **Configuration Fish [^1] :**
   
-   - [Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)
-   - [Fisher](https://github.com/jorgebucaran/fisher)
-   - [Pure](https://github.com/pure-fish/pure)
-   - [Fishline](https://github.com/0rax/fishline)
-   - [Virtualfish](https://github.com/justinmayer/virtualfish)
-   - [Fish Abbreviation Tips](https://github.com/gazorby/fish-abbreviation-tips)
-   - [Bang-Bang](https://github.com/oh-my-fish/plugin-bang-bang)
-   - [Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)
-   - [Catppuccin for Fish](https://github.com/catppuccin/fish)
+   - ~~[Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)~~
+   - ~~[Fisher](https://github.com/jorgebucaran/fisher)~~
+   - ~~[Pure](https://github.com/pure-fish/pure)~~
+   - ~~[Fishline](https://github.com/0rax/fishline)~~
+   - ~~[Virtualfish](https://github.com/justinmayer/virtualfish)~~
+   - ~~[Fish Abbreviation Tips](https://github.com/gazorby/fish-abbreviation-tips)~~
+   - ~~[Bang-Bang](https://github.com/oh-my-fish/plugin-bang-bang)~~
+   - ~~[Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)~~
+   - ~~[Catppuccin for Fish](https://github.com/catppuccin/fish)~~
 
 🧊 **Configuring Termux Display :**
 
@@ -117,6 +120,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 [^2]: Optionally integrated into the main script
 [^3]: In development (no release date yet)
 
+&nbsp;
+
 # 🔥 **XFCE and Debian :**
 
 Sets up a termux XFCE desktop and a Debian proot install.
@@ -125,8 +130,6 @@ You only need to pick your username and follow the prompts.
 
 > [!IMPORTANT]
 > This will take roughly 4GB of storage space
-
-&nbsp;
 
 ## Starting the desktop
 
@@ -140,8 +143,6 @@ To enter the Debian proot install from terminal use the command ```debian```
 
 Also note, you do not need to set display in Debian proot as it is already set. This means you can use the terminal to start any GUI application and it will startup.
 
-&nbsp;
-
 ## Debain Proot
 
 To enter proot use the command ```debian```, from there you can install aditional software with apt and use cp2menu in termux to copy the menu items over to termux xfce menu.
@@ -151,8 +152,6 @@ There are two scripts available for this setup as well :
 ```prun```  Running this followed by a command you want to run from the debian proot install will allow you to run stuff from the termux terminal without running ```debian``` to get into the proot itself.
 
 ```cp2menu``` Running this will pop up a window allowing you to copy .desktop files from debian proot into the termux xfce "start" menu so you won't need to launch them from terminal. A launcher is available in the System menu section.
-
-&nbsp;
 
 > [!CAUTION]
 > Process completed (signal 9) - press Enter
