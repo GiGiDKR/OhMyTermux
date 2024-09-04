@@ -339,7 +339,10 @@ done
      curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc) || 
     echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
 fi
-        echo "alias help='glow \$HOME/.config/OhMyTermux/Help.md'" >> "$HOME/.zshrc"
+        echo "
+
+alias help='glow \$HOME/.config/OhMyTermux/Help.md'
+" >> "$HOME/.zshrc"
         chsh -s zsh
         ;;
         "fish")
