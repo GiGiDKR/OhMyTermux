@@ -88,18 +88,14 @@ done
 }
 
 echo '
-
 alias debian="proot-distro login debian --user $username --shared-tmp"
 alias hud="GALLIUM_HUD=fps "
-
 ' >> $PREFIX/etc/bash.bashrc
 
 if [ -f "$HOME/.zshrc" ]; then
-    écho '
-
-    alias debian="proot-distro login debian --user $username --shared-tmp"
-    alias hud="GALLIUM_HUD=fps"
-
+    echo '
+alias debian="proot-distro login debian --user $username --shared-tmp"
+alias hud="GALLIUM_HUD=fps"
 ' >> $HOME/.zshrc
 fi
 
