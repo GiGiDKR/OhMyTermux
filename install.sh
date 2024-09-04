@@ -525,25 +525,21 @@ if [ -n "$PACKAGES" ]; then
 
         case $PACKAGE in
             eza)
-                echo '
-                alias l="eza --icons"
-                alias ls="eza -1 --icons"
-                alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
-                alias la="eza --icons -lgha --group-directories-first"
-                alias lt="eza --icons --tree"
-                alias lta="eza --icons --tree -lgha"
-                alias dir="eza -lF --icons"
-                ' >> $PREFIX/etc/bash.bashrc
+                echo 'alias l="eza --icons"
+alias ls="eza -1 --icons"
+alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
+alias la="eza --icons -lgha --group-directories-first"
+alias lt="eza --icons --tree"
+alias lta="eza --icons --tree -lgha"
+alias dir="eza -lF --icons"' >> $PREFIX/etc/bash.bashrc
                 if [ -f "$HOME/.zshrc" ]; then
-                    echo '
-                    alias l="eza --icons"
-                    alias ls="eza -1 --icons"
-                    alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
-                    alias la="eza --icons -lgha --group-directories-first"
-                    alias lt="eza --icons --tree"
-                    alias lta="eza --icons --tree -lgha"
-                    alias dir="eza -lF --icons"
-                    ' >> $HOME/.zshrc
+                    echo 'alias l="eza --icons"
+alias ls="eza -1 --icons"
+alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
+alias la="eza --icons -lgha --group-directories-first"
+alias lt="eza --icons --tree"
+alias lta="eza --icons --tree -lgha"
+alias dir="eza -lF --icons"' >> $HOME/.zshrc
                 fi
                 ;;
             bat)
@@ -553,25 +549,21 @@ if [ -n "$PACKAGES" ]; then
                 fi
                 ;;
             nala)
-                echo '
-                alias install="nala install -y"
-                alias uninstall="nala remove -y"
-                alias update="nala update"
-                alias upgrade="nala upgrade -y"
-                alias search="nala search"
-                alias list="nala list --upgradeable"
-                alias show="nala show"
-                ' >> $PREFIX/etc/bash.bashrc
+                echo 'alias install="nala install -y"
+alias uninstall="nala remove -y"
+alias update="nala update"
+alias upgrade="nala upgrade -y"
+alias search="nala search"
+alias list="nala list --upgradeable"
+alias show="nala show"' >> $PREFIX/etc/bash.bashrc
                 if [ -f "$HOME/.zshrc" ]; then
-                    echo '
-                    alias install="nala install -y"
-                    alias uninstall="nala remove -y"
-                    alias update="nala update"
-                    alias upgrade="nala upgrade -y"
-                    alias search="nala search"
-                    alias list="nala list --upgradeable"
-                    alias show="nala show"
-                    ' >> $HOME/.zshrc
+                    echo 'alias install="nala install -y"
+alias uninstall="nala remove -y"
+alias update="nala update"
+alias upgrade="nala upgrade -y"
+alias search="nala search"
+alias list="nala list --upgradeable"
+alias show="nala show"' >> $HOME/.zshrc
                 fi
                 ;;
             # TODO : Ajouter d'autres alias
@@ -591,8 +583,7 @@ alias s="source"
 alias n="nano"
 alias cm="chmod +x"
 alias clone="git clone"
-alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"
-'
+alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"'
 
 # Ajouter les alias à bash.bashrc
 echo "$aliases" >> "$PREFIX/etc/bash.bashrc"
@@ -619,7 +610,7 @@ if $USE_GUM; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
         show_banner
-        if gum confirm --prompt.foreground="33" --selected.background="33" "       Exécuter OhMyTermux ?"; then
+        if gum confirm --prompt.foreground="33" --selected.background="33" "      Exécuter OhMyTermux ?"; then
             termux-reload-settings
             clear
             exec $shell_choice
@@ -637,7 +628,7 @@ else
         read -p "Entrez votre nom d'utilisateur : " username
     else
         show_banner
-        echo -e "\e[38;5;33m       Exécuter OhMyTermux ? (o/n)\e[0m"
+        echo -e "\e[38;5;33m      Exécuter OhMyTermux ? (o/n)\e[0m"
         read choice
         if [ "$choice" = "o" ]; then
             termux-reload-settings
@@ -751,69 +742,6 @@ if [ ! -d "$SCRIPT_DIR" ]; then
     fi
 fi
 
-# Fonction pour exécuter les scripts
-execute_script() {
-    if [ -d "$SCRIPT_DIR" ]; then
-        mapfile -t scripts < <(find "$SCRIPT_DIR" -name "*.sh" -type f)
-
-        script_names=()
-        for script in "${scripts[@]}"; do
-            script_names+=("$(basename "$script")")
-        done
-
-        while true; do
-            show_banner
-            echo -e "\e[38;5;33m            Sélection de script\n\e[0m"
-
-            if $USE_GUM; then
-                script_choice=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" "${script_names[@]}" "QUITTER")
-                if [ "$script_choice" == "> QUITTER" ]; then
-                    clear
-                    return
-                fi
-            else
-                select script_choice in "${script_names[@]}" "QUITTER"; do
-                    if [[ $REPLY -eq $(( ${#script_names[@]} + 1 )) ]]; then
-                        clear
-                        return
-                    elif [[ 1 -le $REPLY && $REPLY -le ${#script_names[@]} ]]; then
-                        selected_script="${scripts[$((REPLY-1))]}"
-                        break
-                    else
-                        show_banner
-                        echo -e "\e[38;5;196m         Aucun script correspondant\e[0m"
-                        sleep 1
-                        continue 2
-                    fi
-                done
-            fi
-            if [ -n "$selected_script" ]; then
-                bash "$selected_script"
-            else
-                echo "Aucun script sélectionné."
-            fi
-        done
-    else
-        echo "Le répertoire $SCRIPT_DIR n'existe pas."
-    fi
-}
-
-# Proposer d'exécuter un script uniquement si OhMyTermuxScript a été installé
-if [ -d "$SCRIPT_DIR" ]; then
-    if $USE_GUM; then
-        if gum confirm --prompt.foreground="33" --selected.background="33" "     Exécuter un script ?"; then
-            execute_script
-        fi
-    else
-        read -p "     Exécuter un script ? (o/n) " choice
-        if [ "$choice" = "o" ]; then
-            execute_script
-        fi
-    fi
-else
-    echo "OhMyTermuxScript n'a pas été installé, aucun script à exécuter."
-fi
-
 ################
 # OhMyObsidian #
 ################
@@ -848,14 +776,14 @@ rm -f xfce.sh proot.sh utils.sh install.sh
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "       Exécuter OhMyTermux ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "      Exécuter OhMyTermux ?"; then
         clear
         exec $shell_choice
     else
         echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
 else
-    echo -e "\e[38;5;33m       Exécuter OhMyTermux ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m      Exécuter OhMyTermux ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         clear
