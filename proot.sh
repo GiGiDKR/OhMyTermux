@@ -99,12 +99,14 @@ else
 fi
 
 show_banner
-if [ "$USE_GUM" = true ]; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "${pkgs_proot[@]}" -y
-else
-    echo -e "\e[38;5;33mInstallation des paquets...\e[0m"
-    proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "${pkgs_proot[@]}" -y > /dev/null 2>&1
-fi
+for pkg in "${pkgs_proot[@]}"; do
+    if [ "$USE_GUM" = true ]; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "$pkg" -y
+    else
+        echo -e "\e[38;5;33mInstallation de $pkg...\e[0m"
+        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "$pkg" -y > /dev/null 2>&1
+    fi
+done
 
 show_banner
 if [ "$USE_GUM" = true ]; then
