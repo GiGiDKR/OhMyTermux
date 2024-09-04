@@ -69,7 +69,7 @@ fi
 
 username="$1"
 
-pkgs=('git' 'virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies' 'eza' 'pavucontrol-qt' 'bat' 'jq' 'nala' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly' 'eza')
+pkgs=('virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
 
 for pkg in "${pkgs[@]}"; do
     if $USE_GUM; then
@@ -89,35 +89,19 @@ done
 
 echo '
 
-alias l="eza --icons"
-alias ls="eza -1 --icons"
-alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
-alias la="eza --icons -lgha --group-directories-first"
-alias lt="eza --icons --tree"
-alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"
-alias ..="cd .."
-alias q="exit"
-alias c="clear"
-alias md="mkdir"
-alias s="source"
 alias debian="proot-distro login debian --user $username --shared-tmp"
 alias hud="GALLIUM_HUD=fps "
-alias cat="bat"
-alias install="nala install -y"
-alias uninstall="nala remove -y"
-alias update="nala update"
-alias upgrade="nala upgrade -y"
-alias search="nala search"
-alias list="nala list --upgradeable"
-alias show="nala show"
-alias n="nano"
-alias cm="chmod +x"
-alias clone="git clone"
-alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"
-alias bashconfig="nano $PREFIX/etc/bash.bashrc"
 
 ' >> $PREFIX/etc/bash.bashrc
+
+if [ -f "$HOME/.zshrc" ]; then
+    écho '
+
+    alias debian="proot-distro login debian --user $username --shared-tmp"
+    alias hud="GALLIUM_HUD=fps"
+
+' >> $HOME/.zshrc
+fi
 
 show_banner
 if $USE_GUM; then
@@ -130,9 +114,9 @@ mv mac_waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation du thème WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip
 else
-    echo -e "\e[38;5;33mInstallation du thème WhiteSur-Dark...\e[0m"
+    echo -e "\e[38;5;33mInstallation WhiteSur-Dark...\e[0m"
     wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip > /dev/null 2>&1
 fi
 {
@@ -145,9 +129,9 @@ fi
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation du thème Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip
 else
-    echo -e "\e[38;5;33mInstallation du thème Fluent Cursor...\e[0m"
+    echo -e "\e[38;5;33mInstallation Fluent Cursor...\e[0m"
     wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip > /dev/null 2>&1
 fi
 {
@@ -160,9 +144,9 @@ fi
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des fichiers de configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de la configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip
 else
-    echo -e "\e[38;5;33mInstallation des fichiers de configuration...\e[0m"
+    echo -e "\e[38;5;33mInstallation de la configuration...\e[0m"
     wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
 fi
 {
