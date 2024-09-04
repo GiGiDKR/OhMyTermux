@@ -216,7 +216,7 @@ export username=$(get_proot_username)
 
 source $PREFIX/etc/bash.bashrc
 if [ -n "$ZSH_VERSION" ]; then
-    source $PREFIX/etc/zshrc
+    source $HOME/.zshrc
 
 # TODO : Ajouter pour Fish
 # elif [ -n "$FISH_VERSION" ]; then
