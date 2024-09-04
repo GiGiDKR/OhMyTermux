@@ -581,7 +581,7 @@ else
     echo -e "\e[38;5;33mAucun package sélectionné. Poursuite du script ...\e[0m"
 fi
 
-echo '
+echo "
 alias ..='cd ..'
 alias q='exit'
 alias c='clear'
@@ -591,10 +591,10 @@ alias n='nano'
 alias cm='chmod +x'
 alias clone='git clone'
 alias push="git pull && git add . && git commit -m 'mobile push' && git push"
-' >> $PREFIX/etc/bash.bashrc
+" >> $PREFIX/etc/bash.bashrc
 
 if [ -f "$HOME/.zshrc" ]; then
-    echo '
+    echo "
 alias ..='cd ..'
 alias q='exit'
 alias c='clear'
@@ -604,7 +604,7 @@ alias n='nano'
 alias cm='chmod +x'
 alias clone='git clone'
 alias push="git pull && git add . && git commit -m 'mobile push' && git push"
- ' >> $HOME/.zshrc
+" >> $HOME/.zshrc
 fi
 
 ##################
