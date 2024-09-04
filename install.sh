@@ -518,6 +518,60 @@ if [ -n "$PACKAGES" ]; then
         installed_packages+="Installé : $PACKAGE\n"
         show_banner 
         echo -e "$installed_packages"
+
+        case $PACKAGE in
+            eza)
+                echo '
+                alias l="eza --icons"
+                alias ls="eza -1 --icons"
+                alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
+                alias la="eza --icons -lgha --group-directories-first"
+                alias lt="eza --icons --tree"
+                alias lta="eza --icons --tree -lgha"
+                alias dir="eza -lF --icons"
+                ' >> $PREFIX/etc/bash.bashrc
+                if [ -f "$HOME/.zshrc" ]; then
+                    echo '
+                    alias l="eza --icons"
+                    alias ls="eza -1 --icons"
+                    alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
+                    alias la="eza --icons -lgha --group-directories-first"
+                    alias lt="eza --icons --tree"
+                    alias lta="eza --icons --tree -lgha"
+                    alias dir="eza -lF --icons"
+                    ' >> $HOME/.zshrc
+                fi
+                ;;
+            bat)
+                echo 'alias cat="bat"' >> $PREFIX/etc/bash.bashrc
+                if [ -f "$HOME/.zshrc" ]; then
+                    echo 'alias cat="bat"' >> $HOME/.zshrc
+                fi
+                ;;
+            nala)
+                echo '
+                alias install="nala install -y"
+                alias uninstall="nala remove -y"
+                alias update="nala update"
+                alias upgrade="nala upgrade -y"
+                alias search="nala search"
+                alias list="nala list --upgradeable"
+                alias show="nala show"
+                ' >> $PREFIX/etc/bash.bashrc
+                if [ -f "$HOME/.zshrc" ]; then
+                    echo '
+                    alias install="nala install -y"
+                    alias uninstall="nala remove -y"
+                    alias update="nala update"
+                    alias upgrade="nala upgrade -y"
+                    alias search="nala search"
+                    alias list="nala list --upgradeable"
+                    alias show="nala show"
+                    ' >> $HOME/.zshrc
+                fi
+                ;;
+            # TODO : Ajouter d'autres alias
+        esac
     done
 else
     echo -e "\e[38;5;33mAucun package sélectionné. Poursuite du script ...\e[0m"
@@ -587,9 +641,9 @@ fi
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets" -- pkg install "${pkgs[@]}" -y
 else
-    echo -e "\e[38;5;33mInstallation des paquets nécessaires...\e[0m"
+    echo -e "\e[38;5;33mInstallation des paquets...\e[0m"
     pkg install "${pkgs[@]}" -y
 fi
 
@@ -726,12 +780,12 @@ fi
 # OhMyObsidian #
 ################
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" " Installer OhMyObsidian ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "      Installer OhMyObsidian ?"; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyObsidian" -- \
         bash -c 'curl -o $HOME/install.sh https://raw.githubusercontent.com/GiGiDKR/OhMyObsidian/main/install.sh && chmod +x $HOME/install.sh && $HOME/install.sh'
     fi
 else
-    echo -e "\e[38;5;33m Installer OhMyObsidian ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m      Installer OhMyObsidian ? (o/n)\e[0m"
     read -r choice
     if [ "$choice" = "o" ]; then
         echo -e "\e[38;5;33mInstallation de OhMyObsidian...\e[0m"
