@@ -81,7 +81,7 @@ else
     username="$1"
 fi
 
-pkgs_proot=('sudo' 'wget' 'nala' 'jq')
+pkgs_proot=('sudo' 'wget' 'jq')
 
 show_banner
 if [ "$USE_GUM" = true ]; then
@@ -155,39 +155,7 @@ else
     echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
 fi
 
-is_package_installed() {
-    dpkg -l | grep -qw "$1"
-}
-
 bashrc_path="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
-
-if is_package_installed "eza"; then
-    cat << EOF >> "$bashrc_path"
-alias l='eza --icons'
-alias ls='eza -1 --icons'
-alias ll='eza -lF -a --icons --total-size --no-permissions --no-time --no-user'
-alias la='eza --icons -lgha --group-directories-first'
-alias lt='eza --icons --tree'
-alias lta='eza --icons --tree -lgha'
-alias dir='eza -lF --icons'
-EOF
-fi
-
-if is_package_installed "bat"; then
-    echo "alias cat='bat'" >> "$bashrc_path"
-fi
-
-if is_package_installed "nala"; then
-    cat << EOF >> "$bashrc_path"
-alias install='nala install -y'
-alias uninstall='nala remove -y'
-alias update='nala update'
-alias upgrade='nala upgrade -y'
-alias search='nala search'
-alias list='nala list --upgradeable'
-alias show='nala show'
-EOF
-fi
 
 cat << EOF >> "$bashrc_path"
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform '
