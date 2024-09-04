@@ -205,6 +205,7 @@ get_proot_username() {
 export username=$(get_proot_username)
 ' >> $PREFIX/etc/bash.bashrc
 
+if [ -n "$ZSH_VERSION" ]; then
 echo '
 get_proot_username() {
   basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
@@ -213,12 +214,4 @@ export username=$(get_proot_username)
 ' >> $HOME/.zshrc
 
 # TODO : Ajouter pour fish
-
-source $PREFIX/etc/bash.bashrc
-if [ -n "$ZSH_VERSION" ]; then
-    source $HOME/.zshrc
-
-# TODO : Ajouter pour Fish
-# elif [ -n "$FISH_VERSION" ]; then
-
 fi
