@@ -166,14 +166,13 @@ Deux scripts sont également disponibles pour cette configuration :
 
 - Version 1.0.0 :
   - Téléchargement initial
-
 - Version 1.0.1 :
   - Modifications de l'interface en ligne de commande
   - Intégration partielle de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
-
 - Version 1.0.2 :
   - Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
-
+- Version 1.0.3 :
+  - Optimisation du système d'alias selon la sélection de paquets et de shell
 - Version 1.1 :
   - En développement
 
