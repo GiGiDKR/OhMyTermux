@@ -78,6 +78,7 @@ if [ "$change_repo_choice" = "o" ]; then
     termux-change-repo
 fi
 
+show_banner
 termux_dir="$HOME/.termux"
 file_path="$termux_dir/colors.properties"
 if [ ! -f "$file_path" ]; then
