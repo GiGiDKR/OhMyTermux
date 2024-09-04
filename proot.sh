@@ -71,8 +71,12 @@ finish() {
 trap finish EXIT
 
 if [ $# -eq 0 ]; then
-    echo -e "\e[38;5;33mVeuillez saisir un nom d'utilisateur :\e[0m"
-    read -r username
+    if [ "$USE_GUM" = true ]; then
+         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
+    else
+        echo -e "\e[38;5;33mEntrez votre nom d'utilisateur :\e[0m"
+        read -r username
+    fi
 else
     username="$1"
 fi
