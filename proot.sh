@@ -200,3 +200,28 @@ else
     echo -e "\e[38;5;33mInstallation de Mesa-Vulkan...\e[0m"
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb > /dev/null 2>&1
 fi
+
+echo '
+get_proot_username() {
+  basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
+}
+export username=$(get_proot_username)
+' >> $PREFIX/etc/bash.bashrc
+
+echo '
+get_proot_username() {
+  basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
+}
+export username=$(get_proot_username)
+' >> $HOME/.zshrc
+
+# TODO : Ajouter pour fish
+
+source $PREFIX/etc/bash.bashrc
+if [ -n "$ZSH_VERSION" ]; then
+    source $PREFIX/etc/zshrc
+
+# TODO : Ajouter pour Fish
+# elif [ -n "$FISH_VERSION" ]; then
+
+fi
