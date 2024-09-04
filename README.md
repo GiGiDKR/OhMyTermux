@@ -183,6 +183,7 @@ There are two scripts available for this setup as well :
     - Integration partial of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
 - Version 1.0.2 :
     - Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
+- Version 1.0.3 : Optimization of the alias system according to package and shell selection
 - Version 1.1 : 
   - In development
 
