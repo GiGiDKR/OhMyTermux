@@ -581,7 +581,8 @@ else
     echo -e "\e[38;5;33mAucun package sélectionné. Poursuite du script ...\e[0m"
 fi
 
-echo '
+# Définir les alias dans une variable
+aliases='
 alias ..="cd .."
 alias q="exit"
 alias c="clear"
@@ -590,21 +591,21 @@ alias s="source"
 alias n="nano"
 alias cm="chmod +x"
 alias clone="git clone"
-alias push="git pull && git add . && git commit -m 'mobile push' && git push"
-' >> $PREFIX/etc/bash.bashrc
+alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"
+'
 
+# Ajouter les alias à bash.bashrc
+echo "$aliases" >> "$PREFIX/etc/bash.bashrc"
+
+# Ajouter les alias à .zshrc si le fichier existe
 if [ -f "$HOME/.zshrc" ]; then
-    echo '
-alias ..="cd .."
-alias q="exit"
-alias c="clear"
-alias md="mkdir"
-alias s="source"
-alias n="nano"
-alias cm="chmod +x"
-alias clone="git clone"
-alias push="git pull && git add . && git commit -m 'mobile push' && git push"
-' >> $HOME/.zshrc
+    echo "$aliases" >> "$HOME/.zshrc"
+fi
+
+# Ajouter les alias à config.fish si le fichier existe
+if [ -f "$HOME/.config/fish/config.fish" ]; then
+    # Convertir les alias bash en format fish
+    echo "$aliases" | sed 's/alias \(.*\)="\(.*\)"/alias \1 "\2"/' >> "$HOME/.config/fish/config.fish"
 fi
 
 ##################
