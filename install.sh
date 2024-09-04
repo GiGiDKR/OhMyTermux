@@ -766,7 +766,7 @@ execute_script() {
 }
 
 if $USE_GUM; then
-  if gum confirm --prompt.foreground="33" --selected.background="33" "Exécuter un script ?"; then
+  if gum confirm --prompt.foreground="33" --selected.background="33" "     Exécuter un script ?"; then
     execute_script
   fi
 else
