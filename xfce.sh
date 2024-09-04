@@ -87,16 +87,12 @@ done
     chmod +x $HOME/Desktop/firefox.desktop
 }
 
-echo '
-alias debian="proot-distro login debian --shared-tmp --user $username"
-alias hud="GALLIUM_HUD=fps "
-' >> $PREFIX/etc/bash.bashrc
+echo 'alias debian="proot-distro login debian --shared-tmp --user $username"
+alias hud="GALLIUM_HUD=fps "' >> $PREFIX/etc/bash.bashrc
 
 if [ -f "$HOME/.zshrc" ]; then
-    echo '
-alias debian="proot-distro login debian --shared-tmp --user $username"
-alias hud="GALLIUM_HUD=fps"
-' >> $HOME/.zshrc
+    echo 'alias debian="proot-distro login debian --shared-tmp --user $username"
+alias hud="GALLIUM_HUD=fps"' >> $HOME/.zshrc
 fi
 
 show_banner
