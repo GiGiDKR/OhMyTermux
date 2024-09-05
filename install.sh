@@ -211,29 +211,18 @@ case $shell_choice in
 
             cp "$zshrc" "${zshrc}.bak"
 
-            existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
-
-            local plugin_list="$existing_plugins"
+            sed -i '/^plugins=(/,/)/c\plugins=(\n    git' "$zshrc"
+    
             for plugin in $PLUGINS; do
-                if [[ ! "$plugin_list" =~ "$plugin" ]]; then
-                    plugin_list+="$plugin "
-                fi
+                sed -i "/^plugins=(/a\    $plugin" "$zshrc"
             done
-
-            sed -i '/^plugins=($/,/^)$/c\plugins=(\n\tgit' "$zshrc"
-            for plugin in $plugin_list; do
-                sed -i "/^plugins=(/a\\\t$plugin" "$zshrc"
-            done
+            
             sed -i '/^plugins=(/,/)/s/$/\n)/' "$zshrc"
-
+            
             if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
                 if ! grep -q "fpath+=" "$zshrc"; then
-                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
+                    echo 'fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' >> "$zshrc"
                 fi
-            fi
-
-            if [[ "$PLUGINS" == *"powerlevel10k"* ]]; then
-                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$zshrc"
             fi
         }
 
