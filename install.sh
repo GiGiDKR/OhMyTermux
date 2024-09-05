@@ -204,6 +204,28 @@ case $shell_choice in
             fi
         fi
 
+        update_zshrc() {
+            local zshrc="$HOME/.zshrc"
+            cp "$zshrc" "${zshrc}.bak"
+
+            existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
+
+            local plugin_list="$existing_plugins"
+            for plugin in $PLUGINS; do
+                if [[ ! "$plugin_list" =~ "$plugin" ]]; then
+                    plugin_list+="$plugin "
+                fi
+            done
+
+            sed -i "/^plugins=(/,/)/c\plugins=(\n\t${plugin_list}\n)" "$zshrc"
+
+            if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
+                if ! grep -q "fpath+=" "$zshrc"; then
+                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
+                fi
+            fi
+        }
+
         curl -fLo "$ZSHRC" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc >/dev/null 2>&1
 
         show_banner
@@ -279,25 +301,6 @@ case $shell_choice in
         if [[ "$PLUGINS" == *"Tout installer"* ]]; then
             PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
         fi
-
-        update_zshrc() {
-            local zshrc="$HOME/.zshrc"
-            cp "$zshrc" "${zshrc}.bak"
-
-            local plugin_list="git"
-            for plugin in $PLUGINS; do
-                plugin_list+=$'\n\t'"$plugin"
-            done
-
-            sed -i "/^plugins=($/,/^)$/c\plugins=(\n\t$plugin_list\n)" "$zshrc"
-
-            if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
-                if ! grep -q "fpath+=" "$zshrc"; then
-                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
-                fi
-            fi
-        }
-
 
         for PLUGIN in $PLUGINS; do
             show_banner
@@ -425,7 +428,7 @@ else
     fi
 fi
 
-rm "$HOME/.termux/colors.zip"
+rm "$HOME/.termux/colors.zip" >/dev/null 2>&1
 
 # Font installation function
 install_font() {
