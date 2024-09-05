@@ -211,11 +211,14 @@ case $shell_choice in
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?" && {
                 gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k" -- \
                 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
+                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                 show_banner
                 if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k" -- \
                     curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                 fi
@@ -226,12 +229,15 @@ case $shell_choice in
             if [ "$choice" = "o" ]; then
                 echo -e "\e[38;5;33mInstallation de PowerLevel10k...\e[0m"
                 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
+                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                 echo -e "\e[38;5;33mInstaller le prompt OhMyTermux ? (o/n)\e[0m"
                 read choice
                 if [ "$choice" = "o" ]; then
                     echo -e "\e[38;5;33mTéléchargement du prompt PowerLevel10k...\e[0m"
                     curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                 fi
@@ -276,30 +282,24 @@ case $shell_choice in
 
         update_zshrc() {
             local zshrc="$HOME/.zshrc"
+            
             cp "$zshrc" "${zshrc}.bak"
-
-            existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
-
-            local plugin_list="git"
-            for plugin in $existing_plugins $PLUGINS; do
-                if [[ ! "$plugin_list" =~ "$plugin" ]]; then
-                    plugin_list+=" $plugin"
-                fi
+            
+            sed -i '/^plugins=(/,/)/c\plugins=(\n    git' "$zshrc"
+            
+            for plugin in $PLUGINS; do
+                sed -i "/^plugins=(/a\    $plugin" "$zshrc"
             done
-
-            sed -i '/^plugins=($/,/^)$/c\plugins=(\n\t'"$(echo $plugin_list | sed 's/ /\n\t/g')"'\n)' "$zshrc"
-
-            if [[ "$plugin_list" == *"zsh-completions"* ]]; then
+            
+            sed -i '/^plugins=(/,/)/s/$/\n)/' "$zshrc"
+            
+            if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
                 if ! grep -q "fpath+=" "$zshrc"; then
-                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
+                    echo 'fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' >> "$zshrc"
                 fi
-            fi
-            if [[ "$plugin_list" == *"powerlevel10k"* ]]; then
-                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$zshrc"
-                echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$zshrc"
-                echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
             fi
         }
+
 
         for PLUGIN in $PLUGINS; do
             show_banner
@@ -359,7 +359,7 @@ case $shell_choice in
             fi
             ;;
             esac
-            update_zshrc
+            update_zshrc >/dev/null 2>&1
         done
 
         show_banner
@@ -648,7 +648,7 @@ fi
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer OhMyTermux XFCE ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" " Installer OhMyTermux XFCE ?"; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
         show_banner
@@ -664,7 +664,7 @@ if $USE_GUM; then
         exit 0
     fi
 else
-    echo -e "\e[38;5;33m  Installer OhMyTermux XFCE ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m Installer OhMyTermux XFCE ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         read -p "Entrez votre nom d'utilisateur : " username
@@ -767,7 +767,7 @@ fi
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "   Installer Termux-X11 ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer Termux-X11 ?"; then
         show_banner
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Termux-X11 APK" -- wget https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk
         mv app-arm64-v8a-debug.apk $HOME/storage/downloads/
@@ -775,7 +775,7 @@ if $USE_GUM; then
         rm $HOME/storage/downloads/app-arm64-v8a-debug.apk
     fi
 else
-    echo -e "\e[38;5;33m   Installer Termux-X11 ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m  Installer Termux-X11 ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         show_banner
