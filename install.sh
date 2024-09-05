@@ -475,7 +475,7 @@ esac
 # Packages installation
 show_banner
 if $USE_GUM; then
-    PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "bat" "lf" "fzf" "glow" "python" "lsd" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+    PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=17 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "bat" "lf" "fzf" "glow" "python" "lsd" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
 else
     echo -e "\e[38;5;33mSélectionner les packages à installer (séparés par des espaces) :\e[0m"
     echo -e "\e[38;5;33m1) nala\e[0m"
