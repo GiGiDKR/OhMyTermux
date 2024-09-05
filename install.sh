@@ -206,46 +206,16 @@ case $shell_choice in
 
         curl -fLo "$ZSHRC" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc >/dev/null 2>&1
 
-        update_zshrc() {
-            local zshrc="$HOME/.zshrc"
-
-            cp "$zshrc" "${zshrc}.bak"
-
-            existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
-
-            local plugin_list="$existing_plugins"
-            for plugin in $PLUGINS; do
-                if [[ ! "$plugin_list" =~ "$plugin" ]]; then
-                    plugin_list+="$plugin "
-                fi
-            done
-
-            sed -i "/^plugins=(/,/)/c\plugins=(\n\tgit" "$zshrc"
-            for plugin in $plugin_list; do
-                sed -i "/^plugins=(/a\\\t$plugin" "$zshrc"
-            done
-            sed -i '/^plugins=(/,/)/s/$/\n)/' "$zshrc"
-
-            if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
-                if ! grep -q "fpath+=" "$zshrc"; then
-                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
-                fi
-            fi
-        }
-
         show_banner
         if $USE_GUM; then
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?" && {
                 gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k" -- \
                 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
-                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                 show_banner
                 if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k" -- \
                     curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
-                    echo -e "\n\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
-                    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                 fi
@@ -256,15 +226,12 @@ case $shell_choice in
             if [ "$choice" = "o" ]; then
                 echo -e "\e[38;5;33mInstallation de PowerLevel10k...\e[0m"
                 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
-                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                 echo -e "\e[38;5;33mInstaller le prompt OhMyTermux ? (o/n)\e[0m"
                 read choice
                 if [ "$choice" = "o" ]; then
                     echo -e "\e[38;5;33mTéléchargement du prompt PowerLevel10k...\e[0m"
                     curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
-                    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
-                    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                 fi
@@ -306,6 +273,33 @@ case $shell_choice in
         if [[ "$PLUGINS" == *"Tout installer"* ]]; then
             PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
         fi
+
+        update_zshrc() {
+            local zshrc="$HOME/.zshrc"
+            cp "$zshrc" "${zshrc}.bak"
+
+            existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
+
+            local plugin_list="git"
+            for plugin in $existing_plugins $PLUGINS; do
+                if [[ ! "$plugin_list" =~ "$plugin" ]]; then
+                    plugin_list+=" $plugin"
+                fi
+            done
+
+            sed -i '/^plugins=($/,/^)$/c\plugins=(\n\t'"$(echo $plugin_list | sed 's/ /\n\t/g')"'\n)' "$zshrc"
+
+            if [[ "$plugin_list" == *"zsh-completions"* ]]; then
+                if ! grep -q "fpath+=" "$zshrc"; then
+                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
+                fi
+            fi
+            if [[ "$plugin_list" == *"powerlevel10k"* ]]; then
+                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$zshrc"
+                echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$zshrc"
+                echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
+            fi
+        }
 
         for PLUGIN in $PLUGINS; do
             show_banner
@@ -568,7 +562,7 @@ if [ -n "$PACKAGES" ]; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $PACKAGE" -- pkg install -y $PACKAGE
         else
             echo -e "\e[38;5;33mInstallation de $PACKAGE...\e[0m"
-            pkg install -y $PACKAGE
+            pkg install -y $PACKAGE  >/dev/null 2>&1
         fi
         installed_packages+="Installé : $PACKAGE\n"
         show_banner 
@@ -654,11 +648,11 @@ fi
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "   Installer OhMyTermux XFCE ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer OhMyTermux XFCE ?"; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
         show_banner
-        if gum confirm --prompt.foreground="33" --selected.background="33" "    Exécuter OhMyTermux ?"; then
+        if gum confirm --prompt.foreground="33" --selected.background="33" " Exécuter OhMyTermux ?"; then
             termux-reload-settings
             clear
             exec $shell_choice
@@ -670,13 +664,13 @@ if $USE_GUM; then
         exit 0
     fi
 else
-    echo -e "\e[38;5;33m   Installer OhMyTermux XFCE ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m  Installer OhMyTermux XFCE ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         read -p "Entrez votre nom d'utilisateur : " username
     else
         show_banner
-        echo -e "\e[38;5;33m    Exécuter OhMyTermux ? (o/n)\e[0m"
+        echo -e "\e[38;5;33m Exécuter OhMyTermux ? (o/n)\e[0m"
         read choice
         if [ "$choice" = "o" ]; then
             termux-reload-settings
@@ -894,11 +888,11 @@ fi
 # End of script #
 #################
 
-rm -f xfce.sh proot.sh utils.sh install.sh
+rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "  Exécuter OhMyTermux ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" " Exécuter OhMyTermux ?"; then
         clear
         source $BASHRC
         if [ -f "$ZSHRC" ]; then
@@ -909,7 +903,7 @@ if $USE_GUM; then
         echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
 else
-    echo -e "\e[38;5;33m  Exécuter OhMyTermux ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m Exécuter OhMyTermux ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         clear
