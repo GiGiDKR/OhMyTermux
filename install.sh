@@ -276,55 +276,55 @@ for PLUGIN in $PLUGINS; do
     case $PLUGIN in
     "zsh-autosuggestions")
     if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-autosuggestions" -- \
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-autosuggestions" -- \
         git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" || true
     else
-        echo -e "\e[38;5;33mInstallation de zsh-autosuggestions...\e[0m"
+        echo -e "\e[38;5;33mInstallation zsh-autosuggestions...\e[0m"
         git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" >/dev/null 2>&1 || true
     fi
     ;;
     "zsh-syntax-highlighting")
     if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-syntax-highlighting" -- \
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-syntax-highlighting" -- \
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" || true
     else
-        echo -e "\e[38;5;33mInstallation de zsh-syntax-highlighting...\e[0m"
+        echo -e "\e[38;5;33mInstallation zsh-syntax-highlighting...\e[0m"
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" >/dev/null 2>&1 || true
     fi
     ;;
     "zsh-completions")
     if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-completions" -- \
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation dzsh-completions" -- \
         git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" || true
     else
-        echo -e "\e[38;5;33mInstallation de zsh-completions...\e[0m"
+        echo -e "\e[38;5;33mInstallation zsh-completions...\e[0m"
         git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" >/dev/null 2>&1 || true
     fi
     ;;
     "you-should-use")
     if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de you-should-use" -- \
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation you-should-use" -- \
         git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" || true
     else
-        echo -e "\e[38;5;33mInstallation de you-should-use...\e[0m"
+        echo -e "\e[38;5;33mInstallation you-should-use...\e[0m"
         git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" >/dev/null 2>&1 || true
     fi
     ;;
     "zsh-abbr")
     if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-abbr" -- \
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-abbr" -- \
         git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" || true
     else
-        echo -e "\e[38;5;33mInstallation de zsh-abbr...\e[0m"
+        echo -e "\e[38;5;33mInstallation zsh-abbr...\e[0m"
         git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" >/dev/null 2>&1 || true
     fi
     ;;
     "zsh-alias-finder")
     if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-alias-finder" -- \
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-alias-finder" -- \
         git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" || true
     else
-        echo -e "\e[38;5;33mInstallation de zsh-alias-finder...\e[0m"
+        echo -e "\e[38;5;33mInstallation zsh-alias-finder...\e[0m"
         git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" >/dev/null 2>&1 || true
     fi
     ;;
@@ -340,7 +340,7 @@ done
     curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc) || 
     echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
 fi
-        echo "alias help='glow \$HOME/.config/OhMyTermux/Help.md'" >> "$HOME/.zshrc"
+        echo "alias help='glow \$HOME/.config/OhMyTermux/help.md'" >> "$HOME/.zshrc"
         chsh -s zsh
         ;;
         "fish")
