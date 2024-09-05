@@ -72,7 +72,7 @@ trap finish EXIT
 
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
-         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
+        username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
         echo -e "\e[38;5;33mEntrez votre nom d'utilisateur :\e[0m"
         read -r username
@@ -81,7 +81,7 @@ else
     username="$1"
 fi
 
-pkgs_proot=('sudo' 'wget' 'jq')
+pkgs_proot=('sudo' 'wget' 'nala' 'jq')
 
 show_banner
 if [ "$USE_GUM" = true ]; then
@@ -155,15 +155,21 @@ else
     echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
 fi
 
-bashrc_path="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
-
-cat << EOF >> "$bashrc_path"
+cat << 'EOF' >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform '
 alias hud='GALLIUM_HUD=fps '
 alias ..='cd ..'
 alias q='exit'
 alias c='clear'
 alias cat='bat '
+alias apt='sudo nala '
+alias install='sudo nala install -y'
+alias update='sudo nala update'
+alias upgrade='sudo nala upgrade -y'
+alias remove='sudo nala remove -y'
+alias list='nala list --upgradeable'
+alias show='nala show'
+alias search='nala search'
 alias start='echo please run from termux, not Debian proot.'
 alias cm='chmod +x'
 alias clone='git clone'

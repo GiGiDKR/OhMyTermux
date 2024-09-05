@@ -331,28 +331,35 @@ for PLUGIN in $PLUGINS; do
     esac
 done
 
-        show_banner
-        if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc'
+show_banner
+if $USE_GUM; then
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc && mkdir -p $HOME/.config/OhMyTermux && curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)'
         else
     echo -e "\e[38;5;33mTéléchargement de la configuration...\e[0m"
     (curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
-    curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc) || 
+    curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc && 
+    curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md) || 
     echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
 fi
+
+if command -v glow &> /dev/null
+    then
         echo "alias help='glow \$HOME/.config/OhMyTermux/help.md'" >> "$HOME/.zshrc"
-        chsh -s zsh
-        ;;
-        "fish")
-        if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Fish" -- pkg install -y fish
-        else
-            echo -e "\e[38;5;33mInstallation de Fish...\e[0m"
-            pkg install -y fish
-        fi
-        # TODO : ajouter la configuration de Fish, de ses plugins et des alias (abbr)
-        chsh -s fish
-        ;;
+    else
+        echo "alias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$HOME/.zshrc"
+    fi
+    chsh -s zsh
+    ;;
+    "fish")
+    if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Fish" -- pkg install -y fish
+    else
+        echo -e "\e[38;5;33mInstallation de Fish...\e[0m"
+        pkg install -y fish
+    fi
+    # TODO : ajouter la configuration de Fish, de ses plugins et des alias (abbr)
+    chsh -s fish
+    ;;
 esac
 
 # Terminal Color Schemes
@@ -699,8 +706,8 @@ else
 fi
 ./utils.sh
 
-# TODO : Vérifier le fonctionnement ou revenir sur la fonction dans proot.sh
 # Get username function for alias to execute Debian 
+# TODO : Vérifier le fonctionnement ou revenir sur la fonction dans proot.sh
 echo '
 function get_username() {
     user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
@@ -729,7 +736,7 @@ fi
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "       Installer Termux-X11 ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "      Installer Termux-X11 ?"; then
         show_banner
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Termux-X11 APK" -- wget https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk
         mv app-arm64-v8a-debug.apk $HOME/storage/downloads/
@@ -737,7 +744,7 @@ if $USE_GUM; then
         rm $HOME/storage/downloads/app-arm64-v8a-debug.apk
     fi
 else
-    echo -e "\e[38;5;33m       Installer Termux-X11 ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m      Installer Termux-X11 ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         show_banner
@@ -851,7 +858,10 @@ fi
 #################
 
 source $PREFIX/etc/bash.bashrc
-termux-reload-settings
+if [ -f "$HOME/.zshrc" ]; then
+    source "$HOME/.zshrc"
+fi
+
 rm -f xfce.sh proot.sh utils.sh install.sh
 
 show_banner

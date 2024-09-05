@@ -69,7 +69,7 @@ fi
 
 username="$1"
 
-pkgs=('virglrenderer-android' 'papirus-icon-theme' 'xfce4' 'xfce4-goodies' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
+pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
 
 for pkg in "${pkgs[@]}"; do
     if $USE_GUM; then
@@ -87,36 +87,36 @@ done
     chmod +x $HOME/Desktop/firefox.desktop
 }
 
-echo 'alias debian="proot-distro login debian --shared-tmp --user $username"
-alias hud="GALLIUM_HUD=fps "' >> $PREFIX/etc/bash.bashrc
+echo 'alias hud="GALLIUM_HUD=fps"' >> $PREFIX/etc/bash.bashrc
 
 if [ -f "$HOME/.zshrc" ]; then
-    echo 'alias debian="proot-distro login debian --shared-tmp --user $username"
-alias hud="GALLIUM_HUD=fps"' >> $HOME/.zshrc
+    echo 'alias hud="GALLIUM_HUD=fps"' >> $HOME/.zshrc
 fi
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png
 else
     echo -e "\e[38;5;33mTéléchargement du fond d'écran...\e[0m"
-    wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/mac_waves.png > /dev/null 2>&1
+    wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png > /dev/null 2>&1
 fi
-mv mac_waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
+
+mkdir -p $PREFIX/share/backgrounds/xfce/
+mv waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip
 else
     echo -e "\e[38;5;33mInstallation WhiteSur-Dark...\e[0m"
-    wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-05-01.zip > /dev/null 2>&1
+    wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip > /dev/null 2>&1
 fi
 {
-    unzip 2024-05-01.zip
-    tar -xf WhiteSur-gtk-theme-2024-05-01/release/WhiteSur-Dark.tar.xz
+    unzip 2024-09-02.zip
+    tar -xf WhiteSur-gtk-theme-2024-09-02/release/WhiteSur-Dark.tar.xz
     mv WhiteSur-Dark/ $PREFIX/share/themes/
     rm -rf WhiteSur*
-    rm 2024-05-01.zip
+    rm 2024-09-02.zip
 } > /dev/null 2>&1
 
 show_banner
