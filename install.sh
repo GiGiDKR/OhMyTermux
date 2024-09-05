@@ -683,7 +683,6 @@ else
         for PACKAGE in $PACKAGES; do
             echo -e "\e[38;5;33mInstallation de $PACKAGE...\e[0m"
             pkg install -y $PACKAGE >/dev/null 2>&1
-            fi
         done
         export PATH="$PATH:$PREFIX/bin"
         show_banner
