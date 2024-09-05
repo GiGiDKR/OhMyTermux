@@ -180,9 +180,9 @@ There are two scripts available for this setup as well :
     - Initial upload
 - Version 1.0.1 :
     - Command line interface changes
-    - Integration partial of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
+    - Integration partial of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1] [Rollback]
 - Version 1.0.2 :
-    - Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
+    - Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian) [Rollback]
 - Version 1.0.3 :
     - Optimization of the alias system according to package and shell selection
 - Version 1.0.4 :
