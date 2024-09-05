@@ -668,6 +668,7 @@ if $USE_GUM; then
             exec $shell_choice
         else
             termux-reload-settings
+            rm -f install.sh
             echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
         fi
         exit 0
@@ -687,6 +688,7 @@ else
             exec $shell_choice
         else
             termux-reload-settings
+            rm -f install.sh
             echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
         fi
         exit 0
