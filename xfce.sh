@@ -87,11 +87,12 @@ done
     chmod +x $HOME/Desktop/firefox.desktop
 }
 
-echo 'alias hud="GALLIUM_HUD=fps"' >> $PREFIX/etc/bash.bashrc
+# TODO : Ajouter l'alias
+#echo 'alias hud="GALLIUM_HUD=fps"' >> $PREFIX/etc/bash.bashrc
 
-if [ -f "$HOME/.zshrc" ]; then
-    echo 'alias hud="GALLIUM_HUD=fps"' >> $HOME/.zshrc
-fi
+#if [ -f "$HOME/.zshrc" ]; then
+#    echo 'alias hud="GALLIUM_HUD=fps"' >> $HOME/.zshrc
+#fi
 
 show_banner
 if $USE_GUM; then
