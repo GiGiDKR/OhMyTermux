@@ -211,17 +211,24 @@ case $shell_choice in
 
             cp "$zshrc" "${zshrc}.bak"
 
-            sed -i '/^plugins=(/,/)/c\plugins=(\n    git' "$zshrc"
-    
+            existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
+
+            local plugin_list="$existing_plugins"
             for plugin in $PLUGINS; do
-                sed -i "/^plugins=(/a\    $plugin" "$zshrc"
+                if [[ ! "$plugin_list" =~ "$plugin" ]]; then
+                    plugin_list+="$plugin "
+                fi
             done
-            
+
+            sed -i "/^plugins=(/,/)/c\plugins=(\n\tgit" "$zshrc"
+            for plugin in $plugin_list; do
+                sed -i "/^plugins=(/a\\\t$plugin" "$zshrc"
+            done
             sed -i '/^plugins=(/,/)/s/$/\n)/' "$zshrc"
-            
+
             if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
                 if ! grep -q "fpath+=" "$zshrc"; then
-                    echo 'fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' >> "$zshrc"
+                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
                 fi
             fi
         }
