@@ -663,6 +663,7 @@ if $USE_GUM; then
         show_banner
         if gum confirm --prompt.foreground="33" --selected.background="33" " Exécuter OhMyTermux ?"; then
             termux-reload-settings
+            rm -f install.sh
             clear
             exec $shell_choice
         else
@@ -690,6 +691,7 @@ else
         read choice
         if [ "$choice" = "o" ]; then
             termux-reload-settings
+            rm -f install.sh
             clear
             exec $shell_choice
         else
