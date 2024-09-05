@@ -185,6 +185,8 @@ There are two scripts available for this setup as well :
     - Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 - Version 1.0.3 :
     - Optimization of the alias system according to package and shell selection
+- Version 1.0.4 :
+    - Added selectable packages
 - Version 1.1 : 
   - In development
 
