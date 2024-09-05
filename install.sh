@@ -652,6 +652,14 @@ if $USE_GUM; then
     if gum confirm --prompt.foreground="33" --selected.background="33" " Installer OhMyTermux XFCE ?"; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
+        PACKAGES="$PACKAGES ncurses-utils"
+
+        for PACKAGE in $PACKAGES; do
+            if $USE_GUM; then
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $PACKAGE" -- pkg install -y $PACKAGE 
+            fi
+        done
+        export PATH="$PATH:$PREFIX/bin"
         show_banner
         if gum confirm --prompt.foreground="33" --selected.background="33" " Exécuter OhMyTermux ?"; then
             termux-reload-settings
@@ -670,6 +678,14 @@ else
     if [ "$choice" = "o" ]; then
         read -p "Entrez votre nom d'utilisateur : " username
     else
+        PACKAGES="$PACKAGES ncurses-utils"
+
+        for PACKAGE in $PACKAGES; do
+            echo -e "\e[38;5;33mInstallation de $PACKAGE...\e[0m"
+            pkg install -y $PACKAGE >/dev/null 2>&1
+            fi
+        done
+        export PATH="$PATH:$PREFIX/bin"
         show_banner
         echo -e "\e[38;5;33m Exécuter OhMyTermux ? (o/n)\e[0m"
         read choice
