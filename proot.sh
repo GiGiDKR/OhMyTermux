@@ -198,20 +198,19 @@ else
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb > /dev/null 2>&1
 fi
 
-echo '
-get_proot_username() {
-  basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
-}
-export username=$(get_proot_username)
-' >> $PREFIX/etc/bash.bashrc
+# TODO : Revenir sur cette fonction si celle de install.sh ne fonctionne pas
+#echo '
+#get_proot_username() {
+#    basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
+#}
+#export username=$(get_proot_username)
+#' >> $PREFIX/etc/bash.bashrc
 
-if [ -n "$ZSH_VERSION" ]; then
-echo '
-get_proot_username() {
-  basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
-}
-export username=$(get_proot_username)
-' >> $HOME/.zshrc
-
-# TODO : Ajouter pour fish
-fi
+#if [ -n "$ZSH_VERSION" ]; then
+#echo '
+#get_proot_username() {
+#    basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
+#}
+#export username=$(get_proot_username)
+#' >> $HOME/.zshrc
+#fi

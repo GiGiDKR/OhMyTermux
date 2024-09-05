@@ -180,9 +180,9 @@ There are two scripts available for this setup as well :
     - Initial upload
 - Version 1.0.1 :
     - Command line interface changes
-    - Integration partial of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1] [Rollback]
+    - Installation of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
 - Version 1.0.2 :
-    - Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian) [Rollback]
+    ~~- Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)~~ (Rollback)
 - Version 1.0.3 :
     - Optimization of the alias system according to package and shell selection
 - Version 1.0.4 :
@@ -193,9 +193,9 @@ There are two scripts available for this setup as well :
 &nbsp;
 
 ## 📖 To Do
-- [X] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Partial)
-- [ ] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Full)
-- [X] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
+- [X] Installation of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
+- [ ] Execution of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
+- [ ] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 - [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
 - [ ] Add more selectable packages and Python modules
 - [ ] Integrate in main script theme selection (Color schemes)

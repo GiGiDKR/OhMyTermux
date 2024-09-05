@@ -41,7 +41,7 @@ show_banner() {
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else
-       bash_banner
+        bash_banner
     fi
 }
 

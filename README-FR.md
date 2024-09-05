@@ -168,9 +168,9 @@ Deux scripts sont également disponibles pour cette configuration :
   - Téléchargement initial
 - Version 1.0.1 :
   - Modifications de l'interface en ligne de commande
-  - Intégration partielle de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
+  - Installation de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
 - Version 1.0.2 :
-  - Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
+  ~~- Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)~~ (Retour arrière)
 - Version 1.0.3 :
   - Optimisation du système d'alias selon la sélection de paquets et de shell
 - Version 1.0.4 :
@@ -180,9 +180,9 @@ Deux scripts sont également disponibles pour cette configuration :
 
 ## 📖 À faire
 
-- [X] Intégration de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Partielle)
-- [ ] Intégration de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) (Complète)
-- [X] Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
+- [X] Installation de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
+- [ ] Execution de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
+- [ ] Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 - [ ] Intégrer la configuration Fish (Plugins, Prompts, Alias)
 - [ ] Ajouter plus de packages sélectionnables et de modules Python
 - [ ] Intégrer dans le script principal la sélection de thèmes (Schémas de couleurs)

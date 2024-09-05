@@ -2,7 +2,6 @@
 
 USE_GUM=false
 
-# Vérification des arguments
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -65,7 +64,7 @@ show_banner() {
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else
-       bash_banner
+        bash_banner
     fi
 }
 
@@ -78,7 +77,6 @@ if [ "$change_repo_choice" = "o" ]; then
     termux-change-repo
 fi
 
-show_banner
 termux_dir="$HOME/.termux"
 file_path="$termux_dir/colors.properties"
 if [ ! -f "$file_path" ]; then
@@ -119,6 +117,7 @@ color17 = #db4b4b
 EOL
 fi
 
+show_banner
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut" -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
 else
@@ -143,7 +142,6 @@ else
 fi
 
 touch .hushlogin
-
 termux-reload-settings
 
 show_banner
@@ -155,6 +153,7 @@ else
     [ "$choice" = "o" ] && termux-setup-storage
 fi
 
+# Shell selection
 show_banner
 if $USE_GUM; then
     shell_choice=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=5 --header="Choisissez le shell à installer :" "bash" "zsh" "fish")
@@ -172,6 +171,7 @@ else
     esac
 fi
 
+# Installation according to the selected shell
 case $shell_choice in
     "bash")
         echo -e "\e[38;5;33mBash sélectionné, poursuite du script...\e[0m"
@@ -268,67 +268,67 @@ select_plugins() {
 select_plugins
 
 if [[ "$PLUGINS" == *"Tout installer"* ]]; then
-  PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
+    PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
 fi
 
 for PLUGIN in $PLUGINS; do
-  show_banner
-  case $PLUGIN in
+    show_banner
+    case $PLUGIN in
     "zsh-autosuggestions")
-      if $USE_GUM; then
+    if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-autosuggestions" -- \
         git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" || true
-      else
+    else
         echo -e "\e[38;5;33mInstallation de zsh-autosuggestions...\e[0m"
         git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" >/dev/null 2>&1 || true
-      fi
-      ;;
+    fi
+    ;;
     "zsh-syntax-highlighting")
-      if $USE_GUM; then
+    if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-syntax-highlighting" -- \
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" || true
-      else
+    else
         echo -e "\e[38;5;33mInstallation de zsh-syntax-highlighting...\e[0m"
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" >/dev/null 2>&1 || true
-      fi
-      ;;
+    fi
+    ;;
     "zsh-completions")
-      if $USE_GUM; then
+    if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-completions" -- \
         git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" || true
-      else
+    else
         echo -e "\e[38;5;33mInstallation de zsh-completions...\e[0m"
         git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" >/dev/null 2>&1 || true
-      fi
-      ;;
+    fi
+    ;;
     "you-should-use")
-      if $USE_GUM; then
+    if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de you-should-use" -- \
         git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" || true
-      else
+    else
         echo -e "\e[38;5;33mInstallation de you-should-use...\e[0m"
         git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" >/dev/null 2>&1 || true
-      fi
-      ;;
+    fi
+    ;;
     "zsh-abbr")
-      if $USE_GUM; then
+    if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-abbr" -- \
         git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" || true
-      else
+    else
         echo -e "\e[38;5;33mInstallation de zsh-abbr...\e[0m"
         git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" >/dev/null 2>&1 || true
-      fi
-      ;;
+    fi
+    ;;
     "zsh-alias-finder")
-      if $USE_GUM; then
+    if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de zsh-alias-finder" -- \
         git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" || true
-      else
+    else
         echo -e "\e[38;5;33mInstallation de zsh-alias-finder...\e[0m"
         git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" >/dev/null 2>&1 || true
-      fi
-      ;;
-  esac
+    fi
+    ;;
+    esac
 done
 
         show_banner
@@ -337,13 +337,10 @@ done
         else
     echo -e "\e[38;5;33mTéléchargement de la configuration...\e[0m"
     (curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
-     curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc) || 
+    curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc) || 
     echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
 fi
-        echo "
-
-alias help='glow \$HOME/.config/OhMyTermux/Help.md'
-" >> "$HOME/.zshrc"
+        echo "alias help='glow \$HOME/.config/OhMyTermux/Help.md'" >> "$HOME/.zshrc"
         chsh -s zsh
         ;;
         "fish")
@@ -358,6 +355,7 @@ alias help='glow \$HOME/.config/OhMyTermux/Help.md'
         ;;
 esac
 
+# Terminal Color Schemes
 show_banner
 if $USE_GUM; then
     if gum confirm --prompt.foreground="33" --selected.background="33" "Installer des thèmes pour Termux ?"; then
@@ -394,13 +392,14 @@ fi
 
 rm "$HOME/.termux/colors.zip"
 
+# Font installation function
 install_font() {
     local font_url="$1"
     curl -L -o "$HOME/.termux/font.ttf" "$font_url" >/dev/null 2>&1
 }
 
+# Font selection
 show_banner
-
 if $USE_GUM; then
     FONT=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=14 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
 else
@@ -473,9 +472,10 @@ case $FONT in
         ;;
 esac
 
+# Packages installation
 show_banner
 if $USE_GUM; then
-    PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=15 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "bat" "lf" "fzf" "glow" "python" "lsd" "micro" "vim" "open-ssh" "tsu" "Tout installer")
+    PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "bat" "lf" "fzf" "glow" "python" "lsd" "micro" "vim" "open-ssh" "tsu" "Tout installer")
 else
     echo -e "\e[38;5;33mSélectionner les packages à installer (séparés par des espaces) :\e[0m"
     echo -e "\e[38;5;33m1) nala\e[0m"
@@ -490,7 +490,7 @@ else
     echo -e "\e[38;5;33m10) vim\e[0m"
     echo -e "\e[38;5;33m11) open-ssh\e[0m"
     echo -e "\e[38;5;33m12) tsu\e[0m"
-    echo -e "\e[38;5;33m13)0 Tout installer\e[0m"
+    echo -e "\e[38;5;33m13) Tout installer\e[0m"
     read -p "Entrez les numéros des packages : " package_choices
     PACKAGES=""
     for choice in $package_choices; do
@@ -504,8 +504,8 @@ else
             7) PACKAGES+="python " ;;
             8) PACKAGES+="lsd " ;;
             9) PACKAGES+="micro " ;;
-            10) PACKAGES+="micro " ;;
-            11) PACKAGES+="micro " ;;
+            10) PACKAGES+="vim " ;;
+            11) PACKAGES+="open-ssh " ;;
             12) PACKAGES+="tsu " ;;
             13) PACKAGES="nala eza bat lf fzf glow python lsd micro vim open-ssh tsu" ;;
         esac
@@ -527,6 +527,7 @@ if [ -n "$PACKAGES" ]; then
         show_banner 
         echo -e "$installed_packages"
 
+        # Managing aliases by installed package
         case $PACKAGE in
             eza)
                 echo 'alias l="eza --icons"
@@ -570,14 +571,14 @@ alias list="nala list --upgradeable"
 alias show="nala show"' >> $HOME/.zshrc
                 fi
                 ;;
-            # TODO : Ajouter d'autres alias
+            # TODO : Ajout d'alias supplémentaires
         esac
     done
 else
     echo -e "\e[38;5;33mAucun package sélectionné. Poursuite du script ...\e[0m"
 fi
 
-# Définir les alias dans une variable
+# Define general aliases in a variable
 aliases='
 alias ..="cd .."
 alias q="exit"
@@ -589,19 +590,17 @@ alias cm="chmod +x"
 alias clone="git clone"
 alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"'
 
-# Ajouter les alias à bash.bashrc
 echo "$aliases" >> "$PREFIX/etc/bash.bashrc"
 
-# Ajouter les alias à .zshrc si le fichier existe
 if [ -f "$HOME/.zshrc" ]; then
     echo "$aliases" >> "$HOME/.zshrc"
 fi
 
-# Ajouter les alias à config.fish si le fichier existe
-if [ -f "$HOME/.config/fish/config.fish" ]; then
-    # Convertir les alias bash en format fish
-    echo "$aliases" | sed 's/alias \(.*\)="\(.*\)"/alias \1 "\2"/' >> "$HOME/.config/fish/config.fish"
-fi
+# TODO : Ajout Fish
+#if [ -f "$HOME/.config/fish/config.fish" ]; then
+#    # Convertir les alias bash en format fish
+#    echo "$aliases" | sed 's/alias \(.*\)="\(.*\)"/alias \1 "\2"/' >> "$HOME/.config/fish/config.fish"
+#fi
 
 ##################
 # OhMyTermuxXFCE #
@@ -609,12 +608,11 @@ fi
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "    Installer OhMyTermux XFCE ?"; then
-        # Demande du nom d'utilisateur avec gum
+    if gum confirm --prompt.foreground="33" --selected.background="33" "   Installer OhMyTermux XFCE ?"; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
         show_banner
-        if gum confirm --prompt.foreground="33" --selected.background="33" "      Exécuter OhMyTermux ?"; then
+        if gum confirm --prompt.foreground="33" --selected.background="33" "       Exécuter OhMyTermux ?"; then
             termux-reload-settings
             clear
             exec $shell_choice
@@ -625,14 +623,13 @@ if $USE_GUM; then
         exit 0
     fi
 else
-    echo -e "\e[38;5;33m    Installer OhMyTermux XFCE ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m   Installer OhMyTermux XFCE ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
-        # Demande du nom d'utilisateur avec read
         read -p "Entrez votre nom d'utilisateur : " username
     else
         show_banner
-        echo -e "\e[38;5;33m      Exécuter OhMyTermux ? (o/n)\e[0m"
+        echo -e "\e[38;5;33m       Exécuter OhMyTermux ? (o/n)\e[0m"
         read choice
         if [ "$choice" = "o" ]; then
             termux-reload-settings
@@ -667,9 +664,9 @@ fi
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets" -- pkg install "${pkgs[@]}" -y
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y
 else
-    echo -e "\e[38;5;33mInstallation des paquets...\e[0m"
+    echo -e "\e[38;5;33mInstallation des paquets nécessaires...\e[0m"
     pkg install "${pkgs[@]}" -y
 fi
 
@@ -690,13 +687,37 @@ chmod +x *.sh
 
 show_banner
 if $USE_GUM; then
-    ./xfce.sh --gum "$username"
-    ./proot.sh --gum "$username"
+    ./xfce.sh --gum $username
+    ./proot.sh --gum $username
 else
-    ./xfce.sh "$username"
-    ./proot.sh "$username"
+    ./xfce.sh $username
+    ./proot.sh $username
 fi
 ./utils.sh
+
+# TODO : Vérifier le fonctionnement ou revenir sur la fonction dans proot.sh
+# Get username function for alias to execute Debian 
+echo '
+function get_username() {
+    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
+    username=$(basename "$user_dir"/*)
+    echo $username
+}
+
+alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
+' >> $PREFIX/etc/bash.bashrc
+
+if [ -f "$HOME/.zshrc" ]; then
+    echo '
+function get_username() {
+    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
+    username=$(basename "$user_dir"/*)
+    echo $username
+}
+
+alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
+' >> $HOME/.zshrc
+fi
 
 ##############
 # Termux-X11 #
@@ -730,7 +751,6 @@ fi
 
 SCRIPT_DIR="$HOME/OhMyTermuxScript"
 
-# Vérifier et installer OhMyTermuxScript si nécessaire
 if [ ! -d "$SCRIPT_DIR" ]; then
     if $USE_GUM; then
         if gum confirm --prompt.foreground="33" --selected.background="33" "    Installer OhMyTermuxScript ?"; then
@@ -746,19 +766,78 @@ if [ ! -d "$SCRIPT_DIR" ]; then
     fi
 fi
 
+# TODO : Implémenter l'éxecution des scripts
+#execute_script() {
+#if [ -d "$SCRIPT_DIR" ]; then
+#    mapfile -t scripts < <(find "$SCRIPT_DIR" -name "*.sh" -type f)
+
+#    script_names=()
+#    for script in "${scripts[@]}"; do
+#        script_names+=("$(basename "$script")")
+#    done
+
+#    while true; do
+#        show_banner
+#        echo -e "\e[38;5;33m            Sélection de script\n\e[0m"
+
+#        if $USE_GUM; then
+#            script_choice=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" "${script_names[@]}" "QUITTER")
+#            if [ "$script_choice" == "> QUITTER" ]; then
+#                clear
+#                return
+#            fi
+#        else
+#            select script_choice in "${script_names[@]}" "QUITTER"; do
+#                if [[ $REPLY -eq $(( ${#script_names[@]} + 1 )) ]]; then
+#                    clear
+#                    return
+#                elif [[ 1 -le $REPLY && $REPLY -le ${#script_names[@]} ]]; then
+#                    selected_script="${scripts[$((REPLY-1))]}"
+#                    break
+#                else
+#                    show_banner
+#                    echo -e "\e[38;5;196m         Aucun script correspondant\e[0m"
+#                    sleep 1
+#                    continue 2
+#                fi
+#            done
+#        fi
+#        if [ -n "$selected_script" ]; then
+#            bash "$selected_script"
+#        else
+#            echo "Aucun script sélectionné."
+#        fi
+#    done
+#else
+#    echo "Le répertoire $SCRIPT_DIR n'existe pas."
+#fi
+#}
+
+#if $USE_GUM; then
+#    if gum confirm --prompt.foreground="33" --selected.background="33" "Exécuter un script ?"; then
+#        execute_script
+#    fi
+#else
+#    read -p "     Exécuter un script ? (o/n) " choice
+#    if [ "$choice" = "o" ]; then
+#        execute_script
+#    fi
+#fi
+
+# TODO : Implémenter OhMyObsidian
 ################
 # OhMyObsidian #
 ################
 #if $USE_GUM; then
-#    if gum confirm --prompt.foreground="33" --selected.background="33" "     Installer OhMyObsidian ?"; then
+#    if gum confirm --prompt.foreground="33" --selected.background="33" " Installer OhMyObsidian ?"; then
 #        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyObsidian" -- \
 #        bash -c 'curl -o $HOME/install.sh https://raw.githubusercontent.com/GiGiDKR/OhMyObsidian/main/install.sh && chmod +x $HOME/install.sh && $HOME/install.sh'
 #    fi
 #else
-#     echo -e "\e[38;5;33m     Installer OhMyObsidian ? (o/n)\e[0m"
+#    echo -e "\e[38;5;33m Installer OhMyObsidian ? (o/n)\e[0m"
 #    read -r choice
 #    if [ "$choice" = "o" ]; then
-#        echo -e "\e[38;5;33mInstallation de OhMyObsidian...\e[0m"  
+#        echo -e "\e[38;5;33mInstallation de OhMyObsidian...\e[0m"
 #        curl -o $HOME/install.sh https://raw.githubusercontent.com/GiGiDKR/OhMyObsidian/main/install.sh && chmod +x $HOME/install.sh && $HOME/install.sh
 #    fi
 #fi
@@ -768,26 +847,19 @@ fi
 #################
 
 source $PREFIX/etc/bash.bashrc
-
-if [ -f "$HOME/.zshrc" ]; then
-    source $HOME/.zshrc
-fi
-
 termux-reload-settings
-
-# Nettoyage des fichiers temporaires
 rm -f xfce.sh proot.sh utils.sh install.sh
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "      Exécuter OhMyTermux ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "       Exécuter OhMyTermux ?"; then
         clear
         exec $shell_choice
     else
         echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
 else
-    echo -e "\e[38;5;33m      Exécuter OhMyTermux ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m       Exécuter OhMyTermux ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         clear
