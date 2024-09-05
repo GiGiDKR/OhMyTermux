@@ -4,7 +4,7 @@
 
 #### Optional installation of:
 
-- **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro with a [XFCE](https://www.xfce.org/) desktop and an [App-Installer](ttps://github.com/GiGiDKR/App-Installer) which are not available in package manager.
+- **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro with a [XFCE](https://www.xfce.org/) desktop and an [App-Installer](https://github.com/GiGiDKR/App-Installer) which are not available in package manager.
 
 - **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : A collection of useful scripts, executable from the main script or later. [^1]
 
