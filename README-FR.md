@@ -178,6 +178,8 @@ Deux scripts sont également disponibles pour cette configuration :
   - Optimisation du système d'alias selon la sélection de paquets et de shell
 - Version 1.0.4 :
   - Ajout de paquets sélectionnables à la liste
+- Version 1.0.5 :
+    - Gestion dynamique de la configuration de .zshrc
 - Version 1.1 :
   - En développement
 

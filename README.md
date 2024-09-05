@@ -191,6 +191,8 @@ There are two scripts available for this setup as well :
     - Optimization of the alias system according to package and shell selection
 - Version 1.0.4 :
     - Adding packages to the selectable list
+- Version 1.0.5 :
+    - Dynamic management of .zshrc configuration
 - Version 1.1 : 
   - In development
 
