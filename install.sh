@@ -475,7 +475,7 @@ esac
 
 show_banner
 if $USE_GUM; then
-    PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "bat" "lf" "fzf" "glow" "python" "lsd" "micro" "tsu" "Tout installer")
+    PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=15 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "bat" "lf" "fzf" "glow" "python" "lsd" "micro" "vim" "open-ssh" "tsu" "Tout installer")
 else
     echo -e "\e[38;5;33mSélectionner les packages à installer (séparés par des espaces) :\e[0m"
     echo -e "\e[38;5;33m1) nala\e[0m"
@@ -487,8 +487,10 @@ else
     echo -e "\e[38;5;33m7) python\e[0m"
     echo -e "\e[38;5;33m8) lsd\e[0m"
     echo -e "\e[38;5;33m9) micro\e[0m"
-    echo -e "\e[38;5;33m10) tsu\e[0m"
-    echo -e "\e[38;5;33m11) Tout installer\e[0m"
+    echo -e "\e[38;5;33m10) vim\e[0m"
+    echo -e "\e[38;5;33m11) open-ssh\e[0m"
+    echo -e "\e[38;5;33m12) tsu\e[0m"
+    echo -e "\e[38;5;33m13)0 Tout installer\e[0m"
     read -p "Entrez les numéros des packages : " package_choices
     PACKAGES=""
     for choice in $package_choices; do
@@ -502,8 +504,10 @@ else
             7) PACKAGES+="python " ;;
             8) PACKAGES+="lsd " ;;
             9) PACKAGES+="micro " ;;
-            10) PACKAGES+="tsu " ;;
-            11) PACKAGES="nala eza bat lf fzf glow python lsd micro tsu" ;;
+            10) PACKAGES+="micro " ;;
+            11) PACKAGES+="micro " ;;
+            12) PACKAGES+="tsu " ;;
+            13) PACKAGES="nala eza bat lf fzf glow python lsd micro vim open-ssh tsu" ;;
         esac
     done
 fi
