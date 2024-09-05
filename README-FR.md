@@ -2,11 +2,11 @@
 
 **Installation automatisée et personnalisée de [Termux](https://github.com/termux) : packages, shell, plugins, prompts, polices et thèmes sélectionnables.**
 
-**[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README-FR.md#-xfce-and-debian-)** : Une distribution proot [Debian](https://www.debian.org/) personnalisée et un bureau [XFCE](https://www.xfce.org/).
+**[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README-FR.md#-xfce-and-debian-)** : Une distribution proot [Debian](https://www.debian.org/) personnalisée avec un bureau [XFCE](https://www.xfce.org/) et un [App-Installer](https://github.com/GiGiDKR/App-Installer) afin d'obtenir des logiciels non-disponible avec le gestionnaire de paquets.
 
 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : Une collection de scripts exécutables depuis le script principal ou ultérieurement. [^1]
 
-**[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Synchroniser Obsidian sur Android en utilisant Termux et Git.
+**[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Synchroniser Obsidian sur Android en utilisant Termux et Git. [^1]
 
 > [!IMPORTANT]
 > Ce projet est en développement actif mais pour faciliter la progression, la langue française est privilégiée pour fournir l'interface utilisateur CLI.
@@ -174,7 +174,7 @@ Deux scripts sont également disponibles pour cette configuration :
 - Version 1.0.3 :
   - Optimisation du système d'alias selon la sélection de paquets et de shell
 - Version 1.0.4 :
-  - Ajout de paquets sélectionnables
+  - Ajout de paquets sélectionnables à la liste
 - Version 1.1 :
   - En développement
 
