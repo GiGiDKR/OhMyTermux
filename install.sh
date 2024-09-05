@@ -282,20 +282,18 @@ case $shell_choice in
 
         update_zshrc() {
             local zshrc="$HOME/.zshrc"
-            
             cp "$zshrc" "${zshrc}.bak"
-            
-            sed -i '/^plugins=(/,/)/c\plugins=(\n    git' "$zshrc"
-            
+
+            local plugin_list="git"
             for plugin in $PLUGINS; do
-                sed -i "/^plugins=(/a\    $plugin" "$zshrc"
+                plugin_list+=$'\n\t'"$plugin"
             done
-            
-            sed -i '/^plugins=(/,/)/s/$/\n)/' "$zshrc"
-            
+
+            sed -i "/^plugins=($/,/^)$/c\plugins=(\n\t$plugin_list\n)" "$zshrc"
+
             if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
                 if ! grep -q "fpath+=" "$zshrc"; then
-                    echo 'fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' >> "$zshrc"
+                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
                 fi
             fi
         }
@@ -359,8 +357,9 @@ case $shell_choice in
             fi
             ;;
             esac
-            update_zshrc >/dev/null 2>&1
         done
+
+        update_zshrc
 
         show_banner
         if $USE_GUM; then
