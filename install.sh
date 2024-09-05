@@ -204,7 +204,7 @@ case $shell_choice in
             fi
         fi
 
-        curl -fLo "$ZSHRC" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc
+        curl -fLo "$ZSHRC" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc >/dev/null 2>&1
 
         update_zshrc() {
             local zshrc="$HOME/.zshrc"
@@ -220,7 +220,11 @@ case $shell_choice in
                 fi
             done
 
-            sed -i "/^plugins=(/,/)/c\plugins=(\n\t${plugin_list}\n)" "$zshrc"
+            sed -i '/^plugins=($/,/^)$/c\plugins=(\n\tgit' "$zshrc"
+            for plugin in $plugin_list; do
+                sed -i "/^plugins=(/a\\\t$plugin" "$zshrc"
+            done
+            sed -i '/^plugins=(/,/)/s/$/\n)/' "$zshrc"
 
             if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
                 if ! grep -q "fpath+=" "$zshrc"; then
@@ -244,7 +248,7 @@ case $shell_choice in
                 if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k" -- \
                     curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
-                    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                    echo -e "\n\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                     echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
@@ -330,7 +334,7 @@ case $shell_choice in
             ;;
             "zsh-completions")
             if $USE_GUM; then
-                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation dzsh-completions" -- \
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-completions" -- \
                 git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" || true
             else
                 echo -e "\e[38;5;33mInstallation zsh-completions...\e[0m"
@@ -380,9 +384,9 @@ case $shell_choice in
 
         if command -v glow &> /dev/null
             then
-            echo "alias help='glow \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
+            echo -e "\nalias help='glow \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
         else
-            echo "alias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
+            echo -e "\nalias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
         fi
         chsh -s zsh
         ;;
@@ -626,8 +630,7 @@ else
 fi
 
 # Define general aliases in a variable
-aliases='
-alias ..="cd .."
+aliases='alias ..="cd .."
 alias q="exit"
 alias c="clear"
 alias md="mkdir"
@@ -659,7 +662,7 @@ if $USE_GUM; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
         show_banner
-        if gum confirm --prompt.foreground="33" --selected.background="33" "       Exécuter OhMyTermux ?"; then
+        if gum confirm --prompt.foreground="33" --selected.background="33" "    Exécuter OhMyTermux ?"; then
             termux-reload-settings
             clear
             exec $shell_choice
@@ -676,7 +679,7 @@ else
         read -p "Entrez votre nom d'utilisateur : " username
     else
         show_banner
-        echo -e "\e[38;5;33m       Exécuter OhMyTermux ? (o/n)\e[0m"
+        echo -e "\e[38;5;33m    Exécuter OhMyTermux ? (o/n)\e[0m"
         read choice
         if [ "$choice" = "o" ]; then
             termux-reload-settings
