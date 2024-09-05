@@ -173,6 +173,8 @@ Deux scripts sont également disponibles pour cette configuration :
   - Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 - Version 1.0.3 :
   - Optimisation du système d'alias selon la sélection de paquets et de shell
+- Version 1.0.4 :
+  - Ajout de paquets sélectionnables
 - Version 1.1 :
   - En développement
 
