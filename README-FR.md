@@ -58,6 +58,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [python](https://github.com/python)
 - [micro](https://github.com/zyedidia/micro)
 - [vim](https://github.com/vim/vim)
+- [neovim](https://github.com/neovim/neovim)
+- [lazygit](https://github.com/jesseduffield/lazygit)
 - [open-ssh](https://www.openssh.com/)
 
 🧊 **Sélection du shell :**
