@@ -357,9 +357,8 @@ case $shell_choice in
             fi
             ;;
             esac
+            update_zshrc
         done
-
-        update_zshrc
 
         show_banner
         if $USE_GUM; then
