@@ -6,7 +6,7 @@
 
 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : A collection of useful scripts, executable from the main script or later. [^1]
 
-**[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Sync Obsidian on Android using Termux and Git.
+**[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Sync Obsidian on Android using Termux and Git. [^1]
 
 &nbsp;
 
@@ -62,6 +62,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [python](https://github.com/python)
 - [micro](https://github.com/zyedidia/micro)
 - [vim](https://github.com/vim/vim)
+- [neovim](https://github.com/neovim/neovim)
+- [lazygit](https://github.com/jesseduffield/lazygit(
 - [open-ssh](https://www.openssh.com/)
 
 
@@ -116,7 +118,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - Electron Node.js
 - XDRP (native Termux or proot-distro)
 
-[^1]: Coming in version 1.1 with the full integration of OhMyTermuxScript 
+[^1]: In development :coming in version 1.1
 [^2]: Optionally integrated into the main script
 [^3]: In development (no release date yet)
 
@@ -186,7 +188,7 @@ There are two scripts available for this setup as well :
 - Version 1.0.3 :
     - Optimization of the alias system according to package and shell selection
 - Version 1.0.4 :
-    - Added selectable packages
+    - Adding packages to the selectable list
 - Version 1.1 : 
   - In development
 
