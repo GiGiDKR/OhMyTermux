@@ -1,6 +1,8 @@
 #!/bin/bash
 
 USE_GUM=false
+BASHRC="$PREFIX/etc/bash.bashrc"
+ZSHRC="$HOME/.zshrc"
 
 for arg in "$@"; do
     case $arg in
@@ -188,7 +190,7 @@ case $shell_choice in
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?" && {
                 gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des pré-requis" -- pkg install -y wget curl git unzip
                 gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Oh My Zsh" -- git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
-                cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$HOME/.zshrc"
+                cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
             }
         else
             echo -e "\e[38;5;33mVoulez-vous installer Oh My Zsh ? (o/n)\e[0m"
@@ -198,19 +200,52 @@ case $shell_choice in
                 pkg install -y wget curl git unzip
                 echo -e "\e[38;5;33mInstallation de Oh My Zsh...\e[0m"
                 git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
-                cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$HOME/.zshrc"
+                cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
             fi
         fi
+
+        curl -fLo "$ZSHRC" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc
+
+        update_zshrc() {
+            local zshrc="$HOME/.zshrc"
+
+            cp "$zshrc" "${zshrc}.bak"
+
+            existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
+
+            local plugin_list="$existing_plugins"
+            for plugin in $PLUGINS; do
+                if [[ ! "$plugin_list" =~ "$plugin" ]]; then
+                    plugin_list+="$plugin "
+                fi
+            done
+
+            sed -i "/^plugins=(/,/)/c\plugins=(\n\t${plugin_list}\n)" "$zshrc"
+
+            if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
+                if ! grep -q "fpath+=" "$zshrc"; then
+                    sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
+                fi
+            fi
+
+            if [[ "$PLUGINS" == *"powerlevel10k"* ]]; then
+                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$zshrc"
+            fi
+        }
 
         show_banner
         if $USE_GUM; then
             gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?" && {
-                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k" -- git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
-                echo 'source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme' >> "$HOME/.zshrc"
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k" -- \
+                git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
+                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                 show_banner
                 if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k" -- curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k" -- \
+                    curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                 fi
@@ -221,13 +256,15 @@ case $shell_choice in
             if [ "$choice" = "o" ]; then
                 echo -e "\e[38;5;33mInstallation de PowerLevel10k...\e[0m"
                 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
-                echo 'source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme' >> "$HOME/.zshrc"
+                sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                 echo -e "\e[38;5;33mInstaller le prompt OhMyTermux ? (o/n)\e[0m"
                 read choice
                 if [ "$choice" = "o" ]; then
                     echo -e "\e[38;5;33mTéléchargement du prompt PowerLevel10k...\e[0m"
                     curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                 else
                     echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                 fi
@@ -235,121 +272,120 @@ case $shell_choice in
         fi
 
         show_banner
+        select_plugins() {
+            if $USE_GUM; then
+                PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
+            else
+                echo -e "\e[38;5;33mSélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :\e[0m"
+                echo -e "\e[38;5;33m1) zsh-autosuggestions\e[0m"
+                echo -e "\e[38;5;33m2) zsh-syntax-highlighting\e[0m"
+                echo -e "\e[38;5;33m3) zsh-completions\e[0m"
+                echo -e "\e[38;5;33m4) you-should-use\e[0m"
+                echo -e "\e[38;5;33m5) zsh-abbr\e[0m"
+                echo -e "\e[38;5;33m6) zsh-alias-finder\e[0m"
+                echo -e "\e[38;5;33m7) Tout installer\e[0m"
+                read -p "Entrez les numéros des plugins : " plugin_choices
+                # Convertir les choix en noms de plugins
+                PLUGINS=""
+                for choice in $plugin_choices; do
+                    case $choice in
+                        1) PLUGINS+="zsh-autosuggestions " ;;
+                        2) PLUGINS+="zsh-syntax-highlighting " ;;
+                        3) PLUGINS+="zsh-completions " ;;
+                        4) PLUGINS+="you-should-use " ;;
+                        5) PLUGINS+="zsh-abbr " ;;
+                        6) PLUGINS+="zsh-alias-finder " ;;
+                        7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
+                    esac
+                done
+            fi
+        }
 
-select_plugins() {
-    if $USE_GUM; then
-        PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
-    else
-        echo -e "\e[38;5;33mSélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :\e[0m"
-        echo -e "\e[38;5;33m1) zsh-autosuggestions\e[0m"
-        echo -e "\e[38;5;33m2) zsh-syntax-highlighting\e[0m"
-        echo -e "\e[38;5;33m3) zsh-completions\e[0m"
-        echo -e "\e[38;5;33m4) you-should-use\e[0m"
-        echo -e "\e[38;5;33m5) zsh-abbr\e[0m"
-        echo -e "\e[38;5;33m6) zsh-alias-finder\e[0m"
-        echo -e "\e[38;5;33m7) Tout installer\e[0m"
-        read -p "Entrez les numéros des plugins : " plugin_choices
-        # Convertir les choix en noms de plugins
-        PLUGINS=""
-        for choice in $plugin_choices; do
-            case $choice in
-                1) PLUGINS+="zsh-autosuggestions " ;;
-                2) PLUGINS+="zsh-syntax-highlighting " ;;
-                3) PLUGINS+="zsh-completions " ;;
-                4) PLUGINS+="you-should-use " ;;
-                5) PLUGINS+="zsh-abbr " ;;
-                6) PLUGINS+="zsh-alias-finder " ;;
-                7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
+        select_plugins
+
+        if [[ "$PLUGINS" == *"Tout installer"* ]]; then
+            PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
+        fi
+
+        for PLUGIN in $PLUGINS; do
+            show_banner
+            case $PLUGIN in
+            "zsh-autosuggestions")
+            if $USE_GUM; then
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-autosuggestions" -- \
+                git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" || true
+            else
+                echo -e "\e[38;5;33mInstallation zsh-autosuggestions...\e[0m"
+                git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" >/dev/null 2>&1 || true
+            fi
+            ;;
+            "zsh-syntax-highlighting")
+            if $USE_GUM; then
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-syntax-highlighting" -- \
+                git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" || true
+            else
+                echo -e "\e[38;5;33mInstallation zsh-syntax-highlighting...\e[0m"
+                git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" >/dev/null 2>&1 || true
+            fi
+            ;;
+            "zsh-completions")
+            if $USE_GUM; then
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation dzsh-completions" -- \
+                git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" || true
+            else
+                echo -e "\e[38;5;33mInstallation zsh-completions...\e[0m"
+                git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" >/dev/null 2>&1 || true
+            fi
+            ;;
+            "you-should-use")
+            if $USE_GUM; then
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation you-should-use" -- \
+                git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" || true
+            else
+                echo -e "\e[38;5;33mInstallation you-should-use...\e[0m"
+                git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" >/dev/null 2>&1 || true
+            fi
+            ;;
+            "zsh-abbr")
+            if $USE_GUM; then
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-abbr" -- \
+                git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" || true
+            else
+                echo -e "\e[38;5;33mInstallation zsh-abbr...\e[0m"
+                git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" >/dev/null 2>&1 || true
+            fi
+            ;;
+            "zsh-alias-finder")
+            if $USE_GUM; then
+                gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-alias-finder" -- \
+                git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" || true
+            else
+                echo -e "\e[38;5;33mInstallation zsh-alias-finder...\e[0m"
+                git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" >/dev/null 2>&1 || true
+            fi
+            ;;
             esac
+            update_zshrc
         done
-    fi
-}
 
-select_plugins
+        show_banner
+        if $USE_GUM; then
+            gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && mkdir -p $HOME/.config/OhMyTermux && curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)'
+                else
+            echo -e "\e[38;5;33mTéléchargement de la configuration...\e[0m"
+            (curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
+            curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md) || 
+            echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
+        fi
 
-if [[ "$PLUGINS" == *"Tout installer"* ]]; then
-    PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
-fi
-
-for PLUGIN in $PLUGINS; do
-    show_banner
-    case $PLUGIN in
-    "zsh-autosuggestions")
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-autosuggestions" -- \
-        git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" || true
-    else
-        echo -e "\e[38;5;33mInstallation zsh-autosuggestions...\e[0m"
-        git clone https://github.com/zsh-users/zsh-autosuggestions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" >/dev/null 2>&1 || true
-    fi
-    ;;
-    "zsh-syntax-highlighting")
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-syntax-highlighting" -- \
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" || true
-    else
-        echo -e "\e[38;5;33mInstallation zsh-syntax-highlighting...\e[0m"
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" >/dev/null 2>&1 || true
-    fi
-    ;;
-    "zsh-completions")
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation dzsh-completions" -- \
-        git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" || true
-    else
-        echo -e "\e[38;5;33mInstallation zsh-completions...\e[0m"
-        git clone https://github.com/zsh-users/zsh-completions.git "$HOME/.oh-my-zsh/custom/plugins/zsh-completions" >/dev/null 2>&1 || true
-    fi
-    ;;
-    "you-should-use")
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation you-should-use" -- \
-        git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" || true
-    else
-        echo -e "\e[38;5;33mInstallation you-should-use...\e[0m"
-        git clone https://github.com/MichaelAquilina/zsh-you-should-use.git "$HOME/.oh-my-zsh/custom/plugins/you-should-use" >/dev/null 2>&1 || true
-    fi
-    ;;
-    "zsh-abbr")
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-abbr" -- \
-        git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" || true
-    else
-        echo -e "\e[38;5;33mInstallation zsh-abbr...\e[0m"
-        git clone https://github.com/olets/zsh-abbr "$HOME/.oh-my-zsh/custom/plugins/zsh-abbr" >/dev/null 2>&1 || true
-    fi
-    ;;
-    "zsh-alias-finder")
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation zsh-alias-finder" -- \
-        git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" || true
-    else
-        echo -e "\e[38;5;33mInstallation zsh-alias-finder...\e[0m"
-        git clone https://github.com/akash329d/zsh-alias-finder "$HOME/.oh-my-zsh/custom/plugins/zsh-alias-finder" >/dev/null 2>&1 || true
-    fi
-    ;;
-    esac
-done
-
-show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc && mkdir -p $HOME/.config/OhMyTermux && curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)'
+        if command -v glow &> /dev/null
+            then
+            echo "alias help='glow \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
         else
-    echo -e "\e[38;5;33mTéléchargement de la configuration...\e[0m"
-    (curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
-    curl -fLo "$HOME/.zshrc" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc && 
-    curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md) || 
-    echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
-fi
-
-if command -v glow &> /dev/null
-    then
-        echo "alias help='glow \$HOME/.config/OhMyTermux/help.md'" >> "$HOME/.zshrc"
-    else
-        echo "alias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$HOME/.zshrc"
-    fi
-    chsh -s zsh
-    ;;
+            echo "alias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
+        fi
+        chsh -s zsh
+        ;;
     "fish")
     if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Fish" -- pkg install -y fish
@@ -547,21 +583,21 @@ alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
 alias la="eza --icons -lgha --group-directories-first"
 alias lt="eza --icons --tree"
 alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"' >> $PREFIX/etc/bash.bashrc
-                if [ -f "$HOME/.zshrc" ]; then
+alias dir="eza -lF --icons"' >> $BASHRC
+                if [ -f "$ZSHRC" ]; then
                     echo 'alias l="eza --icons"
 alias ls="eza -1 --icons"
 alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
 alias la="eza --icons -lgha --group-directories-first"
 alias lt="eza --icons --tree"
 alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"' >> $HOME/.zshrc
+alias dir="eza -lF --icons"' >> $ZSHRC
                 fi
                 ;;
             bat)
-                echo 'alias cat="bat"' >> $PREFIX/etc/bash.bashrc
-                if [ -f "$HOME/.zshrc" ]; then
-                    echo 'alias cat="bat"' >> $HOME/.zshrc
+                echo 'alias cat="bat"' >> $BASHRC
+                if [ -f "$ZSHRC" ]; then
+                    echo 'alias cat="bat"' >> $ZSHRC
                 fi
                 ;;
             nala)
@@ -571,15 +607,15 @@ alias update="nala update"
 alias upgrade="nala upgrade -y"
 alias search="nala search"
 alias list="nala list --upgradeable"
-alias show="nala show"' >> $PREFIX/etc/bash.bashrc
-                if [ -f "$HOME/.zshrc" ]; then
+alias show="nala show"' >> $BASHRC
+                if [ -f "$ZSHRC" ]; then
                     echo 'alias install="nala install -y"
 alias uninstall="nala remove -y"
 alias update="nala update"
 alias upgrade="nala upgrade -y"
 alias search="nala search"
 alias list="nala list --upgradeable"
-alias show="nala show"' >> $HOME/.zshrc
+alias show="nala show"' >> $ZSHRC
                 fi
                 ;;
             # TODO : Ajout d'alias supplémentaires
@@ -601,10 +637,10 @@ alias cm="chmod +x"
 alias clone="git clone"
 alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"'
 
-echo "$aliases" >> "$PREFIX/etc/bash.bashrc"
+echo "$aliases" >> "$BASHRC"
 
-if [ -f "$HOME/.zshrc" ]; then
-    echo "$aliases" >> "$HOME/.zshrc"
+if [ -f "$ZSHRC" ]; then
+    echo "$aliases" >> "$ZSHRC"
 fi
 
 # TODO : Ajout Fish
@@ -716,9 +752,9 @@ function get_username() {
 }
 
 alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
-' >> $PREFIX/etc/bash.bashrc
+' >> $BASHRC
 
-if [ -f "$HOME/.zshrc" ]; then
+if [ -f "$ZSHRC" ]; then
     echo '
 function get_username() {
     user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
@@ -727,7 +763,7 @@ function get_username() {
 }
 
 alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
-' >> $HOME/.zshrc
+' >> $ZSHRC
 fi
 
 ##############
@@ -736,7 +772,7 @@ fi
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "      Installer Termux-X11 ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "    Installer Termux-X11 ?"; then
         show_banner
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Termux-X11 APK" -- wget https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk
         mv app-arm64-v8a-debug.apk $HOME/storage/downloads/
@@ -744,7 +780,7 @@ if $USE_GUM; then
         rm $HOME/storage/downloads/app-arm64-v8a-debug.apk
     fi
 else
-    echo -e "\e[38;5;33m      Installer Termux-X11 ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m    Installer Termux-X11 ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         show_banner
@@ -857,26 +893,29 @@ fi
 # End of script #
 #################
 
-source $PREFIX/etc/bash.bashrc
-if [ -f "$HOME/.zshrc" ]; then
-    source "$HOME/.zshrc"
-fi
-
 rm -f xfce.sh proot.sh utils.sh install.sh
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "       Exécuter OhMyTermux ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "    Exécuter OhMyTermux ?"; then
         clear
+        source $BASHRC
+        if [ -f "$ZSHRC" ]; then
+            source "$ZSHRC"
+        fi
         exec $shell_choice
     else
         echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
 else
-    echo -e "\e[38;5;33m       Exécuter OhMyTermux ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m    Exécuter OhMyTermux ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         clear
+        source $BASHRC
+        if [ -f "$ZSHRC" ]; then
+            source "$ZSHRC"
+        fi
         exec $shell_choice
     else
         echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"

@@ -112,11 +112,11 @@ else
     wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip > /dev/null 2>&1
 fi
 {
-    unzip 2024-09-02.zip
-    tar -xf WhiteSur-gtk-theme-2024-09-02/release/WhiteSur-Dark.tar.xz
+    unzip 2024.09.02.zip
+    tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz
     mv WhiteSur-Dark/ $PREFIX/share/themes/
     rm -rf WhiteSur*
-    rm 2024-09-02.zip
+    rm 2024.09.02.zip
 } > /dev/null 2>&1
 
 show_banner
