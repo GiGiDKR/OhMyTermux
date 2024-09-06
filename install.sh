@@ -237,6 +237,7 @@ install_shell() {
                     echo -e "\nalias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
                 fi
                 chsh -s zsh
+                fi
                 ;;
             "fish")
                 if $USE_GUM; then
