@@ -122,6 +122,90 @@ show_banner() {
 
 check_and_install_gum
 
+show_banner
+
+echo -e "\e[38;5;33mChanger le répertoire de sources ? (o/n)\e[0m"
+read change_repo_choice
+if [ "$change_repo_choice" = "o" ]; then
+    termux-change-repo
+fi
+
+termux_dir="$HOME/.termux"
+file_path="$termux_dir/colors.properties"
+if [ ! -f "$file_path" ]; then
+    mkdir -p "$termux_dir"
+    cat <<EOL > "$file_path"
+## Name: TokyoNight
+# Special
+foreground = #c0caf5
+background = #1a1b26
+cursor = #c0caf5
+# Black/Grey
+color0 = #15161e
+color8 = #414868
+# Red
+color1 = #f7768e
+color9 = #f7768e
+# Green
+color2 = #9ece6a
+color10 = #9ece6a
+# Yellow
+color3 = #e0af68
+color11 = #e0af68
+# Blue
+color4 = #7aa2f7
+color12 = #7aa2f7
+# Magenta
+color5 = #bb9af7
+color13 = #bb9af7
+# Cyan
+color6 = #7dcfff
+color14 = #7dcfff
+# White/Grey
+color7 = #a9b1d6
+color15 = #c0caf5
+# Other
+color16 = #ff9e64
+color17 = #db4b4b
+EOL
+fi
+
+show_banner
+if $USE_GUM; then
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut" -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
+else
+    echo -e "\e[38;5;33mTéléchargement police par défaut...\e[0m"
+    curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
+fi
+
+file_path="$termux_dir/termux.properties"
+
+if [ ! -f "$file_path" ]; then
+    cat <<EOL > "$file_path"
+allow-external-apps = true
+use-black-ui = true
+bell-character = ignore
+fullscreen = true
+EOL
+else
+    sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
+    sed -i 's/^# use-black-ui = true/use-black-ui = true/' "$file_path"
+    sed -i 's/^# bell-character = ignore/bell-character = ignore/' "$file_path"
+    sed -i 's/^# fullscreen = true/fullscreen = true/' "$file_path"
+fi
+
+touch .hushlogin
+termux-reload-settings
+
+show_banner
+if $USE_GUM; then
+    gum confirm --prompt.foreground="33" --selected.background="33" "  Autoriser l'accès au stockage ?" && termux-setup-storage
+else
+    echo -e "\e[38;5;33m  Autoriser l'accès au stockage ? (o/n)\e[0m"
+    read choice
+    [ "$choice" = "o" ] && termux-setup-storage
+fi
+
 install_shell() {
     if $SHELL_CHOICE; then
         show_banner
