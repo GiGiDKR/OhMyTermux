@@ -1001,10 +1001,11 @@ else
     read choice
     if [ "$choice" = "o" ]; then
         clear
-        source $BASHRC
-        if [ -f "$ZSHRC" ]; then
-            source "$ZSHRC"
-        fi
+        #if [ -f "$ZSHRC" ]; then
+        #    source "$ZSHRC"
+        #else
+        #    source $BASHRC
+        #fi
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
         else
