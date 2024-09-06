@@ -73,6 +73,8 @@ check_and_install_gum() {
     fi
 }
 
+check_and_install_gum
+
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -119,8 +121,6 @@ show_banner() {
         bash_banner
     fi
 }
-
-check_and_install_gum
 
 show_banner
 
