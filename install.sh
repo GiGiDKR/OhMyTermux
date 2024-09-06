@@ -321,7 +321,6 @@ install_shell() {
                     echo -e "\e[38;5;33mZSH n'est pas installé. Impossible d'installer les plugins.\e[0m"
                 fi
                 chsh -s zsh
-                fi
                 ;;
             "fish")
                 if $USE_GUM; then
