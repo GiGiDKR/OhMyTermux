@@ -341,6 +341,9 @@ install_zsh_plugins() {
     if $PLUGIN_CHOICE && command -v zsh &> /dev/null; then
         show_banner
         PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
+    elif $PLUGIN_CHOICE; then
+        echo -e "\e[38;5;33mZSH n'est pas installé.\e[0m"
+        return
     else
         echo -e "\e[38;5;33mSélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :\e[0m"
         echo -e "\e[38;5;33m1) zsh-autosuggestions\e[0m"
@@ -363,10 +366,7 @@ install_zsh_plugins() {
                 7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
             esac
         done
-    elif $PLUGIN_CHOICE; then
-        echo -e "\e[38;5;33mZSH n'est pas installé.\e[0m"
     fi
-
     if [[ "$PLUGINS" == *"Tout installer"* ]]; then
         PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
     fi
