@@ -983,9 +983,10 @@ show_banner
 if $USE_GUM; then
     if gum confirm --prompt.foreground="33" --selected.background="33" "   Exécuter OhMyTermux ?"; then
         clear
-        source $BASHRC
         if [ -f "$ZSHRC" ]; then
             source "$ZSHRC"
+        else
+            source $BASHRC
         fi
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
@@ -1000,9 +1001,10 @@ else
     read choice
     if [ "$choice" = "o" ]; then
         clear
-        source $BASHRC
         if [ -f "$ZSHRC" ]; then
             source "$ZSHRC"
+        else
+            source $BASHRC
         fi
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
