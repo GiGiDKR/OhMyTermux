@@ -507,7 +507,7 @@ add_aliases_to_rc() {
     local package=$1
     case $package in
         eza)
-            echo 'alias l="eza --icons"
+            echo -e '\nalias l="eza --icons"
 alias ls="eza -1 --icons"
 alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
 alias la="eza --icons -lgha --group-directories-first"
@@ -515,7 +515,7 @@ alias lt="eza --icons --tree"
 alias lta="eza --icons --tree -lgha"
 alias dir="eza -lF --icons"' >> $BASHRC
             if [ -f "$ZSHRC" ]; then
-                echo 'alias l="eza --icons"
+                echo -e '\nalias l="eza --icons"
 alias ls="eza -1 --icons"
 alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
 alias la="eza --icons -lgha --group-directories-first"
@@ -525,13 +525,13 @@ alias dir="eza -lF --icons"' >> $ZSHRC
             fi
             ;;
         bat)
-            echo 'alias cat="bat"' >> $BASHRC
+            echo -e '\nalias cat="bat"' >> $BASHRC
             if [ -f "$ZSHRC" ]; then
-                echo 'alias cat="bat"' >> $ZSHRC
+                echo -e '\nalias cat="bat"' >> $ZSHRC
             fi
             ;;
         nala)
-            echo 'alias install="nala install -y"
+            echo -e '\nalias install="nala install -y"
 alias uninstall="nala remove -y"
 alias update="nala update"
 alias upgrade="nala upgrade -y"
@@ -539,7 +539,7 @@ alias search="nala search"
 alias list="nala list --upgradeable"
 alias show="nala show"' >> $BASHRC
             if [ -f "$ZSHRC" ]; then
-                echo 'alias install="nala install -y"
+                echo -e '\nalias install="nala install -y"
 alias uninstall="nala remove -y"
 alias update="nala update"
 alias upgrade="nala upgrade -y"
@@ -567,10 +567,10 @@ alias g="git"
 alias gc="git clone"
 alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"'
 
-echo "$aliases" >> "$BASHRC"
+echo -e "\n$aliases" >> "$BASHRC"
 
 if [ -f "$ZSHRC" ]; then
-    echo "$aliases" >> "$ZSHRC"
+    echo -e"\n$aliases" >> "$ZSHRC"
 fi
 
 # TODO : Ajout Fish
@@ -810,31 +810,27 @@ install_xfce() {
         ./utils.sh
 
         # Get username function for alias to execute Debian 
-        echo '
-        function get_username() {
-            user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
-            username=$(basename "$user_dir"/*)
-            echo $username
-        }
+        echo -e '\nfunction get_username() {
+  user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
+  username=$(basename "$user_dir"/*)
+  echo $username
+}
 
-        alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
-        ' >> $BASHRC
+alias debian="proot-distro login debian --shared-tmp --user $(get_username)"' >> $BASHRC
 
         if [ -f "$ZSHRC" ]; then
-            echo '
-        function get_username() {
-            user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
-            username=$(basename "$user_dir"/*)
-            echo $username
-        }
+            echo -e '\nfunction get_username() {
+  user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
+  username=$(basename "$user_dir"/*)
+  echo $username
+}
 
-        alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
-        ' >> $ZSHRC
+alias debian="proot-distro login debian --shared-tmp --user $(get_username)"' >> $ZSHRC
         fi
         # Termux-X11 
         show_banner
         if $USE_GUM; then
-            if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer Termux-X11 ?"; then
+            if gum confirm --prompt.foreground="33" --selected.background="33" " Installer Termux-X11 ?"; then
                 show_banner
                 gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Termux-X11 APK" -- wget https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk
                 mv app-arm64-v8a-debug.apk $HOME/storage/downloads/
@@ -842,7 +838,7 @@ install_xfce() {
                 rm $HOME/storage/downloads/app-arm64-v8a-debug.apk
             fi
         else
-            echo -e "\e[38;5;33m  Installer Termux-X11 ? (o/n)\e[0m"
+            echo -e "\e[38;5;33m Installer Termux-X11 ? (o/n)\e[0m"
             read choice
             if [ "$choice" = "o" ]; then
                 show_banner
@@ -975,7 +971,7 @@ rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" " Exécuter OhMyTermux ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "   Exécuter OhMyTermux ?"; then
         clear
         source $BASHRC
         if [ -f "$ZSHRC" ]; then
@@ -986,7 +982,7 @@ if $USE_GUM; then
         echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
 else
-    echo -e "\e[38;5;33m Exécuter OhMyTermux ? (o/n)\e[0m"
+    echo -e "\e[38;5;33m   Exécuter OhMyTermux ? (o/n)\e[0m"
     read choice
     if [ "$choice" = "o" ]; then
         clear
