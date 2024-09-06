@@ -298,12 +298,6 @@ install_shell() {
                         fi
                     fi
 
-                if command -v zsh &> /dev/null; then
-                    install_zsh_plugins
-                else
-                    echo -e "\e[38;5;33mZSH n'est pas installé.\e[0m"
-                fi
-
                 show_banner
                 if $USE_GUM; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && mkdir -p $HOME/.config/OhMyTermux && curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)'
@@ -314,11 +308,17 @@ install_shell() {
                     echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
                 fi
 
-                if command -v glow &> /dev/null
-                    then
-                    echo -e "\nalias help='glow \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
+#                if command -v glow &> /dev/null
+#                    then
+#                    echo -e "\nalias help='glow \#?$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
+#                else
+#                    echo -e "\nalias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
+#                fi
+
+                if command -v zsh &> /dev/null; then
+                    install_zsh_plugins
                 else
-                    echo -e "\nalias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
+                    echo -e "\e[38;5;33mZSH n'est pas installé. Impossible d'installer les plugins.\e[0m"
                 fi
                 chsh -s zsh
                 fi
@@ -338,14 +338,12 @@ install_shell() {
 }
 
 install_zsh_plugins() {
-    if $PLUGIN_CHOICE && command -v zsh &> /dev/null; then
+    if command -v zsh &> /dev/null; then
         show_banner
-        PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
-    elif $PLUGIN_CHOICE; then
-        echo -e "\e[38;5;33mZSH n'est pas installé.\e[0m"
-        return
-    else
-        echo -e "\e[38;5;33mSélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :\e[0m"
+        if $USE_GUM; then
+            PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
+        else
+            echo -e "\e[38;5;33mSélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :\e[0m"
         echo -e "\e[38;5;33m1) zsh-autosuggestions\e[0m"
         echo -e "\e[38;5;33m2) zsh-syntax-highlighting\e[0m"
         echo -e "\e[38;5;33m3) zsh-completions\e[0m"
