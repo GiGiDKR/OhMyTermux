@@ -357,7 +357,7 @@ install_zsh_plugins() {
                 7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
             esac
         done
-    fi
+        fi
     if [[ "$PLUGINS" == *"Tout installer"* ]]; then
         PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
     fi
@@ -386,6 +386,7 @@ install_zsh_plugins() {
         esac
     done
     update_zshrc
+    fi
 }
 
 install_plugin() {
