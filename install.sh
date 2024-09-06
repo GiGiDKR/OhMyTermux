@@ -550,6 +550,35 @@ alias show="nala show"' >> $ZSHRC
             ;;
         # TODO : Ajout d'alias pour d'autres packages
     esac
+    # Define general aliases in a variable
+    aliases='alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias h="history"
+alias q="exit"
+alias c="clear"
+alias md="mkdir"
+alias rm="rm -rf"
+alias s="source"
+alias n="nano"
+alias cm="chmod +x"
+alias g="git"
+alias gc="git clone"
+alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"'
+
+echo "$aliases" >> "$BASHRC"
+
+if [ -f "$ZSHRC" ]; then
+    echo "$aliases" >> "$ZSHRC"
+fi
+
+# TODO : Ajout Fish
+#if [ -f "$HOME/.config/fish/config.fish" ]; then
+#    # Convertir les alias bash en format fish
+#    echo "$aliases" | sed 's/alias \(.*\)="\(.*\)"/alias \1 "\2"/' >> "$HOME/.config/fish/config.fish"
+#fi
+
 }
 
 # TODO : Ajouter l'installation de Color Schemes
