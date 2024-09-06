@@ -1,6 +1,7 @@
 #!/bin/bash
 
 USE_GUM=false
+EXECUTE_INITIAL_CONFIG=true
 SHELL_CHOICE=false
 PACKAGES_CHOICE=false
 PLUGIN_CHOICE=false
@@ -47,6 +48,10 @@ for arg in "$@"; do
         --script|-sc)
             SCRIPT_CHOICE=true
             ONLY_GUM=false
+            shift
+            ;;
+        --noconf|-nc)
+            EXECUTE_INITIAL_CONFIG=false
             shift
             ;;
     esac
@@ -124,6 +129,7 @@ show_banner() {
 
 show_banner
 
+initial_config() {
 echo -e "\e[38;5;33mChanger le répertoire de sources ? (o/n)\e[0m"
 read change_repo_choice
 if [ "$change_repo_choice" = "o" ]; then
@@ -205,6 +211,7 @@ else
     read choice
     [ "$choice" = "o" ] && termux-setup-storage
 fi
+}
 
 install_shell() {
     if $SHELL_CHOICE; then
@@ -957,6 +964,9 @@ install_script() {
 ###############################
 show_banner
 
+if $EXECUTE_INITIAL_CONFIG; then
+    initial_config
+fi
 install_shell
 install_packages
 install_font
@@ -977,7 +987,11 @@ if $USE_GUM; then
         if [ -f "$ZSHRC" ]; then
             source "$ZSHRC"
         fi
-        exec $shell_choice
+        if [ "$shell_choice" = "zsh" ]; then
+            exec zsh -l
+        else
+            exec $shell_choice
+        fi
     else
         echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
@@ -990,7 +1004,11 @@ else
         if [ -f "$ZSHRC" ]; then
             source "$ZSHRC"
         fi
-        exec $shell_choice
+        if [ "$shell_choice" = "zsh" ]; then
+            exec zsh -l
+        else
+            exec $shell_choice
+        fi
     else
         echo -e "\e[38;5;33mOhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
