@@ -1001,7 +1001,7 @@ else
     read choice
     if [ "$choice" = "o" ]; then
         clear
-        #if [ -f "$ZSHRC" ]; then
+        if [ -f "$ZSHRC" ]; then
             source "$ZSHRC"
         else
             source $BASHRC
