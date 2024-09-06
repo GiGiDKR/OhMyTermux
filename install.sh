@@ -120,6 +120,8 @@ show_banner() {
     fi
 }
 
+check_and_install_gum
+
 install_shell() {
     if $SHELL_CHOICE; then
         show_banner
@@ -851,7 +853,6 @@ install_script() {
 ###############################
 # Partie principale du script #
 ###############################
-check_and_install_gum
 show_banner
 
 install_shell
