@@ -238,7 +238,7 @@ install_shell() {
                         pkg install -y zsh
                     fi
                 fi
-                
+
                 # Installation de Oh My Zsh et autres configurations ZSH
                 show_banner
                 if $USE_GUM; then
@@ -263,7 +263,7 @@ install_shell() {
 
                 show_banner
                 if $USE_GUM; then
-                    gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?" && {
+                    if gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?"; then
                         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k" -- \
                         git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
@@ -277,7 +277,7 @@ install_shell() {
                         else
                             echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                         fi
-                    }
+                    fi
                 else
                     echo -e "\e[38;5;33mVoulez-vous installer PowerLevel10k ? (o/n)\e[0m"
                     read choice
@@ -297,6 +297,7 @@ install_shell() {
                             echo -e "\e[38;5;33mVous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.\e[0m"
                         fi
                     fi
+                fi
 
                 show_banner
                 if $USE_GUM; then
@@ -307,13 +308,6 @@ install_shell() {
                     curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md) || 
                     echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
                 fi
-
-#                if command -v glow &> /dev/null
-#                    then
-#                    echo -e "\nalias help='glow \#?$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
-#                else
-#                    echo -e "\nalias help='cat \$HOME/.config/OhMyTermux/help.md'" >> "$ZSHRC"
-#                fi
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
