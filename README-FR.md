@@ -180,6 +180,8 @@ Deux scripts sont également disponibles pour cette configuration :
   - Ajout de paquets sélectionnables à la liste
 - Version 1.0.5 :
     - Gestion dynamique de la configuration de .zshrc
+- Version 1.0.6 :
+    - Modification globale du script principal en divisant chaque étape en une fonction exécutable seule (ou combinée avec d'autres) avec l'ajout d'un argument à la commande d'exécution
 - Version 1.1 :
   - En développement
 
