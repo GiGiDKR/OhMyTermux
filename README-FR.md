@@ -35,6 +35,19 @@ Ou sans
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
+>[!NOTE]
+> Depuis la version 1.0.6 il est possible d'exécuter une seule fonction du script en utilisant l'argument correspondant :
+> - Istallation du shell : `--shell` or `-sh`
+> - Intallation des paquets : `--package` or `-pkg`
+> - Installation des plugins : `--plugin` or `-plg`
+> - Installation de la police : `--font` or `-f`
+> - XFCE / Debian-Proot : `--xfce` or `-x`
+> - OhMyTermuxScript : `--script` or `-s`
+> - Passer la configuration initiale : `--noconf` or `-nc`
+>
+> **Plusieurs arguments peuvent être combinés.**
+>
+
 ## À propos de ce programme
 
 🧊 **Packages installés par défaut :**
