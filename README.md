@@ -15,29 +15,37 @@
 > [!IMPORTANT]
 > This project is under active development but to facilitate progress the French language is preferred to provide the user CLI.
 > 
-> Several languages ​​will be available in a future version.
-> 
 > A French version of this text is [available](README-FR.md).
 
 &nbsp;
 
 ## Installation
 
-> [!TIP]
-> **[Gum](https://github.com/charmbracelet/gum)** allows simplified use of CLI scripts like multiple selection with Space.
->
-> It is recommended to use it by adding the `--gum` or `-g` parameter to the command.
+🧊 To install **OhMyTermux**
+```bash
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+```
 
-🧊 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
+>[!TIP]
+> **[Gum](https://github.com/charmbracelet/gum)** allows simplified use of CLI scripts, it is recommended to use it by adding the `--gum` or `-g` argument.
+
+🔥 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
 
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
-Or without
-```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
-```
+>[!NOTE]
+> Since version 1.0.6 it is possible to execute only one function of the script by use the corresponding argument :
+> - `--shell` or `-sh`.  : Shell installation
+> - `--package` or `-pkg`: Packages installation
+> - `--plugin` or `-plg` : Plugins installation
+> - `--font` or `-f`     : Fonts installation 
+> - `--xfce` or `-x`     : XFCE desktop and Debian proot installation 
+> - `--script` or `-s`   : OhMyTermuxScript installation 
+> - `--noconf` or `-nc`  : Skip initial setup (change repo, grant storage access, install default font and theme)
+>
+> *Multiple arguments can be combined.*
 
 &nbsp;
 
@@ -65,7 +73,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [micro](https://github.com/zyedidia/micro)
 - [vim](https://github.com/vim/vim)
 - [neovim](https://github.com/neovim/neovim)
-- [lazygit](https://github.com/jesseduffield/lazygit(
+- [lazygit](https://github.com/jesseduffield/lazygit)
 - [open-ssh](https://www.openssh.com/)
 
 
@@ -126,7 +134,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 &nbsp;
 
-# 🔥 **XFCE and Debian :**
+# 🧊 **XFCE and Debian :**
 
 Sets up a termux XFCE desktop and a Debian proot install.
 This setup uses Termux-X11, the termux-x11 server will be installed and you will be prompted to allow termux to install the Android APK.
@@ -193,6 +201,8 @@ There are two scripts available for this setup as well :
     - Adding packages to the selectable list
 - Version 1.0.5 :
     - Dynamic management of .zshrc configuration
+- Version 1.0.6 :
+    - Global modification of the main script by splitting each step into a function that can be executed alone (or combined with others) with the addition of an argument to the execution command
 - Version 1.1 : 
   - In development
 
@@ -207,5 +217,8 @@ There are two scripts available for this setup as well :
 - [ ] Integrate in main script theme selection (Color schemes)
 - [ ] Separate XFCE / Debian install to run native Termux XFCE
 - [ ] Add options for Debian (Themes, Fonts, Wallpapers)
+- [ ] Added an argument to not delete the main script in order to run it again
+- [ ] Create a $PREFIX/bin function for executing the preserved main script
 
 &nbsp;
+
