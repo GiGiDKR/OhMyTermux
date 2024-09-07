@@ -30,7 +30,7 @@ for arg in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --plugin|-plg)
+        --plugins|-plg)
             PLUGIN_CHOICE=true
             ONLY_GUM=false
             shift
