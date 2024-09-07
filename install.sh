@@ -25,12 +25,12 @@ for arg in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --packages|-p)
+        --packages|-pkg)
             PACKAGES_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
-        --plugin|-pl)
+        --plugin|-plg)
             PLUGIN_CHOICE=true
             ONLY_GUM=false
             shift
