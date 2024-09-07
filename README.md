@@ -37,15 +37,15 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 >[!NOTE]
 > Since version 1.0.6 it is possible to execute only one function of the script by use the corresponding argument :
-> - `--shell` or `-sh`.  : Shell installation
-> - `--package` or `-pkg`: Packages installation
-> - `--plugin` or `-plg` : Plugins installation
-> - `--font` or `-f`     : Fonts installation 
-> - `--xfce` or `-x`     : XFCE desktop and Debian proot installation 
-> - `--script` or `-s`   : OhMyTermuxScript installation 
-> - `--noconf` or `-nc`  : Skip initial setup (change repo, grant storage access, install default font and theme)
+> - Shell installation : `--shell` or `-sh`
+> - Packages installation : `--package` or `-pkg`
+> - Plugins installation : `--plugin` or `-plg`
+> - Fonts installation : `--font` or `-f`
+> - XFCE / Debian-Proot : `--xfce` or `-x`
+> - OhMyTermuxScript : `--script` or `-s`
+> - Skip initial configuration : `--noconf` or `-nc`
 >
-> *Multiple arguments can be combined.*
+> **Multiple arguments can be combined.**
 
 &nbsp;
 
@@ -115,7 +115,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 - Custom aliases
 - Symlink to internal storage user directories [^1]
-
 
 🧊 **Useful scripts [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
 
