@@ -70,6 +70,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [fzf](https://github.com/junegunn/fzf)
 - [glow](https://github.com/charmbracelet/glow)
 - [python](https://github.com/python)
+- [nodejs](https://github.com/nodejs/node)
+- [nodejs-lts](https://github.com/nodejs/Release)
 - [micro](https://github.com/zyedidia/micro)
 - [vim](https://github.com/vim/vim)
 - [neovim](https://github.com/neovim/neovim)
