@@ -741,9 +741,7 @@ install_xfce() {
         else
             echo -e "\e[38;5;33m Installer OhMyTermux XFCE ? (o/n)\e[0m"
             read choice
-            if [ "$choice" = "o" ]; then
-                read -p "Entrez votre nom d'utilisateur : " username
-            else
+            if [ "$choice" = "n" ]; then
                 PACKAGES="$PACKAGES ncurses-utils"
 
                 for PACKAGE in $PACKAGES; do
@@ -812,8 +810,8 @@ install_xfce() {
 
         show_banner
         if $USE_GUM; then
-            ./xfce.sh --gum $username
-            ./proot.sh --gum $username
+            ./xfce.sh --gum
+            ./proot.sh --gum
         else
             ./xfce.sh $username
             ./proot.sh $username
