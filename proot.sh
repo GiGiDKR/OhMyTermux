@@ -70,16 +70,22 @@ finish() {
 
 trap finish EXIT
 
-if [ $# -eq 0 ]; then
-    if [ "$USE_GUM" = true ]; then
-        username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
-    else
-        echo -e "\e[38;5;33mEntrez votre nom d'utilisateur :\e[0m"
-        read -r username
-    fi
+if [ "$USE_GUM" = true ]; then
+    username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
 else
-    username="$1"
+    read -p "Entrez votre nom d'utilisateur : " username
 fi
+
+#if [ $# -eq 0 ]; then
+#    if [ "$USE_GUM" = true ]; then
+#        username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
+#    else
+#        echo -e "\e[38;5;33mEntrez votre nom d'utilisateur :\e[0m"
+#        read -r username
+#    fi
+#else
+#    username="$1"
+#fi
 
 pkgs_proot=('sudo' 'wget' 'nala' 'jq')
 
