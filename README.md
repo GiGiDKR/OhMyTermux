@@ -185,7 +185,7 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
-## 💻 Version history
+# 💻 Version history
 
 - Version 1.0.0 :
     - Initial upload
@@ -207,7 +207,7 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
-## 📖 To Do
+# 📖 To Do
 - [X] Installation of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
 - [ ] Execution of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
 - [ ] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
