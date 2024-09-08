@@ -434,47 +434,51 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         show_banner
         if $USE_GUM; then
-            PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=19 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "bat" "lf" "fzf" "glow" "python" "nodejs" "nodejs-lts" "lsd" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=21 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
             echo -e "\e[38;5;33mSélectionner les packages à installer (séparés par des espaces) :\e[0m"
             echo -e "\e[38;5;33m1) nala\e[0m"
             echo -e "\e[38;5;33m2) eza\e[0m"
-            echo -e "\e[38;5;33m3) bat\e[0m"
-            echo -e "\e[38;5;33m4) lf\e[0m"
-            echo -e "\e[38;5;33m5) fzf\e[0m"
-            echo -e "\e[38;5;33m6) glow\e[0m"
-            echo -e "\e[38;5;33m7) python\e[0m"
-            echo -e "\e[38;5;33m8) nodejs\e[0m"
-            echo -e "\e[38;5;33m9) nodejs-lts\e[0m"
-            echo -e "\e[38;5;33m10) lsd\e[0m"
-            echo -e "\e[38;5;33m11) micro\e[0m"
-            echo -e "\e[38;5;33m12) vim\e[0m"
-            echo -e "\e[38;5;33m13) neovim\e[0m"
-            echo -e "\e[38;5;33m14) lazygit\e[0m"
-            echo -e "\e[38;5;33m15) open-ssh\e[0m"
-            echo -e "\e[38;5;33m16) tsu\e[0m"
-            echo -e "\e[38;5;33m17) Tout installer\e[0m"
+            echo -e "\e[38;5;33m3) colorls\e[0m"   
+            echo -e "\e[38;5;33m4) lsd\e[0m"         
+            echo -e "\e[38;5;33m5) bat\e[0m"
+            echo -e "\e[38;5;33m6) lf\e[0m"
+            echo -e "\e[38;5;33m7) fzf\e[0m"
+            echo -e "\e[38;5;33m8) glow\e[0m"
+            echo -e "\e[38;5;33m9) tmux\e[0m"
+            echo -e "\e[38;5;33m10) python\e[0m"
+            echo -e "\e[38;5;33m11) nodejs\e[0m"
+            echo -e "\e[38;5;33m12) nodejs-lts\e[0m"
+            echo -e "\e[38;5;33m13) micro\e[0m"
+            echo -e "\e[38;5;33m14) vim\e[0m"
+            echo -e "\e[38;5;33m15) neovim\e[0m"
+            echo -e "\e[38;5;33m16) lazygit\e[0m"
+            echo -e "\e[38;5;33m17) open-ssh\e[0m"
+            echo -e "\e[38;5;33m18) tsu\e[0m"
+            echo -e "\e[38;5;33m19) Tout installer\e[0m"
             read -p "Entrez les numéros des packages : " package_choices
             PACKAGES=""
             for choice in $package_choices; do
                 case $choice in
                     1) PACKAGES+="nala " ;;
                     2) PACKAGES+="eza " ;;
-                    3) PACKAGES+="bat " ;;
-                    4) PACKAGES+="lf " ;;
-                    5) PACKAGES+="fzf " ;;
-                    6) PACKAGES+="glow " ;;
-                    7) PACKAGES+="python " ;;
-                    8) PACKAGES+="nodejs " ;;
-                    9) PACKAGES+="nodejs-lts " ;;
-                    10) PACKAGES+="lsd " ;;
-                    11) PACKAGES+="micro " ;;
-                    12) PACKAGES+="vim " ;;
-                    13) PACKAGES+="neovim " ;;
-                    14) PACKAGES+="lazygit " ;;
-                    15) PACKAGES+="open-ssh " ;;
-                    16) PACKAGES+="tsu " ;;
-                    17) PACKAGES="nala eza bat lf fzf glow python nodejs nodejs-lts lsd micro vim neovim lazygit open-ssh tsu" ;;
+                    3) PACKAGES+="colorsls " ;;
+                    4) PACKAGES+="lsd " ;;
+                    5) PACKAGES+="bat " ;;
+                    6) PACKAGES+="lf " ;;
+                    7) PACKAGES+="fzf " ;;
+                    8) PACKAGES+="glow " ;;
+                    9) PACKAGES+="tmux " ;;
+                    10) PACKAGES+="python " ;;
+                    11) PACKAGES+="nodejs " ;;
+                    12) PACKAGES+="nodejs-lts " ;;
+                    13) PACKAGES+="micro " ;;
+                    14) PACKAGES+="vim " ;;
+                    15) PACKAGES+="neovim " ;;
+                    16) PACKAGES+="lazygit " ;;
+                    17) PACKAGES+="open-ssh " ;;
+                    18) PACKAGES+="tsu " ;;
+                    19) PACKAGES="nala eza colorsls lsd bat lf fzf glow tmux python nodejs nodejs-lts micro vim neovim lazygit open-ssh tsu" ;;
                 esac
             done
         fi
@@ -820,18 +824,18 @@ install_xfce() {
 
         # Get username function for alias to execute Debian 
         echo -e '\nfunction get_username() {
-  user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
-  username=$(basename "$user_dir"/*)
-  echo $username
+        user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
+        username=$(basename "$user_dir"/*)
+        echo $username
 }
 
 alias debian="proot-distro login debian --shared-tmp --user $(get_username)"' >> $BASHRC
 
         if [ -f "$ZSHRC" ]; then
             echo -e '\nfunction get_username() {
-  user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
-  username=$(basename "$user_dir"/*)
-  echo $username
+            user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
+            username=$(basename "$user_dir"/*)
+            echo $username
 }
 
 alias debian="proot-distro login debian --shared-tmp --user $(get_username)"' >> $ZSHRC

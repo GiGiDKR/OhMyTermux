@@ -2,7 +2,7 @@
 
 **Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
 
-Optional installation of :
+#### Optional installation of:
 
 - **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro with a [XFCE](https://www.xfce.org/) desktop and an **[App-Installer](https://github.com/GiGiDKR/App-Installer)** which are not available in package manager.
 
@@ -51,6 +51,12 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 ## About this program 
 
+🧊 **Shell selection :**
+
+- [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
+- [ZSH](https://www.zsh.org/)
+- [Fish](https://github.com/fish-shell/fish-shell)
+
 🧊 **Packages installed by default :**
 
 - [wget](https://github.com/mirror/wget)
@@ -69,20 +75,23 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [lf](https://github.com/gokcehan/lf)
 - [fzf](https://github.com/junegunn/fzf)
 - [glow](https://github.com/charmbracelet/glow)
+- [tmux](https://github.com/tmux/tmux)
 - [python](https://github.com/python)
+- [nodejs](https://github.com/nodejs/node)
+- [nodejs-lts](https://github.com/nodejs/Release)
+- [rust](https://github.com/rust-lang/rust)
 - [micro](https://github.com/zyedidia/micro)
 - [vim](https://github.com/vim/vim)
 - [neovim](https://github.com/neovim/neovim)
 - [lazygit](https://github.com/jesseduffield/lazygit)
 - [open-ssh](https://www.openssh.com/)
 
+🧊 **Individually selectable modules  :**
 
-🧊 **Shell selection :**
-
-- [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
-- [ZSH](https://www.zsh.org/)
-- [Fish](https://github.com/fish-shell/fish-shell)
-
+- [qobuz-dl](https://github.com/vitiko98/qobuz-dl)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [librosa](https://github.com/librosa/librosa)
+- [cmd-wrapped](https://github.com/YiNNx/cmd-wrapped)
 
   🧊 **Configuration ZSH :**
 
@@ -133,7 +142,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 &nbsp;
 
-# **XFCE and Debian 🧊**
+# 🧊 **XFCE and Debian :**
 
 Sets up a termux XFCE desktop and a Debian proot install.
 This setup uses Termux-X11, the termux-x11 server will be installed and you will be prompted to allow termux to install the Android APK.
@@ -185,7 +194,7 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
-# 💻 Version history
+## 💻 Version history
 
 - Version 1.0.0 :
     - Initial upload
@@ -207,7 +216,7 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
-# 📖 To Do
+## 📖 To Do
 - [X] Installation of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
 - [ ] Execution of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
 - [ ] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
