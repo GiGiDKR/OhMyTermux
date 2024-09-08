@@ -754,7 +754,7 @@ install_xfce() {
 
         # Si l'utilisateur ne veut pas installer XFCE, installer seulement les packages nécessaires
         if ! $install_xfce; then
-            PACKAGES="$PACKAGES ncurses-utils"
+            PACKAGES="ncurses-utils"
             for PACKAGE in $PACKAGES; do
                 if $USE_GUM; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $PACKAGE" -- pkg install -y $PACKAGE 
