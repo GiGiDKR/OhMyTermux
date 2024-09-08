@@ -2,7 +2,7 @@
 
 **Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
 
-#### Optional installation of:
+Optional installation of :
 
 - **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro with a [XFCE](https://www.xfce.org/) desktop and an **[App-Installer](https://github.com/GiGiDKR/App-Installer)** which are not available in package manager.
 
