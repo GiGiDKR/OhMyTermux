@@ -73,12 +73,21 @@ trap finish EXIT
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
+        password=$(gum input --password --placeholder "Entrez votre mot de passe")
     else
         echo -e "\e[38;5;33mEntrez votre nom d'utilisateur :\e[0m"
         read -r username
+        echo -e "\e[38;5;33mEntrez votre mot de passe :\e[0m"
+        read -s password
     fi
 else
     username="$1"
+    if [ "$USE_GUM" = true ]; then
+        password=$(gum input --password --placeholder "Entrez votre mot de passe")
+    else
+        echo -e "\e[38;5;33mEntrez votre mot de passe :\e[0m"
+        read -s password
+    fi
 fi
 
 pkgs_proot=('sudo' 'wget' 'nala' 'jq')
@@ -118,31 +127,28 @@ if [ "$USE_GUM" = true ]; then
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash '$username'
+        echo '$username:$password' | proot-distro login debian --shared-tmp -- chpasswd
     "
 else
     echo -e "\e[38;5;33mCréation de l'utilisateur...\e[0m"
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash "$username"
+    echo "$username:$password" | proot-distro login debian --shared-tmp -- chpasswd
 fi
 
 show_banner
 if [ "$USE_GUM" = true ]; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Ajout des droits utilisateur" -- bash -c '
         chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-        echo "$username ALL=(ALL) NOPASSWD:ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+        echo "$username ALL=(ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers" > /dev/null
         chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
     '
 else
     echo -e "\e[38;5;33mAjout des droits utilisateur...\e[0m"
     chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-    echo "$username ALL=(ALL) NOPASSWD:ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+    echo "$username ALL=(ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers" > /dev/null
     chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-fi
-
-if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash "$username"; then
-    echo "Erreur lors de la création de l'utilisateur $username"
-    exit 1
 fi
 
 show_banner
@@ -203,20 +209,3 @@ else
     echo -e "\e[38;5;33mInstallation de Mesa-Vulkan...\e[0m"
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb > /dev/null 2>&1
 fi
-
-# TODO : Revenir sur cette fonction si celle de install.sh ne fonctionne pas
-#echo '
-#get_proot_username() {
-#    basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
-#}
-#export username=$(get_proot_username)
-#' >> $PREFIX/etc/bash.bashrc
-
-#if [ -n "$ZSH_VERSION" ]; then
-#echo '
-#get_proot_username() {
-#    basename "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"*
-#}
-#export username=$(get_proot_username)
-#' >> $HOME/.zshrc
-#fi
