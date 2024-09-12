@@ -13,20 +13,13 @@ done
 
 bash_banner() {
     clear
-    COLOR="\e[38;5;33m"
-
-    TOP_BORDER="╔════════════════════════════════════════╗"
-    BOTTOM_BORDER="╚════════════════════════════════════════╝"
-    EMPTY_LINE="║                                        ║"
-    TEXT_LINE="║              OHMYTERMUX                ║"
-
-    echo
-    echo -e "${COLOR}${TOP_BORDER}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${TEXT_LINE}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
-    echo
+    echo -e "\e[38;5;33m
+╔════════════════════════════════════════╗
+║                                        ║
+║              OHMYTERMUX                ║
+║                                        ║
+╚════════════════════════════════════════╝
+\e[0m"
 }
 
 show_banner() {
