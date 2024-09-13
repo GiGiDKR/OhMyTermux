@@ -51,7 +51,23 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/install.sh -
 
 ## About this program 
 
+🧊 **Shell selection :**
+
+<details>
+
+<summary>Expand the list</summary>
+
+- [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
+- [ZSH](https://www.zsh.org/)
+- [Fish](https://github.com/fish-shell/fish-shell)
+
+</details>
+
 🧊 **Packages installed by default :**
+
+<details>
+
+<summary>Expand the list</summary>
 
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
@@ -59,66 +75,121 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/install.sh -
 - [zsh](https://github.com/zsh-users/zsh)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
+</details>
+
 🧊 **Individually selectable packages :**
+
+<details>
+
+<summary>Expand the list</summary>
 
 - [nala](https://github.com/volitank/nala)
 - [eza](https://github.com/eza-community/eza)
-- [lsd](https://github.com/lsd-rs/lsd)
 - [logo-ls](https://github.com/Yash-Handa/logo-ls)
+- [colorls](https://github.com/athityakumar/colorls)
+- [lsd](https://github.com/lsd-rs/lsd)
 - [bat](https://github.com/sharkdp/bat)
 - [lf](https://github.com/gokcehan/lf)
 - [fzf](https://github.com/junegunn/fzf)
 - [glow](https://github.com/charmbracelet/glow)
+- [tmux](https://github.com/tmux/tmux)
 - [python](https://github.com/python)
 - [nodejs](https://github.com/nodejs/node)
 - [nodejs-lts](https://github.com/nodejs/Release)
+- [rust](https://github.com/rust-lang/rust)
 - [micro](https://github.com/zyedidia/micro)
 - [vim](https://github.com/vim/vim)
 - [neovim](https://github.com/neovim/neovim)
 - [lazygit](https://github.com/jesseduffield/lazygit)
 - [open-ssh](https://www.openssh.com/)
 
+</details>
 
-🧊 **Shell selection :**
+🧊 **Individually selectable Python packages  :**
 
-- [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
-- [ZSH](https://www.zsh.org/)
-- [Fish](https://github.com/fish-shell/fish-shell)
+<details>
 
+<summary>Expand the list</summary>
 
-  🧊 **Configuration ZSH :**
+- [qobuz-dl](https://github.com/vitiko98/qobuz-dl)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [librosa](https://github.com/librosa/librosa)
+- ...
 
-    - [Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)
-    - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-    - [zsh-completions](https://github.com/zsh-users/zsh-completions)
-    - [zsh-you-should-use](https://github.com/MichaelAquilina/zsh-you-should-use)
-    - [zsh-abbr](https://github.com/olets/zsh-abbr)
-    - [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
+</details>
 
-  🧊 **Configuration Fish [^1] :**
-  
-   - ~~[Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)~~
-   - ~~[Fisher](https://github.com/jorgebucaran/fisher)~~
-   - ~~[Pure](https://github.com/pure-fish/pure)~~
-   - ~~[Fishline](https://github.com/0rax/fishline)~~
-   - ~~[Virtualfish](https://github.com/justinmayer/virtualfish)~~
-   - ~~[Fish Abbreviation Tips](https://github.com/gazorby/fish-abbreviation-tips)~~
-   - ~~[Bang-Bang](https://github.com/oh-my-fish/plugin-bang-bang)~~
-   - ~~[Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)~~
-   - ~~[Catppuccin for Fish](https://github.com/catppuccin/fish)~~
+🧊 **Individually selectable Rust packages  :**
+
+<details>
+
+<summary>Expand the list</summary>
+
+- [cmd-wrapped](https://github.com/YiNNx/cmd-wrapped)
+- ...
+
+</details>
+
+🧊 **Configuration ZSH :**
+
+<details>
+
+<summary>Expand the list</summary>
+
+- [Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)
+- [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+- [zsh-completions](https://github.com/zsh-users/zsh-completions)
+- [zsh-you-should-use](https://github.com/MichaelAquilina/zsh-you-should-use)
+- [zsh-abbr](https://github.com/olets/zsh-abbr)
+- [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
+
+</details>
+
+🧊 **Configuration Fish [^1] :**
+    
+<details>
+
+<summary>Expand the list</summary>
+
+- ~~[Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)~~
+- ~~[Fisher](https://github.com/jorgebucaran/fisher)~~
+- ~~[Pure](https://github.com/pure-fish/pure)~~
+- ~~[Fishline](https://github.com/0rax/fishline)~~
+- ~~[Virtualfish](https://github.com/justinmayer/virtualfish)~~
+- ~~[Fish Abbreviation Tips](https://github.com/gazorby/fish-abbreviation-tips)~~
+- ~~[Bang-Bang](https://github.com/oh-my-fish/plugin-bang-bang)~~
+- ~~[Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)~~
+- ~~[Catppuccin for Fish](https://github.com/catppuccin/fish)~~
+
+</details>
 
 🧊 **Configuring Termux Display :**
+
+<details>
+
+<summary>Expand the list</summary>
 
 - [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) 
 - [Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
+</details>
+
 🧊 **Helpful Termux configuration :**
+
+<details>
+
+<summary>Expand the list</summary>
 
 - Custom aliases
 - Symlink to internal storage user directories [^1]
 
-🧊 **Useful scripts [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+</details>
+
+🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+
+<details>
+
+<summary>Expand the list</summary>
 
 - Theme Selector
 - Nerd Fonts Installer
@@ -132,6 +203,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/install.sh -
 [^1]: In development :coming in version 1.1
 [^2]: Optionally integrated into the main script
 [^3]: In development (no release date yet)
+
+</details>
 
 &nbsp;
 
@@ -169,21 +242,47 @@ There are two scripts available for this setup as well :
 &nbsp;
 
 > [!CAUTION]
-> Process completed (signal 9) - press Enter
+> *Process completed (signal 9) - press Enter*
 >
+> You need to run this adb command to fix the process 9 error that will force close Termux :
+> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+>
+> To do this without using a PC you have several methods :
+>
+> First, Connect to WIFI.
+>
+> **Method 1 :**
+> 
+> Install adb in Termux by running this code:
+> Install adb in Termux by running this code:
+> ```
+> pkg install android-tools -y
+> ```
+> Then open settings and enable developer's options by selecting "About phone" then hit "Build" 7 times.
+> 
+> Back out of this menu and go into developer's options, enable wireless debugging then click into there to get the port number then click pair device to get the pairing code.
+> 
+> Put settings into split screen mode by pressing the square button on the bottom right of your phone, and hold the settings icon until the split screen icon shows up.
+> 
+> Then select Termux and in settings select pair with a code. In Termux type :
+> ```
+> adb pair 
+> ``` 
+> Then type your pairing info.
+> 
+> After you have completed this process you can type adb connect and connect to your phone with the ip and port provided in the wireless debugging menu. You can then run the fix command.
+> 
+> **Method 2 :**
+> 
 > Install LADB from [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) or from [GitHub](https://github.com/hyperio546/ladb-builds/releases).
 > 
-> Connect to WIFI.  
->
 > In split screen have one side LADB and the other side showing developer settings.
 >
 > In developer settings, enable wireless debugging then click into there to get the port number then click pair device to get the pairing code.
 >
 > Enter both those values into LADB.
 >
-> Once it connects run this command :
-> 
-> ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+> Once it connects run the fix command.
 
 &nbsp;
 
@@ -222,4 +321,3 @@ There are two scripts available for this setup as well :
 - [ ] Create a $PREFIX/bin function for executing the preserved main script
 
 &nbsp;
-
