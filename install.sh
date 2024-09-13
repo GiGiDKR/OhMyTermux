@@ -74,8 +74,6 @@ check_and_install_gum() {
     fi
 }
 
-check_and_install_gum
-
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -118,14 +116,22 @@ show_banner() {
     fi
 }
 
+check_and_install_gum
+
 show_banner
 
 initial_config() {
-echo -e "\e[38;5;33mChanger le répertoire de sources ? (o/n)\e[0m"
-read change_repo_choice
-if [ "$change_repo_choice" = "o" ]; then
-    termux-change-repo
-fi
+    if $USE_GUM; then
+        if gum confirm --prompt.foreground="33" --selected.background="33" "Changer le répertoire de sources ?"; then
+            termux-change-repo
+        fi
+    else
+        echo -e "\e[38;5;33mChanger le répertoire de sources ? (o/n)\e[0m"
+        read change_repo_choice
+        if [ "$change_repo_choice" = "o" ]; then
+            termux-change-repo
+        fi
+    fi
 
 termux_dir="$HOME/.termux"
 file_path="$termux_dir/colors.properties"
@@ -169,10 +175,10 @@ fi
 
 show_banner
 if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut" -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut" -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/files/font.ttf
 else
     echo -e "\e[38;5;33mTéléchargement police par défaut...\e[0m"
-    curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
+    curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/files/font.ttf
 fi
 
 file_path="$termux_dir/termux.properties"
@@ -256,7 +262,7 @@ install_shell() {
                     fi
                 fi
 
-                curl -fLo "$ZSHRC" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc >/dev/null 2>&1
+                curl -fLo "$ZSHRC" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/files/zshrc >/dev/null 2>&1
 
                 show_banner
                 if $USE_GUM; then
@@ -268,7 +274,7 @@ install_shell() {
                         show_banner
                         if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
                             gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k" -- \
-                            curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                            curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/files/p10k.zsh
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -287,7 +293,7 @@ install_shell() {
                         read choice
                         if [ "$choice" = "o" ]; then
                             echo -e "\e[38;5;33mTéléchargement du prompt PowerLevel10k...\e[0m"
-                            curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                            curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/files/p10k.zsh
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -298,11 +304,11 @@ install_shell() {
 
                 show_banner
                 if $USE_GUM; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && mkdir -p $HOME/.config/OhMyTermux && curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)'
+                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/files/aliases.zsh && mkdir -p $HOME/.config/OhMyTermux && curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/files/help.md)'
                 else
                     echo -e "\e[38;5;33mTéléchargement de la configuration...\e[0m"
-                    (curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
-                    curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md) || 
+                    (curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/files/aliases.zsh && 
+                    curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.6/files/help.md) || 
                     echo -e "\e[38;5;31mErreur lors du téléchargement des fichiers\e[0m"
                 fi
 
@@ -599,7 +605,7 @@ fi
 #        mkdir -p $CONFIG $COLORS_DIR_TERMUXSTYLE $COLORS_DIR_TERMUX $COLORS_DIR_XFCE4TERMINAL
 
 #        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des thèmes" -- bash -c '
-#            curl -L -o $HOME/.termux/colors.zip https://github.com/GiGiDKR/OhMyTermux/raw/main/files/colors.zip &&
+#            curl -L -o $HOME/.termux/colors.zip https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/files/colors.zip &&
 #            unzip -o "$HOME/.termux/colors.zip" -d "$HOME/.termux/"
 #        '
 #    fi
@@ -616,7 +622,7 @@ fi
 #        mkdir -p $CONFIG $COLORS_DIR_TERMUXSTYLE $COLORS_DIR_TERMUX $COLORS_DIR_XFCE4TERMINAL
 
 #        echo -e "\e[38;5;33mInstallation des thèmes...\e[0m"
-#        curl -L -o $HOME/.termux/colors.zip https://github.com/GiGiDKR/OhMyTermux/raw/main/files/colors.zip
+#        curl -L -o $HOME/.termux/colors.zip https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/files/colors.zip
 #        unzip -o "$HOME/.termux/colors.zip" -d "$HOME/.termux/"
 #    fi
 #fi
@@ -786,15 +792,15 @@ install_xfce() {
         show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement des scripts" -- bash -c "
-                wget https://github.com/GiGiDKR/OhMyTermux/raw/main/xfce.sh &&
-                wget https://github.com/GiGiDKR/OhMyTermux/raw/main/proot.sh &&
-                wget https://github.com/GiGiDKR/OhMyTermux/raw/main/utils.sh
+                wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/xfce.sh &&
+                wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/proot.sh &&
+                wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/utils.sh
             "
         else
             echo -e "\e[38;5;33mTéléchargement des scripts...\e[0m"
-            wget https://github.com/GiGiDKR/OhMyTermux/raw/main/xfce.sh
-            wget https://github.com/GiGiDKR/OhMyTermux/raw/main/proot.sh
-            wget https://github.com/GiGiDKR/OhMyTermux/raw/main/utils.sh
+            wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/xfce.sh
+            wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/proot.sh
+            wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/utils.sh
         fi
         chmod +x *.sh
 
