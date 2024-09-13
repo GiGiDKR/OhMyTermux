@@ -97,11 +97,14 @@ show_banner
 if [ "$USE_GUM" = true ]; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Recherche de mise à jour" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y
+    gum spin --spinner.foreground="33" --title.foreground="33" --title="Désinstallation de xterm et sensible-utils" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt remove xterm sensible-utils -y
 else
     echo -e "\e[38;5;33mRecherche de mise à jour...\e[0m"
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update > /dev/null 2>&1
     echo -e "\e[38;5;33mMise à jour des paquets...\e[0m"
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y > /dev/null 2>&1
+    echo -e "\e[38;5;33mDésinstallation de xterm et sensible-utils...\e[0m"
+    proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt remove xterm sensible-utils -y > /dev/null 2>&1
 fi
 
 show_banner
