@@ -66,10 +66,6 @@ if $ONLY_GUM; then
     SCRIPT_CHOICE=true
 fi
 
-############
-# FUNCTION #
-############
-
 check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
         bash_banner
@@ -97,18 +93,13 @@ trap finish EXIT
 
 bash_banner() {
     clear
-    COLOR="\e[38;5;33m"
-    TOP_BORDER="╔════════════════════════════════════════╗"
-    BOTTOM_BORDER="╚════════════════════════════════════════╝"
-    EMPTY_LINE="║                                        ║"
-    TEXT_LINE="║              OHMYTERMUX                ║"
-    echo
-    echo -e "${COLOR}${TOP_BORDER}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${TEXT_LINE}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
-    echo
+    echo -e "\e[38;5;33m
+╔════════════════════════════════════════╗
+║                                        ║
+║              OHMYTERMUX                ║
+║                                        ║
+╚════════════════════════════════════════╝
+\e[0m"
 }
 
 show_banner() {
@@ -128,10 +119,6 @@ show_banner() {
 }
 
 show_banner
-
-##################
-# INITIAL CONFIG #
-##################
 
 initial_config() {
 echo -e "\e[38;5;33mChanger le répertoire de sources ? (o/n)\e[0m"
@@ -217,10 +204,6 @@ else
 fi
 }
 
-#########
-# SHELL #
-#########
-
 install_shell() {
     if $SHELL_CHOICE; then
         show_banner
@@ -254,7 +237,6 @@ install_shell() {
                     fi
                 fi
 
-                # Installation de Oh My Zsh et autres configurations ZSH
                 show_banner
                 if $USE_GUM; then
                     if gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?"; then
@@ -344,10 +326,6 @@ install_shell() {
         esac
     fi
 }
-
-###############
-# PLUGINS ZSH #
-###############
 
 install_zsh_plugins() {
     if command -v zsh &> /dev/null; then
@@ -441,10 +419,6 @@ update_zshrc() {
         fi
     fi
 }
-
-############
-# PACKAGES #
-############
 
 install_packages() {
     if $PACKAGES_CHOICE; then
@@ -649,10 +623,6 @@ fi
 
 #rm "$HOME/.termux/colors.zip" >/dev/null 2>&1
 
-########
-# FONT #
-########
-
 install_font() {
     if $FONT_CHOICE; then
         show_banner
@@ -730,16 +700,11 @@ install_font() {
     fi
 }
 
-#################
-# XFCE / DEBIAN #
-#################
-
 install_xfce() {
     if $XFCE_CHOICE; then
         show_banner
         local install_xfce=false
 
-        # Demander à l'utilisateur s'il veut installer XFCE et DEBIAN
         if $USE_GUM; then
             if gum confirm --prompt.foreground="33" --selected.background="33" " Installer XFCE et DEBIAN ?"; then
                 install_xfce=true
@@ -752,7 +717,6 @@ install_xfce() {
             fi
         fi
 
-        # Si l'utilisateur ne veut pas installer XFCE, installer seulement les packages nécessaires
         if ! $install_xfce; then
             PACKAGES="ncurses-utils"
             for PACKAGE in $PACKAGES; do
@@ -766,7 +730,6 @@ install_xfce() {
             export PATH="$PATH:$PREFIX/bin"
             show_banner
             
-            # Demander à l'utilisateur s'il veut exécuter OhMyTermux
             local execute_ohmytermux=false
             if $USE_GUM; then
                 if gum confirm --prompt.foreground="33" --selected.background="33" " Exécuter OhMyTermux ?"; then
@@ -793,11 +756,9 @@ install_xfce() {
             return
         fi
 
-        # Installation de XFCE et DEBIAN
         show_banner
-        pkgs=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
+        pkgs=('wget' 'ncurses-utils' 'dbus-x11' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
 
-        # Installation des pré-requis
         show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des pré-requis" -- pkg install ncurses-ui-libs && pkg uninstall dbus -y
@@ -806,7 +767,6 @@ install_xfce() {
             pkg install ncurses-ui-libs && pkg uninstall dbus -y
         fi
 
-        # Mise à jour des paquets
         show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- pkg update -y
@@ -815,7 +775,6 @@ install_xfce() {
             pkg update -y
         fi
 
-        # Installation des paquets nécessaires
         show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y
@@ -824,7 +783,6 @@ install_xfce() {
             pkg install "${pkgs[@]}" -y
         fi
 
-        # Téléchargement des scripts
         show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement des scripts" -- bash -c "
@@ -840,7 +798,6 @@ install_xfce() {
         fi
         chmod +x *.sh
 
-        # Exécution des scripts
         show_banner
         if $USE_GUM; then
             ./xfce.sh --gum
@@ -851,7 +808,6 @@ install_xfce() {
         fi
         ./utils.sh
 
-        # Ajout de la fonction get_username et de l'alias debian
         add_get_username_function
     fi
 }
@@ -871,10 +827,6 @@ alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
         echo -e "$function_text" >> "$ZSHRC"
     fi
 }
-
-##############
-# Termux-X11 #
-##############
 
 install_termux_x11() {
     show_banner
@@ -915,10 +867,6 @@ install_termux_x11() {
         fi
     fi
 }
-
-####################
-# OhMyTermuxScript #
-####################
 
 install_script() {
     if $SCRIPT_CHOICE; then
@@ -1016,9 +964,6 @@ install_script() {
 #    fi
 #fi
 
-###############################
-# Partie principale du script #
-###############################
 show_banner
 
 if $EXECUTE_INITIAL_CONFIG; then
@@ -1030,10 +975,6 @@ install_font
 install_xfce
 install_termux_x11
 install_script
-
-#################
-# Fin du script #
-#################
 
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 
