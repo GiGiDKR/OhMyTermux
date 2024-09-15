@@ -71,6 +71,7 @@ download_file() {
     if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de $1" -- wget "$2"
     else
+        show_banner
         info_msg "Téléchargement de $1..."
         wget "$2" > /dev/null 2>&1
     fi
@@ -119,8 +120,6 @@ download_file "fond d'écran" "https://raw.githubusercontent.com/GiGiDKR/OhMyTer
 mkdir -p "$PREFIX/share/backgrounds/xfce/"
 mv waves.png "$PREFIX/share/backgrounds/xfce/"
 
-show_banner
-
 # Téléchargement et installation du thème WhiteSur-Dark
 download_file "WhiteSur-Dark" "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip"
 unzip 2024.09.02.zip
@@ -128,16 +127,12 @@ tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz
 mv WhiteSur-Dark/ "$PREFIX/share/themes/"
 rm -rf WhiteSur* 2024.09.02.zip
 
-show_banner
-
 # Téléchargement et installation du curseur Fluent
 download_file "Fluent Cursor" "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip"
 unzip 2024-02-25.zip
 mv Fluent-icon-theme-2024-02-25/cursors/dist "$PREFIX/share/icons/"
 mv Fluent-icon-theme-2024-02-25/cursors/dist-dark "$PREFIX/share/icons/"
 rm -rf "$HOME/Fluent"* 2024-02-25.zip
-
-show_banner
 
 # Téléchargement et installation de la configuration
 download_file "configuration" "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip"
