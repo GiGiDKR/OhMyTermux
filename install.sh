@@ -12,6 +12,27 @@ BASHRC="$PREFIX/etc/bash.bashrc"
 ZSHRC="$HOME/.zshrc"
 ONLY_GUM=true
 
+bash_banner() {
+    clear
+    echo -e "\e[38;5;33m
+╔════════════════════════════════════════╗
+║                                        ║
+║              OHMYTERMUX                ║
+║                                        ║
+╚════════════════════════════════════════╝
+\e[0m"
+}
+
+check_and_install_gum() {
+    if $USE_GUM && ! command -v gum &> /dev/null; then
+        bash_banner
+        info_msg "Installation de gum..."
+        pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
+    fi
+}
+
+check_and_install_gum
+
 # Fonction pour afficher un message d'erreur
 error_msg() {
     if $USE_GUM; then
@@ -55,14 +76,6 @@ if $ONLY_GUM; then
     SCRIPT_CHOICE=true
 fi
 
-check_and_install_gum() {
-    if $USE_GUM && ! command -v gum &> /dev/null; then
-        bash_banner
-        info_msg "Installation de gum..."
-        pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
-    fi
-}
-
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -73,17 +86,6 @@ finish() {
 }
 
 trap finish EXIT
-
-bash_banner() {
-    clear
-    echo -e "\e[38;5;33m
-╔════════════════════════════════════════╗
-║                                        ║
-║              OHMYTERMUX                ║
-║                                        ║
-╚════════════════════════════════════════╝
-\e[0m"
-}
 
 show_banner() {
     clear
@@ -100,8 +102,6 @@ show_banner() {
         bash_banner
     fi
 }
-
-check_and_install_gum
 
 show_banner
 
