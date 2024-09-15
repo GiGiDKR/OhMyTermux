@@ -581,8 +581,11 @@ alias show="nala show"' >> $ZSHRC
             ;;
         # TODO : Ajout d'alias pour d'autres packages
     esac
-    # Define general aliases in a variable
-    aliases='alias ..="cd .."
+}
+
+common_alias() {
+# Define general aliases in a variable
+aliases='alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
@@ -603,6 +606,7 @@ echo -e "\n$aliases" >> "$BASHRC"
 if [ -f "$ZSHRC" ]; then
     echo -e"\n$aliases" >> "$ZSHRC"
 fi
+}
 
 # TODO : Ajout Fish
 #if [ -f "$HOME/.config/fish/config.fish" ]; then
@@ -1026,6 +1030,7 @@ if $EXECUTE_INITIAL_CONFIG; then
 fi
 install_shell
 install_packages
+common_alias
 install_font
 install_xfce
 install_termux_x11
