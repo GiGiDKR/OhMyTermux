@@ -14,7 +14,7 @@ done
 # Fonction pour afficher un message d'erreur
 error_msg() {
     if $USE_GUM; then
-        gum style --foreground 196 "$1"
+        gum style --foreground 196 $1
     else
         echo -e "\e[38;5;196m$1\e[0m"
     fi
@@ -23,7 +23,7 @@ error_msg() {
 # Fonction pour afficher un message d'information
 info_msg() {
     if $USE_GUM; then
-        gum style --foreground 33 "$1"
+        gum style --foreground 33 $1
     else
         echo -e "\e[38;5;33m$1\e[0m"
     fi
@@ -81,6 +81,8 @@ finish() {
 
 trap finish EXIT
 
+show_banner
+
 # Demande du nom d'utilisateur et du mot de passe
 if [ $# -eq 0 ]; then
     if $USE_GUM; then
@@ -105,12 +107,11 @@ fi
 # Liste des paquets à installer dans proot
 pkgs_proot=('sudo' 'wget' 'nala' 'jq')
 
-show_banner
-
 # Installation de Debian proot
 if $USE_GUM; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Debian proot" -- proot-distro install debian
 else
+    show_banner
     info_msg "Installation de Debian proot..."
     proot-distro install debian > /dev/null 2>&1
 fi
