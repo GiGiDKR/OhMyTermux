@@ -601,10 +601,10 @@ alias g="git"
 alias gc="git clone"
 alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"'
 
-echo -e "\n$aliases" >> "$BASHRC"
+echo -e "$aliases" >> "$BASHRC"
 
 if [ -f "$ZSHRC" ]; then
-    echo -e"\n$aliases" >> "$ZSHRC"
+    echo -e"$aliases" >> "$ZSHRC"
 fi
 
 # TODO : Ajout Fish
