@@ -40,7 +40,7 @@ show_banner() {
 # Fonction pour afficher un message d'erreur
 error_msg() {
     if $USE_GUM; then
-        gum style --foreground 196 "$1"
+        gum style --foreground 196 $1
     else
         echo -e "\e[38;5;196m$1\e[0m"
     fi
@@ -49,7 +49,7 @@ error_msg() {
 # Fonction pour afficher un message d'information
 info_msg() {
     if $USE_GUM; then
-        gum style --foreground 33 "$1"
+        gum style --foreground 33 $1
     else
         echo -e "\e[38;5;33m$1\e[0m"
     fi
