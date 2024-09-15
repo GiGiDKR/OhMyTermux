@@ -698,30 +698,28 @@ install_xfce() {
             return
         fi
 
-        show_banner
         pkgs=('wget' 'ncurses-utils' 'dbus-x11' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
-        show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des pré-requis" -- pkg install ncurses-ui-libs && pkg uninstall dbus -y
         else
+            show_banner
             info_msg "Installation des pré-requis..."
             pkg install ncurses-ui-libs && pkg uninstall dbus -y
         fi
-        show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- pkg update -y
         else
+            show_banner
             info_msg "Mise à jour des paquets..."
             pkg update -y
         fi
-        show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y
         else
+            show_banner
             info_msg "Installation des paquets nécessaires..."
             pkg install "${pkgs[@]}" -y
         fi
-        show_banner
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement des scripts" -- bash -c "
                 wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/xfce.sh &&
@@ -729,13 +727,13 @@ install_xfce() {
                 wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/utils.sh
             "
         else
+            show_banner
             info_msg "Téléchargement des scripts..."
             wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/xfce.sh
             wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/proot.sh
             wget https://github.com/GiGiDKR/OhMyTermux/raw/1.0.6/utils.sh
         fi
         chmod +x *.sh
-        show_banner
         if $USE_GUM; then
             ./xfce.sh --gum
             ./proot.sh --gum
