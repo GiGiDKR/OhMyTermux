@@ -606,7 +606,6 @@ echo -e "\n$aliases" >> "$BASHRC"
 if [ -f "$ZSHRC" ]; then
     echo -e"\n$aliases" >> "$ZSHRC"
 fi
-}
 
 # TODO : Ajout Fish
 #if [ -f "$HOME/.config/fish/config.fish" ]; then
