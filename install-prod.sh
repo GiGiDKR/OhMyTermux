@@ -234,9 +234,11 @@ install_shell() {
             shell_choice=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=5 --header="Choisissez le shell à installer :" "bash" "zsh" "fish")
         else
             echo -e "${COLOR_BLUE}Choisissez le shell à installer :${COLOR_RESET}"
+            echo
             echo -e "${COLOR_BLUE}1) bash${COLOR_RESET}"
             echo -e "${COLOR_BLUE}2) zsh${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) fish${COLOR_RESET}"
+            echo
             read -p "Entrez le numéro de votre choix : " choice
             case $choice in
                 1) shell_choice="bash" ;;
@@ -359,14 +361,16 @@ install_zsh_plugins() {
             PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
         else
             echo -e "${COLOR_BLUE}Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}1) zsh-autosuggestions${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}2) zsh-syntax-highlighting${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}3) zsh-completions${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}4) you-should-use${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}5) zsh-abbr${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}6) zsh-alias-finder${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}7) Tout installer${COLOR_RESET}"
-        read -p "Entrez les numéros des plugins : " plugin_choices
+            echo
+            echo -e "${COLOR_BLUE}1) zsh-autosuggestions${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) zsh-syntax-highlighting${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3) zsh-completions${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4) you-should-use${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}5) zsh-abbr${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}6) zsh-alias-finder${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}7) Tout installer${COLOR_RESET}"
+            echo
+            read -p "Entrez les numéros des plugins : " plugin_choices
         PLUGINS=""
         for choice in $plugin_choices; do
             case $choice in
@@ -452,6 +456,7 @@ install_packages() {
             PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=21 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
             echo -e "${COLOR_BLUE}Sélectionner les packages à installer (séparés par des espaces) :${COLOR_RESET}"
+            echo
             echo -e "${COLOR_BLUE}1) nala${COLOR_RESET}"
             echo -e "${COLOR_BLUE}2) eza${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) colorls${COLOR_RESET}"   
@@ -471,6 +476,7 @@ install_packages() {
             echo -e "${COLOR_BLUE}17) open-ssh${COLOR_RESET}"
             echo -e "${COLOR_BLUE}18) tsu${COLOR_RESET}"
             echo -e "${COLOR_BLUE}19) Tout installer${COLOR_RESET}"
+            echo
             read -p "Entrez les numéros des packages : " package_choices
             PACKAGES=""
             for choice in $package_choices; do
@@ -621,6 +627,7 @@ install_font() {
             FONT=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=14 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
+            echo
             echo -e "${COLOR_BLUE}1) Police par défaut${COLOR_RESET}"
             echo -e "${COLOR_BLUE}2) CaskaydiaCove Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) FiraCode Nerd Font${COLOR_RESET}"
@@ -630,6 +637,7 @@ install_font() {
             echo -e "${COLOR_BLUE}7) RobotoMono Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}8) SourceCodePro Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}9) UbuntuMono Nerd Font${COLOR_RESET}"
+            echo
             read -p "Entrez le numéro de votre choix : " choice
             case $choice in
                 1) FONT="Police par défaut" ;;
