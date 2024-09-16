@@ -70,14 +70,51 @@ finish() {
     fi
 }
 
+
+# Nouvelles fonctions de message
+info_msg() {
+    if $USE_GUM; then
+        gum style --foreground 33 "$1"
+    else
+        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
+    fi
+}
+
+success_msg() {
+    if $USE_GUM; then
+        gum style --foreground 76 "$1"
+    else
+        echo -e "\e[38;5;76m$1${COLOR_RESET}"
+    fi
+}
+
+error_msg() {
+    if $USE_GUM; then
+        gum style --foreground 196 "$1"
+    else
+        echo -e "${COLOR_RED}$1${COLOR_RESET}"
+    fi
+}
+
+execute_command() {
+    local command="$1"
+    local message="$2"
+    
+    if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- eval "$command $redirect"
+    else
+        info_msg "$message"
+        eval "$command $redirect"
+    fi
+}
+
 install_package() {
     local pkg=$1
     if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- pkg install "$pkg" -y
     else
         show_banner
-        echo -e "${COLOR_BLUE}Installation de $pkg...${COLOR_RESET}"
-        eval "pkg install $pkg -y $redirect"
+        execute_command "pkg install $pkg -y" "Installation de $pkg"
     fi
 }
 
@@ -97,8 +134,7 @@ trap finish EXIT
 show_banner
 if $USE_GUM && ! command -v gum &> /dev/null; then
     echo -e "${COLOR_BLUE}Installation de gum...${COLOR_RESET}"
-    eval "pkg update -y $redirect"
-    eval "pkg install -y gum $redirect"
+    pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
 fi
 
 username="$1"

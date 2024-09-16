@@ -88,6 +88,59 @@ if $ONLY_GUM; then
     SCRIPT_CHOICE=true
 fi
 
+
+# Fonction pour afficher des messages d'information en bleu
+info_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 33
+    else
+        echo -e "\e[38;5;33m$1\e[0m"
+    fi
+}
+
+# Fonction pour afficher des messages de succès en vert
+success_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 82
+    else
+        echo -e "\e[38;5;82m$1\e[0m"
+    fi
+}
+
+# Fonction pour afficher des messages d'erreur en rouge
+error_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 196
+    else
+        echo -e "\e[38;5;196m$1\e[0m"
+    fi
+}
+
+# Fonction pour exécuter une commande et afficher le résultat
+execute_command() {
+    local command="$1"
+    local info_msg="$2"
+    local success_msg="✓ $info_msg"
+    local error_msg="✗ $info_msg"
+
+    if $USE_GUM; then
+        if gum spin  --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command"; then
+            gum style "$success_msg" --foreground 82
+        else
+            gum style "$error_msg" --foreground 196
+            return 1
+        fi
+    else
+        info_msg "$info_msg"
+        if eval "$command"; then
+            success_msg "$success_msg"
+        else
+            error_msg "$error_msg"
+            return 1
+        fi
+    fi
+}
+
 bash_banner() {
     clear
     local BANNER="
@@ -104,7 +157,7 @@ check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
         bash_banner
         echo -e "${COLOR_BLUE}Installation de gum...${COLOR_RESET}"
-        eval "pkg update -y $redirect && pkg install gum -y $redirect"
+        pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 }
 
@@ -191,12 +244,9 @@ EOL
 fi
 
 show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut" -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
-else
-    echo -e "${COLOR_BLUE}Téléchargement police par défaut...${COLOR_RESET}"
-    eval "curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf $redirect"
-fi
+
+execute_command "curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement police par défaut"
+
 
 file_path="$termux_dir/termux.properties"
 
@@ -254,12 +304,7 @@ install_shell() {
                 ;;
             "zsh")
                 if ! command -v zsh &> /dev/null; then
-                    if $USE_GUM; then
-                        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de ZSH" -- pkg install -y zsh
-                    else
-                        echo -e "${COLOR_BLUE}Installation de ZSH...${COLOR_RESET}"
-                        eval "pkg install -y zsh $redirect"
-                    fi
+                        execute_command "pkg install -y zsh" "Installation de ZSH"
                 fi
 
                 # Installation de Oh My Zsh et autres configurations ZSH
@@ -274,15 +319,13 @@ install_shell() {
                     echo -e "${COLOR_BLUE}Voulez-vous installer Oh My Zsh ? (o/n)${COLOR_RESET}"
                     read choice
                     if [ "$choice" = "o" ]; then
-                        echo -e "${COLOR_BLUE}Installation des pré-requis...${COLOR_RESET}"
-                        eval "pkg install -y wget curl git unzip $redirect"
-                        echo -e "${COLOR_BLUE}Installation de Oh My Zsh...${COLOR_RESET}"
-                        eval "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\" --quiet $redirect"
+                        execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
+                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh My Zsh"
                         cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 fi
 
-                eval "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc $redirect"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc" "Téléchargement de la configuration"
 
                 show_banner
                 if $USE_GUM; then
@@ -305,15 +348,13 @@ install_shell() {
                     echo -e "${COLOR_BLUE}Voulez-vous installer PowerLevel10k ? (o/n)${COLOR_RESET}"
                     read choice
                     if [ "$choice" = "o" ]; then
-                        echo -e "${COLOR_BLUE}Installation de PowerLevel10k...${COLOR_RESET}"
-                        eval "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" --quiet $redirect || true"
+                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         echo -e "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n)${COLOR_RESET}"
                         read choice
                         if [ "$choice" = "o" ]; then
-                            echo -e "${COLOR_BLUE}Téléchargement du prompt PowerLevel10k...${COLOR_RESET}"
-                            eval "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh $redirect"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh" "Téléchargement du prompt PowerLevel10k"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -326,11 +367,10 @@ install_shell() {
                 if $USE_GUM; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && mkdir -p $HOME/.config/OhMyTermux && curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md'
                 else
-                    echo -e "${COLOR_BLUE}Téléchargement de la configuration...${COLOR_RESET}"
-                    eval "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
+                    execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && 
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md) $redirect" || 
-                    echo -e "${COLOR_RED}Erreur lors du téléchargement des fichiers${COLOR_RESET}"
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)" "Téléchargement de la configuration" || 
+                    error_msg "Erreur lors du téléchargement des fichiers"
                 fi
 
                 if command -v zsh &> /dev/null; then
@@ -344,8 +384,7 @@ install_shell() {
                 if $USE_GUM; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Fish" -- pkg install -y fish
                 else
-                    echo -e "${COLOR_BLUE}Installation de Fish...${COLOR_RESET}"
-                    eval "pkg install -y fish $redirect"
+                    execute_command "pkg install -y fish" "Installation de Fish"
                 fi
                 # TODO : ajouter la configuration de Fish, de ses plugins et des alias (abbr)
                 chsh -s fish
@@ -422,8 +461,7 @@ install_plugin() {
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation $plugin_name" -- \
         git clone "$plugin_url" "$HOME/.oh-my-zsh/custom/plugins/$plugin_name" || true
     else
-        echo -e "${COLOR_BLUE}Installation $plugin_name...${COLOR_RESET}"
-        eval "git clone \"$plugin_url\" \"$HOME/.oh-my-zsh/custom/plugins/$plugin_name\" --quiet $redirect || true"
+        execute_command "git clone \"$plugin_url\" \"$HOME/.oh-my-zsh/custom/plugins/$plugin_name\" || true" "Installation $plugin_name"
     fi
 }
 
@@ -512,8 +550,7 @@ install_packages() {
                 if $USE_GUM; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $PACKAGE" -- pkg install -y $PACKAGE
                 else
-                    echo -e "${COLOR_BLUE}Installation de $PACKAGE...${COLOR_RESET}"
-                    eval "pkg install -y $PACKAGE $redirect"
+                    execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
                 fi
                 installed_packages+="Installé : $PACKAGE\n"
                 show_banner 
@@ -658,8 +695,7 @@ install_font() {
                 if $USE_GUM; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut" -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
                 else
-                    echo -e "${COLOR_BLUE}Téléchargement police par défaut...${COLOR_RESET}"
-                    eval "curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf $redirect"
+                    execute_command "curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement police par défaut"
                 fi
                 ;;
             *)
@@ -667,8 +703,7 @@ install_font() {
                 if $USE_GUM; then
                     gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement $FONT" -- curl -L -o $HOME/.termux/font.ttf "$font_url"
                 else
-                    echo -e "${COLOR_BLUE}Téléchargement $FONT...${COLOR_RESET}"
-                    eval "curl -L -o $HOME/.termux/font.ttf \"$font_url\" $redirect"
+                    execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Téléchargement $FONT"
                 fi
                 ;;
         esac
@@ -700,8 +735,7 @@ install_xfce() {
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des pré-requis" -- pkg install ncurses-ui-libs && pkg uninstall dbus -y
         else
-            echo -e "${COLOR_BLUE}Installation des pré-requis...\e[0m"
-            eval "pkg install ncurses-ui-libs && pkg uninstall dbus -y $redirect"
+            execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
         fi
 
         # Installation des paquets nécessaires
@@ -709,8 +743,7 @@ install_xfce() {
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y
         else
-            echo -e "${COLOR_BLUE}Installation des paquets nécessaires...\e[0m"
-            eval "pkg install \"${pkgs[@]}\" -y $redirect"
+            execute_command "pkg install \"${pkgs[@]}\" -y" "Installation des paquets nécessaires"
         fi
 
         # Installation de Debian
@@ -718,8 +751,7 @@ install_xfce() {
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Debian" -- proot-distro install debian
         else
-            echo -e "${COLOR_BLUE}Installation de Debian...\e[0m"
-            eval "proot-distro install debian $redirect"
+            execute_command "proot-distro install debian" "Installation de Debian"
         fi
 
         # Création des fichiers de configuration
@@ -737,16 +769,15 @@ Categories=System;" > $PREFIX/share/applications/kill_termux_x11.desktop
                 chmod +x $PREFIX/bin/start $PREFIX/bin/kill_termux_x11
             '
         else
-            echo -e "${COLOR_BLUE}Création des fichiers de configuration...\e[0m"
-            eval 'echo "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dbus-launch --exit-with-session startxfce4" > $PREFIX/bin/start'
-            eval 'echo "pkill -f \"app_process / com.termux.x11\"" > $PREFIX/bin/kill_termux_x11'
-            eval 'echo "[Desktop Entry]
+            execute_command 'echo "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dbus-launch --exit-with-session startxfce4" > $PREFIX/bin/start' "Création des fichiers de configuration"
+            execute_command 'echo "pkill -f \"app_process / com.termux.x11\"" > $PREFIX/bin/kill_termux_x11' "Création des fichiers de configuration"
+            execute_command 'echo "[Desktop Entry]
 Type=Application
 Name=Kill Termux:X11
 Exec=$PREFIX/bin/kill_termux_x11
 Icon=system-shutdown
-Categories=System;" > $PREFIX/share/applications/kill_termux_x11.desktop'
-            eval "chmod +x $PREFIX/bin/start $PREFIX/bin/kill_termux_x11"
+Categories=System;" > $PREFIX/share/applications/kill_termux_x11.desktop' "Création des fichiers de configuration"
+            execute_command "chmod +x $PREFIX/bin/start $PREFIX/bin/kill_termux_x11" "Création des fichiers de configuration"
         fi
 
         # Installation des paquets dans Debian
@@ -758,10 +789,9 @@ Categories=System;" > $PREFIX/share/applications/kill_termux_x11.desktop'
                 proot-distro login debian --shared-tmp -- apt install -y xfce4 xfce4-terminal dbus-x11 tigervnc-standalone-server
             '
         else
-            echo -e "${COLOR_BLUE}Installation des paquets dans Debian...\e[0m"
-            eval "proot-distro login debian --shared-tmp -- apt update $redirect"
-            eval "proot-distro login debian --shared-tmp -- apt upgrade -y $redirect"
-            eval "proot-distro login debian --shared-tmp -- apt install -y xfce4 xfce4-terminal dbus-x11 tigervnc-standalone-server $redirect"
+            execute_command "proot-distro login debian --shared-tmp -- apt update" "Installation des paquets dans Debian"
+            execute_command "proot-distro login debian --shared-tmp -- apt upgrade -y" "Installation des paquets dans Debian"
+            execute_command "proot-distro login debian --shared-tmp -- apt install -y xfce4 xfce4-terminal dbus-x11 tigervnc-standalone-server" "Installation des paquets dans Debian"
         fi
 
         # Configuration de XFCE
@@ -775,12 +805,11 @@ startxfce4 &" | proot-distro login debian --shared-tmp -- tee /root/.vnc/xstartu
                 proot-distro login debian --shared-tmp -- chmod +x /root/.vnc/xstartup
             '
         else
-            echo -e "${COLOR_BLUE}Configuration de XFCE...\e[0m"
-            eval "proot-distro login debian --shared-tmp -- mkdir -p /root/.vnc"
-            eval "echo \"#!/bin/bash
+            execute_command "proot-distro login debian --shared-tmp -- mkdir -p /root/.vnc" "Configuration de XFCE"
+            execute_command "echo \"#!/bin/bash
 xrdb $HOME/.Xresources
-startxfce4 &\" | proot-distro login debian --shared-tmp -- tee /root/.vnc/xstartup > /dev/null"
-            eval "proot-distro login debian --shared-tmp -- chmod +x /root/.vnc/xstartup"
+startxfce4 &\" | proot-distro login debian --shared-tmp -- tee /root/.vnc/xstartup > /dev/null" "Configuration de XFCE"
+            execute_command "proot-distro login debian --shared-tmp -- chmod +x /root/.vnc/xstartup" "Configuration de XFCE"
         fi
     fi
 }
@@ -809,8 +838,7 @@ install_termux_x11() {
         if $USE_GUM; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Termux-X11 APK" -- wget "$apk_url" -O "$apk_file"
         else
-            echo -e "${COLOR_BLUE}Téléchargement de Termux-X11 APK...\e[0m"
-            eval "wget \"$apk_url\" -O \"$apk_file\" $redirect"
+            execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11 APK"
         fi
 
         if [ -f "$apk_file" ]; then
@@ -820,7 +848,7 @@ install_termux_x11() {
             read -r
             rm "$apk_file"
         else
-            echo -e "${COLOR_RED}Erreur : Le téléchargement de l'APK a échoué.\e[0m"
+            error_msg "Erreur : Le téléchargement de l'APK a échoué."
         fi
     fi
 }
@@ -837,8 +865,7 @@ install_script() {
                 echo -e "${COLOR_BLUE}  Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}"
                 read -r choice
                 if [ "$choice" = "o" ]; then
-                    echo -e "${COLOR_BLUE}Installation de OhMyTermuxScript...\e[0m"
-                    eval "git clone https://github.com/GiGiDKR/OhMyTermuxScript.git \"$HOME/OhMyTermuxScript\" && chmod +x $HOME/OhMyTermuxScript/*.sh $redirect"
+                    execute_command "git clone https://github.com/GiGiDKR/OhMyTermuxScript.git \"$HOME/OhMyTermuxScript\" && chmod +x $HOME/OhMyTermuxScript/*.sh" "Installation de OhMyTermuxScript"
                 fi
             fi
         fi

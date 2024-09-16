@@ -20,14 +20,14 @@ fi
 # Fonction pour vérifier les dépendances nécessaires
 check_dependencies() {
     if [ "$USE_GUM" = true ]; then
-        if ! command -v gum &> /dev/null; then
-            echo -e "${COLOR_BLUE}Gum n'est pas installé. Installation de gum...${COLOR_RESET}"
-            pkg update -y && pkg install gum -y
+        if $USE_GUM && ! command -v gum &> /dev/null; then
+            echo -e "${COLOR_BLUE}Installation de gum...${COLOR_RESET}"
+            pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
         fi
     fi
 
     if ! command -v proot-distro &> /dev/null; then
-        echo -e "${COLOR_RED}Erreur : proot-distro n'est pas installé. Veuillez l'installer avant de continuer.${COLOR_RESET}"
+        error_msg "Erreur : proot-distro n'est pas installé. Veuillez l'installer avant de continuer."
         exit 1
     fi
 }
@@ -83,8 +83,7 @@ install_packages_proot() {
         if [ "$USE_GUM" = true ]; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "$pkg" -y
         else
-            echo -e "${COLOR_BLUE}Installation de $pkg...${COLOR_RESET}"
-            eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y $redirect"
+            execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
         fi
     done
 }
@@ -98,10 +97,9 @@ create_user_proot() {
             proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash '$username'
         "
     else
-        echo -e "${COLOR_BLUE}Création de l'utilisateur...${COLOR_RESET}"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage $redirect"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel $redirect"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash $username $redirect"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage" "Création de l'utilisateur"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel" "Création de l'utilisateur"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash $username" "Création de l'utilisateur"
     fi
 }
 
@@ -114,10 +112,9 @@ configure_user_rights() {
             chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
         '
     else
-        echo -e "${COLOR_BLUE}Ajout des droits utilisateur...${COLOR_RESET}"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chmod u+rw \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\" $redirect"
-        eval "echo \"$username ALL=(ALL) NOPASSWD:ALL\" | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 tee -a \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\" $redirect"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chmod u-w \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\" $redirect"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chmod u+rw \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
+        execute_command "echo \"$username ALL=(ALL) NOPASSWD:ALL\" | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 tee -a \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chmod u-w \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
     fi
 }
 
@@ -129,10 +126,8 @@ install_mesa_vulkan() {
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Mesa-Vulkan" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget "$mesa_url"
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Mesa-Vulkan" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./"$mesa_package"
     else
-        echo -e "${COLOR_BLUE}Téléchargement de Mesa-Vulkan...${COLOR_RESET}"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url $redirect"
-        echo -e "${COLOR_BLUE}Installation de Mesa-Vulkan...${COLOR_RESET}"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package $redirect"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installation de Mesa-Vulkan"
     fi
 }
 
@@ -155,18 +150,15 @@ main() {
     if [ "$USE_GUM" = true ]; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Debian proot" -- proot-distro install debian
     else
-        echo -e "${COLOR_BLUE}Installation de Debian proot...${COLOR_RESET}"
-        eval "proot-distro install debian $redirect"
+        execute_command "proot-distro install debian" "Installation de Debian proot"
     fi
     show_banner
     if [ "$USE_GUM" = true ]; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Recherche de mise à jour" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y
     else
-        echo -e "${COLOR_BLUE}Recherche de mise à jour...${COLOR_RESET}"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update $redirect"
-        echo -e "${COLOR_BLUE}Mise à jour des paquets...${COLOR_RESET}"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y $redirect"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
     fi
     install_packages_proot
     create_user_proot
@@ -177,11 +169,10 @@ main() {
             echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
         '
     else
-        echo -e "${COLOR_BLUE}Configuration de la distribution...${COLOR_RESET}"
-        eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"echo 'export DISPLAY=:1.0' >> /home/$username/.bashrc\" $redirect"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"echo 'export DISPLAY=:1.0' >> /home/$username/.bashrc\"" "Configuration de la distribution"
     fi
     # Ajout des alias dans .bashrc
-    eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << 'EOF' >> /home/$username/.bashrc
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << 'EOF' >> /home/$username/.bashrc
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform '
 alias hud='GALLIUM_HUD=fps '
 alias ..='cd ..'
@@ -201,23 +192,60 @@ alias cm='chmod +x'
 alias clone='git clone'
 alias push='git pull && git add . && git commit -m \\\"mobile push\\\" && git push'
 alias bashconfig='nano \\\$HOME/.bashrc'
-EOF\" $redirect"
+EOF\"" "Ajout des alias dans .bashrc"
     # Configuration du fuseau horaire
     timezone=$(getprop persist.sys.timezone)
-    eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"
         rm /etc/localtime
         cp /usr/share/zoneinfo/$timezone /etc/localtime
-    \" $redirect"
+    \"" "Configuration du fuseau horaire"
     # Configuration des icônes et thèmes
-    eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 mkdir -p /usr/share/icons $redirect"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 mkdir -p /usr/share/icons" "Configuration des icônes et thèmes"
     cd "$PREFIX/share/icons"
-    eval "find dist-dark | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 cpio -pdm /usr/share/icons $redirect"
-    eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << EOF > /home/$username/.Xresources
+    execute_command "find dist-dark | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 cpio -pdm /usr/share/icons" "Configuration des icônes et thèmes"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << EOF > /home/$username/.Xresources
 Xcursor.theme: dist-dark
-EOF\" $redirect"
+EOF\"" "Configuration des icônes et thèmes"
     # Création des répertoires nécessaires
-    eval "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\" $redirect"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Création des répertoires nécessaires"
     install_mesa_vulkan
+}
+
+# Nouvelles fonctions de message
+info_msg() {
+    if $USE_GUM; then
+        gum style --foreground 33 "$1"
+    else
+        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
+    fi
+}
+
+success_msg() {
+    if $USE_GUM; then
+        gum style --foreground 76 "$1"
+    else
+        echo -e "\e[38;5;76m$1${COLOR_RESET}"
+    fi
+}
+
+error_msg() {
+    if $USE_GUM; then
+        gum style --foreground 196 "$1"
+    else
+        echo -e "${COLOR_RED}$1${COLOR_RESET}"
+    fi
+}
+
+execute_command() {
+    local command="$1"
+    local message="$2"
+    
+    if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- eval "$command $redirect"
+    else
+        info_msg "$message"
+        eval "$command $redirect"
+    fi
 }
 
 main "$@"
