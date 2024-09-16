@@ -54,6 +54,10 @@ for arg in "$@"; do
             EXECUTE_INITIAL_CONFIG=false
             shift
             ;;
+        --uninstall|-u)
+            uninstall_proot
+            exit 0
+            ;;
     esac
 done
 
@@ -198,10 +202,10 @@ bell-character = ignore
 fullscreen = true
 EOL
 else
-    sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
-    sed -i 's/^# use-black-ui = true/use-black-ui = true/' "$file_path"
-    sed -i 's/^# bell-character = ignore/bell-character = ignore/' "$file_path"
-    sed -i 's/^# fullscreen = true/fullscreen = true/' "$file_path"
+    sed -i 's/^# allow-external-apps = true/allow-external-apps = true/; 
+        s/^# use-black-ui = true/use-black-ui = true/; 
+        s/^# bell-character = ignore/bell-character = ignore/; 
+        s/^# fullscreen = true/fullscreen = true/' "$file_path"
 fi
 
 touch .hushlogin
@@ -873,6 +877,39 @@ alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
     if [ -f "$ZSHRC" ]; then
         echo -e "$function_text" >> "$ZSHRC"
     fi
+}
+
+
+uninstall_proot() {
+    show_banner
+    if $USE_GUM; then
+        if ! gum confirm --prompt.foreground="33" --selected.background="33" "Êtes-vous sûr de vouloir désinstaller la configuration proot Debian ?"; then
+            return
+        fi
+    else
+        echo -e "\e[38;5;33mÊtes-vous sûr de vouloir désinstaller la configuration proot Debian ? (o/n)\e[0m"
+        read choice
+        if [ "$choice" != "o" ]; then
+            return
+        fi
+    fi
+
+    # Supprimer la distribution proot Debian
+    proot-distro remove debian
+
+    # Supprimer les fichiers de configuration associés
+    rm -f "$PREFIX/bin/prun"
+    rm -f "$PREFIX/bin/zrun"
+    rm -f "$PREFIX/bin/zrunhud"
+    rm -f "$PREFIX/bin/cp2menu"
+    rm -f "$PREFIX/share/applications/cp2menu.desktop"
+    rm -f "$PREFIX/bin/app-installer"
+    rm -f "$HOME/Desktop/app-installer.desktop"
+    rm -f "$PREFIX/bin/start"
+    rm -f "$PREFIX/bin/kill_termux_x11"
+    rm -f "$PREFIX/share/applications/kill_termux_x11.desktop"
+
+    echo -e "\e[38;5;33mDésinstallation de la configuration proot Debian terminée.\e[0m"
 }
 
 ##############
