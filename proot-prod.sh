@@ -74,7 +74,7 @@ finish() {
     fi
 }
 
-trap terminer EXIT
+trap finish EXIT
 
 # Fonction pour installer les paquets nécessaires dans proot
 install_packages_proot() {
@@ -88,18 +88,20 @@ install_packages_proot() {
     done
 }
 
-# Fonction pour créer un utilisateur dans proot
+# Fonction pour créer un utilisateur dans proot avec mot de passe
 create_user_proot() {
     if [ "$USE_GUM" = true ]; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Création de l'utilisateur" -- bash -c "
             proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
             proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
             proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash '$username'
+            echo '$username:$password' | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chpasswd
         "
     else
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage" "Création de l'utilisateur"
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel" "Création de l'utilisateur"
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash $username" "Création de l'utilisateur"
+        execute_command "echo '$username:$password' | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chpasswd" "Définition du mot de passe"
     fi
 }
 
@@ -108,12 +110,12 @@ configure_user_rights() {
     if [ "$USE_GUM" = true ]; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Ajout des droits utilisateur" -- bash -c '
             chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-            echo "$username ALL=(ALL) NOPASSWD:ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+            echo "$username ALL=(ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
             chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
         '
     else
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chmod u+rw \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
-        execute_command "echo \"$username ALL=(ALL) NOPASSWD:ALL\" | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 tee -a \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
+        execute_command "echo \"$username ALL=(ALL) ALL\" | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 tee -a \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chmod u-w \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
     fi
 }
@@ -135,16 +137,20 @@ install_mesa_vulkan() {
 main() {
     check_dependencies
     show_banner
-    # Récupération du nom d'utilisateur
+    # Récupération du nom d'utilisateur et du mot de passe
     if [ $# -eq 0 ]; then
         if [ "$USE_GUM" = true ]; then
             username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
+            password=$(gum input --password --placeholder "Entrez votre mot de passe")
         else
             echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur :${COLOR_RESET}"
             read -r username
+            echo -e "${COLOR_BLUE}Entrez votre mot de passe :${COLOR_RESET}"
+            read -rs password
         fi
     else
         username="$1"
+        password="$2"
     fi
     show_banner
     if [ "$USE_GUM" = true ]; then
@@ -239,7 +245,7 @@ error_msg() {
 execute_command() {
     local command="$1"
     local message="$2"
-    
+
     if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- eval "$command $redirect"
     else
