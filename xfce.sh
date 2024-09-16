@@ -2,6 +2,11 @@
 
 USE_GUM=false
 
+# Couleurs en variables
+COLOR_BLUE="\e[38;5;33m"
+COLOR_RED="\e[38;5;196m"
+COLOR_RESET="\e[0m"
+
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -13,20 +18,14 @@ done
 
 bash_banner() {
     clear
-    COLOR="\e[38;5;33m"
+    local BANNER="
+╔════════════════════════════════════════╗
+║                                        ║
+║           OHMYTERMUXSCRIPT             ║
+║                                        ║
+╚════════════════════════════════════════╝"
 
-    TOP_BORDER="╔════════════════════════════════════════╗"
-    BOTTOM_BORDER="╚════════════════════════════════════════╝"
-    EMPTY_LINE="║                                        ║"
-    TEXT_LINE="║              OHMYTERMUX                ║"
-
-    echo
-    echo -e "${COLOR}${TOP_BORDER}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${TEXT_LINE}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
-    echo
+    echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
 show_banner() {
@@ -39,7 +38,7 @@ show_banner() {
             --align center \
             --width 40 \
             --margin "1 1 1 0" \
-            "" "OHMYTERMUX" ""
+            "" "OHMYTERMUXSCRIPT" ""
     else
         bash_banner
     fi
@@ -52,9 +51,31 @@ finish() {
         if $USE_GUM; then
             gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
         else
-            echo -e "\e[38;5;196mERREUR: Installation de OhMyTermux impossible.\e[0m"
+            echo -e "${COLOR_RED}ERREUR: Installation de OhMyTermux impossible.${COLOR_RESET}"
         fi
-        echo -e "\e[38;5;33mVeuillez vous référer au(x) message(s) d'erreur ci-dessus.\e[0m"
+        echo -e "${COLOR_BLUE}Veuillez vous référer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
+    fi
+}
+
+install_package() {
+    local pkg=$1
+    if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- pkg install "$pkg" -y
+    else
+        show_banner
+        echo -e "${COLOR_BLUE}Installation de $pkg...${COLOR_RESET}"
+        pkg install "$pkg" -y > /dev/null 2>&1
+    fi
+}
+
+download_file() {
+    local url=$1
+    local message=$2
+    if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- wget "$url"
+    else
+        echo -e "${COLOR_BLUE}$message${COLOR_RESET}"
+        wget "$url" > /dev/null 2>&1
     fi
 }
 
@@ -62,7 +83,7 @@ trap finish EXIT
 
 show_banner
 if $USE_GUM && ! command -v gum &> /dev/null; then
-    echo -e "\e[38;5;33mInstallation de gum...\e[0m"
+    echo -e "${COLOR_BLUE}Installation de gum...${COLOR_RESET}"
     pkg update -y > /dev/null 2>&1
     pkg install -y gum > /dev/null 2>&1
 fi
@@ -72,13 +93,7 @@ username="$1"
 pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
 
 for pkg in "${pkgs[@]}"; do
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- pkg install "$pkg" -y
-    else
-        show_banner
-        echo -e "\e[38;5;33mInstallation de $pkg...\e[0m"
-        pkg install "$pkg" -y > /dev/null 2>&1
-    fi
+    install_package "$pkg"
 done
 
 {
@@ -87,31 +102,14 @@ done
     chmod +x $HOME/Desktop/firefox.desktop
 }
 
-# TODO : Ajouter l'alias
-#echo 'alias hud="GALLIUM_HUD=fps"' >> $PREFIX/etc/bash.bashrc
-
-#if [ -f "$HOME/.zshrc" ]; then
-#    echo 'alias hud="GALLIUM_HUD=fps"' >> $HOME/.zshrc
-#fi
-
 show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png
-else
-    echo -e "\e[38;5;33mTéléchargement du fond d'écran...\e[0m"
-    wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png > /dev/null 2>&1
-fi
+download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png" "Téléchargement du fond d'écran"
 
 mkdir -p $PREFIX/share/backgrounds/xfce/
 mv waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
 
 show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip
-else
-    echo -e "\e[38;5;33mInstallation WhiteSur-Dark...\e[0m"
-    wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip > /dev/null 2>&1
-fi
+download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Installation WhiteSur-Dark"
 {
     unzip 2024.09.02.zip
     tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz
@@ -121,12 +119,7 @@ fi
 } > /dev/null 2>&1
 
 show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip
-else
-    echo -e "\e[38;5;33mInstallation Fluent Cursor...\e[0m"
-    wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip > /dev/null 2>&1
-fi
+download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Installation Fluent Cursor"
 {
     unzip 2024-02-25.zip
     mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/
@@ -136,12 +129,7 @@ fi
 } > /dev/null 2>&1
 
 show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de la configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip
-else
-    echo -e "\e[38;5;33mInstallation de la configuration...\e[0m"
-    wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
-fi
+download_file "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip" "Installation de la configuration"
 {
     unzip config.zip
     rm config.zip

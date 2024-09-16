@@ -2,6 +2,11 @@
 
 USE_GUM=false
 
+# Couleurs en variables
+COLOR_BLUE="\e[38;5;33m"
+COLOR_RED="\e[38;5;196m"
+COLOR_RESET="\e[0m"
+
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -13,25 +18,19 @@ done
 
 bash_banner() {
     clear
-    COLOR="\e[38;5;33m"
+    local BANNER="
+╔════════════════════════════════════════╗
+║                                        ║
+║           OHMYTERMUXSCRIPT             ║
+║                                        ║
+╚════════════════════════════════════════╝"
 
-    TOP_BORDER="╔════════════════════════════════════════╗"
-    BOTTOM_BORDER="╚════════════════════════════════════════╝"
-    EMPTY_LINE="║                                        ║"
-    TEXT_LINE="║              OHMYTERMUX                ║"
-
-    echo
-    echo -e "${COLOR}${TOP_BORDER}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${TEXT_LINE}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
-    echo
+    echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
 show_banner() {
     clear
-    if [ "$USE_GUM" = true ]; then
+    if $USE_GUM; then
         gum style \
             --foreground 33 \
             --border-foreground 33 \
@@ -39,7 +38,7 @@ show_banner() {
             --align center \
             --width 40 \
             --margin "1 1 1 0" \
-            "" "OHMYTERMUX" ""
+            "" "OHMYTERMUXSCRIPT" ""
     else
         bash_banner
     fi
@@ -48,7 +47,7 @@ show_banner() {
 check_and_install_gum() {
     if [ "$USE_GUM" = true ] && ! command -v gum &> /dev/null; then
         bash_banner
-        echo -e "\e[38;5;33mInstallation de gum...\e[0m"
+        echo -e "${COLOR_BLUE}Installation de gum...${COLOR_RESET}"
         pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 }
@@ -62,9 +61,9 @@ finish() {
         if [ "$USE_GUM" = true ]; then
             gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
         else
-            echo -e "\e[38;5;196mERREUR: Installation de OhMyTermux impossible.\e[0m"
+            echo -e "${COLOR_RED}ERREUR: Installation de OhMyTermux impossible.${COLOR_RESET}"
         fi
-        echo -e "\e[38;5;33mVeuillez vous référer au(x) message(s) d'erreur ci-dessus.\e[0m"
+        echo -e "${COLOR_BLUE}Veuillez vous référer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
     fi
 }
 
@@ -76,7 +75,7 @@ install_proot_packages() {
         if [ "$USE_GUM" = true ]; then
             gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "$pkg" -y
         else
-            echo -e "\e[38;5;33mInstallation de $pkg...\e[0m"
+            echo -e "${COLOR_BLUE}Installation de $pkg...${COLOR_RESET}"
             proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "$pkg" -y > /dev/null 2>&1
         fi
     done
@@ -90,7 +89,7 @@ create_proot_user() {
             proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash '$username'
         "
     else
-        echo -e "\e[38;5;33mCréation de l'utilisateur...\e[0m"
+        echo -e "${COLOR_BLUE}Création de l'utilisateur...${COLOR_RESET}"
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash "$username"
@@ -105,7 +104,7 @@ configure_proot_user() {
             chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
         '
     else
-        echo -e "\e[38;5;33mAjout des droits utilisateur...\e[0m"
+        echo -e "${COLOR_BLUE}Ajout des droits utilisateur...${COLOR_RESET}"
         chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
         echo "$username ALL=(ALL) NOPASSWD:ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
         chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
@@ -117,9 +116,9 @@ install_mesa_vulkan() {
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Mesa-Vulkan" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget https://github.com/GiGiDKR/OhMyTermux/raw/main/mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb
         gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Mesa-Vulkan" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb
     else
-        echo -e "\e[38;5;33mTéléchargement de Mesa-Vulkan...\e[0m"
+        echo -e "${COLOR_BLUE}Téléchargement de Mesa-Vulkan...${COLOR_RESET}"
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget https://github.com/GiGiDKR/OhMyTermux/raw/main/mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb > /dev/null 2>&1
-        echo -e "\e[38;5;33mInstallation de Mesa-Vulkan...\e[0m"
+        echo -e "${COLOR_BLUE}Installation de Mesa-Vulkan...${COLOR_RESET}"
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb > /dev/null 2>&1
     fi
 }
@@ -128,7 +127,7 @@ if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
         username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
     else
-        echo -e "\e[38;5;33mEntrez votre nom d'utilisateur :\e[0m"
+        echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur :${COLOR_RESET}"
         read -r username
     fi
 else
@@ -139,7 +138,7 @@ show_banner
 if [ "$USE_GUM" = true ]; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Debian proot" -- proot-distro install debian
 else
-    echo -e "\e[38;5;33mInstallation de Debian proot...\e[0m"
+    echo -e "${COLOR_BLUE}Installation de Debian proot...${COLOR_RESET}"
     proot-distro install debian > /dev/null 2>&1
 fi
 
@@ -148,9 +147,9 @@ if [ "$USE_GUM" = true ]; then
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Recherche de mise à jour" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update
     gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y
 else
-    echo -e "\e[38;5;33mRecherche de mise à jour...\e[0m"
+    echo -e "${COLOR_BLUE}Recherche de mise à jour...${COLOR_RESET}"
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update > /dev/null 2>&1
-    echo -e "\e[38;5;33mMise à jour des paquets...\e[0m"
+    echo -e "${COLOR_BLUE}Mise à jour des paquets...${COLOR_RESET}"
     proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y > /dev/null 2>&1
 fi
 
@@ -164,7 +163,7 @@ if [ "$USE_GUM" = true ]; then
         echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
     '
 else
-    echo -e "\e[38;5;33mConfiguration de la distribution...\e[0m"
+    echo -e "${COLOR_BLUE}Configuration de la distribution...${COLOR_RESET}"
     echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
 fi
 
