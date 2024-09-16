@@ -32,16 +32,21 @@ check_dependencies() {
     fi
 }
 
-# Fonction pour afficher la bannière
-show_banner() {
+bash_banner() {
     clear
     local BANNER="
 ╔════════════════════════════════════════╗
 ║                                        ║
-║            OHMYTERMUXSCRIPT            ║
+║               OHMYTERMUX               ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
-    if [ "$USE_GUM" = true ]; then
+
+    echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
+}
+
+show_banner() {
+    clear
+    if $USE_GUM; then
         gum style \
             --foreground 33 \
             --border-foreground 33 \
@@ -49,9 +54,9 @@ show_banner() {
             --align center \
             --width 40 \
             --margin "1 1 1 0" \
-            "" "OHMYTERMUXSCRIPT" ""
+            "" "OHMYTERMUX" ""
     else
-        echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
+        bash_banner
     fi
 }
 

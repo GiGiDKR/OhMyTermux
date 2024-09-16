@@ -21,7 +21,7 @@ bash_banner() {
     local BANNER="
 ╔════════════════════════════════════════╗
 ║                                        ║
-║           OHMYTERMUXSCRIPT             ║
+║               OHMYTERMUX               ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
 
@@ -38,7 +38,7 @@ show_banner() {
             --align center \
             --width 40 \
             --margin "1 1 1 0" \
-            "" "OHMYTERMUXSCRIPT" ""
+            "" "OHMYTERMUX" ""
     else
         bash_banner
     fi
