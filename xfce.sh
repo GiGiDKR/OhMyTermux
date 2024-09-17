@@ -1,16 +1,29 @@
 #!/bin/bash
 
 USE_GUM=false
+VERBOSE=false
 
 # Couleurs en variables
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
 COLOR_RESET="\e[0m"
 
+# Configuration de la redirection
+if [ "$VERBOSE" = false ]; then
+    redirect="> /dev/null 2>&1"
+else
+    redirect=""
+fi
+
 for arg in "$@"; do
     case $arg in
         --gum|-g)
             USE_GUM=true
+            shift
+            ;;
+        --verbose|-v)
+            VERBOSE=true
+            redirect=""
             shift
             ;;
     esac
@@ -57,26 +70,54 @@ finish() {
     fi
 }
 
-install_package() {
-    local pkg=$1
+
+# Nouvelles fonctions de message
+info_msg() {
     if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- pkg install "$pkg" -y
+        gum style --foreground 33 "$1"
+    else
+        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
+    fi
+}
+
+success_msg() {
+    if $USE_GUM; then
+        gum style --foreground 76 "$1"
+    else
+        echo -e "\e[38;5;76m$1${COLOR_RESET}"
+    fi
+}
+
+error_msg() {
+    if $USE_GUM; then
+        gum style --foreground 196 "$1"
+    else
+        echo -e "${COLOR_RED}$1${COLOR_RESET}"
+    fi
+}
+
+execute_command() {
+    local command="$1"
+    local message="$2"
+    
+    if $USE_GUM; then
+        gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- eval "$command $redirect"
     else
         show_banner
-        echo -e "${COLOR_BLUE}Installation de $pkg...${COLOR_RESET}"
-        pkg install "$pkg" -y > /dev/null 2>&1
+        info_msg "$message"
+        eval "$command $redirect"
     fi
+}
+
+install_package() {
+    local pkg=$1
+    execute_command "pkg install $pkg -y" "Installation de $pkg"
 }
 
 download_file() {
     local url=$1
     local message=$2
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- wget "$url"
-    else
-        echo -e "${COLOR_BLUE}$message${COLOR_RESET}"
-        wget "$url" > /dev/null 2>&1
-    fi
+    execute_command "wget $url" "$message"
 }
 
 trap finish EXIT
@@ -84,8 +125,7 @@ trap finish EXIT
 show_banner
 if $USE_GUM && ! command -v gum &> /dev/null; then
     echo -e "${COLOR_BLUE}Installation de gum...${COLOR_RESET}"
-    pkg update -y > /dev/null 2>&1
-    pkg install -y gum > /dev/null 2>&1
+    pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
 fi
 
 username="$1"
@@ -96,41 +136,16 @@ for pkg in "${pkgs[@]}"; do
     install_package "$pkg"
 done
 
-{
-    mkdir -p $HOME/Desktop
-    cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop
-    chmod +x $HOME/Desktop/firefox.desktop
-}
+execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
-show_banner
 download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png" "Téléchargement du fond d'écran"
+execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Installation du fond d'écran"
 
-mkdir -p $PREFIX/share/backgrounds/xfce/
-mv waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
+download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement du thème WhiteSur-Dark"
+execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
 
-show_banner
-download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Installation WhiteSur-Dark"
-{
-    unzip 2024.09.02.zip
-    tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz
-    mv WhiteSur-Dark/ $PREFIX/share/themes/
-    rm -rf WhiteSur*
-    rm 2024.09.02.zip
-} > /dev/null 2>&1
+download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
+execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
-show_banner
-download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Installation Fluent Cursor"
-{
-    unzip 2024-02-25.zip
-    mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/
-    mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/
-    rm -rf $HOME/Fluent*
-    rm 2024-02-25.zip
-} > /dev/null 2>&1
-
-show_banner
-download_file "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip" "Installation de la configuration"
-{
-    unzip config.zip
-    rm config.zip
-} > /dev/null 2>&1
+download_file "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip" "Téléchargement de la pré-configuration"
+execute_command "unzip config.zip && rm config.zip" "Installation de la pré-configuration"
