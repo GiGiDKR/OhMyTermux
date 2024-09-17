@@ -124,12 +124,7 @@ execute_command() {
     local error_msg="✗ $info_msg"
 
     if $USE_GUM; then
-        if gum spin  --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command"; then
-            gum style "$success_msg" --foreground 82
-        else
-            gum style "$error_msg" --foreground 196
-            return 1
-        fi
+        gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command"
     else
         info_msg "$info_msg"
         if eval "$command"; then
@@ -311,8 +306,8 @@ install_shell() {
                 show_banner
                 if $USE_GUM; then
                     if gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?"; then
-                        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des pré-requis" -- pkg install -y wget curl git unzip
-                        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Oh My Zsh" -- git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+                        execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
+                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh My Zsh"
                         cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
@@ -330,14 +325,12 @@ install_shell() {
                 show_banner
                 if $USE_GUM; then
                     if gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?"; then
-                        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de PowerLevel10k" -- \
-                        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" || true
+                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         show_banner
                         if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
-                            gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement prompt PowerLevel10k" -- \
-                            curl -fLo "$HOME/.p10k.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh" "Téléchargement prompt PowerLevel10k"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -364,14 +357,10 @@ install_shell() {
                 fi
 
                 show_banner
-                if $USE_GUM; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de la configuration" -- sh -c 'curl -fLo "$HOME/.oh-my-zsh/custom/aliases.zsh" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && mkdir -p $HOME/.config/OhMyTermux && curl -fLo "$HOME/.config/OhMyTermux/help.md" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md'
-                else
-                    execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && 
                     curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)" "Téléchargement de la configuration" || 
                     error_msg "Erreur lors du téléchargement des fichiers"
-                fi
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -381,11 +370,7 @@ install_shell() {
                 chsh -s zsh
                 ;;
             "fish")
-                if $USE_GUM; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Fish" -- pkg install -y fish
-                else
-                    execute_command "pkg install -y fish" "Installation de Fish"
-                fi
+                execute_command "pkg install -y fish" "Installation de Fish"
                 # TODO : ajouter la configuration de Fish, de ses plugins et des alias (abbr)
                 chsh -s fish
                 ;;
@@ -457,12 +442,7 @@ install_zsh_plugins() {
 install_plugin() {
     local plugin_name=$1
     local plugin_url=$2
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation $plugin_name" -- \
-        git clone "$plugin_url" "$HOME/.oh-my-zsh/custom/plugins/$plugin_name" || true
-    else
-        execute_command "git clone \"$plugin_url\" \"$HOME/.oh-my-zsh/custom/plugins/$plugin_name\" || true" "Installation $plugin_name"
-    fi
+    execute_command "git clone \"$plugin_url\" \"$HOME/.oh-my-zsh/custom/plugins/$plugin_name\" || true" "Installation $plugin_name"
 }
 
 update_zshrc() {
@@ -547,11 +527,7 @@ install_packages() {
         show_banner
         if [ -n "$PACKAGES" ]; then
             for PACKAGE in $PACKAGES; do
-                if $USE_GUM; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $PACKAGE" -- pkg install -y $PACKAGE
-                else
-                    execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
-                fi
+                execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
                 installed_packages+="Installé : $PACKAGE\n"
                 show_banner 
                 echo -e "$installed_packages"
@@ -692,19 +668,11 @@ install_font() {
 
         case $FONT in
             "Police par défaut")
-                if $USE_GUM; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement police par défaut" -- curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf
-                else
-                    execute_command "curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement police par défaut"
-                fi
+                execute_command "curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement police par défaut"
                 ;;
             *)
                 font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
-                if $USE_GUM; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement $FONT" -- curl -L -o $HOME/.termux/font.ttf "$font_url"
-                else
-                    execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Téléchargement $FONT"
-                fi
+                execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Téléchargement $FONT"
                 ;;
         esac
         termux-reload-settings
@@ -732,85 +700,47 @@ install_xfce() {
 
         # Installation des pré-requis
         show_banner
-        if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des pré-requis" -- pkg install ncurses-ui-libs && pkg uninstall dbus -y
-        else
-            execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
-        fi
+        execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
 
         # Installation des paquets nécessaires
         show_banner
-        if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets nécessaires" -- pkg install "${pkgs[@]}" -y
-        else
-            execute_command "pkg install \"${pkgs[@]}\" -y" "Installation des paquets nécessaires"
-        fi
+        execute_command "pkg install \"${pkgs[@]}\" -y" "Installation des paquets nécessaires"
 
         # Installation de Debian
         show_banner
-        if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Debian" -- proot-distro install debian
-        else
-            execute_command "proot-distro install debian" "Installation de Debian"
-        fi
+        execute_command "proot-distro install debian" "Installation de Debian"
 
         # Création des fichiers de configuration
         show_banner
-        if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Création des fichiers de configuration" -- bash -c '
-                echo "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dbus-launch --exit-with-session startxfce4" > $PREFIX/bin/start
-                echo "pkill -f \"app_process / com.termux.x11\"" > $PREFIX/bin/kill_termux_x11
-                echo "[Desktop Entry]
+        execute_command '
+            echo "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dbus-launch --exit-with-session startxfce4" > $PREFIX/bin/start
+            echo "pkill -f \"app_process / com.termux.x11\"" > $PREFIX/bin/kill_termux_x11
+            echo "[Desktop Entry]
 Type=Application
 Name=Kill Termux:X11
 Exec=$PREFIX/bin/kill_termux_x11
 Icon=system-shutdown
 Categories=System;" > $PREFIX/share/applications/kill_termux_x11.desktop
-                chmod +x $PREFIX/bin/start $PREFIX/bin/kill_termux_x11
-            '
-        else
-            execute_command 'echo "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dbus-launch --exit-with-session startxfce4" > $PREFIX/bin/start' "Création des fichiers de configuration"
-            execute_command 'echo "pkill -f \"app_process / com.termux.x11\"" > $PREFIX/bin/kill_termux_x11' "Création des fichiers de configuration"
-            execute_command 'echo "[Desktop Entry]
-Type=Application
-Name=Kill Termux:X11
-Exec=$PREFIX/bin/kill_termux_x11
-Icon=system-shutdown
-Categories=System;" > $PREFIX/share/applications/kill_termux_x11.desktop' "Création des fichiers de configuration"
-            execute_command "chmod +x $PREFIX/bin/start $PREFIX/bin/kill_termux_x11" "Création des fichiers de configuration"
-        fi
+            chmod +x $PREFIX/bin/start $PREFIX/bin/kill_termux_x11
+        ' "Création des fichiers de configuration"
 
         # Installation des paquets dans Debian
         show_banner
-        if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation des paquets dans Debian" -- bash -c '
-                proot-distro login debian --shared-tmp -- apt update
-                proot-distro login debian --shared-tmp -- apt upgrade -y
-                proot-distro login debian --shared-tmp -- apt install -y xfce4 xfce4-terminal dbus-x11 tigervnc-standalone-server
-            '
-        else
-            execute_command "proot-distro login debian --shared-tmp -- apt update" "Installation des paquets dans Debian"
-            execute_command "proot-distro login debian --shared-tmp -- apt upgrade -y" "Installation des paquets dans Debian"
-            execute_command "proot-distro login debian --shared-tmp -- apt install -y xfce4 xfce4-terminal dbus-x11 tigervnc-standalone-server" "Installation des paquets dans Debian"
-        fi
+        execute_command '
+            proot-distro login debian --shared-tmp -- apt update
+            proot-distro login debian --shared-tmp -- apt upgrade -y
+            proot-distro login debian --shared-tmp -- apt install -y xfce4 xfce4-terminal dbus-x11 tigervnc-standalone-server
+        ' "Installation des paquets dans Debian"
 
         # Configuration de XFCE
         show_banner
-        if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Configuration de XFCE" -- bash -c '
-                proot-distro login debian --shared-tmp -- mkdir -p /root/.vnc
-                echo "#!/bin/bash
+        execute_command '
+            proot-distro login debian --shared-tmp -- mkdir -p /root/.vnc
+            echo "#!/bin/bash
 xrdb $HOME/.Xresources
 startxfce4 &" | proot-distro login debian --shared-tmp -- tee /root/.vnc/xstartup > /dev/null
-                proot-distro login debian --shared-tmp -- chmod +x /root/.vnc/xstartup
-            '
-        else
-            execute_command "proot-distro login debian --shared-tmp -- mkdir -p /root/.vnc" "Configuration de XFCE"
-            execute_command "echo \"#!/bin/bash
-xrdb $HOME/.Xresources
-startxfce4 &\" | proot-distro login debian --shared-tmp -- tee /root/.vnc/xstartup > /dev/null" "Configuration de XFCE"
-            execute_command "proot-distro login debian --shared-tmp -- chmod +x /root/.vnc/xstartup" "Configuration de XFCE"
-        fi
+            proot-distro login debian --shared-tmp -- chmod +x /root/.vnc/xstartup
+        ' "Configuration de XFCE"
     fi
 }
 
@@ -835,11 +765,7 @@ install_termux_x11() {
         local apk_url="https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk"
         local apk_file="$HOME/storage/downloads/termux-x11.apk"
 
-        if $USE_GUM; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Termux-X11 APK" -- wget "$apk_url" -O "$apk_file"
-        else
-            execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11 APK"
-        fi
+        execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11 APK"
 
         if [ -f "$apk_file" ]; then
             termux-open "$apk_file"
@@ -859,13 +785,13 @@ install_script() {
         if [ ! -d "$SCRIPT_DIR" ]; then
             if $USE_GUM; then
                 if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer OhMyTermuxScript ?"; then
-                    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de OhMyTermuxScript" -- bash -c 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh'
+                    execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
                 fi
             else
                 echo -e "${COLOR_BLUE}  Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}"
                 read -r choice
                 if [ "$choice" = "o" ]; then
-                    execute_command "git clone https://github.com/GiGiDKR/OhMyTermuxScript.git \"$HOME/OhMyTermuxScript\" && chmod +x $HOME/OhMyTermuxScript/*.sh" "Installation de OhMyTermuxScript"
+                    execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
                 fi
             fi
         fi

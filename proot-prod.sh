@@ -10,6 +10,8 @@ COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
 COLOR_RESET="\e[0m"
 
+bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
+
 # Configuration de la redirection
 if [ "$VERBOSE" = false ]; then
     redirect="> /dev/null 2>&1"
@@ -29,6 +31,13 @@ check_dependencies() {
     if ! command -v proot-distro &> /dev/null; then
         error_msg "Erreur : proot-distro n'est pas installé. Veuillez l'installer avant de continuer."
         exit 1
+    fi
+}
+
+check_bashrc() {
+    if [ ! -f "$bashrc" ]; then
+        error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 touch $bashrc" "Création du fichier .bashrc"
     fi
 }
 
@@ -80,64 +89,41 @@ trap finish EXIT
 install_packages_proot() {
     local pkgs_proot=('sudo' 'wget' 'nala' 'jq')
     for pkg in "${pkgs_proot[@]}"; do
-        if [ "$USE_GUM" = true ]; then
-            gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install "$pkg" -y
-        else
-            execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
-        fi
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
     done
 }
 
 # Fonction pour créer un utilisateur dans proot avec mot de passe
 create_user_proot() {
-    if [ "$USE_GUM" = true ]; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Création de l'utilisateur" -- bash -c "
-            proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
-            proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
-            proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash '$username'
-            echo '$username:$password' | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chpasswd
-        "
-    else
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage" "Création de l'utilisateur"
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel" "Création de l'utilisateur"
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash $username" "Création de l'utilisateur"
-        execute_command "echo '$username:$password' | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chpasswd" "Définition du mot de passe"
-    fi
+    execute_command "
+        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
+        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
+        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash '$username'
+        echo '$username:$password' | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chpasswd
+    " "Création de l'utilisateur"
 }
 
 # Fonction pour configurer les droits de l'utilisateur
 configure_user_rights() {
-    if [ "$USE_GUM" = true ]; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Ajout des droits utilisateur" -- bash -c '
-            chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-            echo "$username ALL=(ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-            chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-        '
-    else
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chmod u+rw \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
-        execute_command "echo \"$username ALL=(ALL) ALL\" | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 tee -a \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chmod u-w \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers\"" "Ajout des droits utilisateur"
-    fi
+    execute_command '
+        chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+        echo "$username ALL=(ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+        chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+    ' "Ajout des droits utilisateur"
 }
 
 # Fonction pour installer Mesa-Vulkan
 install_mesa_vulkan() {
     local mesa_package="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
     local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/main/$mesa_package"
-    if [ "$USE_GUM" = true ]; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement de Mesa-Vulkan" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget "$mesa_url"
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Mesa-Vulkan" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./"$mesa_package"
-    else
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installation de Mesa-Vulkan"
-    fi
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installation de Mesa-Vulkan"
 }
 
 # Fonction principale
 main() {
     check_dependencies
     show_banner
-    # Récupération du nom d'utilisateur et du mot de passe
     if [ $# -eq 0 ]; then
         if [ "$USE_GUM" = true ]; then
             username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
@@ -153,32 +139,16 @@ main() {
         password="$2"
     fi
     show_banner
-    if [ "$USE_GUM" = true ]; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de Debian proot" -- proot-distro install debian
-    else
-        execute_command "proot-distro install debian" "Installation de Debian proot"
-    fi
+    execute_command "proot-distro install debian" "Installation de Debian proot"
     show_banner
-    if [ "$USE_GUM" = true ]; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Recherche de mise à jour" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Mise à jour des paquets" -- proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y
-    else
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
-    fi
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
     install_packages_proot
     create_user_proot
     configure_user_rights
     show_banner
-    if [ "$USE_GUM" = true ]; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Configuration de la distribution" -- bash -c '
-            echo "export DISPLAY=:1.0" >> "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
-        '
-    else
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"echo 'export DISPLAY=:1.0' >> /home/$username/.bashrc\"" "Configuration de la distribution"
-    fi
-    # Ajout des alias dans .bashrc
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << 'EOF' >> /home/$username/.bashrc
+    execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << 'EOF' >> $bashrc
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform '
 alias hud='GALLIUM_HUD=fps '
 alias ..='cd ..'
@@ -198,7 +168,7 @@ alias cm='chmod +x'
 alias clone='git clone'
 alias push='git pull && git add . && git commit -m \\\"mobile push\\\" && git push'
 alias bashconfig='nano \\\$HOME/.bashrc'
-EOF\"" "Ajout des alias dans .bashrc"
+EOF\"" "Ajout d'alias dans .bashrc"
     # Configuration du fuseau horaire
     timezone=$(getprop persist.sys.timezone)
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"
@@ -206,18 +176,17 @@ EOF\"" "Ajout des alias dans .bashrc"
         cp /usr/share/zoneinfo/$timezone /etc/localtime
     \"" "Configuration du fuseau horaire"
     # Configuration des icônes et thèmes
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 mkdir -p /usr/share/icons" "Configuration des icônes et thèmes"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 mkdir -p /usr/share/icons" "Configuration des thèmes"
     cd "$PREFIX/share/icons"
-    execute_command "find dist-dark | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 cpio -pdm /usr/share/icons" "Configuration des icônes et thèmes"
+    execute_command "find dist-dark | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 cpio -pdm /usr/share/icons" "Configuration des icônes"
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << EOF > /home/$username/.Xresources
 Xcursor.theme: dist-dark
-EOF\"" "Configuration des icônes et thèmes"
+EOF\"" "Configuration des curseurs"
     # Création des répertoires nécessaires
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Création des répertoires nécessaires"
     install_mesa_vulkan
 }
 
-# Nouvelles fonctions de message
 info_msg() {
     if $USE_GUM; then
         gum style --foreground 33 "$1"

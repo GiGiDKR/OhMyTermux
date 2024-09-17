@@ -103,6 +103,7 @@ execute_command() {
     if $USE_GUM; then
         gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- eval "$command $redirect"
     else
+        show_banner
         info_msg "$message"
         eval "$command $redirect"
     fi
@@ -110,23 +111,13 @@ execute_command() {
 
 install_package() {
     local pkg=$1
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- pkg install "$pkg" -y
-    else
-        show_banner
-        execute_command "pkg install $pkg -y" "Installation de $pkg"
-    fi
+    execute_command "pkg install $pkg -y" "Installation de $pkg"
 }
 
 download_file() {
     local url=$1
     local message=$2
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- wget "$url"
-    else
-        echo -e "${COLOR_BLUE}$message${COLOR_RESET}"
-        eval "wget $url $redirect"
-    fi
+    execute_command "wget $url" "$message"
 }
 
 trap finish EXIT
@@ -145,41 +136,16 @@ for pkg in "${pkgs[@]}"; do
     install_package "$pkg"
 done
 
-eval "{
-    mkdir -p $HOME/Desktop
-    cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop
-    chmod +x $HOME/Desktop/firefox.desktop
-} $redirect"
+execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
-show_banner
 download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png" "Téléchargement du fond d'écran"
+execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Installation du fond d'écran"
 
-eval "mkdir -p $PREFIX/share/backgrounds/xfce/ $redirect"
-eval "mv waves.png $PREFIX/share/backgrounds/xfce/ $redirect"
+download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement du thème WhiteSur-Dark"
+execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
 
-show_banner
-download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Installation WhiteSur-Dark"
-eval "{
-    unzip 2024.09.02.zip
-    tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz
-    mv WhiteSur-Dark/ $PREFIX/share/themes/
-    rm -rf WhiteSur*
-    rm 2024.09.02.zip
-} $redirect"
+download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
+execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
-show_banner
-download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Installation Fluent Cursor"
-eval "{
-    unzip 2024-02-25.zip
-    mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/
-    mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/
-    rm -rf $HOME/Fluent*
-    rm 2024-02-25.zip
-} $redirect"
-
-show_banner
-download_file "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip" "Installation de la configuration"
-eval "{
-    unzip config.zip
-    rm config.zip
-} $redirect"
+download_file "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip" "Téléchargement de la pré-configuration"
+execute_command "unzip config.zip && rm config.zip" "Installation de la pré-configuration"
