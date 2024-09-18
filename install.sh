@@ -15,7 +15,6 @@ ZSHRC="$HOME/.zshrc"
 
 ONLY_GUM=true
 
-# Couleurs en variables
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
 COLOR_RESET="\e[0m"
@@ -264,9 +263,9 @@ termux-reload-settings
 
 show_banner
 if $USE_GUM; then
-    gum confirm --prompt.foreground="33" --selected.background="33" "  Autoriser l'accès au stockage ?" && termux-setup-storage
+    gum confirm --prompt.foreground="33" --selected.background="33" "Autoriser l'accès au stockage ?" && termux-setup-storage
 else
-    echo -e "${COLOR_BLUE}  Autoriser l'accès au stockage ? (o/n)${COLOR_RESET}"
+    echo -e "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n)${COLOR_RESET}"
     read choice
     [ "$choice" = "o" ] && termux-setup-storage
 fi
@@ -636,7 +635,7 @@ fi
 install_font() {
     if $FONT_CHOICE; then
         show_banner
-         if $USE_GUM; then
+        if $USE_GUM; then
             FONT=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=14 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
@@ -749,7 +748,7 @@ install_termux_x11() {
     local install_x11=false
 
     if $USE_GUM; then
-        if gum confirm --prompt.foreground="33" --selected.background="33" " Installer Termux-X11 ?"; then
+        if gum confirm --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
             install_x11=true
         fi
     else
@@ -784,11 +783,11 @@ install_script() {
         SCRIPT_DIR="$HOME/OhMyTermuxScript"
         if [ ! -d "$SCRIPT_DIR" ]; then
             if $USE_GUM; then
-                if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer OhMyTermuxScript ?"; then
+                if gum confirm --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
                     execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
                 fi
             else
-                echo -e "${COLOR_BLUE}  Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}"
                 read -r choice
                 if [ "$choice" = "o" ]; then
                     execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
@@ -815,7 +814,7 @@ rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "   Exécuter OhMyTermux ?"; then
+    if gum confirm --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
@@ -826,7 +825,7 @@ if $USE_GUM; then
         echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
 else
-    echo -e "${COLOR_BLUE}   Exécuter OhMyTermux ? (o/n)${COLOR_RESET}"
+    echo -e "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}"
     read choice
     if [ "$choice" = "o" ]; then
         clear
