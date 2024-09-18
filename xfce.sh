@@ -145,7 +145,7 @@ download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/ta
 execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
 
 download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
-execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
+execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/Fluent && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/Fluent-dark && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
 download_file "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip" "Téléchargement de la pré-configuration"
 execute_command "unzip config.zip && rm config.zip" "Installation de la pré-configuration"

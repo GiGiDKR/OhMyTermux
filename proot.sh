@@ -114,8 +114,14 @@ configure_user_rights() {
 install_mesa_vulkan() {
     local mesa_package="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
     local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/main/$mesa_package"
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installation de Mesa-Vulkan"
+    
+    # Vérification si Mesa-Vulkan est déjà installé
+    if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dpkg -s mesa-vulkan-kgsl &> /dev/null; then
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installation de Mesa-Vulkan"
+    else
+        info_msg "Mesa-Vulkan est déjà installé."
+    fi
 }
 
 # Fonction principale
@@ -189,9 +195,14 @@ EOF\"" "Ajout d'alias dans .bashrc"
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 mkdir -p /usr/share/icons" "Configuration des thèmes"
     cd "$PREFIX/share/icons"
     execute_command "find dist-dark | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 cpio -pdm /usr/share/icons" "Configuration des icônes"
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << EOF > /home/$username/.Xresources
+    # Vérification si .Xresources existe déjà
+    if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 test -f "/home/$username/.Xresources"; then
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << EOF > /home/$username/.Xresources
 Xcursor.theme: dist-dark
 EOF\"" "Configuration des curseurs"
+    else
+        info_msg "Le fichier .Xresources existe déjà. Pas de modification."
+    fi
     # Création des répertoires nécessaires
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Création des répertoires nécessaires"
     install_mesa_vulkan
