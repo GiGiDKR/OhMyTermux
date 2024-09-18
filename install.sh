@@ -263,7 +263,7 @@ termux-reload-settings
 
 show_banner
 if $USE_GUM; then
-    gum confirm --prompt.foreground="33" --selected.background="33" "Autoriser l'accès au stockage ?" && termux-setup-storage
+    gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Autoriser l'accès au stockage ?" && termux-setup-storage
 else
     echo -e "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n)${COLOR_RESET}"
     read choice
@@ -275,7 +275,7 @@ install_shell() {
     if $SHELL_CHOICE; then
         show_banner
         if $USE_GUM; then
-            shell_choice=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=5 --header="Choisissez le shell à installer :" "bash" "zsh" "fish")
+            shell_choice=$(gum choose --selected="zsh" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=5 --header="Choisissez le shell à installer :" "bash" "zsh" "fish")
         else
             echo -e "${COLOR_BLUE}Choisissez le shell à installer :${COLOR_RESET}"
             echo
@@ -304,7 +304,7 @@ install_shell() {
                 # Installation de Oh My Zsh et autres configurations ZSH
                 show_banner
                 if $USE_GUM; then
-                    if gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?"; then
+                    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh My Zsh"
                         cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
@@ -323,12 +323,12 @@ install_shell() {
 
                 show_banner
                 if $USE_GUM; then
-                    if gum confirm --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?"; then
+                    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?"; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         show_banner
-                        if gum confirm --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
+                        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh" "Téléchargement prompt PowerLevel10k"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
@@ -381,7 +381,7 @@ install_zsh_plugins() {
     if command -v zsh &> /dev/null; then
         show_banner
         if $USE_GUM; then
-            PLUGINS=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
+            PLUGINS=$(gum choose --selected="Tout installer" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
         else
             echo -e "${COLOR_BLUE}Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :${COLOR_RESET}"
             echo
@@ -470,7 +470,7 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         show_banner
         if $USE_GUM; then
-            PACKAGES=$(gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=21 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum choose --selected="nala,eza,bat,lf,fzf,python" --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=21 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
             echo -e "${COLOR_BLUE}Sélectionner les packages à installer (séparés par des espaces) :${COLOR_RESET}"
             echo
@@ -682,7 +682,7 @@ install_xfce() {
     if $XFCE_CHOICE; then
         show_banner
         if $USE_GUM; then
-            if ! gum confirm --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
+            if ! gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
                 return
             fi
         else
@@ -748,7 +748,7 @@ install_termux_x11() {
     local install_x11=false
 
     if $USE_GUM; then
-        if gum confirm --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
+        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
             install_x11=true
         fi
     else
@@ -783,7 +783,7 @@ install_script() {
         SCRIPT_DIR="$HOME/OhMyTermuxScript"
         if [ ! -d "$SCRIPT_DIR" ]; then
             if $USE_GUM; then
-                if gum confirm --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
+                if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
                     execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
                 fi
             else
@@ -814,7 +814,7 @@ rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 
 show_banner
 if $USE_GUM; then
-    if gum confirm --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
+    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
