@@ -10,7 +10,7 @@ XFCE_CHOICE=false
 SCRIPT_CHOICE=false
 VERBOSE=false
 
-BASHRC="$PREFIX/etc/bash.bashrc"
+BASHRC="$HOME/.bashrc"
 ZSHRC="$HOME/.zshrc"
 
 ONLY_GUM=true
@@ -678,6 +678,7 @@ install_font() {
     fi
 }
 
+
 install_xfce() {
     if $XFCE_CHOICE; then
         show_banner
@@ -705,41 +706,37 @@ install_xfce() {
         show_banner
         execute_command "pkg install \"${pkgs[@]}\" -y" "Installation des paquets nécessaires"
 
-        # Installation de Debian
-        show_banner
-        execute_command "proot-distro install debian" "Installation de Debian"
+        # Téléchargement des scripts supplémentaires
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/xfce.sh" "Téléchargement du script xfce"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/proot.sh" "Téléchargement du script proot"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/utils.sh" "Téléchargement du script utils"
+        execute_command "chmod +x xfce.sh proot.sh utils.sh" "Attribution des permissions d'exécution"
+        
+        if $USE_GUM; then
+            ./xfce.sh --gum
+            ./proot.sh --gum
+        else
+            ./xfce.sh
+            ./proot.sh
+        fi
+        ./utils.sh
+        add_get_username_function
+    fi
+}
 
-        # Création des fichiers de configuration
-        show_banner
-        execute_command '
-            echo "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dbus-launch --exit-with-session startxfce4" > $PREFIX/bin/start
-            echo "pkill -f \"app_process / com.termux.x11\"" > $PREFIX/bin/kill_termux_x11
-            echo "[Desktop Entry]
-Type=Application
-Name=Kill Termux:X11
-Exec=$PREFIX/bin/kill_termux_x11
-Icon=system-shutdown
-Categories=System;" > $PREFIX/share/applications/kill_termux_x11.desktop
-            chmod +x $PREFIX/bin/start $PREFIX/bin/kill_termux_x11
-        ' "Création des fichiers de configuration"
-
-        # Installation des paquets dans Debian
-        show_banner
-        execute_command '
-            proot-distro login debian --shared-tmp -- apt update
-            proot-distro login debian --shared-tmp -- apt upgrade -y
-            proot-distro login debian --shared-tmp -- apt install -y xfce4 xfce4-terminal dbus-x11 tigervnc-standalone-server
-        ' "Installation des paquets dans Debian"
-
-        # Configuration de XFCE
-        show_banner
-        execute_command '
-            proot-distro login debian --shared-tmp -- mkdir -p /root/.vnc
-            echo "#!/bin/bash
-xrdb $HOME/.Xresources
-startxfce4 &" | proot-distro login debian --shared-tmp -- tee /root/.vnc/xstartup > /dev/null
-            proot-distro login debian --shared-tmp -- chmod +x /root/.vnc/xstartup
-        ' "Configuration de XFCE"
+add_get_username_function() {
+    local function_text='
+function get_username() {
+    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
+    username=$(basename "$user_dir"/*)
+    echo $username
+}
+alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
+'
+    echo -e "$function_text" >> "$BASHRC"
+    
+    if [ -f "$ZSHRC" ]; then
+        echo -e "$function_text" >> "$ZSHRC"
     fi
 }
 

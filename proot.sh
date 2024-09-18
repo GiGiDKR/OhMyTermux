@@ -10,8 +10,6 @@ COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
 COLOR_RESET="\e[0m"
 
-bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
-
 # Configuration de la redirection
 if [ "$VERBOSE" = false ]; then
     redirect="> /dev/null 2>&1"
@@ -138,14 +136,26 @@ main() {
         username="$1"
         password="$2"
     fi
+    
     show_banner
     execute_command "proot-distro install debian" "Installation de Debian proot"
+    
+    # Vérification de l'installation de Debian
+    if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
+        error_msg "L'installation de Debian a échoué. Veuillez vérifier votre connexion internet et réessayer."
+        exit 1
+    fi
+    
+    # Définition de bashrc après l'installation de Debian
+    bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
+    
     show_banner
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
     install_packages_proot
     create_user_proot
     configure_user_rights
+    check_bashrc
     show_banner
     execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << 'EOF' >> $bashrc
