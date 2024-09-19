@@ -12,7 +12,7 @@ COLOR_RESET="\e[0m"
 
 # Configuration de la redirection
 if [ "$VERBOSE" = false ]; then
-    redirect=">/dev/null"
+    redirect=">/dev/null 2>&1
 else
     redirect=""
 fi
