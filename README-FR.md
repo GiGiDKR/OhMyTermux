@@ -165,13 +165,13 @@ Deux scripts sont également disponibles pour cette configuration :
 ```cp2menu``` En exécutant cela, une fenêtre s'ouvrira vous permettant de copier des fichiers .desktop depuis le proot Debian dans le menu "démarrer" de termux xfce afin que vous n'ayez pas besoin de les lancer depuis le terminal. Un lanceur est disponible dans la section du menu Système.
 
 > [!WARNING]
-> *Process completed (signal 9) - press Enter*
+> ***Process completed (signal 9) - press Enter***
 >
 > Vous devez exécuter cette commande adb pour corriger l'erreur du processus 9 qui force la fermeture de Termux :
->
-> ```adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"```
->
-> Pour le faire sans utiliser de PC, vous avez plusieurs solutions:
+> ```
+> adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"
+> ```
+> Pour le faire sans utiliser de PC, vous avez plusieurs solutions :
 >
 > Tout d'abord, connectez-vous au WIFI.
 >
@@ -191,7 +191,8 @@ Deux scripts sont également disponibles pour cette configuration :
 >
 > Une fois ce processus terminé, saisissez `adb connect` pour vous connecter avec l'adresse IP et le port fournis dans le menu de débogage sans fil.
 >
-> Enfin, exécutez la commande `adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"`
+> Enfin, exécutez la commande
+> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 >
 > **Méthode 2 :**
 >

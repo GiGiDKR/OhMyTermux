@@ -1,6 +1,6 @@
 # OhMyTermux 🧊
 
-**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.** 👀 
+**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.** 👀
 
 #### Optional installation of:
 
@@ -175,10 +175,10 @@ There are two scripts available for this setup as well :
 
 
 > [!WARNING]
-> *Process completed (signal 9) - press Enter*
+> ***Process completed (signal 9) - press Enter***
 >
 > You need to run this adb command to fix the process 9 error that will force close Termux :
-> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+> ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 >
 > To do this without using a PC you have several methods :
 >
@@ -196,11 +196,7 @@ There are two scripts available for this setup as well :
 > 
 > Put settings into split screen mode by pressing the square button on the bottom right of your phone, and hold the settings icon until the split screen icon shows up.
 > 
-> Then select Termux and in settings select pair with a code. In Termux type :
-> ```
-> adb pair 
-> ``` 
-> Then type your pairing info.
+> Then select Termux and in settings select pair with a code. In Termux type `adb pair` then enter your pairing info.
 > 
 > After you have completed this process you can type adb connect and connect to your phone with the ip and port provided in the wireless debugging menu. You can then run the fix command.
 > 
