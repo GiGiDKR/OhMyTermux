@@ -442,7 +442,6 @@ install_zsh_plugins() {
     fi
 
     for PLUGIN in $PLUGINS; do
-        show_banner
         case $PLUGIN in
             "zsh-autosuggestions")
                 install_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions.git"
