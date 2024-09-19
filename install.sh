@@ -883,3 +883,4 @@ else
         echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
     fi
 fi
+}
