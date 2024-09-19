@@ -1,6 +1,6 @@
 # OhMyTermux 🧊
 
-**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
+**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.** 👀 
 
 #### Optional installation of:
 
@@ -13,14 +13,14 @@
 &nbsp;
 
 > [!CAUTION]
-> This project is under development, use it at your own risk.
+> ⚠️ This project is under development, use it at your own risk.
 >
 > The various branches of the repository are currently not up to date.
 >
 > Please wait for version 1.1 before using this project or check the code before running it !
 
 > [!IMPORTANT]
-> To facilitate progress, the French language is preferred to provide the user CLI.
+> 🚩 To facilitate progress, the French language is preferred to provide the user CLI.
 >
 > A French version of this text is [available](README-FR.md).
 
