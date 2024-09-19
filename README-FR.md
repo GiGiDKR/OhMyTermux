@@ -112,7 +112,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
-🧊 **Configuration utile de Termux :**
+🧊 **Configuration de Termux :**
 
 - Alias personnalisés
 - Lien symbolique vers les répertoires utilisateur du stockage interne [^1]
@@ -122,7 +122,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - Sélecteur de thèmes
 - Installateur de Nerd Fonts
 - App-Installer (VSCode, PyCharm, Obsidian...) [^2]
-- Bureau XFCE4 natif de Termux sur Termux-X11 [^3]
+- Bureau XFCE4 natif de Termux sur Termux-X11 [^1]
 - Oh-My-Zsh [^2]
 - Oh-My-Posh [^1]
 - Electron Node.js
@@ -130,7 +130,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 [^1]: À venir dans la version 1.1 avec l'intégration complète de OhMyTermuxScript
 [^2]: Intégration optionnelle dans le script principal
-[^3]: En développement (pas encore de date de sortie)
 
 # 🔥 **XFCE et Debian :**
 
@@ -166,13 +165,13 @@ Deux scripts sont également disponibles pour cette configuration :
 ```cp2menu``` En exécutant cela, une fenêtre s'ouvrira vous permettant de copier des fichiers .desktop depuis le proot Debian dans le menu "démarrer" de termux xfce afin que vous n'ayez pas besoin de les lancer depuis le terminal. Un lanceur est disponible dans la section du menu Système.
 
 > [!WARNING]
-> *Processus terminé (signal 9) - appuyez sur Entrée*
+> *Process completed (signal 9) - press Enter*
 >
-> Vous devez exécuter cette commande adb pour corriger l'erreur du processus 9 qui forcera la fermeture de Termux :
+> Vous devez exécuter cette commande adb pour corriger l'erreur du processus 9 qui force la fermeture de Termux :
 >
 > ```adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"```
 >
-> Pour faire cela sans utiliser de PC, vous avez plusieurs méthodes :
+> Pour le faire sans utiliser de PC, vous avez plusieurs solutions:
 >
 > Tout d'abord, connectez-vous au WIFI.
 >
@@ -182,19 +181,17 @@ Deux scripts sont également disponibles pour cette configuration :
 > ```
 > pkg install android-tools -y
 > ```
-> Ouvrez ensuite les paramètres et activez les options du développeur en sélectionnant « À propos du téléphone », puis appuyez 7 fois sur « Créer ».
+> Ouvrez ensuite les paramètres et activez les options du développeur en sélectionnant "À propos du téléphone", puis appuyez 7 fois sur "Build".
 >
-> Sortez de ce menu et accédez aux options du développeur, activez le débogage sans fil, puis cliquez dessus pour obtenir le numéro de port, puis cliquez sur coupler l'appareil pour obtenir le code de couplage.
+> Sortez de ce menu et accédez aux options du développeur, activez le débogage sans fil et cliquez dessus pour obtenir le numéro de port. Ensuite, cliquez sur "Pair device" pour obtenir le code d'appairage.
 >
-> Mettez les paramètres en mode écran partagé en appuyant sur le bouton carré en bas à droite de votre téléphone et maintenez l'icône des paramètres jusqu'à ce que l'icône de l'écran partagé apparaisse.
+> Mettez les paramètres en mode écran partagé.
 >
-> Sélectionnez ensuite Termux et dans les paramètres, sélectionnez jumeler avec un code. Dans Termux, tapez :
-> ```
-> adb pair
-> ```
-> Tapez ensuite vos informations de jumelage.
+> Sélectionnez Termux et dans les paramètres, sélectionnez appairer avec un code. Saisissez `adb pair` puis entrez vos informations d'appairage.
 >
-> Une fois ce processus terminé, vous pouvez taper adb connect et vous connecter à votre téléphone avec l'adresse IP et le port fournis dans le menu de débogage sans fil. Vous pouvez ensuite exécuter la commande fix.
+> Une fois ce processus terminé, saisissez `adb connect` pour vous connecter avec l'adresse IP et le port fournis dans le menu de débogage sans fil.
+>
+> Enfin, exécutez la commande `adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"`
 >
 > **Méthode 2 :**
 >
@@ -206,7 +203,7 @@ Deux scripts sont également disponibles pour cette configuration :
 >
 > Entrez ces deux valeurs dans LADB.
 >
-> Une fois connecté, exécutez la commande fix.
+> Une fois connecté, exécutez la commande `adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"`
 
 ## 💻 Historique des versions
 
