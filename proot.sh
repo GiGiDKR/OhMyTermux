@@ -17,15 +17,15 @@ show_help() {
 # Traitement des options
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --gum)
+        --gum|-g)
             USE_GUM=true
             shift
             ;;
-        --verbose)
+        --verbose|-v)
             VERBOSE=true
             shift
             ;;
-        --help)
+        --help|-h)
             show_help
             exit 0
             ;;
