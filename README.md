@@ -56,7 +56,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 ### About this program 
 
-#### 🧊 **Packages installed by default :**
+#### 🧊 **Packages installed by default**
 
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
@@ -64,7 +64,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [zsh](https://github.com/zsh-users/zsh)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
-🧊 **Individually selectable packages :**
+#### 🧊 **Individually selectable packages**
 
 - [nala](https://github.com/volitank/nala)
 - [eza](https://github.com/eza-community/eza)
@@ -84,14 +84,14 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [open-ssh](https://www.openssh.com/)
 
 
-🧊 **Shell selection :**
+#### 🧊 **Shell selection**
 
 - [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
 - [ZSH](https://www.zsh.org/)
 - [Fish](https://github.com/fish-shell/fish-shell)
 
 
-  🧊 **Configuration ZSH :**
+  ##### 🧊 **Configuration ZSH *
 
     - [Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)
     - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
@@ -100,7 +100,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
     - [zsh-abbr](https://github.com/olets/zsh-abbr)
     - [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
 
-  🧊 **Configuration Fish [^1] :**
+  ##### 🧊 **Configuration Fish [^1]**
   
    - ~~[Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)~~
    - ~~[Fisher](https://github.com/jorgebucaran/fisher)~~
