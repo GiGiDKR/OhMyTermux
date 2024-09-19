@@ -720,7 +720,7 @@ install_font() {
 
 # Fonction pour installer XFCE
 install_xfce() {
-    if $XFCE_CHOICE; then
+#    if $XFCE_CHOICE; then
         show_banner
         if $USE_GUM; then
             if ! gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
@@ -756,7 +756,7 @@ install_xfce() {
         fi
         ./utils.sh
         add_get_username_function
-    fi
+#    fi
 }
 
 # Fonction pour ajouter la fonction get_username
