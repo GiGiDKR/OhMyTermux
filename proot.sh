@@ -9,9 +9,9 @@ VERBOSE=false
 show_help() {
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
-    echo "  --gum     Utiliser gum pour l'interface utilisateur"
-    echo "  --verbose Afficher les sorties détaillées"
-    echo "  --help    Afficher ce message d'aide"
+    echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose | -v Afficher les sorties détaillées"
+    echo "  --help | -h    Afficher ce message d'aide"
 }
 
 # Traitement des options
