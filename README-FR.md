@@ -9,14 +9,14 @@
 
 - **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Synchroniser Obsidian sur Android en utilisant Termux et Git. [^1]
 
-[!CAUTION]
+> [!CAUTION]
 > ⚠️ Ce projet est en développement, utilisez-le à vos propres risque
 >
 > Les différentes branches du dépôt ne sont actuellement pas à jour. 
 >
 > Veuillez attendre la version 1.1 avant d'utiliser ce projet ou vérifiez le code avant de l'exécuter.
 
-[!IMPORTANT]
+> [!IMPORTANT]
 > 🚩 Pour faciliter l'avancement, la langue française est privilégiée pour fournir l'interface en ligne de commande.
 > 
 > Une version Anglaise de ce texte est [disponible](README.md).
