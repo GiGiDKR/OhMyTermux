@@ -140,7 +140,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 &nbsp;
 
-## 🧊 **XFCE and Debian :**
+## **XFCE and Debian 🧊**
 
 Sets up a termux XFCE desktop and a Debian proot install.
 This setup uses Termux-X11, the termux-x11 server will be installed and you will be prompted to allow termux to install the Android APK.
@@ -149,7 +149,7 @@ You only need to pick your username and follow the prompts.
 > [!IMPORTANT]
 > This will take roughly 4GB of storage space
 
-## Starting the desktop
+### Starting the desktop
 
 You will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
 
@@ -161,7 +161,7 @@ To enter the Debian proot install from terminal use the command ```debian```
 
 Also note, you do not need to set display in Debian proot as it is already set. This means you can use the terminal to start any GUI application and it will startup.
 
-## Debain Proot
+### Debain Proot
 
 To enter proot use the command ```debian```, from there you can install aditional software with apt and use cp2menu in termux to copy the menu items over to termux xfce menu.
 
