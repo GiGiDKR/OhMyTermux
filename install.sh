@@ -733,23 +733,19 @@ install_xfce() {
             fi
         fi
 
-        # Installation de XFCE et DEBIAN
-        show_banner
-        pkgs=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
+        # Installation de XFCE et Debian
+        PACKAGES=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
 
         # Installation des pré-requis
-        show_banner
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
 
         # Installation des paquets nécessaires
-        show_banner
-        execute_command "pkg install \"${pkgs[@]}\" -y" "Installation des paquets nécessaires"
+            for PACKAGE in $PACKAGES; do
+                execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
 
         # Téléchargement des scripts supplémentaires
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh" "Téléchargement du script xfce"
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script proot"
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement du script utils"
-        execute_command "chmod +x xfce.sh proot.sh utils.sh" "Attribution des permissions d'exécution"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh && curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh && curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement des scripts"
+        execute_command "chmod +x *.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
             ./xfce.sh --gum
