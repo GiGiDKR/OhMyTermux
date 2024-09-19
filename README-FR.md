@@ -9,44 +9,46 @@
 
 - **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Synchroniser Obsidian sur Android en utilisant Termux et Git. [^1]
 
-> [!IMPORTANT]
-> Ce projet est en développement actif mais pour faciliter la progression, la langue française est privilégiée pour fournir l'interface utilisateur CLI.
-> 
-> Plusieurs langues seront disponibles dans une version à venir.
+[!WARNING]
+> Ce projet est en développement, utilisez-le à vos propres risque
+>
+> Les différentes branches du dépôt ne sont actuellement pas à jour. 
+>
+> Veuillez attendre la version 1.1 avant d'utiliser ce projet ou vérifiez le code avant de l'exécuter.
+
+[!IMPORTANT]
+> Pour faciliter l'avancement, la langue française est privilégiée pour fournir l'interface en ligne de commande.
 > 
 > Une version Anglaise de ce texte est [disponible](README.md).
 
 ## Installation
+
+🧊 Pour installer **OhMyTermux** 
+```bash
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+```
 
 > [!TIP]
 > **[Gum](https://github.com/charmbracelet/gum)** permet une utilisation simplifiée des scripts CLI comme la sélection multiple avec Espace.
 > 
 > Il est recommandé de l'utiliser en ajoutant le paramètre `--gum` ou `-g` à la commande.
 
-🧊 Pour installer **OhMyTermux** avec **[Gum](https://github.com/charmbracelet/gum)**
-
+🔥 Pour installer **OhMyTermux** avec **[Gum](https://github.com/charmbracelet/gum)**
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
-```
-
-Ou sans
-
-```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
 >[!NOTE]
-> Depuis la version 1.0.6 il est possible d'exécuter une seule fonction du script en utilisant l'argument correspondant :
+> Il est possible d'exécuter une seule fonction du script en utilisant l'argument correspondant :
 > - Istallation du shell : `--shell` or `-sh`
 > - Intallation des paquets : `--package` or `-pkg`
-> - Installation des plugins : `--plugin` or `-plg`
 > - Installation de la police : `--font` or `-f`
 > - XFCE / Debian-Proot : `--xfce` or `-x`
-> - OhMyTermuxScript : `--script` or `-s`
-> - Passer la configuration initiale : `--noconf` or `-nc`
+> - OhMyTermuxScript : `--script` or `-sc`
+> - Passer la configuration initiale : `--skip` or `-sk`
 >
 > **Plusieurs arguments peuvent être combinés.**
->
+
 
 ## À propos de ce programme
 
@@ -69,6 +71,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [fzf](https://github.com/junegunn/fzf)
 - [glow](https://github.com/charmbracelet/glow)
 - [python](https://github.com/python)
+- [nodejs](https://github.com/nodejs/node)
+- [nodejs-lts](https://github.com/nodejs/Release)
 - [micro](https://github.com/zyedidia/micro)
 - [vim](https://github.com/vim/vim)
 - [neovim](https://github.com/neovim/neovim)
@@ -113,7 +117,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - Alias personnalisés
 - Lien symbolique vers les répertoires utilisateur du stockage interne [^1]
 
-🧊 **Scripts utiles [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
 
 - Sélecteur de thèmes
 - Installateur de Nerd Fonts
@@ -161,22 +165,48 @@ Deux scripts sont également disponibles pour cette configuration :
 
 ```cp2menu``` En exécutant cela, une fenêtre s'ouvrira vous permettant de copier des fichiers .desktop depuis le proot Debian dans le menu "démarrer" de termux xfce afin que vous n'ayez pas besoin de les lancer depuis le terminal. Un lanceur est disponible dans la section du menu Système.
 
-> [!CAUTION]
-> Processus terminé (signal 9) - appuyez sur Entrée
-> 
-> Installez LADB depuis [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) ou depuis [GitHub](https://github.com/hyperio546/ladb-builds/releases).
-> 
-> Connectez-vous au WIFI.
-> 
-> En écran partagé, ayez d'un côté LADB et de l'autre les paramètres développeur.
-> 
-> Dans les paramètres développeur, activez le débogage sans fil puis cliquez dessus pour obtenir le numéro de port, puis cliquez sur appareiller l'appareil pour obtenir le code d'appariement.
-> 
+> [!ATTENTION]
+> *Processus terminé (signal 9) - appuyez sur Entrée*
+>
+> Vous devez exécuter cette commande adb pour corriger l'erreur du processus 9 qui forcera la fermeture de Termux :
+>
+> ```adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"```
+>
+> Pour faire cela sans utiliser de PC, vous avez plusieurs méthodes :
+>
+> Tout d'abord, connectez-vous au WIFI.
+>
+> **Méthode 1 :**
+>
+> Installez adb dans Termux en exécutant ce code :
+> ```
+> pkg install android-tools -y
+> ```
+> Ouvrez ensuite les paramètres et activez les options du développeur en sélectionnant « À propos du téléphone », puis appuyez 7 fois sur « Créer ».
+>
+> Sortez de ce menu et accédez aux options du développeur, activez le débogage sans fil, puis cliquez dessus pour obtenir le numéro de port, puis cliquez sur coupler l'appareil pour obtenir le code de couplage.
+>
+> Mettez les paramètres en mode écran partagé en appuyant sur le bouton carré en bas à droite de votre téléphone et maintenez l'icône des paramètres jusqu'à ce que l'icône de l'écran partagé apparaisse.
+>
+> Sélectionnez ensuite Termux et dans les paramètres, sélectionnez jumeler avec un code. Dans Termux, tapez :
+> ```
+> adb pair
+> ```
+> Tapez ensuite vos informations de jumelage.
+>
+> Une fois ce processus terminé, vous pouvez taper adb connect et vous connecter à votre téléphone avec l'adresse IP et le port fournis dans le menu de débogage sans fil. Vous pouvez ensuite exécuter la commande fix.
+>
+> **Méthode 2 :**
+>
+> Installez LADB depuis [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) ou depuis [GitHub](https: //github.com/hyperio546/ladb-builds/releases).
+>
+> En écran partagé, ayez un côté LADB et l'autre côté affichant les paramètres du développeur.
+>
+> Dans les paramètres du développeur, activez le débogage sans fil, puis cliquez dessus pour obtenir le numéro de port, puis cliquez sur associer l'appareil pour obtenir le code d'association.
+>
 > Entrez ces deux valeurs dans LADB.
-> 
-> Une fois connecté, exécutez cette commande :
-> 
-> ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+>
+> Une fois connecté, exécutez la commande fix.
 
 ## 💻 Historique des versions
 
@@ -195,6 +225,20 @@ Deux scripts sont également disponibles pour cette configuration :
     - Gestion dynamique de la configuration de .zshrc
 - Version 1.0.6 :
     - Modification globale du script principal en divisant chaque étape en une fonction exécutable seule (ou combinée avec d'autres) avec l'ajout d'un argument à la commande d'exécution
+- Version 1.0.7 :
+    - Ajout de l'argument `--shell` pour installer un shell
+    - Ajout de l'argument `--package` pour installer des paquets
+    - Ajout de l'argument `--xfce` pour installer XFCE et Debian proot
+    - Ajout de l'argument `--font` pour installer des polices
+    - Ajout de l'argument `--script` pour installer [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
+    - Ajout de l'argument `--skip` pour passer la configuration initiale
+- Version 1.0.8 :
+    - Correction de bugs et améliorations
+- Version 1.0.9 :
+    - Amélioration globale du script
+    - Ajout de la création d'un mot de passe pour l'utilisateur Debian proot
+    - Implémentation d'un exécution non-verbeuse lorsque gum n'est pas utilisé
+    - Implémentation d'un système pour afficher le résultat de l'exécution des commandes (succès/échec)
 - Version 1.1 :
   - En développement
 

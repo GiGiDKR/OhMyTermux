@@ -13,7 +13,7 @@
 &nbsp;
 
 > [!WARNING]
-> This project is under active development, use it at your own risk.
+> This project is under development, use it at your own risk.
 >
 > The various branches of the repository are currently not up to date.
 >
@@ -37,20 +37,18 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 > **[Gum](https://github.com/charmbracelet/gum)** allows simplified use of CLI scripts, it is recommended to use it by adding the `--gum` or `-g` argument.
 
 🔥 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
-
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
 >[!NOTE]
-> Since version 1.0.6 it is possible to execute only one function of the script by use the corresponding argument :
+> It is possible to execute only one function of the script by use the corresponding argument :
 > - Shell installation : `--shell` or `-sh`
 > - Packages installation : `--package` or `-pkg`
-> ~~- Plugins installation : `--plugin` or `-plg`~~
 > - Fonts installation : `--font` or `-f`
 > - XFCE / Debian-Proot : `--xfce` or `-x`
-> - OhMyTermuxScript : `--script` or `-s`
-> - Skip initial configuration : `--noconf` or `-nc`
+> - OhMyTermuxScript : `--script` or `-sc`
+> - Skip initial configuration : `--skip` or `-sk`
 >
 > **Multiple arguments can be combined.**
 
@@ -125,7 +123,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - Custom aliases
 - Symlink to internal storage user directories [^1]
 
-🧊 **Useful scripts [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
 
 - Theme Selector
 - Nerd Fonts Installer
@@ -175,22 +173,48 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
+
 > [!CAUTION]
-> Process completed (signal 9) - press Enter
+> *Process completed (signal 9) - press Enter*
 >
+> You need to run this adb command to fix the process 9 error that will force close Termux :
+> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+>
+> To do this without using a PC you have several methods :
+>
+> First, Connect to WIFI.
+>
+> **Method 1 :**
+> 
+> Install adb in Termux by running this code:
+> ```
+> pkg install android-tools -y
+> ```
+> Then open settings and enable developer's options by selecting "About phone" then hit "Build" 7 times.
+> 
+> Back out of this menu and go into developer's options, enable wireless debugging then click into there to get the port number then click pair device to get the pairing code.
+> 
+> Put settings into split screen mode by pressing the square button on the bottom right of your phone, and hold the settings icon until the split screen icon shows up.
+> 
+> Then select Termux and in settings select pair with a code. In Termux type :
+> ```
+> adb pair 
+> ``` 
+> Then type your pairing info.
+> 
+> After you have completed this process you can type adb connect and connect to your phone with the ip and port provided in the wireless debugging menu. You can then run the fix command.
+> 
+> **Method 2 :**
+> 
 > Install LADB from [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) or from [GitHub](https://github.com/hyperio546/ladb-builds/releases).
 > 
-> Connect to WIFI.  
->
 > In split screen have one side LADB and the other side showing developer settings.
 >
 > In developer settings, enable wireless debugging then click into there to get the port number then click pair device to get the pairing code.
 >
 > Enter both those values into LADB.
 >
-> Once it connects run this command :
-> 
-> ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+> Once it connects run the fix command.
 
 &nbsp;
 
