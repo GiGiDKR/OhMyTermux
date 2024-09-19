@@ -776,6 +776,7 @@ alias debian='\''proot-distro login debian --shared-tmp --user $(get_username)'\
     if [ -f "$ZSHRC" ]; then
         echo -e "$function_text" >> "$ZSHRC"
     fi
+}
 
 # Fonction pour installer Termux-X11
 install_termux_x11() {
@@ -883,4 +884,3 @@ else
         echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
     fi
 fi
-}
