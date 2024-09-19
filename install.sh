@@ -198,11 +198,13 @@ change_repo() {
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Changer le répertoire de sources ?"; then
             termux-change-repo
+            clear
         fi
     else
         read -p "${COLOR_BLUE}Changer le répertoire de sources ? (o/n) : ${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
             termux-change-repo
+            clear
         fi
     fi
 }
@@ -765,6 +767,7 @@ function get_username() {
         return 1
     fi
     echo "$username"
+}
 
 alias debian='\''proot-distro login debian --shared-tmp --user $(get_username)'\''
 '
@@ -773,7 +776,6 @@ alias debian='\''proot-distro login debian --shared-tmp --user $(get_username)'\
     if [ -f "$ZSHRC" ]; then
         echo -e "$function_text" >> "$ZSHRC"
     fi
-}
 
 # Fonction pour installer Termux-X11
 install_termux_x11() {
