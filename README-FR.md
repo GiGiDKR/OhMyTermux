@@ -1,6 +1,6 @@
 # OhMyTermux 🧊
 
-**Installation automatisée et personnalisée de [Termux](https://github.com/termux) : packages, shell, plugins, prompts, polices et thèmes sélectionnables.**
+**Installation automatisée et personnalisée de [Termux](https://github.com/termux) : packages, shell, plugins, prompts, polices et thèmes sélectionnables.** 👀
 
 #### Installation optionnelle de :
 - **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README-FR.md#-xfce-and-debian-)** : Une distribution proot [Debian](https://www.debian.org/) personnalisée avec un bureau [XFCE](https://www.xfce.org/) et un [App-Installer](https://github.com/GiGiDKR/App-Installer) afin d'obtenir des logiciels non-disponible avec le gestionnaire de paquets.
@@ -10,14 +10,14 @@
 - **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Synchroniser Obsidian sur Android en utilisant Termux et Git. [^1]
 
 [!CAUTION]
-> Ce projet est en développement, utilisez-le à vos propres risque
+> ⚠️ Ce projet est en développement, utilisez-le à vos propres risque
 >
 > Les différentes branches du dépôt ne sont actuellement pas à jour. 
 >
 > Veuillez attendre la version 1.1 avant d'utiliser ce projet ou vérifiez le code avant de l'exécuter.
 
 [!IMPORTANT]
-> Pour faciliter l'avancement, la langue française est privilégiée pour fournir l'interface en ligne de commande.
+> 🚩 Pour faciliter l'avancement, la langue française est privilégiée pour fournir l'interface en ligne de commande.
 > 
 > Une version Anglaise de ce texte est [disponible](README.md).
 
