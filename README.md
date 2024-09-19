@@ -91,7 +91,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [Fish](https://github.com/fish-shell/fish-shell)
 
 
-  ##### 🧊 **Configuration ZSH *
+  ##### 🧊 **Configuration ZSH**
 
     - [Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)
     - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
@@ -112,18 +112,18 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
    - ~~[Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)~~
    - ~~[Catppuccin for Fish](https://github.com/catppuccin/fish)~~
 
-🧊 **Configuring Termux Display :**
+  #### 🧊 **Configuring Termux Display :**
 
 - [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) 
 - [Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
-🧊 **Helpful Termux configuration :**
+  #### 🧊 **Helpful Termux configuration :**
 
 - Custom aliases
 - Symlink to internal storage user directories [^1]
 
-🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+  #### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
 
 - Theme Selector
 - Nerd Fonts Installer
