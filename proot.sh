@@ -212,19 +212,30 @@ main() {
     check_dependencies
     show_banner
     if [ $# -eq 0 ]; then
-        if [ "$USE_GUM" = true ]; then
-            username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
-            password=$(gum input --password --placeholder "Entrez votre mot de passe")
-        else
-            echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
-            read -r username
-            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
-            read -rs password
-        fi
+    if [ "$USE_GUM" = true ]; then
+        username=$(gum input --prompt "Nom d'utilisateur : " --placeholder "Entrez votre nom d'utilisateur")
+        password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
     else
-        username="$1"
-        password="$2"
+        echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
+        read -r username
+        echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+        read -rs password
     fi
+elif [ $# -eq 1 ]; then
+    username="$1"
+    if [ "$USE_GUM" = true ]; then
+        password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
+    else
+        echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+        read -rs password
+    fi
+elif [ $# -eq 2 ]; then
+    username="$1"
+    password="$2"
+else
+    echo "Usage: $0 [username] [password]"
+    exit 1
+fi
     
     show_banner
     execute_command "proot-distro install debian" "Installation de Debian proot"
