@@ -141,7 +141,7 @@ fi
 pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
 
 for pkg in "${pkgs[@]}"; do
-    install_package "$pkg"
+    execute_command "pkg install $pkg -y" "Installation de $pkg"
 done
 
 # Configuration du bureau
