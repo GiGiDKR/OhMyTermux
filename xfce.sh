@@ -161,4 +161,4 @@ execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors
 
 # Téléchargement de la pré-configuration
 download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/config.zip" "Téléchargement de la pré-configuration"
-execute_command "unzip config.zip && rm config.zip" "Installation de la pré-configuration"
+execute_command "unzip -o config.zip && rm config.zip" "Installation de la pré-configuration"
