@@ -117,7 +117,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - Alias personnalisés
 - Lien symbolique vers les répertoires utilisateur du stockage interne [^1]
 
-### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1]
 
 - Sélecteur de thèmes
 - Installateur de Nerd Fonts
@@ -131,7 +131,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 [^1]: À venir dans la version 1.1 avec l'intégration complète de OhMyTermuxScript
 [^2]: Intégration optionnelle dans le script principal
 
-# **XFCE et Debian :**
+## **XFCE et Debian**
 
 Configure un bureau XFCE et une installation proot Debian.
 
@@ -142,7 +142,7 @@ Vous n'avez qu'à choisir votre nom d'utilisateur et suivre les instructions.
 > [!IMPORTANT]
 > L'installation nécessite 4 Go
 
-## 🧊 Démarrer le bureau
+### 🧊 Démarrer le bureau
 
 Vous recevrez une notification pour autoriser les installations depuis termux, cela ouvrira l'APK pour l'application Android Termux-X11. Bien que vous n'ayez pas besoin d'autoriser les installations depuis termux, vous devrez tout de même l'installer manuellement en utilisant un explorateur de fichiers et en trouvant l'APK dans votre dossier de téléchargements.
 
@@ -154,7 +154,7 @@ Pour entrer dans l'installation proot Debian depuis le terminal, utilisez la com
 
 Notez également que vous n'avez pas besoin de définir l'affichage dans le proot Debian car il est déjà configuré. Cela signifie que vous pouvez utiliser le terminal pour démarrer n'importe quelle application GUI et elle se lancera.
 
-## 🧊 Debian Proot
+### 🧊 Debian Proot
 
 Pour entrer dans le proot, utilisez la commande ```debian```, à partir de là, vous pouvez installer des logiciels supplémentaires avec apt et utiliser cp2menu dans termux pour copier les éléments de menu dans le menu xfce de termux.
 
