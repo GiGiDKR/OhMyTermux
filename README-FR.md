@@ -2,7 +2,7 @@
 
 **Installation automatisée et personnalisée de [Termux](https://github.com/termux) : packages, shell, plugins, prompts, polices et thèmes sélectionnables.** 👀
 
-#### Installation optionnelle de :
+Installation optionnelle de :
 - **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README-FR.md#-xfce-and-debian-)** : Une distribution proot [Debian](https://www.debian.org/) personnalisée avec un bureau [XFCE](https://www.xfce.org/) et un [App-Installer](https://github.com/GiGiDKR/App-Installer) afin d'obtenir des logiciels non-disponible avec le gestionnaire de paquets.
 
 - **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : Une collection de scripts exécutables depuis le script principal ou ultérieurement. [^1]
@@ -52,7 +52,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 ## À propos de ce programme
 
-🧊 **Packages installés par défaut :**
+### 🧊 **Packages installés par défaut**
 
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
@@ -60,7 +60,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [zsh](https://github.com/zsh-users/zsh)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
-🧊 **Packages sélectionnables individuellement :**
+### 🧊 **Packages sélectionnables individuellement**
 
 - [nala](https://github.com/volitank/nala)
 - [eza](https://github.com/eza-community/eza)
@@ -79,13 +79,13 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [lazygit](https://github.com/jesseduffield/lazygit)
 - [open-ssh](https://www.openssh.com/)
 
-🧊 **Sélection du shell :**
+### 🧊 **Sélection du shell**
 
 - [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
 - [ZSH](https://www.zsh.org/)
 - [Fish](https://github.com/fish-shell/fish-shell)
 
-🧊 **Configuration ZSH :**
+#### 🧊 **Configuration ZSH**
 
 - [Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)
 - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
@@ -94,7 +94,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [zsh-abbr](https://github.com/olets/zsh-abbr)
 - [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
 
-🧊 **Configuration Fish [^1] :**
+#### 🧊 **Configuration Fish [^1]**
 
 - ~~[Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)~~
 - ~~[Fisher](https://github.com/jorgebucaran/fisher)~~
@@ -106,18 +106,18 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - ~~[Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)~~
 - ~~[Catppuccin for Fish](https://github.com/catppuccin/fish)~~
 
-🧊 **Configuration de l'affichage Termux :**
+### 🧊 **Configuration de l'affichage Termux :**
 
 - [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
 - [Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
-🧊 **Configuration de Termux :**
+### 🧊 **Configuration de Termux :**
 
 - Alias personnalisés
 - Lien symbolique vers les répertoires utilisateur du stockage interne [^1]
 
-🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
 
 - Sélecteur de thèmes
 - Installateur de Nerd Fonts
@@ -131,7 +131,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 [^1]: À venir dans la version 1.1 avec l'intégration complète de OhMyTermuxScript
 [^2]: Intégration optionnelle dans le script principal
 
-# 🔥 **XFCE et Debian :**
+# **XFCE et Debian :**
 
 Configure un bureau XFCE et une installation proot Debian.
 
@@ -142,7 +142,7 @@ Vous n'avez qu'à choisir votre nom d'utilisateur et suivre les instructions.
 > [!IMPORTANT]
 > L'installation nécessite 4 Go
 
-## Démarrer le bureau
+## 🧊 Démarrer le bureau
 
 Vous recevrez une notification pour autoriser les installations depuis termux, cela ouvrira l'APK pour l'application Android Termux-X11. Bien que vous n'ayez pas besoin d'autoriser les installations depuis termux, vous devrez tout de même l'installer manuellement en utilisant un explorateur de fichiers et en trouvant l'APK dans votre dossier de téléchargements.
 
@@ -154,7 +154,7 @@ Pour entrer dans l'installation proot Debian depuis le terminal, utilisez la com
 
 Notez également que vous n'avez pas besoin de définir l'affichage dans le proot Debian car il est déjà configuré. Cela signifie que vous pouvez utiliser le terminal pour démarrer n'importe quelle application GUI et elle se lancera.
 
-## Proot Debian
+## 🧊 Debian Proot
 
 Pour entrer dans le proot, utilisez la commande ```debian```, à partir de là, vous pouvez installer des logiciels supplémentaires avec apt et utiliser cp2menu dans termux pour copier les éléments de menu dans le menu xfce de termux.
 
