@@ -178,7 +178,9 @@ There are two scripts available for this setup as well :
 > ***Process completed (signal 9) - press Enter***
 >
 > You need to run this adb command to fix the process 9 error that will force close Termux :
-> ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+> ```
+> adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"
+> ```
 >
 > To do this without using a PC you have several methods :
 >
@@ -199,6 +201,7 @@ There are two scripts available for this setup as well :
 > Then select Termux and in settings select pair with a code. In Termux type `adb pair` then enter your pairing info.
 > 
 > After you have completed this process you can type adb connect and connect to your phone with the ip and port provided in the wireless debugging menu. You can then run the fix command.
+> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 > 
 > **Method 2 :**
 > 
@@ -211,6 +214,7 @@ There are two scripts available for this setup as well :
 > Enter both those values into LADB.
 >
 > Once it connects run the fix command.
+> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 
 &nbsp;
 

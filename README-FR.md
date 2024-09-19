@@ -204,7 +204,8 @@ Deux scripts sont également disponibles pour cette configuration :
 >
 > Entrez ces deux valeurs dans LADB.
 >
-> Une fois connecté, exécutez la commande `adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"`
+> Une fois connecté, exécutez la commande
+> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 
 ## 💻 Historique des versions
 
