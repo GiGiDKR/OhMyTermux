@@ -54,9 +54,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 &nbsp;
 
-## About this program 
+### About this program 
 
-🧊 **Packages installed by default :**
+#### 🧊 **Packages installed by default :**
 
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
@@ -140,7 +140,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 &nbsp;
 
-## **XFCE and Debian 🧊**
+## **XFCE and Debian**
 
 Sets up a termux XFCE desktop and a Debian proot install.
 This setup uses Termux-X11, the termux-x11 server will be installed and you will be prompted to allow termux to install the Android APK.
