@@ -770,7 +770,7 @@ function get_username() {
         return 1
     fi
     echo "$username"
-}
+
 alias debian='\''proot-distro login debian --shared-tmp --user $(get_username)'\''
 '
     echo -e "$function_text" >> "$BASHRC"
