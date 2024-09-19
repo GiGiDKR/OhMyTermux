@@ -200,8 +200,16 @@ install_mesa_vulkan() {
     local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/$mesa_package"
     
     if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dpkg -s mesa-vulkan-kgsl &> /dev/null; then
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installation de Mesa-Vulkan"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url -O /tmp/$mesa_package" "Téléchargement de Mesa-Vulkan"
+        if [ $? -eq 0 ]; then
+            execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo dpkg -i /tmp/$mesa_package" "Installation de Mesa-Vulkan"
+            if [ $? -ne 0 ]; then
+                execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt-get install -f -y" "Résolution des dépendances"
+                execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo dpkg -i /tmp/$mesa_package" "Nouvelle tentative d'installation de Mesa-Vulkan"
+            fi
+        else
+            error_msg "Échec du téléchargement de Mesa-Vulkan"
+        fi
     else
         info_msg "Mesa-Vulkan est déjà installé."
     fi
