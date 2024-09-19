@@ -406,93 +406,87 @@ install_shell() {
     fi
 }
 
-# Fonction pour installer les plugins ZSH
+# Fonction pour installer les plugins
 install_zsh_plugins() {
-    if command -v zsh &> /dev/null; then
-        show_banner
-        if $USE_GUM; then
-            PLUGINS=$(gum choose --selected="Tout installer" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
-        else
-            echo -e "${COLOR_BLUE}Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :${COLOR_RESET}"
-            echo
-            echo -e "${COLOR_BLUE}1) zsh-autosuggestions${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) zsh-syntax-highlighting${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) zsh-completions${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}4) you-should-use${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}5) zsh-abbr${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}6) zsh-alias-finder${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}7) Tout installer${COLOR_RESET}"
-            echo
-            read -p "${COLOR_BLUE}Entrez les numéros des plugins : ${COLOR_RESET}" plugin_choices
-            PLUGINS=""
-            for choice in $plugin_choices; do
-                case $choice in
-                    1) PLUGINS+="zsh-autosuggestions " ;;
-                    2) PLUGINS+="zsh-syntax-highlighting " ;;
-                    3) PLUGINS+="zsh-completions " ;;
-                    4) PLUGINS+="you-should-use " ;;
-                5) PLUGINS+="zsh-abbr " ;;
-                    6) PLUGINS+="zsh-alias-finder " ;;
-                    7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
-                esac
-            done
+    local plugins_to_install=()
+    if $USE_GUM; then
+        plugins_to_install=($(gum choose --no-limit --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
+        if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
+            plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
-    if [[ "$PLUGINS" == *"Tout installer"* ]]; then
-        PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
+    else
+        info_msg "Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :"
+        echo
+        info_msg "1) zsh-autosuggestions"
+        info_msg "2) zsh-syntax-highlighting"
+        info_msg "3) zsh-completions"
+        info_msg "4) you-should-use"
+        info_msg "5) zsh-abbr"
+        info_msg "6) zsh-alias-finder"
+        info_msg "7) Tout installer"
+        echo
+        read -p $"\e[33mEntrez les numéros des plugins : \e[0m" plugin_choices
+        
+        for choice in $plugin_choices; do
+            case $choice in
+                1) plugins_to_install+=("zsh-autosuggestions") ;;
+                2) plugins_to_install+=("zsh-syntax-highlighting") ;;
+                3) plugins_to_install+=("zsh-completions") ;;
+                4) plugins_to_install+=("you-should-use") ;;
+                5) plugins_to_install+=("zsh-abbr") ;;
+                6) plugins_to_install+=("zsh-alias-finder") ;;
+                7) plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder") ;;
+            esac
+        done
     fi
 
-    for PLUGIN in $PLUGINS; do
-        case $PLUGIN in
-            "zsh-autosuggestions")
-                install_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions.git"
-                ;;
-            "zsh-syntax-highlighting")
-                install_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
-                ;;
-            "zsh-completions")
-                install_plugin "zsh-completions" "https://github.com/zsh-users/zsh-completions.git"
-                ;;
-            "you-should-use")
-                install_plugin "you-should-use" "https://github.com/MichaelAquilina/zsh-you-should-use.git"
-                ;;
-            "zsh-abbr")
-                install_plugin "zsh-abbr" "https://github.com/olets/zsh-abbr"
-                ;;
-            "zsh-alias-finder")
-                install_plugin "zsh-alias-finder" "https://github.com/akash329d/zsh-alias-finder"
-                ;;
-        esac
+    for plugin in "${plugins_to_install[@]}"; do
+        install_plugin "$plugin"
     done
-    update_zshrc
-    fi
+
+    update_zshrc "${plugins_to_install[@]}"
 }
 
+# Fonction pour installer un plugin
 install_plugin() {
     local plugin_name=$1
-    local plugin_url=$2
-    execute_command "git clone \"$plugin_url\" \"$HOME/.oh-my-zsh/custom/plugins/$plugin_name\" || true" "Installation $plugin_name"
+    local plugin_url=""
+
+    case $plugin_name in
+        "zsh-autosuggestions") plugin_url="https://github.com/zsh-users/zsh-autosuggestions.git" ;;
+        "zsh-syntax-highlighting") plugin_url="https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
+        "zsh-completions") plugin_url="https://github.com/zsh-users/zsh-completions.git" ;;
+        "you-should-use") plugin_url="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
+        "zsh-abbr") plugin_url="https://github.com/olets/zsh-abbr" ;;
+        "zsh-alias-finder") plugin_url="https://github.com/akash329d/zsh-alias-finder" ;;
+    esac
+
+    if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$plugin_name" ]; then
+        execute_command "git clone '$plugin_url' '$HOME/.oh-my-zsh/custom/plugins/$plugin_name' --quiet" "Installation de $plugin_name"
+    else
+        info_msg "$plugin_name est déjà installé"
+    fi
 }
 
-# Fonction pour mettre à jour le fichier .zshrc
+# Fonction pour mettre à jour la configuration de ZSH
 update_zshrc() {
-    local zshrc="$HOME/.zshrc"
-    cp "$zshrc" "${zshrc}.bak"
+    local plugins=("$@")
+    local default_plugins=(git command-not-found copyfile node npm vscode web-search timer)
+    plugins+=("${default_plugins[@]}")
 
-    existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
+    # Supprimer les doublons
+    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | sort -u)
 
-    local plugin_list="$existing_plugins"
-    for plugin in $PLUGINS; do
-        if [[ ! "$plugin_list" =~ "$plugin" ]]; then
-            plugin_list+="$plugin "
-        fi
+    local new_plugins_section="plugins=(\n"
+    for plugin in "${unique_plugins[@]}"; do
+        new_plugins_section+="\t$plugin\n"
     done
+    new_plugins_section+=")"
 
-    sed -i "/^plugins=(/,/)/c\plugins=(\n\t${plugin_list}\n)" "$zshrc"
+    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Mise à jour de la section plugins dans .zshrc"
 
-    if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
-        if ! grep -q "fpath+=" "$zshrc"; then
-            sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
-        fi
+    if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]] && ! grep -q "fpath+=" "$ZSHRC"; then
+        execute_command "sed -i '/^source \$ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' '$ZSHRC'" "Ajout du chemin zsh-completions à fpath"
     fi
 }
 
@@ -720,7 +714,7 @@ install_font() {
 
 # Fonction pour installer XFCE
 install_xfce() {
-#    if $XFCE_CHOICE; then
+    if $XFCE_CHOICE; then
         show_banner
         if $USE_GUM; then
             if ! gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
@@ -740,8 +734,9 @@ install_xfce() {
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
 
         # Installation des paquets nécessaires
-            for PACKAGE in $PACKAGES; do
-                execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
+        for PACKAGE in "${PACKAGES[@]}"; do
+            execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
+        done
 
         # Téléchargement des scripts supplémentaires
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh && curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh && curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement des scripts"
@@ -756,7 +751,7 @@ install_xfce() {
         fi
         ./utils.sh
         add_get_username_function
-#    fi
+    fi
 }
 
 # Fonction pour ajouter la fonction get_username
