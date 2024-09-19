@@ -210,8 +210,8 @@ install_mesa_vulkan() {
 add_aliases() {
     local shell_rc="$1"
     local shell_name="$2"
-    
-    cat << 'EOF' >> "$shell_rc"
+
+    local aliases_content="
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform'
 alias hud='GALLIUM_HUD=fps'
 alias ..='cd ..'
@@ -226,15 +226,15 @@ alias remove='sudo nala remove -y'
 alias list='nala list --upgradeable'
 alias show='nala show'
 alias search='nala search'
-alias start='echo "Veuillez exécuter depuis Termux et non Debian proot."'
+alias start='echo \"Veuillez exécuter depuis Termux et non Debian proot.\"'
 alias cm='chmod +x'
 alias clone='git clone'
-alias push='git pull && git add . && git commit -m "mobile push" && git push'
-alias bashrc='nano $HOME/.bashrc'
-alias zshrc='nano $HOME/.zshrc'
-EOF
-
-    execute_command "echo \"alias ${shell_name}rc='nano \$HOME/.${shell_name}rc'\" >> '$shell_rc'" "Ajout d'alias ${shell_name}rc dans .${shell_name}rc"
+alias push='git pull && git add . && git commit -m \"mobile push\" && git push'
+alias bashrc='nano \$HOME/.bashrc'
+alias zshrc='nano \$HOME/.zshrc'
+alias ${shell_name}rc='nano \$HOME/.${shell_name}rc'
+"
+    execute_command "echo \"$aliases_content\" >> '$shell_rc'" "Ajout d'alias dans .${shell_name}rc"
 }
 
 # Fonction principale
@@ -290,10 +290,11 @@ main() {
     
     check_bashrc
     execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
-    execute_command "add_aliases '$bashrc' 'bash'" "Ajout d'alias dans .bashrc"
-    if [ -f "$zshrc" ]; then
-        execute_command "add_aliases '$zshrc' 'zsh'" "Ajout d'alias dans .zshrc"
-    fi
+
+    add_aliases "$bashrc" "bash"
+        if [ -f "$zshrc" ]; then
+            add_aliases "$zshrc" "zsh"
+        fi
 
     # Configuration du fuseau horaire
     timezone=$(getprop persist.sys.timezone)
