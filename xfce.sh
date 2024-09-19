@@ -15,6 +15,7 @@ else
     redirect=""
 fi
 
+# Gestion des arguments
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -29,6 +30,7 @@ for arg in "$@"; do
     esac
 done
 
+# Fonction pour afficher la bannerière
 bash_banner() {
     clear
     local BANNER="
@@ -57,6 +59,7 @@ show_banner() {
     fi
 }
 
+# Fonction de gestion des erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -71,7 +74,7 @@ finish() {
 }
 
 
-# Nouvelles fonctions de message
+# Fonction pour afficher des messages d'information en bleu
 info_msg() {
     if $USE_GUM; then
         gum style --foreground 33 "$1"
@@ -80,6 +83,7 @@ info_msg() {
     fi
 }
 
+# Fonction pour afficher des messages de succès en vert
 success_msg() {
     if $USE_GUM; then
         gum style --foreground 76 "$1"
@@ -88,6 +92,7 @@ success_msg() {
     fi
 }
 
+# Fonction pour afficher des messages d'erreur en rouge
 error_msg() {
     if $USE_GUM; then
         gum style --foreground 196 "$1"
@@ -96,6 +101,7 @@ error_msg() {
     fi
 }
 
+# Fonction pour exécuter une commande et afficher le résultat
 execute_command() {
     local command="$1"
     local message="$2"
@@ -109,11 +115,13 @@ execute_command() {
     fi
 }
 
+# Fonction pour installer un package
 install_package() {
     local pkg=$1
     execute_command "pkg install $pkg -y" "Installation de $pkg"
 }
 
+# Fonction pour télécharger un fichier
 download_file() {
     local url=$1
     local message=$2
@@ -122,30 +130,35 @@ download_file() {
 
 trap finish EXIT
 
+# Installation de gum
 show_banner
 if $USE_GUM && ! command -v gum &> /dev/null; then
-    echo -e "${COLOR_BLUE}Installation de gum...${COLOR_RESET}"
+    echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
     pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
 fi
 
-username="$1"
-
+# Installation des packages
 pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
 
 for pkg in "${pkgs[@]}"; do
     install_package "$pkg"
 done
 
+# Configuration du bureau
 execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
+# Téléchargemen t du fond d'écran
 download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png" "Téléchargement du fond d'écran"
 execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Installation du fond d'écran"
 
+# Téléchargement du thème
 download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement du thème WhiteSur-Dark"
 execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
 
+# 
 download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
 execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/Fluent && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/Fluent-dark && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
+# Téléchargement de la pré-configuration
 download_file "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip" "Téléchargement de la pré-configuration"
 execute_command "unzip config.zip && rm config.zip" "Installation de la pré-configuration"

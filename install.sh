@@ -26,6 +26,7 @@ else
     redirect=""
 fi
 
+# Gestion des arguments
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -87,7 +88,6 @@ if $ONLY_GUM; then
     SCRIPT_CHOICE=true
 fi
 
-
 # Fonction pour afficher des messages d'information en bleu
 info_msg() {
     if $USE_GUM; then
@@ -135,6 +135,7 @@ execute_command() {
     fi
 }
 
+# Fonction pour afficher la bannerière en mode texte
 bash_banner() {
     clear
     local BANNER="
@@ -147,6 +148,7 @@ bash_banner() {
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
+# Fonction pour vérifier et installer gum
 check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
         bash_banner
@@ -155,8 +157,10 @@ check_and_install_gum() {
     fi
 }
 
+# TODO : Déplacer dans la fonction principale
 check_and_install_gum
 
+# Fonction de gestion des erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -172,6 +176,7 @@ finish() {
 
 trap finish EXIT
 
+# Fonction pour afficher la bannerière en mode graphique
 show_banner() {
     clear
     if $USE_GUM; then
@@ -188,20 +193,29 @@ show_banner() {
     fi
 }
 
-show_banner
+# Fonction pour changer le répertoire de sources
+change_repo() {
+    if $USE_GUM; then
+        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Changer le répertoire de sources ?"; then
+            termux-change-repo
+        fi
+    else
+        read -p "${COLOR_BLUE}Changer le répertoire de sources ? (o/n) : ${COLOR_RESET}" choice
+        if [ "$choice" = "o" ]; then
+            termux-change-repo
+        fi
+    fi
+}
 
-initial_config() {
-echo -e "${COLOR_BLUE}Changer le répertoire de sources ? (o/n)${COLOR_RESET}"
-read change_repo_choice
-if [ "$change_repo_choice" = "o" ]; then
-    termux-change-repo
-fi
-
-termux_dir="$HOME/.termux"
-file_path="$termux_dir/colors.properties"
-if [ ! -f "$file_path" ]; then
-    mkdir -p "$termux_dir"
-    cat <<EOL > "$file_path"
+# Fonction pour configurer les fichiers Termux
+configure_termux_files() {
+    termux_dir="$HOME/.termux"
+    
+    # Configuration de colors.properties
+    file_path="$termux_dir/colors.properties"
+    if [ ! -f "$file_path" ]; then
+        mkdir -p "$termux_dir"
+        cat <<EOL > "$file_path"
 ## Name: TokyoNight
 # Special
 foreground = #c0caf5
@@ -235,42 +249,60 @@ color15 = #c0caf5
 color16 = #ff9e64
 color17 = #db4b4b
 EOL
-fi
+    fi
 
-show_banner
+    # Téléchargement de la police
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement police par défaut"
 
-execute_command "curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement police par défaut"
-
-
-file_path="$termux_dir/termux.properties"
-
-if [ ! -f "$file_path" ]; then
-    cat <<EOL > "$file_path"
+    # Configuration de termux.properties
+    file_path="$termux_dir/termux.properties"
+    if [ ! -f "$file_path" ]; then
+        cat <<EOL > "$file_path"
 allow-external-apps = true
 use-black-ui = true
 bell-character = ignore
 fullscreen = true
 EOL
-else
-    sed -i 's/^# allow-external-apps = true/allow-external-apps = true/; 
-        s/^# use-black-ui = true/use-black-ui = true/; 
-        s/^# bell-character = ignore/bell-character = ignore/; 
-        s/^# fullscreen = true/fullscreen = true/' "$file_path"
-fi
+    else
+        sed -i 's/^# allow-external-apps = true/allow-external-apps = true/; 
+            s/^# use-black-ui = true/use-black-ui = true/; 
+            s/^# bell-character = ignore/bell-character = ignore/; 
+            s/^# fullscreen = true/fullscreen = true/' "$file_path"
+    fi
 
-touch .hushlogin
-termux-reload-settings
+    touch .hushlogin
 
-show_banner
-if $USE_GUM; then
-    gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Autoriser l'accès au stockage ?" && termux-setup-storage
-else
-    echo -e "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n)${COLOR_RESET}"
-    read choice
-    [ "$choice" = "o" ] && termux-setup-storage
-fi
+    if $USE_GUM; then
+        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Appliquer la configuration graphique dès maintenant ?"; then
+            termux-reload-settings
+        fi
+    else
+        read -p "${COLOR_BLUE}Appliquer la configuration graphique dès maintenant ? (o/n) : ${COLOR_RESET}" choice
+        if [ "$choice" = "o" ]; then
+            termux-reload-settings
+        fi
+    fi
 }
 
+# Fonction pour configurer l'accès au stockage
+setup_storage() {
+    show_banner
+    if $USE_GUM; then
+        gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Autoriser l'accès au stockage ?" && termux-setup-storage
+    else
+        read -p "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}" choice
+        [ "$choice" = "o" ] && termux-setup-storage
+    fi
+}
+
+# Fonction principale pour la configuration initiale
+initial_config() {
+    change_repo
+    configure_termux_files
+    setup_storage
+}
+
+# Fonction pour installer le shell
 install_shell() {
     if $SHELL_CHOICE; then
         show_banner
@@ -310,8 +342,7 @@ install_shell() {
                         cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
-                    echo -e "${COLOR_BLUE}Voulez-vous installer Oh My Zsh ? (o/n)${COLOR_RESET}"
-                    read choice
+                    read -p "${COLOR_BLUE}Voulez-vous installer Oh My Zsh ? (o/n) : ${COLOR_RESET}" choice
                     if [ "$choice" = "o" ]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh My Zsh"
@@ -337,14 +368,12 @@ install_shell() {
                         fi
                     fi
                 else
-                    echo -e "${COLOR_BLUE}Voulez-vous installer PowerLevel10k ? (o/n)${COLOR_RESET}"
-                    read choice
+                    read -p "${COLOR_BLUE}Voulez-vous installer PowerLevel10k ? (o/n) : ${COLOR_RESET}" choice
                     if [ "$choice" = "o" ]; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        echo -e "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n)${COLOR_RESET}"
-                        read choice
+                        read -p "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}" choice
                         if [ "$choice" = "o" ]; then
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh" "Téléchargement du prompt PowerLevel10k"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
@@ -377,6 +406,7 @@ install_shell() {
     fi
 }
 
+# Fonction pour installer les plugins ZSH
 install_zsh_plugins() {
     if command -v zsh &> /dev/null; then
         show_banner
@@ -393,19 +423,19 @@ install_zsh_plugins() {
             echo -e "${COLOR_BLUE}6) zsh-alias-finder${COLOR_RESET}"
             echo -e "${COLOR_BLUE}7) Tout installer${COLOR_RESET}"
             echo
-            read -p "Entrez les numéros des plugins : " plugin_choices
-        PLUGINS=""
-        for choice in $plugin_choices; do
-            case $choice in
-                1) PLUGINS+="zsh-autosuggestions " ;;
-                2) PLUGINS+="zsh-syntax-highlighting " ;;
-                3) PLUGINS+="zsh-completions " ;;
-                4) PLUGINS+="you-should-use " ;;
+            read -p "${COLOR_BLUE}Entrez les numéros des plugins : ${COLOR_RESET}" plugin_choices
+            PLUGINS=""
+            for choice in $plugin_choices; do
+                case $choice in
+                    1) PLUGINS+="zsh-autosuggestions " ;;
+                    2) PLUGINS+="zsh-syntax-highlighting " ;;
+                    3) PLUGINS+="zsh-completions " ;;
+                    4) PLUGINS+="you-should-use " ;;
                 5) PLUGINS+="zsh-abbr " ;;
-                6) PLUGINS+="zsh-alias-finder " ;;
-                7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
-            esac
-        done
+                    6) PLUGINS+="zsh-alias-finder " ;;
+                    7) PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder" ;;
+                esac
+            done
         fi
     if [[ "$PLUGINS" == *"Tout installer"* ]]; then
         PLUGINS="zsh-autosuggestions zsh-syntax-highlighting zsh-completions you-should-use zsh-abbr zsh-alias-finder"
@@ -444,6 +474,7 @@ install_plugin() {
     execute_command "git clone \"$plugin_url\" \"$HOME/.oh-my-zsh/custom/plugins/$plugin_name\" || true" "Installation $plugin_name"
 }
 
+# Fonction pour mettre à jour le fichier .zshrc
 update_zshrc() {
     local zshrc="$HOME/.zshrc"
     cp "$zshrc" "${zshrc}.bak"
@@ -466,6 +497,7 @@ update_zshrc() {
     fi
 }
 
+# Fonction pour installer les packages
 install_packages() {
     if $PACKAGES_CHOICE; then
         show_banner
@@ -476,8 +508,8 @@ install_packages() {
             echo
             echo -e "${COLOR_BLUE}1) nala${COLOR_RESET}"
             echo -e "${COLOR_BLUE}2) eza${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) colorls${COLOR_RESET}"   
-            echo -e "${COLOR_BLUE}4) lsd${COLOR_RESET}"         
+            echo -e "${COLOR_BLUE}3) colorls${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4) lsd${COLOR_RESET}"
             echo -e "${COLOR_BLUE}5) bat${COLOR_RESET}"
             echo -e "${COLOR_BLUE}6) lf${COLOR_RESET}"
             echo -e "${COLOR_BLUE}7) fzf${COLOR_RESET}"
@@ -494,7 +526,7 @@ install_packages() {
             echo -e "${COLOR_BLUE}18) tsu${COLOR_RESET}"
             echo -e "${COLOR_BLUE}19) Tout installer${COLOR_RESET}"
             echo
-            read -p "Entrez les numéros des packages : " package_choices
+            read -p "${COLOR_BLUE}Entrez les numéros des packages : ${COLOR_RESET}" package_choices
             PACKAGES=""
             for choice in $package_choices; do
                 case $choice in
@@ -551,6 +583,7 @@ install_packages() {
     fi
 }
 
+# Fonction pour ajouter des alias
 add_aliases_to_rc() {
     local package=$1
     case $package in
@@ -600,8 +633,8 @@ alias show="nala show"' >> $ZSHRC
     esac
 }
 
+# Définition des alias communs
 common_alias() {
-# Define general aliases in a variable
 aliases='alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -613,6 +646,8 @@ alias md="mkdir"
 alias rm="rm -rf"
 alias s="source"
 alias n="nano"
+alias bashrc="nano \$HOME/.bashrc"
+alias zshrc="nano \$HOME/.zshrc"
 alias cm="chmod +x"
 alias g="git"
 alias gc="git clone"
@@ -624,19 +659,23 @@ if [ -f "$ZSHRC" ]; then
     echo -e "$aliases" >> "$ZSHRC"
 fi
 
-# TODO : Ajout Fish
+# TODO : Ajout d'alias pour Fish
 #if [ -f "$HOME/.config/fish/config.fish" ]; then
 #    # Convertir les alias bash en format fish
 #    echo "$aliases" | sed 's/alias \(.*\)="\(.*\)"/alias \1 "\2"/' >> "$HOME/.config/fish/config.fish"
 #fi
-
 }
 
+# TODO : Ajout de plugins pour Python
+
+# Fonction pour installer la police
 install_font() {
     if $FONT_CHOICE; then
         show_banner
         if $USE_GUM; then
-            FONT=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=14 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
+            echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
+            FONT=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=16 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
@@ -649,8 +688,10 @@ install_font() {
             echo -e "${COLOR_BLUE}7) RobotoMono Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}8) SourceCodePro Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}9) UbuntuMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
             echo
-            read -p "Entrez le numéro de votre choix : " choice
+            read -p "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}" choice
             case $choice in
                 1) FONT="Police par défaut" ;;
                 2) FONT="CaskaydiaCove Nerd Font" ;;
@@ -661,13 +702,15 @@ install_font() {
                 7) FONT="RobotoMono Nerd Font" ;;
                 8) FONT="SourceCodePro Nerd Font" ;;
                 9) FONT="UbuntuMono Nerd Font" ;;
+                10) FONT="AnonymousPro Nerd Font" ;;
+                11) FONT="Terminus Nerd Font" ;;
                 *) FONT="Police par défaut" ;;
             esac
         fi
 
         case $FONT in
             "Police par défaut")
-                execute_command "curl -L -o $HOME/.termux/font.ttf https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement police par défaut"
+                info_msg "Police par défaut sélectionnée"
                 ;;
             *)
                 font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
@@ -678,7 +721,7 @@ install_font() {
     fi
 }
 
-
+# Fonction pour installer XFCE
 install_xfce() {
     if $XFCE_CHOICE; then
         show_banner
@@ -687,8 +730,7 @@ install_xfce() {
                 return
             fi
         else
-            echo -e "${COLOR_BLUE}Installer XFCE ? (o/n)${COLOR_RESET}"
-            read choice
+            read -p "${COLOR_BLUE}Installer XFCE ? (o/n)${COLOR_RESET}" choice
             if [ "$choice" != "o" ]; then
                 return
             fi
@@ -724,14 +766,19 @@ install_xfce() {
     fi
 }
 
+# Fonction pour ajouter la fonction get_username
 add_get_username_function() {
     local function_text='
 function get_username() {
-    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
-    username=$(basename "$user_dir"/*)
-    echo $username
+    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
+    username=$(ls -1 "$user_dir" | head -n 1)
+    if [ -z "$username" ]; then
+        echo "Aucun utilisateur trouvé" >&2
+        return 1
+    fi
+    echo "$username"
 }
-alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
+alias debian='\''proot-distro login debian --shared-tmp --user $(get_username)'\''
 '
     echo -e "$function_text" >> "$BASHRC"
     
@@ -740,7 +787,18 @@ alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
     fi
 }
 
+# Fonction pour installer Termux-X11
 install_termux_x11() {
+    file_path="$termux_dir/termux.properties"
+
+    if [ ! -f "$file_path" ]; then
+        cat <<EOL > "$file_path"
+allow-external-apps = true
+EOL
+    else
+        sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
+    fi
+    
     show_banner
     local install_x11=false
 
@@ -749,8 +807,7 @@ install_termux_x11() {
             install_x11=true
         fi
     else
-        echo -e "${COLOR_BLUE} Installer Termux-X11 ? (o/n)${COLOR_RESET}"
-        read -r choice
+        read -p "${COLOR_BLUE} Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
             install_x11=true
         fi
@@ -775,6 +832,7 @@ install_termux_x11() {
     fi
 }
 
+# Fonction pour installer OhMyTermuxScript
 install_script() {
     if $SCRIPT_CHOICE; then
         SCRIPT_DIR="$HOME/OhMyTermuxScript"
@@ -784,8 +842,7 @@ install_script() {
                     execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
                 fi
             else
-                echo -e "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}"
-                read -r choice
+                read -p "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}" choice
                 if [ "$choice" = "o" ]; then
                     execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
                 fi
@@ -794,8 +851,8 @@ install_script() {
     fi
 }
 
+# Fonction principale
 show_banner
-
 if $EXECUTE_INITIAL_CONFIG; then
     initial_config
 fi
@@ -807,8 +864,10 @@ install_xfce
 install_termux_x11
 install_script
 
+# Nettoyage des fichiers temporaires
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 
+# Exécution de OhMyTermux
 show_banner
 if $USE_GUM; then
     if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
@@ -822,8 +881,7 @@ if $USE_GUM; then
         echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
     fi
 else
-    echo -e "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}"
-    read choice
+    read -p "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}" choice
     if [ "$choice" = "o" ]; then
         clear
         if [ "$shell_choice" = "zsh" ]; then

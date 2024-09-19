@@ -17,21 +17,74 @@ else
     redirect=""
 fi
 
+# Fonction pour afficher des messages d'information en bleu
+info_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 33
+    else
+        echo -e "\e[38;5;33m$1\e[0m"
+    fi
+}
+
+# Fonction pour afficher des messages de succès en vert
+success_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 82
+    else
+        echo -e "\e[38;5;82m$1\e[0m"
+    fi
+}
+
+# Fonction pour afficher des messages d'erreur en rouge
+error_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 196
+    else
+        echo -e "\e[38;5;196m$1\e[0m"
+    fi
+}
+
+# Fonction pour exécuter une commande et afficher le résultat
+execute_command() {
+    local command="$1"
+    local info_msg="$2"
+    local success_msg="✓ $info_msg"
+    local error_msg="✗ $info_msg"
+
+    if $USE_GUM; then
+        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command"; then
+            gum style "$success_msg" --foreground 82
+        else
+            gum style "$error_msg" --foreground 196
+            return 1
+        fi
+    else
+        info_msg "$info_msg"
+        if eval "$command"; then
+            success_msg "$success_msg"
+        else
+            error_msg "$error_msg"
+            return 1
+        fi
+    fi
+}
+
 # Fonction pour vérifier les dépendances nécessaires
 check_dependencies() {
     if [ "$USE_GUM" = true ]; then
         if $USE_GUM && ! command -v gum &> /dev/null; then
-            echo -e "${COLOR_BLUE}Installation de gum...${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
             pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
         fi
     fi
 
     if ! command -v proot-distro &> /dev/null; then
-        error_msg "Erreur : proot-distro n'est pas installé. Veuillez l'installer avant de continuer."
+        error_msg "Veuillez installer proot-distro avant de continuer."
         exit 1
     fi
 }
 
+# Fonction pour vérifier l'existence de .bashrc
 check_bashrc() {
     if [ ! -f "$bashrc" ]; then
         error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
@@ -39,6 +92,7 @@ check_bashrc() {
     fi
 }
 
+# Fonction pour afficher la bannerière
 bash_banner() {
     clear
     local BANNER="
@@ -67,7 +121,7 @@ show_banner() {
     fi
 }
 
-# Fonction pour gérer les finitions en cas d'erreur
+# Fonction de gestion des erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -115,13 +169,42 @@ install_mesa_vulkan() {
     local mesa_package="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
     local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/main/$mesa_package"
     
-    # Vérification si Mesa-Vulkan est déjà installé
     if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dpkg -s mesa-vulkan-kgsl &> /dev/null; then
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installation de Mesa-Vulkan"
     else
         info_msg "Mesa-Vulkan est déjà installé."
     fi
+}
+
+add_aliases() {
+    local shell_rc="$1"
+    local shell_name="$2"
+    
+    cat << 'EOF' >> "$shell_rc"
+alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform'
+alias hud='GALLIUM_HUD=fps'
+alias ..='cd ..'
+alias q='exit'
+alias c='clear'
+alias cat='bat'
+alias apt='sudo nala'
+alias install='sudo nala install -y'
+alias update='sudo nala update'
+alias upgrade='sudo nala upgrade -y'
+alias remove='sudo nala remove -y'
+alias list='nala list --upgradeable'
+alias show='nala show'
+alias search='nala search'
+alias start='echo "Veuillez exécuter depuis Termux et non Debian proot."'
+alias cm='chmod +x'
+alias clone='git clone'
+alias push='git pull && git add . && git commit -m "mobile push" && git push'
+alias bashrc='nano $HOME/.bashrc'
+alias zshrc='nano $HOME/.zshrc'
+EOF
+
+    execute_command "echo \"alias ${shell_name}rc='nano \$HOME/.${shell_name}rc'\" >> '$shell_rc'" "Ajout d'alias ${shell_name}rc dans .${shell_name}rc"
 }
 
 # Fonction principale
@@ -133,9 +216,9 @@ main() {
             username=$(gum input --placeholder "Entrez votre nom d'utilisateur")
             password=$(gum input --password --placeholder "Entrez votre mot de passe")
         else
-            echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur :${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
             read -r username
-            echo -e "${COLOR_BLUE}Entrez votre mot de passe :${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
             read -rs password
         fi
     else
@@ -148,100 +231,47 @@ main() {
     
     # Vérification de l'installation de Debian
     if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
-        error_msg "L'installation de Debian a échoué. Veuillez vérifier votre connexion internet et réessayer."
+        error_msg "L'installation de Debian a échoué."
         exit 1
     fi
     
-    # Définition de bashrc après l'installation de Debian
     bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
-    
-    show_banner
+    zshrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.zshrc"
+
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
     install_packages_proot
+    
     create_user_proot
     configure_user_rights
+    
     check_bashrc
-    show_banner
     execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << 'EOF' >> $bashrc
-alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform '
-alias hud='GALLIUM_HUD=fps '
-alias ..='cd ..'
-alias q='exit'
-alias c='clear'
-alias cat='bat '
-alias apt='sudo nala '
-alias install='sudo nala install -y'
-alias update='sudo nala update'
-alias upgrade='sudo nala upgrade -y'
-alias remove='sudo nala remove -y'
-alias list='nala list --upgradeable'
-alias show='nala show'
-alias search='nala search'
-alias start='echo please run from termux, not Debian proot.'
-alias cm='chmod +x'
-alias clone='git clone'
-alias push='git pull && git add . && git commit -m \\\"mobile push\\\" && git push'
-alias bashconfig='nano \\\$HOME/.bashrc'
-EOF\"" "Ajout d'alias dans .bashrc"
+    execute_command "add_aliases '$bashrc' 'bash'" "Ajout d'alias dans .bashrc"
+    if [ -f "$zshrc" ]; then
+        execute_command "add_aliases '$zshrc' 'zsh'" "Ajout d'alias dans .zshrc"
+    fi
+
     # Configuration du fuseau horaire
     timezone=$(getprop persist.sys.timezone)
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"
-        rm /etc/localtime
-        cp /usr/share/zoneinfo/$timezone /etc/localtime
-    \"" "Configuration du fuseau horaire"
+    execute_command "
+        proot-distro login debian -- rm /etc/localtime
+        proot-distro login debian -- cp /usr/share/zoneinfo/$timezone /etc/localtime
+    " "Configuration du fuseau horaire"
+
     # Configuration des icônes et thèmes
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 mkdir -p /usr/share/icons" "Configuration des thèmes"
     cd "$PREFIX/share/icons"
-    execute_command "find dist-dark | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 cpio -pdm /usr/share/icons" "Configuration des icônes"
-    # Vérification si .Xresources existe déjà
-    if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 test -f "/home/$username/.Xresources"; then
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"cat << EOF > /home/$username/.Xresources
-Xcursor.theme: dist-dark
-EOF\"" "Configuration des curseurs"
-    else
-        info_msg "Le fichier .Xresources existe déjà. Pas de modification."
-    fi
+    execute_command "find dist-dark | cpio -pdm $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons" "Configuration des icônes"
+    
+    # Configuration de .Xresources
+    execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
+    Xcursor.theme: dist-dark
+    EOF" "Configuration des curseurs"
+
     # Création des répertoires nécessaires
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Création des répertoires nécessaires"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration des thèmes et polices"
+    
     install_mesa_vulkan
-}
-
-info_msg() {
-    if $USE_GUM; then
-        gum style --foreground 33 "$1"
-    else
-        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
-    fi
-}
-
-success_msg() {
-    if $USE_GUM; then
-        gum style --foreground 76 "$1"
-    else
-        echo -e "\e[38;5;76m$1${COLOR_RESET}"
-    fi
-}
-
-error_msg() {
-    if $USE_GUM; then
-        gum style --foreground 196 "$1"
-    else
-        echo -e "${COLOR_RED}$1${COLOR_RESET}"
-    fi
-}
-
-execute_command() {
-    local command="$1"
-    local message="$2"
-
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- eval "$command $redirect"
-    else
-        info_msg "$message"
-        eval "$command $redirect"
-    fi
 }
 
 main "$@"
