@@ -123,7 +123,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - Custom aliases
 - Symlink to internal storage user directories [^1]
 
-  #### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+  #### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1]
 
 - Theme Selector
 - Nerd Fonts Installer
