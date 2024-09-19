@@ -9,7 +9,7 @@
 
 - **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Synchroniser Obsidian sur Android en utilisant Termux et Git. [^1]
 
-[!WARNING]
+[!CAUTION]
 > Ce projet est en développement, utilisez-le à vos propres risque
 >
 > Les différentes branches du dépôt ne sont actuellement pas à jour. 
@@ -165,7 +165,7 @@ Deux scripts sont également disponibles pour cette configuration :
 
 ```cp2menu``` En exécutant cela, une fenêtre s'ouvrira vous permettant de copier des fichiers .desktop depuis le proot Debian dans le menu "démarrer" de termux xfce afin que vous n'ayez pas besoin de les lancer depuis le terminal. Un lanceur est disponible dans la section du menu Système.
 
-> [!ATTENTION]
+> [!WARNING]
 > *Processus terminé (signal 9) - appuyez sur Entrée*
 >
 > Vous devez exécuter cette commande adb pour corriger l'erreur du processus 9 qui forcera la fermeture de Termux :

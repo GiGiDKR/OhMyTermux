@@ -12,7 +12,7 @@
 
 &nbsp;
 
-> [!WARNING]
+> [!CAUTION]
 > This project is under development, use it at your own risk.
 >
 > The various branches of the repository are currently not up to date.
@@ -174,7 +174,7 @@ There are two scripts available for this setup as well :
 &nbsp;
 
 
-> [!CAUTION]
+> [!WARNING]
 > *Process completed (signal 9) - press Enter*
 >
 > You need to run this adb command to fix the process 9 error that will force close Termux :
