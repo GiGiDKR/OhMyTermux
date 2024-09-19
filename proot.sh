@@ -5,6 +5,36 @@ set -euo pipefail
 USE_GUM=false
 VERBOSE=false
 
+# Fonction pour afficher l'aide
+show_help() {
+    echo "Usage: $0 [OPTIONS] [username] [password]"
+    echo "Options:"
+    echo "  --gum     Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose Afficher les sorties détaillées"
+    echo "  --help    Afficher ce message d'aide"
+}
+
+# Traitement des options
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --gum)
+            USE_GUM=true
+            shift
+            ;;
+        --verbose)
+            VERBOSE=true
+            shift
+            ;;
+        --help)
+            show_help
+            exit 0
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
 # Couleurs en variables
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
@@ -211,31 +241,33 @@ EOF
 main() {
     check_dependencies
     show_banner
+
+    # Gestion des arguments utilisateur et mot de passe
     if [ $# -eq 0 ]; then
-    if [ "$USE_GUM" = true ]; then
-        username=$(gum input --prompt "Nom d'utilisateur : " --placeholder "Entrez votre nom d'utilisateur")
-        password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
+        if [ "$USE_GUM" = true ]; then
+            username=$(gum input --prompt "Nom d'utilisateur : " --placeholder "Entrez votre nom d'utilisateur")
+            password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
+        else
+            echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
+            read -r username
+            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+            read -rs password
+        fi
+    elif [ $# -eq 1 ]; then
+        username="$1"
+        if [ "$USE_GUM" = true ]; then
+            password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
+        else
+            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+            read -rs password
+        fi
+    elif [ $# -eq 2 ]; then
+        username="$1"
+        password="$2"
     else
-        echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
-        read -r username
-        echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
-        read -rs password
+        show_help
+        exit 1
     fi
-elif [ $# -eq 1 ]; then
-    username="$1"
-    if [ "$USE_GUM" = true ]; then
-        password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
-    else
-        echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
-        read -rs password
-    fi
-elif [ $# -eq 2 ]; then
-    username="$1"
-    password="$2"
-else
-    echo "Usage: $0 [username] [password]"
-    exit 1
-fi
     
     show_banner
     execute_command "proot-distro install debian" "Installation de Debian proot"
