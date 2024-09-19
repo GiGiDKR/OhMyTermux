@@ -12,10 +12,13 @@
 
 &nbsp;
 
+> [!WARNING]
+> This project is under active development, use it at your own risk.
+> The various branches of the repository are currently not up to date.
+> Please wait for version 1.1 before using this project or check the code before running it !
+
 > [!IMPORTANT]
-> This project is under active development but to facilitate progress the French language is preferred to provide the user CLI.
-> 
-> A French version of this text is [available](README-FR.md).
+> To facilitate progress, the French language is preferred to provide the user CLI (a French version of this text is [available](README-FR.md)).
 
 &nbsp;
 
@@ -23,7 +26,7 @@
 
 🧊 To install **OhMyTermux**
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.5/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 >[!TIP]
@@ -32,14 +35,14 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.5/install.sh -
 🔥 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
 
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.5/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
 >[!NOTE]
 > Since version 1.0.6 it is possible to execute only one function of the script by use the corresponding argument :
 > - Shell installation : `--shell` or `-sh`
 > - Packages installation : `--package` or `-pkg`
-> - Plugins installation : `--plugin` or `-plg`
+> ~~- Plugins installation : `--plugin` or `-plg`~~
 > - Fonts installation : `--font` or `-f`
 > - XFCE / Debian-Proot : `--xfce` or `-x`
 > - OhMyTermuxScript : `--script` or `-s`
@@ -204,8 +207,22 @@ There are two scripts available for this setup as well :
     - Dynamic management of .zshrc configuration
 - Version 1.0.6 :
     - Global modification of the main script by splitting each step into a function that can be executed alone (or combined with others) with the addition of an argument to the execution command
+- Version 1.0.7 :
+    - Addition of the argument `--shell` to install a shell
+    - Addition of the argument `--package` to install packages
+    - Addition of the argument `--xfce` to install XFCE and Debian proot
+    - Addition of the argument `--font` to install fonts
+    - Addition of the argument `--script` to install [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
+    - Addition of the argument `--skip` to skip the initial configuration
+- Version 1.0.8 :
+    - Bug fixes and improvements
+- Version 1.0.9 :
+    - Overall improvement of the script
+    - Addition of the creation of a password for the Debian proot user
+    - Implementation of a non-verbose execution when gum is not used
+    - Implementation of a system for displaying the result of the execution of commands (success/failure)
 - Version 1.1 : 
-  - In development
+    - In development
 
 &nbsp;
 

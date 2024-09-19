@@ -63,7 +63,7 @@ for arg in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --noconf|-nc)
+        --skip|-sk)
             EXECUTE_INITIAL_CONFIG=false
             shift
             ;;
@@ -252,7 +252,7 @@ EOL
     fi
 
     # Téléchargement de la police
-    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement police par défaut"
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/font.ttf" "Téléchargement police par défaut"
 
     # Configuration de termux.properties
     file_path="$termux_dir/termux.properties"
@@ -326,7 +326,7 @@ install_shell() {
 
         case $shell_choice in
             "bash")
-                echo -e "${COLOR_BLUE}Bash sélectionné, poursuite du script...${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}Bash sélectionné${COLOR_RESET}"
                 ;;
             "zsh")
                 if ! command -v zsh &> /dev/null; then
@@ -350,7 +350,7 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc" "Téléchargement de la configuration"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/zshrc" "Téléchargement de la configuration"
 
                 show_banner
                 if $USE_GUM; then
@@ -360,7 +360,7 @@ install_shell() {
 
                         show_banner
                         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "  Installer le prompt OhMyTermux ?"; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh" "Téléchargement prompt PowerLevel10k"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/p10k.zsh" "Téléchargement prompt PowerLevel10k"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -375,7 +375,7 @@ install_shell() {
 
                         read -p "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}" choice
                         if [ "$choice" = "o" ]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh" "Téléchargement du prompt PowerLevel10k"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/p10k.zsh" "Téléchargement du prompt PowerLevel10k"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -385,15 +385,15 @@ install_shell() {
                 fi
 
                 show_banner
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && 
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)" "Téléchargement de la configuration" || 
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/help.md)" "Téléchargement de la configuration" || 
                     error_msg "Erreur lors du téléchargement des fichiers"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
                 else
-                    echo -e "${COLOR_BLUE}ZSH n'est pas installé. Impossible d'installer les plugins.${COLOR_RESET}"
+                    echo -e "${COLOR_RED}ZSH n'est pas installé. Impossible d'installer les plugins.${COLOR_RESET}"
                 fi
                 chsh -s zsh
                 ;;
@@ -710,7 +710,7 @@ install_font() {
 
         case $FONT in
             "Police par défaut")
-                info_msg "Police par défaut sélectionnée"
+                echo -e "${COLOR_BLUE}Police par défaut sélectionnée${COLOR_RESET}"
                 ;;
             *)
                 font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
@@ -749,9 +749,9 @@ install_xfce() {
         execute_command "pkg install \"${pkgs[@]}\" -y" "Installation des paquets nécessaires"
 
         # Téléchargement des scripts supplémentaires
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/xfce.sh" "Téléchargement du script xfce"
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/proot.sh" "Téléchargement du script proot"
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/utils.sh" "Téléchargement du script utils"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh" "Téléchargement du script xfce"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script proot"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement du script utils"
         execute_command "chmod +x xfce.sh proot.sh utils.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
@@ -818,16 +818,16 @@ EOL
         local apk_url="https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk"
         local apk_file="$HOME/storage/downloads/termux-x11.apk"
 
-        execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11 APK"
+        execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11"
 
         if [ -f "$apk_file" ]; then
             termux-open "$apk_file"
-            echo -e "${COLOR_BLUE}Veuillez installer l'APK manuellement.\e[0m"
-            echo -e "${COLOR_BLUE}Une fois l'installation terminée, appuyez sur Entrée pour continuer.\e[0m"
+            echo -e "${COLOR_BLUE}Veuillez installer l'APK manuellement.${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Une fois l'installation terminée, appuyez sur Entrée pour continuer.${COLOR_RESET}"
             read -r
             rm "$apk_file"
         else
-            error_msg "Erreur : Le téléchargement de l'APK a échoué."
+            echo -e "${COLOR_RED}Erreur : Le téléchargement de Termux-X11 a échoué.${COLOR_RESET}"
         fi
     fi
 }
@@ -878,7 +878,7 @@ if $USE_GUM; then
             exec $shell_choice
         fi
     else
-        echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
+        echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
     fi
 else
     read -p "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}" choice
@@ -890,6 +890,6 @@ else
             exec $shell_choice
         fi
     else
-        echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.\e[0m"
+        echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
     fi
 fi

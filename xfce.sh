@@ -148,7 +148,7 @@ done
 execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
 # Téléchargemen t du fond d'écran
-download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png" "Téléchargement du fond d'écran"
+download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/waves.png" "Téléchargement du fond d'écran"
 execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Installation du fond d'écran"
 
 # Téléchargement du thème
@@ -160,5 +160,5 @@ download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tag
 execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/Fluent && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/Fluent-dark && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
 # Téléchargement de la pré-configuration
-download_file "https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip" "Téléchargement de la pré-configuration"
+download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/config.zip" "Téléchargement de la pré-configuration"
 execute_command "unzip config.zip && rm config.zip" "Installation de la pré-configuration"
