@@ -673,8 +673,6 @@ install_font() {
     if $FONT_CHOICE; then
         show_banner
         if $USE_GUM; then
-            echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
             FONT=$(gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=16 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
