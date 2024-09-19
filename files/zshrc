@@ -82,6 +82,7 @@ HIST_STAMPS="dd.mm.yyyy"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
 
+# Load oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
