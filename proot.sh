@@ -29,15 +29,16 @@ show_help() {
     echo "  --help | -h    Afficher ce message d'aide"
 }
 
-# Traitement des options
-while [[ $# -gt 0 ]]; do
-    case $1 in
+# Gestion des arguments
+for arg in "$@"; do
+    case $arg in
         --gum|-g)
             USE_GUM=true
             shift
             ;;
         --verbose|-v)
             VERBOSE=true
+            redirect=""
             shift
             ;;
         --help|-h)
@@ -345,7 +346,7 @@ main() {
     " "Configuration du fuseau horaire"
 
     # Configuration des icônes et thèmes
-    cd "$PREFIX/share/icons"
+    mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
     execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/dist-dark" "Configuration des icônes"
 
     # Configuration de .Xresources
