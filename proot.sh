@@ -12,6 +12,9 @@ COLOR_RESET="\e[0m"
 
 # Fonction pour afficher l'aide
 show_help() {
+    clear
+    echo "Aide OhMyTermux"
+    echo 
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
     echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
