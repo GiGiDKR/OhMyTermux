@@ -784,6 +784,9 @@ install_font() {
     fi
 }
 
+# Variable globale pour suivre si XFCE ou Proot a été installé
+INSTALL_UTILS=false
+
 # Fonction pour installer XFCE
 install_xfce() {
     if $XFCE_CHOICE; then
@@ -799,29 +802,56 @@ install_xfce() {
             fi
         fi
 
-        # Installation des pré-requis
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
 
         PACKAGES=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
     
-        # Installation des paquets nécessaires
         for PACKAGE in "${PACKAGES[@]}"; do
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
 
-        # Téléchargement des scripts supplémentaires
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh && curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh && curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement des scripts complémentaires"
-        execute_command "chmod +x *.sh" "Attribution des permissions d'exécution"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh" "Téléchargement du script XFCE"
+        execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
             ./xfce.sh --gum
-            ./proot.sh --gum
         else
             ./xfce.sh
-            ./proot.sh
         fi
+        
+        INSTALL_UTILS=true
+    fi
+}
+
+# Fonction pour installer Proot
+install_proot() {
+    info_msg "❯ Configuration de Proot"
+    if $USE_GUM; then
+        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script Proot"
+            execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
+            ./proot.sh --gum
+            INSTALL_UTILS=true
+        fi
+    else
+        read -p "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}" choice
+        if [ "$choice" = "o" ]; then
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script Proot"
+            execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
+            ./proot.sh
+            INSTALL_UTILS=true
+        fi
+    fi
+
+    add_get_username_function
+}
+
+# Fonction pour installer les utilitaires
+install_utils() {
+    if $INSTALL_UTILS; then
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement du script Utils"
+        execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
-        add_get_username_function
     fi
 }
 
@@ -923,6 +953,8 @@ install_packages
 common_alias
 install_font
 install_xfce
+install_proot
+install_utils
 install_termux_x11
 install_script
 
