@@ -33,9 +33,17 @@ show_help() {
     echo 
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
-    echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
-    echo "  --verbose | -v Afficher les sorties détaillées"
-    echo "  --help | -h    Afficher ce message d'aide"
+    echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose | -v    Afficher les sorties détaillées"
+    echo "  --shell | -sh     Module d'installation du shell"
+    echo "  --package | -pkg  Module d'installation des packagés"
+    echo "  --plugin | -plg   Module d'installation de packages Python"
+    echo "  --font | -f       Module d'installation de la police"
+    echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
+    echo "  --script| -sc     Module d'installation de OhMyTermuxScript"
+    echo "  --skip | -sk      Ignorer la configuration initiale"
+    echo "  --uninstall| -u   Désinstallation de Debian Proot"
+    echo "  --help | -h       Afficher ce message d'aide"
 }
 
 # Gestion des arguments
@@ -45,7 +53,7 @@ for arg in "$@"; do
             USE_GUM=true
             shift
             ;;
-        --shell|-s)
+        --shell|-sh)
             SHELL_CHOICE=true
             ONLY_GUM=false
             shift
@@ -67,7 +75,7 @@ for arg in "$@"; do
             ;;
         --xfce|-x)
             XFCE_CHOICE=true
-            ONLY_GUM=false
+            ONLY_GUM=fals 
             shift
             ;;
         --script|-sc)
@@ -269,9 +277,6 @@ color17 = #db4b4b
 EOL
     fi
 
-    # Téléchargement de la police
-    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/font.ttf" "Téléchargement police par défaut"
-
     # Configuration de termux.properties
     file_path="$termux_dir/termux.properties"
     if [ ! -f "$file_path" ]; then
@@ -289,6 +294,9 @@ EOL
     fi
 
     touch .hushlogin
+
+    # Téléchargement de la police
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/font.ttf" "Téléchargement police par défaut"
 
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Appliquer la configuration graphique dès maintenant ?"; then
