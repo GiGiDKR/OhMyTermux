@@ -5,6 +5,11 @@ set -euo pipefail
 USE_GUM=false
 VERBOSE=false
 
+# Couleurs en variables
+COLOR_BLUE="\e[38;5;33m"
+COLOR_RED="\e[38;5;196m"
+COLOR_RESET="\e[0m"
+
 # Fonction pour afficher l'aide
 show_help() {
     echo "Usage: $0 [OPTIONS] [username] [password]"
@@ -34,11 +39,6 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-
-# Couleurs en variables
-COLOR_BLUE="\e[38;5;33m"
-COLOR_RED="\e[38;5;196m"
-COLOR_RESET="\e[0m"
 
 # Configuration de la redirection
 if [ "$VERBOSE" = false ]; then
