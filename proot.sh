@@ -346,7 +346,7 @@ main() {
 
     # Configuration des icônes et thèmes
     cd "$PREFIX/share/icons"
-    execute_command "find dist-dark | cpio -pdm $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons" "Configuration des icônes"
+    execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/dist-dark" "Configuration des icônes"
 
     # Configuration de .Xresources
     execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
