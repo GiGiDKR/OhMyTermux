@@ -780,9 +780,10 @@ install_font() {
             *)
                 font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
                 execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Installation de $FONT"
+                termux-reload-settings
                 ;;
         esac
-        termux-reload-settings
+
     fi
 }
 
@@ -963,9 +964,10 @@ install_script
 info_msg "❯ Nettoyage des fichiers temporaires"
 # Nettoyage des fichiers temporaires
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
-success_msg "✓ Suppression des fichiers temporaires"
+success_msg "✓ Suppression des scripts d'installation"
+
 # Exécution de OhMyTermux
-show_banner
+
 if $USE_GUM; then
     if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
         clear
