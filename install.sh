@@ -405,6 +405,8 @@ install_shell() {
             "zsh")
                 if ! command -v zsh &> /dev/null; then
                     execute_command "pkg install -y zsh" "Installation de ZSH"
+                else
+                    success_msg="✓ Zsh déjà installé"
                 fi
 
                 # Installation de Oh My Zsh et autres configurations ZSH
