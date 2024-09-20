@@ -364,12 +364,12 @@ initial_config() {
 
     if $USE_GUM; then
         show_banner
-        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Appliquer la configuration recommandée ?"; then
+        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Activer la configuration recommandée ?"; then
             configure_termux
         fi
     else
         show_banner
-        read -p "${COLOR_BLUE}Appliquer la configuration recommandée ? (o/n) : ${COLOR_RESET}" choice
+        read -p "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
             configure_termux
         fi
