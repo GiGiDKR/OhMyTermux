@@ -90,7 +90,7 @@ for arg in "$@"; do
             ;;
         --help|-h)
             show_help
-            shift
+            exit 0
             ;;
     esac
 done
