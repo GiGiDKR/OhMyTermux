@@ -237,7 +237,7 @@ create_backups() {
     local backup_dir="$HOME/backup"
     
     # Création du répertoire de sauvegarde
-    execute_command "mkdir -p \"$backup_dir\"" "Création du répertoire de sauvegarde $backup_dir"
+    execute_command "mkdir -p \"$backup_dir\"" "Création du répertoire ~/backup"
 
     # Liste des fichiers à sauvegarder
     local files_to_backup=(
@@ -273,6 +273,7 @@ change_repo() {
 
 # Fonction pour configurer l'accès au stockage
 setup_storage() {
+    show_banner
     if $USE_GUM; then
         gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Autoriser l'accès au stockage ?" && termux-setup-storage
     else
@@ -363,12 +364,12 @@ initial_config() {
 
     if $USE_GUM; then
         show_banner
-        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Appliquer la configuration Termux recommandée ?"; then
+        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Appliquer la configuration recommandée ?"; then
             configure_termux
         fi
     else
         show_banner
-        read -p "${COLOR_BLUE}Appliquer la configuration Termux recommandée ? (o/n) : ${COLOR_RESET}" choice
+        read -p "${COLOR_BLUE}Appliquer la configuration recommandée ? (o/n) : ${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
             configure_termux
         fi
@@ -378,6 +379,7 @@ initial_config() {
 # Fonction pour installer le shell
 install_shell() {
     if $SHELL_CHOICE; then
+        info_msg "❯ Configuration du shell"
         if $USE_GUM; then
             shell_choice=$(gum choose --selected="zsh" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=5 --header="Choisissez le shell à installer :" "bash" "zsh" "fish")
         else
@@ -401,22 +403,23 @@ install_shell() {
                 echo -e "${COLOR_BLUE}Bash sélectionné${COLOR_RESET}"
                 ;;
             "zsh")
+                info_msg "❯ Configuration de ZSH"
                 if ! command -v zsh &> /dev/null; then
-                        execute_command "pkg install -y zsh" "Installation de ZSH"
+                    execute_command "pkg install -y zsh" "Installation de ZSH"
                 fi
 
                 # Installation de Oh My Zsh et autres configurations ZSH
                 if $USE_GUM; then
-                    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Voulez-vous installer Oh My Zsh ?"; then
+                    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
-                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh My Zsh"
+                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
                         cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
-                    read -p "${COLOR_BLUE}Voulez-vous installer Oh My Zsh ? (o/n) : ${COLOR_RESET}" choice
+                    read -p "${COLOR_BLUE}Installer Oh-My-Zsh ? (o/n) : ${COLOR_RESET}" choice
                     if [ "$choice" = "o" ]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
-                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh My Zsh"
+                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
                         cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 fi
@@ -424,7 +427,7 @@ install_shell() {
                 execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/zshrc" "Téléchargement de la configuration"
 
                 if $USE_GUM; then
-                    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Voulez-vous installer PowerLevel10k ?"; then
+                    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer PowerLevel10k ?"; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
@@ -437,7 +440,7 @@ install_shell() {
                         fi
                     fi
                 else
-                    read -p "${COLOR_BLUE}Voulez-vous installer PowerLevel10k ? (o/n) : ${COLOR_RESET}" choice
+                    read -p "${COLOR_BLUE}Installer PowerLevel10k ? (o/n) : ${COLOR_RESET}" choice
                     if [ "$choice" = "o" ]; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
@@ -466,6 +469,7 @@ install_shell() {
                 chsh -s zsh
                 ;;
             "fish")
+                info_msg "❯ Configuration de Fish"
                 execute_command "pkg install -y fish" "Installation de Fish"
                 # TODO : ajouter la configuration de Fish, de ses plugins et des alias (abbr)
                 chsh -s fish
@@ -478,7 +482,7 @@ install_shell() {
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
-        plugins_to_install=($(gum choose --selected="Tout installer" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=7 --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
+        plugins_to_install=($(gum choose --selected="Tout installer" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=9 --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
             plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
@@ -567,6 +571,7 @@ update_zshrc() {
 # Fonction pour installer les packages
 install_packages() {
     if $PACKAGES_CHOICE; then
+        info_msg "❯ Configuration des packages"
         if $USE_GUM; then
             PACKAGES=$(gum choose --selected="nala,eza,bat,lf,fzf,python" --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=21 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
@@ -619,13 +624,9 @@ install_packages() {
             done
         fi
 
-        installed_packages=""
-
         if [ -n "$PACKAGES" ]; then
             for PACKAGE in $PACKAGES; do
                 execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
-                installed_packages+="Installé : $PACKAGE\n"
-                echo -e "$installed_packages"
 
                 # Managing aliases by installed package
                 case $PACKAGE in
@@ -735,6 +736,7 @@ fi
 # Fonction pour installer la police
 install_font() {
     if $FONT_CHOICE; then
+        info_msg "❯ Configuration de la police"
         if $USE_GUM; then
             FONT=$(gum choose --selected="Police par défaut" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner la police à installer :" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
@@ -785,6 +787,7 @@ install_font() {
 # Fonction pour installer XFCE
 install_xfce() {
     if $XFCE_CHOICE; then
+        info_msg "❯ Configuration de XFCE"
         if $USE_GUM; then
             if ! gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
                 return
@@ -846,6 +849,7 @@ alias debian='\''proot-distro login debian --shared-tmp --user $(get_username)'\
 
 # Fonction pour installer Termux-X11
 install_termux_x11() {
+    info_msg "❯ Configuration de Termux-X11"
     file_path="$termux_dir/termux.properties"
 
     if [ ! -f "$file_path" ]; then
@@ -889,6 +893,7 @@ EOL
 
 # Fonction pour installer OhMyTermuxScript
 install_script() {
+    info_msg "❯ Configuration de OhMyTermuxScript"
     if $SCRIPT_CHOICE; then
         SCRIPT_DIR="$HOME/OhMyTermuxScript"
         if [ ! -d "$SCRIPT_DIR" ]; then
@@ -921,9 +926,10 @@ install_xfce
 install_termux_x11
 install_script
 
+info_msg "❯ Nettoyage des fichiers temporaires"
 # Nettoyage des fichiers temporaires
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
-
+success_msg "✓ Suppression des fichiers temporaires"
 # Exécution de OhMyTermux
 show_banner
 if $USE_GUM; then
