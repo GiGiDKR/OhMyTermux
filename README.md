@@ -51,6 +51,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 > - Skip initial configuration : `--skip` or `-sk`
 >
 > **Multiple arguments can be combined.**
+> 
+> - For help on a specific function, use the `-h` or `--help` argument.
 
 &nbsp;
 
