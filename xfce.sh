@@ -196,7 +196,7 @@ main() {
 
     # 
     download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
-    execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/Fluent && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/Fluent-dark && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
+    execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
     # Téléchargement de la pré-configuration
     download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/config.zip" "Téléchargement de la configuration XFCE"
