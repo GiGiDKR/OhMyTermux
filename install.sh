@@ -403,12 +403,12 @@ install_shell() {
                 echo -e "${COLOR_BLUE}Bash sélectionné${COLOR_RESET}"
                 ;;
             "zsh")
-                info_msg "❯ Configuration de ZSH"
                 if ! command -v zsh &> /dev/null; then
                     execute_command "pkg install -y zsh" "Installation de ZSH"
                 fi
 
                 # Installation de Oh My Zsh et autres configurations ZSH
+                info_msg "❯ Configuration de ZSH"
                 if $USE_GUM; then
                     if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
