@@ -10,7 +10,7 @@ COLOR_RESET="\e[0m"
 
 # Configuration de la redirection
 if [ "$VERBOSE" = false ]; then
-    redirect="> /dev/null 2>&1"
+    redirect=">/dev/null 2>&1"
 else
     redirect=""
 fi
@@ -94,7 +94,6 @@ finish() {
     fi
 }
 
-
 # Fonction pour afficher des messages d'information en bleu
 info_msg() {
     if $USE_GUM; then
@@ -122,17 +121,35 @@ error_msg() {
     fi
 }
 
+# Fonction pour journaliser les erreurs
+log_error() {
+    local error_msg="$1"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+}
+
 # Fonction pour exécuter une commande et afficher le résultat
 execute_command() {
     local command="$1"
-    local message="$2"
-    
+    local info_msg="$2"
+    local success_msg="✓ $info_msg"
+    local error_msg="✗ $info_msg"
+
     if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="$message" -- eval "$command $redirect"
+        info_msg "$info_msg"
+        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command $redirect"; then
+            success_msg "$success_msg"
+        else
+            error_msg "$error_msg"
+            return 1
+        fi
     else
-        show_banner
-        info_msg "$message"
-        eval "$command $redirect"
+        info_msg "$info_msg"
+        if eval "$command $redirect"; then
+            success_msg "$success_msg"
+        else
+            error_msg "$error_msg"
+            return 1
+        fi
     fi
 }
 
@@ -151,35 +168,41 @@ download_file() {
 
 trap finish EXIT
 
-# Installation de gum
-show_banner
-if $USE_GUM && ! command -v gum &> /dev/null; then
-    echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
-    pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
-fi
+# Fonction principale
+main() {
+    # Installation de gum si nécessaire
+    if $USE_GUM && ! command -v gum &> /dev/null; then
+        echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
+        pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
+    fi
 
-# Installation des packages
-pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
+    info_msg "❯ Installation de XFCE"
 
-for pkg in "${pkgs[@]}"; do
-    execute_command "pkg install $pkg -y" "Installation de $pkg"
-done
+    # Installation des packages
+    pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
 
-# Configuration du bureau
-execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
+    for pkg in "${pkgs[@]}"; do
+        install_package "$pkg"
+    done
 
-# Téléchargemen t du fond d'écran
-download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/waves.png" "Téléchargement du fond d'écran"
-execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Installation du fond d'écran"
+    # Configuration du bureau
+    execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
-# Téléchargement du thème
-download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement du thème WhiteSur-Dark"
-execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
+    # Téléchargement du fond d'écran
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/waves.png" "Téléchargement du fond d'écran"
+    execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
 
-# 
-download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
-execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/Fluent && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/Fluent-dark && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
+    # Téléchargement du thème
+    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement de WhiteSur-Dark"
+    execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
 
-# Téléchargement de la pré-configuration
-download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/config.zip" "Téléchargement de la pré-configuration"
-execute_command "unzip -o config.zip && rm config.zip" "Installation de la pré-configuration"
+    # 
+    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
+    execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/Fluent && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/Fluent-dark && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
+
+    # Téléchargement de la pré-configuration
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/config.zip" "Téléchargement de la configuration XFCE"
+        execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
+    }
+
+main "$@"
