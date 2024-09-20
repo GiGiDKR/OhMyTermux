@@ -26,6 +26,18 @@ else
     redirect=""
 fi
 
+# Fonction pour afficher l'aide
+show_help() {
+    clear
+    echo "Aide OhMyTermux"
+    echo 
+    echo "Usage: $0 [OPTIONS] [username] [password]"
+    echo "Options:"
+    echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose | -v Afficher les sorties détaillées"
+    echo "  --help | -h    Afficher ce message d'aide"
+}
+
 # Gestion des arguments
 for arg in "$@"; do
     case $arg in
@@ -74,6 +86,10 @@ for arg in "$@"; do
         --verbose|-v)
             VERBOSE=true
             redirect=""
+            shift
+            ;;
+        --help|-h)
+            show_help
             shift
             ;;
     esac
