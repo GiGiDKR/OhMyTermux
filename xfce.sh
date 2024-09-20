@@ -48,8 +48,6 @@ for arg in "$@"; do
             ;;
     esac
 done
-    esac
-done
 
 # Fonction pour afficher la bannerière
 bash_banner() {
