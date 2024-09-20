@@ -151,13 +151,15 @@ execute_command() {
     fi
 }
 
+# TODO Implémenter la fonction install_package
 # Fonction pour installer un package
-install_package() {
-    local pkg=$1
-    execute_command "pkg install $pkg -y" "Installation de $pkg"
-}
+#install_package() {
+#    local pkg=$1
+#    execute_command "pkg install $pkg -y" "Installation de $pkg"
+#}
 
 # Fonction pour télécharger un fichier
+
 download_file() {
     local url=$1
     local message=$2
@@ -183,7 +185,7 @@ main() {
 
 
     for pkg in "${pkgs[@]}"; do
-        install_package "$pkg"
+        execute_command "pkg install $pkg -y" "Installation de $pkg"
     done
 
     # Configuration du bureau
