@@ -557,7 +557,7 @@ update_zshrc() {
     done
     new_plugins_section+=")"
 
-    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Mise à jour de la section plugins dans .zshrc"
+    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
 
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
         echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
@@ -740,7 +740,7 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum choose --selected="Police par défaut" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner la police à installer :" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
+            FONT=$(gum choose --selected="Police par défaut" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
