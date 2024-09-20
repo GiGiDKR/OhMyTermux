@@ -553,9 +553,13 @@ update_zshrc() {
 
     execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Mise à jour de la section plugins dans .zshrc"
 
+    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
+        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+    fi
+
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
         if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
-            execute_command "sed -i '1ifpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' '$ZSHRC'" "Ajout du chemin zsh-completions à fpath"
+            sed -i "1ifpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$ZSHRC"
         fi
     fi
 }
