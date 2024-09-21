@@ -879,31 +879,31 @@ install_utils() {
             execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 touch $bashrc_proot" "Création du fichier .bashrc"
         fi
 
-        # Contenu à ajouter au fichier $bashrc_proot
-        bashrc_proot_content='
+        # Ajouts au fichier $bashrc_proot
+        execute_command "echo '
 export DISPLAY=:1.0
 
-alias zink="MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform"
-alias hud="GALLIUM_HUD=fps"
-alias ..="cd .."
-alias q="exit"
-alias c="clear"
-alias cat="bat"
-alias apt="sudo nala"
-alias install="sudo nala install -y"
-alias update="sudo nala update"
-alias upgrade="sudo nala upgrade -y"
-alias remove="sudo nala remove -y"
-alias list="nala list --upgradeable"
-alias show="nala show"
-alias search="nala search"
-alias start="echo \"Veuillez exécuter depuis Termux et non Debian proot.\""
-alias cm="chmod +x"
-alias clone="git clone"
-alias push="git pull && git add . && git commit -m \"mobile push\" && git push"
-alias bashrc="nano $HOME/.bashrc"'
+alias zink=\"MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform\"
+alias hud=\"GALLIUM_HUD=fps\"
+alias ..=\"cd ..\"
+alias q=\"exit\"
+alias c=\"clear\"
+alias cat=\"bat\"
+alias apt=\"sudo nala\"
+alias install=\"sudo nala install -y\"
+alias update=\"sudo nala update\"
+alias upgrade=\"sudo nala upgrade -y\"
+alias remove=\"sudo nala remove -y\"
+alias list=\"nala list --upgradeable\"
+alias show=\"nala show\"
+alias search=\"nala search\"
+alias start=\"echo \\\"Veuillez exécuter depuis Termux et non Debian proot.\\\"\"
+alias cm=\"chmod +x\"
+alias clone=\"git clone\"
+alias push=\"git pull && git add . && git commit -m \\\"mobile push\\\" && git push\"
+alias bashrc=\"nano \$HOME/.bashrc\"
+' >> '$bashrc_proot'" "Configurations .bashrc proot"
 
-        execute_command "echo '$bashrc_proot_content' >> '$bashrc_proot'" "Configurations .bashrc proot"
 
         # Contenu à ajouter au fichier $BASHRC
         bashrc_content='
