@@ -126,14 +126,6 @@ check_dependencies() {
     fi
 }
 
-# Fonction pour vérifier l'existence de .bashrc
-check_bashrc() {
-    if [ ! -f "$bashrc" ]; then
-        error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 touch $bashrc" "Création du fichier .bashrc"
-    fi
-}
-
 # Fonction pour afficher la bannerière
 bash_banner() {
     clear
@@ -283,8 +275,6 @@ else
     exit 1
 fi
 
-bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
-
 execute_command "proot-distro install debian" "Installation de la distribution"
 
 # Vérification de l'installation de Debian
@@ -300,39 +290,6 @@ install_packages_proot
 
 create_user_proot
 configure_user_rights
-
-check_bashrc
-
-execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
-
-add_aliases() {
-    local shell_rc="$1"
-
-    local aliases_content="
-alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform'
-alias hud='GALLIUM_HUD=fps'
-alias ..='cd ..'
-alias q='exit'
-alias c='clear'
-alias cat='bat'
-alias apt='sudo nala'
-alias install='sudo nala install -y'
-alias update='sudo nala update'
-alias upgrade='sudo nala upgrade -y'
-alias remove='sudo nala remove -y'
-alias list='nala list --upgradeable'
-alias show='nala show'
-alias search='nala search'
-alias start='echo \"Veuillez exécuter depuis Termux et non Debian proot.\"'
-alias cm='chmod +x'
-alias clone='git clone'
-alias push='git pull && git add . && git commit -m \"mobile push\" && git push'
-alias bashrc='nano \$HOME/.bashrc'
-"
-    execute_command "echo \"$aliases_content\" >> '$shell_rc'" "Ajout d'alias dans .bashrc"
-}
-
-add_aliases "$bashrc"
 
 # Configuration du fuseau horaire
 timezone=$(getprop persist.sys.timezone)
