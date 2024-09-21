@@ -880,36 +880,36 @@ install_utils() {
         fi
 
         # Contenu à ajouter au fichier $bashrc_proot
-        bashrc_proot_content="
+        bashrc_proot_content='
 export DISPLAY=:1.0
 
-alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform'
-alias hud='GALLIUM_HUD=fps'
-alias ..='cd ..'
-alias q='exit'
-alias c='clear'
-alias cat='bat'
-alias apt='sudo nala'
-alias install='sudo nala install -y'
-alias update='sudo nala update'
-alias upgrade='sudo nala upgrade -y'
-alias remove='sudo nala remove -y'
-alias list='nala list --upgradeable'
-alias show='nala show'
-alias search='nala search'
-alias start='echo \"Veuillez exécuter depuis Termux et non Debian proot.\"'
-alias cm='chmod +x'
-alias clone='git clone'
-alias push='git pull && git add . && git commit -m \"mobile push\" && git push'
-alias bashrc='nano \$HOME/.bashrc'"
+alias zink="MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform"
+alias hud="GALLIUM_HUD=fps"
+alias ..="cd .."
+alias q="exit"
+alias c="clear"
+alias cat="bat"
+alias apt="sudo nala"
+alias install="sudo nala install -y"
+alias update="sudo nala update"
+alias upgrade="sudo nala upgrade -y"
+alias remove="sudo nala remove -y"
+alias list="nala list --upgradeable"
+alias show="nala show"
+alias search="nala search"
+alias start="echo \"Veuillez exécuter depuis Termux et non Debian proot.\""
+alias cm="chmod +x"
+alias clone="git clone"
+alias push="git pull && git add . && git commit -m \"mobile push\" && git push"
+alias bashrc="nano $HOME/.bashrc"'
 
-        execute_command "echo \"$bashrc_proot_content\" >> $bashrc_proot" "Configurations .bashrc proot"
+        execute_command "echo '$bashrc_proot_content' >> '$bashrc_proot'" "Configurations .bashrc proot"
 
         # Contenu à ajouter au fichier $BASHRC
-        bashrc_content="
+        bashrc_content='
 get_username() {
-    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian\home"
-    username=$(ls -1 \"$user_dir" | head "-n 1)
+    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
+    username=$(ls -1 "$user_dir" | head -n 1)
     if [ -z "$username" ]; then
         echo "Aucun utilisateur trouvé" >&2
         return 1
@@ -917,13 +917,13 @@ get_username() {
     echo "$username"
 }
 
-alias debian='proot-distro login debian --shared-tmp --user $(get_username)'"
+alias debian="proot-distro login debian --shared-tmp --user $(get_username)"'
 
-        execute_command "echo \"$bashrc_content\" >> $BASHRC" "Configuration .bashrc termux"
+        execute_command "echo '$bashrc_content' >> '$BASHRC'" "Configuration .bashrc termux"
 
         # Ajout au fichier $ZSHRC si existant
         if [ -f "$ZSHRC" ]; then
-            execute_command "echo \"$bashrc_content\" >> $ZSHRC" "Configuration .zshrc termux"
+            execute_command "echo '$bashrc_content' >> '$ZSHRC'" "Configuration .zshrc termux"
         fi
     fi
 }
