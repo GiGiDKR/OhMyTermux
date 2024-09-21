@@ -247,7 +247,7 @@ create_backups() {
         "$HOME/.bashrc"
         "$HOME/.termux/colors.properties"
         "$HOME/.termux/termux.properties"
-#        "$HOME/.termux/font.ttf"
+        "$HOME/.termux/font.ttf"
         "$0"
     )
 
@@ -355,7 +355,7 @@ EOL" "Configuration des propriétés Termux"
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
 
     # Téléchargement de la police
-    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/font.ttf" "Téléchargement de la police par défaut"
+    execute_command "curl -fLo "$HOME/.termux/font.ttf" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/font.ttf" "Téléchargement de la police par défaut"
 
     termux-reload-settings
 }
@@ -743,10 +743,11 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum choose --selected="DejaVuSansMono Nerd Font" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner la police à installer :" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
+            FONT=$(gum choose --selected="Police par défaut" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
+            echo -e "${COLOR_BLUE}1) Police par défaut${COLOR_RESET}"
             echo -e "${COLOR_BLUE}1) CaskaydiaCove Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}2) FiraMono Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) JetBrainsMono Nerd Font${COLOR_RESET}"
@@ -760,6 +761,7 @@ install_font() {
             echo
             read -p "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}" choice
             case $choice in
+                0) FONT="Police par défaut" ;;
                 1) FONT="CaskaydiaCove Nerd Font" ;;
                 2) FONT="FiraMono Nerd Font" ;;
                 3) FONT="JetBrainsMono Nerd Font" ;;
@@ -770,11 +772,19 @@ install_font() {
                 8) FONT="UbuntuMono Nerd Font" ;;
                 9) FONT="AnonymousPro Nerd Font" ;;
                 10) FONT="Terminus Nerd Font" ;;
-                *) FONT="CaskaydiaCove Nerd Font" ;;
+                *) FONT="Police par défaut" ;;
             esac
         fi
 
-        font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
+        case $FONT in
+            "Police par défaut")
+                success_msg "✓ Police par défaut installée"
+                ;;
+            *) font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
+                execute_command "curl -L -o $HOME/.termux/font.ttf "$font_url"" "Installation de $FONT"
+                termux-reload-settings
+                ;;
+        esac font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
         execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Installation de $FONT"
         termux-reload-settings
     fi
