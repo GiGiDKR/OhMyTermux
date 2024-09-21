@@ -880,7 +880,8 @@ install_utils() {
         fi
 
         # Contenu à ajouter au fichier $bashrc_proot
-        bashrc_proot_content="export DISPLAY=:1.0
+        bashrc_proot_content="
+export DISPLAY=:1.0
 
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform'
 alias hud='GALLIUM_HUD=fps'
@@ -905,18 +906,18 @@ alias bashrc='nano \$HOME/.bashrc'"
         execute_command "echo \"$bashrc_proot_content\" >> $bashrc_proot" "Configurations .bashrc proot"
 
         # Contenu à ajouter au fichier $BASHRC
-        bashrc_content="# Fonction pour récupérer le nom d'utilisateur
+        bashrc_content="
 get_username() {
-    user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
-    username=\$(ls -1 \"\$user_dir\" | head -n 1)
-    if [ -z \"\$username\" ]; then
-        echo \"Aucun utilisateur trouvé\" >&2
+    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian\home"
+    username=$(ls -1 \"$user_dir" | head "-n 1)
+    if [ -z "$username" ]; then
+        echo "Aucun utilisateur trouvé" >&2
         return 1
     fi
-    echo \"\$username\"
+    echo "$username"
 }
 
-alias debian='proot-distro login debian --shared-tmp --user \$(get_username)'"
+alias debian='proot-distro login debian --shared-tmp --user $(get_username)'"
 
         execute_command "echo \"$bashrc_content\" >> $BASHRC" "Configuration .bashrc termux"
 
