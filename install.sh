@@ -879,9 +879,8 @@ install_utils() {
             execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 touch $bashrc_proot" "Création du fichier .bashrc"
         fi
 
-        # Ajouts au fichier $bashrc_proot
-        execute_command "cat << 'EOF' >> $bashrc_proot
-export DISPLAY=:1.0
+        # Contenu à ajouter au fichier $bashrc_proot
+        bashrc_proot_content="export DISPLAY=:1.0
 
 alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform'
 alias hud='GALLIUM_HUD=fps'
@@ -901,41 +900,29 @@ alias start='echo \"Veuillez exécuter depuis Termux et non Debian proot.\"'
 alias cm='chmod +x'
 alias clone='git clone'
 alias push='git pull && git add . && git commit -m \"mobile push\" && git push'
-alias bashrc='nano \$HOME/.bashrc'
-EOF" "Configurations .bashrc proot"
+alias bashrc='nano \$HOME/.bashrc'"
 
-        # Ajouts au fichier $BASHRC
-        execute_command "cat << 'EOF' >> $BASHRC
-# Fonction pour récupérer le nom d'utilisateur
+        execute_command "echo \"$bashrc_proot_content\" >> $bashrc_proot" "Configurations .bashrc proot"
+
+        # Contenu à ajouter au fichier $BASHRC
+        bashrc_content="# Fonction pour récupérer le nom d'utilisateur
 get_username() {
-    user_dir="\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
-    username=\$(ls -1 "\$user_dir" | head -n 1)
-    if [ -z "\$username" ]; then
-        echo "Aucun utilisateur trouvé" >&2
+    user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
+    username=\$(ls -1 \"\$user_dir\" | head -n 1)
+    if [ -z \"\$username\" ]; then
+        echo \"Aucun utilisateur trouvé\" >&2
         return 1
     fi
-    echo "\$username"
+    echo \"\$username\"
 }
 
-alias debian='proot-distro login debian --shared-tmp --user \$(get_username)'
-EOF" "Configuration .bashrc termux"
+alias debian='proot-distro login debian --shared-tmp --user \$(get_username)'"
+
+        execute_command "echo \"$bashrc_content\" >> $BASHRC" "Configuration .bashrc termux"
 
         # Ajout au fichier $ZSHRC si existant
         if [ -f "$ZSHRC" ]; then
-            execute_command "cat << 'EOF' >> $ZSHRC
-# Fonction pour récupérer le nom d'utilisateur
-get_username() {
-    user_dir="\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
-    username=\$(ls -1 "\$user_dir" | head -n 1)
-    if [ -z "\$username" ]; then
-        echo "Aucun utilisateur trouvé" >&2
-        return 1
-    fi
-    echo "\$username"
-}
-
-alias debian='proot-distro login debian --shared-tmp --user \$(get_username)'
-EOF" "Configuration .zshrc termux"
+            execute_command "echo \"$bashrc_content\" >> $ZSHRC" "Configuration .zshrc termux"
         fi
     fi
 }
