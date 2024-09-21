@@ -848,8 +848,16 @@ install_proot() {
             INSTALL_UTILS=true
         fi
     fi
+}
 
-    add_get_username_function
+get_username() {
+    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
+    username=$(ls -1 "$user_dir" | head -n 1)
+    if [ -z "$username" ]; then
+        echo "Aucun utilisateur trouvé" >&2
+        return 1
+    fi
+    echo "$username"
 }
 
 # Fonction pour installer les utilitaires
