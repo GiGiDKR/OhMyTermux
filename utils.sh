@@ -130,7 +130,7 @@ chmod +x "$INSTALLER_DIR/app-installer"
 
 EOF
 chmod +x "$PREFIX/bin/app-installer"
-bash $PREFIX/bin/app-installer
+bash $PREFIX/bin/app-installer > /dev/null 2>&1
 
 # Check if the .desktop file exists
 if [ ! -f "$HOME/Desktop/app-installer.desktop" ]; then
