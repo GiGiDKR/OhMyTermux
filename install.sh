@@ -858,6 +858,32 @@ install_utils() {
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement du script Utils"
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
+
+        check_bashrc
+        
+        execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
+
+        execute_command 'echo "
+alias zink='MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform'
+alias hud='GALLIUM_HUD=fps'
+alias ..='cd ..'
+alias q='exit'
+alias c='clear'
+alias cat='bat'
+alias apt='sudo nala'
+alias install='sudo nala install -y'
+alias update='sudo nala update'
+alias upgrade='sudo nala upgrade -y'
+alias remove='sudo nala remove -y'
+alias list='nala list --upgradeable'
+alias show='nala show'
+alias search='nala search'
+alias start='echo \"Veuillez exécuter depuis Termux et non Debian proot.\"'
+alias cm='chmod +x'
+alias clone='git clone'
+alias push='git pull && git add . && git commit -m \"mobile push\" && git push'
+alias bashrc='nano \$HOME/.bashrc'
+" >> "$bashrc"'
     fi
 }
 
