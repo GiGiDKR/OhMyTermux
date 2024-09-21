@@ -108,8 +108,8 @@ execute_command() {
             log_error "$command"
             return 1
         fi
-    fi
 
+    fi
 }
 
 # Fonction pour vérifier les dépendances nécessaires
@@ -251,116 +251,113 @@ alias ${shell_name}rc='nano \$HOME/.${shell_name}rc'
 }
 
 # Fonction principale
-main() {
-    check_dependencies
-    info_msg "❯ Installation de Debian Proot"
+check_dependencies
+info_msg "❯ Installation de Debian Proot"
 
-    if [ $# -eq 0 ]; then
-        if [ "$USE_GUM" = true ]; then
-            username=$(gum input --prompt "Nom d'utilisateur : " --placeholder "Entrez votre nom d'utilisateur")
-            while true; do
-                password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
-                password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
-                if [ "$password" = "$password_confirm" ]; then
-                    break
-                else
-                    gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
-                fi
-            done
-        else
-            echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
-            read -r username
-            while true; do
-                echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
-                read -rs password
-                echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
-                read -rs password_confirm
-                if [ "$password" = "$password_confirm" ]; then
-                    break
-                else
-                    echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
-                fi
-            done
-        fi
-    elif [ $# -eq 1 ]; then
-        username="$1"
-        if [ "$USE_GUM" = true ]; then
-            while true; do
-                password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
-                password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
-                if [ "$password" = "$password_confirm" ]; then
-                    break
-                else
-                    gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
-                fi
-            done
-        else
-            while true; do
-                echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
-                read -rs password
-                echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
-                read -rs password_confirm
-                if [ "$password" = "$password_confirm" ]; then
-                    break
-                else
-                    echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
-                fi
-            done
-        fi
-    elif [ $# -eq 2 ]; then
-        username="$1"
-        password="$2"
+if [ $# -eq 0 ]; then
+    if [ "$USE_GUM" = true ]; then
+        username=$(gum input --prompt "Nom d'utilisateur : " --placeholder "Entrez votre nom d'utilisateur")
+        while true; do
+            password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
+            password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
+            if [ "$password" = "$password_confirm" ]; then
+                break
+            else
+                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
+            fi
+        done
     else
-        show_help
-        exit 1
+        echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
+        read -r username
+        while true; do
+            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+            read -rs password
+            echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
+            read -rs password_confirm
+            if [ "$password" = "$password_confirm" ]; then
+                break
+            else
+                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+            fi
+        done
     fi
-
-    execute_command "proot-distro install debian" "Installation de la distribution"
-
-    # Vérification de l'installation de Debian
-    if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
-        error_msg "L'installation de Debian a échoué."
-        exit 1
+elif [ $# -eq 1 ]; then
+    username="$1"
+    if [ "$USE_GUM" = true ]; then
+        while true; do
+            password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
+            password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
+            if [ "$password" = "$password_confirm" ]; then
+                break
+            else
+                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
+            fi
+        done
+    else
+        while true; do
+            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+            read -rs password
+            echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
+            read -rs password_confirm
+            if [ "$password" = "$password_confirm" ]; then
+                break
+            else
+                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+            fi
+        done
     fi
+elif [ $# -eq 2 ]; then
+    username="$1"
+    password="$2"
+else
+    show_help
+    exit 1
+fi
 
-    bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
-    zshrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.zshrc"
+execute_command "proot-distro install debian" "Installation de la distribution"
 
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
-    install_packages_proot
+# Vérification de l'installation de Debian
+if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
+    error_msg "L'installation de Debian a échoué."
+    exit 1
+fi
 
-    create_user_proot
-    configure_user_rights
+bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
+zshrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.zshrc"
 
-    check_bashrc
-    execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
+check_bashrc
+execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
 
-    add_aliases "$bashrc" "bash"
-    if [ -f "$zshrc" ]; then
-        add_aliases "$zshrc" "zsh"
-    fi
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
 
-    # Configuration du fuseau horaire
-    timezone=$(getprop persist.sys.timezone)
-    execute_command "
-        proot-distro login debian -- rm /etc/localtime
-        proot-distro login debian -- cp /usr/share/zoneinfo/$timezone /etc/localtime
-    " "Configuration du fuseau horaire"
+install_packages_proot
 
-    # Configuration des icônes et thèmes
-    mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
-    execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/dist-dark" "Configuration des icônes"
+create_user_proot
+configure_user_rights
 
-    # Configuration de .Xresources
-    execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
-    Xcursor.theme: dist-dark
-    EOF" "Configuration des curseurs"
+add_aliases "$bashrc" "bash"
+if [ -f "$zshrc" ]; then
+    add_aliases "$zshrc" "zsh"
+fi
 
-    # Création des répertoires nécessaires
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration des thèmes et polices"
+# Configuration du fuseau horaire
+timezone=$(getprop persist.sys.timezone)
+execute_command "
+    proot-distro login debian -- rm /etc/localtime
+    proot-distro login debian -- cp /usr/share/zoneinfo/$timezone /etc/localtime
+" "Configuration du fuseau horaire"
 
-    install_mesa_vulkan
-}
+# Configuration des icônes et thèmes
+mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
+execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/dist-dark" "Configuration des icônes"
 
-main "$@"
+# Configuration de .Xresources
+execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
+Xcursor.theme: dist-dark
+EOF" "Configuration des curseurs"
+
+# Création des répertoires nécessaires
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration des thèmes et polices"
+
+install_mesa_vulkan
