@@ -929,7 +929,7 @@ get_username() {
     echo \"\$username\"
 }
 
-alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"" >> '$ZSHRC" "Configuration .zshrc termux"
+alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"" >> "$ZSHRC" "Configuration .zshrc termux"
         fi
     fi
 }
