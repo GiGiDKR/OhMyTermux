@@ -784,9 +784,7 @@ install_font() {
                 execute_command "curl -L -o $HOME/.termux/font.ttf "$font_url" "Installation de $FONT"
                 termux-reload-settings
                 ;;
-        esac font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
-        execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Installation de $FONT"
-        termux-reload-settings
+        esac
     fi
 }
 
