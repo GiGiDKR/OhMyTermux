@@ -324,9 +324,6 @@ if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
     exit 1
 fi
 
-check_bashrc
-execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
-
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
 
@@ -334,6 +331,10 @@ install_packages_proot
 
 create_user_proot
 configure_user_rights
+
+check_bashrc
+
+execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
 
 add_aliases "$bashrc" "bash"
 if [ -f "$zshrc" ]; then
