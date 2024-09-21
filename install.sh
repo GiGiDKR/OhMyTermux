@@ -859,8 +859,12 @@ install_utils() {
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
 
-        check_bashrc
-        
+        bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
+        if [ ! -f "$bashrc" ]; then
+            error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
+            execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 touch $bashrc" "Création du fichier .bashrc"
+        fi
+
         execute_command "echo 'export DISPLAY=:1.0' >> '$bashrc'" "Configuration de la distribution"
 
         execute_command 'echo "
@@ -889,7 +893,15 @@ alias bashrc='nano \$HOME/.bashrc'
 
 # Fonction pour ajouter la fonction get_username
 add_get_username_function() {
-    local function_text='
+    local function_text='# Fonction pour vérifier l'existence de .bashrc
+check_bashrc() {
+    if [ ! -f "$bashrc" ]; then
+        error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 touch $bashrc" "Création du fichier .bashrc"
+    fi
+}
+
+bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
 function get_username() {
     user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
     username=$(ls -1 "$user_dir" | head -n 1)
