@@ -748,30 +748,30 @@ install_font() {
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
             echo -e "${COLOR_BLUE}1) Police par défaut${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}1) CaskaydiaCove Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) FiraMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) JetBrainsMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}4) Mononoki Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}5) VictorMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}6) RobotoMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}7) DejaVuSansMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}8) UbuntuMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}9) AnonymousPro Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}10) Terminus Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) CaskaydiaCove Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3) FiraCode Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4) Hack Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}5) JetBrainsMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}6) Meslo Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}7) RobotoMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}8) SourceCodePro Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}9) UbuntuMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
             echo
             read -p "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}" choice
             case $choice in
-                0) FONT="Police par défaut" ;;
-                1) FONT="CaskaydiaCove Nerd Font" ;;
-                2) FONT="FiraMono Nerd Font" ;;
-                3) FONT="JetBrainsMono Nerd Font" ;;
-                4) FONT="Mononoki Nerd Font" ;;
-                5) FONT="VictorMono Nerd Font" ;;
-                6) FONT="RobotoMono Nerd Font" ;;
-                7) FONT="DejaVuSansMono Nerd Font" ;;
-                8) FONT="UbuntuMono Nerd Font" ;;
-                9) FONT="AnonymousPro Nerd Font" ;;
-                10) FONT="Terminus Nerd Font" ;;
+                1) FONT="Police par défaut" ;;
+                2) FONT="CaskaydiaCove Nerd Font" ;;
+                3) FONT="FiraCode Nerd Font" ;;
+                4) FONT="Hack Nerd Font" ;;
+                5) FONT="JetBrainsMono Nerd Font" ;;
+                6) FONT="Meslo Nerd Font" ;;
+                7) FONT="RobotoMono Nerd Font" ;;
+                8) FONT="SourceCodePro Nerd Font" ;;
+                9) FONT="UbuntuMono Nerd Font" ;;
+                10) FONT="AnonymousPro Nerd Font" ;;
+                11) FONT="Terminus Nerd Font" ;;
                 *) FONT="Police par défaut" ;;
             esac
         fi
@@ -781,11 +781,12 @@ install_font() {
                 success_msg "✓ Police par défaut installée"
                 ;;
             *)
- font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
-                execute_command "curl -L -o $HOME/.termux/font.ttf "$font_url" "Installation de $FONT"
+                font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
+                execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Installation de $FONT"
                 termux-reload-settings
                 ;;
         esac
+
     fi
 }
 
