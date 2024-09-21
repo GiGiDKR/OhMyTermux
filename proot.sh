@@ -51,9 +51,6 @@ for arg in "$@"; do
     esac
 done
 
-bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
-zshrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.zshrc"
-
 # Fonction pour afficher des messages d'information en bleu
 info_msg() {
     if $USE_GUM; then
@@ -316,6 +313,9 @@ else
     show_help
     exit 1
 fi
+
+bashrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
+zshrc="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.zshrc"
 
 execute_command "proot-distro install debian" "Installation de la distribution"
 
