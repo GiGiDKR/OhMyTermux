@@ -96,6 +96,7 @@ execute_command() {
             gum style "$success_msg" --foreground 82
         else
             gum style "$error_msg" --foreground 196
+            log_error "$command"
             return 1
         fi
     else
@@ -104,9 +105,11 @@ execute_command() {
             success_msg "$success_msg"
         else
             error_msg "$error_msg"
+            log_error "$command"
             return 1
         fi
     fi
+
 }
 
 # Fonction pour vérifier les dépendances nécessaires

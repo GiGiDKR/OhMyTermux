@@ -102,15 +102,8 @@ APP_DESKTOP_FILE="$DESKTOP_DIR/app-installer.desktop"
 # Check if the directory already exists
 if [ ! -d "$INSTALLER_DIR" ]; then
     # Directory doesn't exist, clone the repository
-    git clone "$REPO_URL" "$INSTALLER_DIR" >/dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        echo "Repository cloned successfully."
-    else
-        echo "Failed to clone repository. Exiting."
-        exit 1
-    fi
+    git clone "$REPO_URL" "$INSTALLER_DIR" 
 else
-    echo "Directory already exists. Skipping clone."
     "$INSTALLER_DIR/app-installer"
 fi
 
