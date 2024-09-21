@@ -876,16 +876,17 @@ alias debian='\''proot-distro login debian --shared-tmp --user $(get_username)'\
 # Fonction pour installer Termux-X11
 install_termux_x11() {
     info_msg "❯ Configuration de Termux-X11"
-    file_path="$termux_dir/termux.properties"
+    local file_path="$HOME/.termux/termux.properties"
 
     if [ ! -f "$file_path" ]; then
+        mkdir -p "$HOME/.termux"
         cat <<EOL > "$file_path"
 allow-external-apps = true
-EOL >/dev/null 2>&1
+EOL
     else
-        sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path" >/dev/null 2>&1
+        sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
     fi
-    
+
     local install_x11=false
 
     if $USE_GUM; then
@@ -893,7 +894,7 @@ EOL >/dev/null 2>&1
             install_x11=true
         fi
     else
-        read -p "${COLOR_BLUE} Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
+        read -p "${COLOR_BLUE}Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
             install_x11=true
         fi
