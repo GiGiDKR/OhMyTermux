@@ -133,7 +133,6 @@ execute_command() {
     local error_msg="✗ $info_msg"
 
     if $USE_GUM; then
-        info_msg "$info_msg"
         if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command $redirect"; then
             success_msg "$success_msg"
         else
