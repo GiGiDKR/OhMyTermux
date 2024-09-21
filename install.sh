@@ -903,7 +903,7 @@ alias push=\"git pull && git add . && git commit -m \\\"mobile push\\\" && git p
 alias bashrc=\"nano \$HOME/.bashrc\"" >> $bashrc_proot" "Configurations .bashrc proot"
 
         # Ajouts au fichier $BASHRC
-        execute_command "echo "# Fonction pour récupérer le nom d'utilisateur
+        execute_command "echo '# Fonction pour récupérer le nom d'utilisateur
 get_username() {
     user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
     username=\$(ls -1 \"\$user_dir\" | head -n 1)
@@ -914,11 +914,11 @@ get_username() {
     echo \"\$username\"
 }
 
-alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"" >> $BASHRC" "Configuration .bashrc termux"
+alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"' >> $BASHRC" "Configuration .bashrc termux"
 
         # Ajout au fichier $ZSHRC si existant
         if [ -f "$ZSHRC" ]; then
-            execute_command "echo "# Fonction pour récupérer le nom d'utilisateur
+            execute_command "echo '# Fonction pour récupérer le nom d'utilisateur
 get_username() {
     user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
     username=\$(ls -1 \"\$user_dir\" | head -n 1)
@@ -929,7 +929,7 @@ get_username() {
     echo \"\$username\"
 }
 
-alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"" >> "$ZSHRC" "Configuration .zshrc termux"
+alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"' >> $ZSHRC" "Configuration .zshrc termux"
         fi
     fi
 }
