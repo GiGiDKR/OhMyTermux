@@ -108,7 +108,6 @@ execute_command() {
             log_error "$command"
             return 1
         fi
-
     fi
 }
 
