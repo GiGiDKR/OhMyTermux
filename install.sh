@@ -10,6 +10,7 @@ FONT_CHOICE=false
 XFCE_CHOICE=false
 SCRIPT_CHOICE=false
 VERBOSE=false
+FULL_INSTALL=false
 
 ONLY_GUM=true
 
@@ -47,6 +48,7 @@ show_help() {
     echo "  --skip | -sk      Ignorer la configuration initiale"
     echo "  --uninstall| -u   Désinstallation de Debian Proot"
     echo "  --help | -h       Afficher ce message d'aide"
+    echo "  --full | -f       Installer tous les modules sans confirmation"
 }
 
 # Gestion des arguments
@@ -78,7 +80,7 @@ for arg in "$@"; do
             ;;
         --xfce|-x)
             XFCE_CHOICE=true
-            ONLY_GUM=fals 
+            ONLY_GUM=false
             shift
             ;;
         --script|-sc)
@@ -97,6 +99,17 @@ for arg in "$@"; do
         --verbose|-v)
             VERBOSE=true
             redirect=""
+            shift
+            ;;
+        --full|-f)
+            FULL_INSTALL=true
+            SHELL_CHOICE=true
+            PACKAGES_CHOICE=true
+            PLUGIN_CHOICE=true
+            FONT_CHOICE=true
+            XFCE_CHOICE=true
+            SCRIPT_CHOICE=true
+            ONLY_GUM=false
             shift
             ;;
         --help|-h)
@@ -183,7 +196,7 @@ bash_banner() {
     local BANNER="
 ╔════════════════════════════════════════╗
 ║                                        ║
-║               OHMYTERMUX               ║
+║               OHMYTERMUX              ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
 
@@ -263,7 +276,7 @@ create_backups() {
 change_repo() {
     show_banner
     if $USE_GUM; then
-        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Changer le répertoire de sources ?"; then
+        if gum_confirm "Changer le répertoire de sources ?"; then
             termux-change-repo
         fi
     else
@@ -278,7 +291,9 @@ change_repo() {
 setup_storage() {
     show_banner
     if $USE_GUM; then
-        gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Autoriser l'accès au stockage ?" && termux-setup-storage
+        if gum_confirm "Autoriser l'accès au stockage ?"; then
+            termux-setup-storage
+        fi
     else
         read -p "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}" choice
         [ "$choice" = "o" ] && termux-setup-storage
@@ -367,7 +382,7 @@ initial_config() {
 
     if $USE_GUM; then
         show_banner
-        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Activer la configuration recommandée ?"; then
+        if gum_confirm "Activer la configuration recommandée ?"; then
             configure_termux
         fi
     else
@@ -384,7 +399,7 @@ install_shell() {
     if $SHELL_CHOICE; then
         info_msg "❯ Configuration du shell"
         if $USE_GUM; then
-            shell_choice=$(gum choose --selected="zsh" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=5 --header="Choisissez le shell à installer :" "bash" "zsh" "fish")
+            shell_choice=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" "bash" "zsh" "fish")
         else
             echo -e "${COLOR_BLUE}Choisissez le shell à installer :${COLOR_RESET}"
             echo
@@ -415,7 +430,7 @@ install_shell() {
                 # Installation de Oh My Zsh et autres configurations ZSH
                 info_msg "❯ Configuration de ZSH"
                 if $USE_GUM; then
-                    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Oh-My-Zsh ?"; then
+                    if gum_confirm "Installer Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
                         cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
@@ -432,11 +447,11 @@ install_shell() {
                 execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/zshrc" "Téléchargement de la configuration"
 
                 if $USE_GUM; then
-                    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer PowerLevel10k ?"; then
+                    if gum_confirm "Installer PowerLevel10k ?"; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer le prompt OhMyTermux ?"; then
+                        if gum_confirm "Installer le prompt OhMyTermux ?"; then
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
@@ -487,7 +502,7 @@ install_shell() {
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
-        plugins_to_install=($(gum choose --selected="Tout installer" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=9 --header="Sélectionner avec ESPACE les plugins à installer :" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
+        plugins_to_install=($(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
             plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
@@ -578,7 +593,7 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         info_msg "❯ Configuration des packages"
         if $USE_GUM; then
-            PACKAGES=$(gum choose --selected="nala,eza,bat,lf,fzf,python" --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=21 --header="Sélectionner avec espace les packages à installer :" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
             echo -e "${COLOR_BLUE}Sélectionner les packages à installer (séparés par des espaces) :${COLOR_RESET}"
             echo
@@ -743,7 +758,7 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum choose --selected="Police par défaut" --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height=13 --header="Sélectionner la police à installer :" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
+            FONT=$(gum_choose "Sélectionner la police à installer :" --selected="Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
@@ -876,7 +891,7 @@ install_utils() {
         bashrc_proot="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
         if [ ! -f "$bashrc_proot" ]; then
             error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
-            execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 touch $bashrc_proot" "Création du fichier .bashrc"
+            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 touch $bashrc_proot" "Création du fichier .bashrc"
         fi
 
         # Ajouts au fichier $bashrc_proot
