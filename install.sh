@@ -355,7 +355,7 @@ EOL" "Configuration des propriétés Termux"
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
 
     # Téléchargement de la police
-    execute_command "curl -fLo "$HOME/.termux/font.ttf" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/font.ttf" "Téléchargement de la police par défaut"
+    execute_command "curl -fLo "$HOME/.termux/font.ttf" https://github.com/GiGiDKR/OhMyTermux/raw/main/files/font.ttf" "Téléchargement de la police par défaut"
 
     termux-reload-settings
 }
@@ -429,7 +429,7 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/zshrc" "Téléchargement de la configuration"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/zshrc" "Téléchargement de la configuration"
 
                 if $USE_GUM; then
                     if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer PowerLevel10k ?"; then
@@ -437,7 +437,7 @@ install_shell() {
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer le prompt OhMyTermux ?"; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -452,7 +452,7 @@ install_shell() {
 
                         read -p "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}" choice
                         if [ "$choice" = "o" ]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -461,9 +461,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/aliases.zsh && 
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && 
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/help.md)" "Téléchargement de la configuration" || 
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/help.md)" "Téléchargement de la configuration" || 
                     error_msg "Erreur lors du téléchargement des fichiers"
 
                 if command -v zsh &> /dev/null; then
@@ -820,7 +820,7 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
 
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh" "Téléchargement du script XFCE"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/xfce.sh" "Téléchargement du script XFCE"
         execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
@@ -838,7 +838,7 @@ install_proot() {
     info_msg "❯ Configuration de Proot"
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script Proot"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/proot.sh" "Téléchargement du script Proot"
             execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
             ./proot.sh --gum
             INSTALL_UTILS=true
@@ -846,7 +846,7 @@ install_proot() {
     else
         read -p "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script Proot"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/proot.sh" "Téléchargement du script Proot"
             execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
             ./proot.sh
             INSTALL_UTILS=true
@@ -867,7 +867,7 @@ get_username() {
 # Fonction pour installer les utilitaires
 install_utils() {
     if $INSTALL_UTILS; then
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement du script Utils"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/utils.sh" "Téléchargement du script Utils"
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
 

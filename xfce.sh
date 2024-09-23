@@ -193,7 +193,7 @@ main() {
     execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
     # Téléchargement du fond d'écran
-    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/waves.png" "Téléchargement du fond d'écran"
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png" "Téléchargement du fond d'écran"
     execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
 
     # Téléchargement du thème

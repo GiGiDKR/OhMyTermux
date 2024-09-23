@@ -252,3 +252,13 @@ Deux scripts sont également disponibles pour cette configuration :
 - [ ] Intégrer dans le script principal la sélection de thèmes (Schémas de couleurs)
 - [ ] Séparer l'installation XFCE / Debian pour exécuter XFCE natif de Termux
 - [ ] Ajouter des options pour Debian (Thèmes, Polices, Fonds d'écran)
+
+&nbsp;
+
+## 📝 Notes
+
+- Le script `xfce.sh` est utilisé pour installer XFCE sur Termux.
+- Le script `proot.sh` est utilisé pour installer Proot sur Termux.
+- Le script `utils.sh` est utilisé pour gérer le menu de bureau.
+- Le script `install.sh` est le script principal qui installera tout le reste.
+- Le dossier `files` contient les fichiers nécessaires pour l'installation.

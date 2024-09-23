@@ -270,3 +270,10 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
+## 📝 Notes
+
+- The `xfce.sh` script is used to install XFCE on Termux.
+- The `proot.sh` script is used to install Proot on Termux.
+- The `utils.sh` script is used to manage the desktop menu.
+- The `install.sh` script is the main script that will install everything.
+- The `files` folder contains the files needed for the installation.
