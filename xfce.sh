@@ -1,32 +1,65 @@
 #!/bin/bash
 
 USE_GUM=false
+VERBOSE=false
 
+# Couleurs en variables
+COLOR_BLUE="\e[38;5;33m"
+COLOR_RED="\e[38;5;196m"
+COLOR_RESET="\e[0m"
+
+# Configuration de la redirection
+if [ "$VERBOSE" = false ]; then
+    redirect=">/dev/null 2>&1"
+else
+    redirect=""
+fi
+
+# Fonction pour afficher l'aide
+show_help() {
+    clear
+    echo "Aide OhMyTermux"
+    echo 
+    echo "Usage: $0 [OPTIONS] [username] [password]"
+    echo "Options:"
+    echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose | -v Afficher les sorties détaillées"
+    echo "  --help | -h    Afficher ce message d'aide"
+}
+
+# Gestion des arguments
 for arg in "$@"; do
     case $arg in
         --gum|-g)
             USE_GUM=true
             shift
             ;;
+        --verbose|-v)
+            VERBOSE=true
+            redirect=""
+            shift
+            ;;
+        --help|-h)
+            show_help
+            exit 0
+            ;;
+        *)
+            break
+            ;;
     esac
 done
 
+# Fonction pour afficher la bannerière
 bash_banner() {
     clear
-    COLOR="\e[38;5;33m"
+    local BANNER="
+╔════════════════════════════════════════╗
+║                                        ║
+║               OHMYTERMUX               ║
+║                                        ║
+╚════════════════════════════════════════╝"
 
-    TOP_BORDER="╔════════════════════════════════════════╗"
-    BOTTOM_BORDER="╚════════════════════════════════════════╝"
-    EMPTY_LINE="║                                        ║"
-    TEXT_LINE="║              OHMYTERMUX                ║"
-
-    echo
-    echo -e "${COLOR}${TOP_BORDER}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${TEXT_LINE}"
-    echo -e "${COLOR}${EMPTY_LINE}"
-    echo -e "${COLOR}${BOTTOM_BORDER}\e[0m"
-    echo
+    echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
 show_banner() {
@@ -45,6 +78,7 @@ show_banner() {
     fi
 }
 
+# Fonction de gestion des erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -52,97 +86,127 @@ finish() {
         if $USE_GUM; then
             gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
         else
-            echo -e "\e[38;5;196mERREUR: Installation de OhMyTermux impossible.\e[0m"
+            echo -e "${COLOR_RED}ERREUR: Installation de OhMyTermux impossible.${COLOR_RESET}"
         fi
-        echo -e "\e[38;5;33mVeuillez vous référer au(x) message(s) d'erreur ci-dessus.\e[0m"
+        echo -e "${COLOR_BLUE}Veuillez vous référer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
     fi
+}
+
+# Fonction pour afficher des messages d'information en bleu
+info_msg() {
+    if $USE_GUM; then
+        gum style --foreground 33 "$1"
+    else
+        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
+    fi
+}
+
+# Fonction pour afficher des messages de succès en vert
+success_msg() {
+    if $USE_GUM; then
+        gum style --foreground 76 "$1"
+    else
+        echo -e "\e[38;5;76m$1${COLOR_RESET}"
+    fi
+}
+
+# Fonction pour afficher des messages d'erreur en rouge
+error_msg() {
+    if $USE_GUM; then
+        gum style --foreground 196 "$1"
+    else
+        echo -e "${COLOR_RED}$1${COLOR_RESET}"
+    fi
+}
+
+# Fonction pour journaliser les erreurs
+log_error() {
+    local error_msg="$1"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+}
+
+# Fonction pour exécuter une commande et afficher le résultat
+execute_command() {
+    local command="$1"
+    local info_msg="$2"
+    local success_msg="✓ $info_msg"
+    local error_msg="✗ $info_msg"
+
+    if $USE_GUM; then
+        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command $redirect"; then
+            success_msg "$success_msg"
+        else
+            error_msg "$error_msg"
+            log_error "$command"
+            return 1
+        fi
+    else
+        info_msg "$info_msg"
+        if eval "$command $redirect"; then
+            success_msg "$success_msg"
+        else
+            error_msg "$error_msg"
+            log_error "$command"
+            return 1
+        fi
+    fi
+}
+
+# TODO Implémenter la fonction install_package
+# Fonction pour installer un package
+#install_package() {
+#    local pkg=$1
+#    execute_command "pkg install $pkg -y" "Installation de $pkg"
+#}
+
+# Fonction pour télécharger un fichier
+
+download_file() {
+    local url=$1
+    local message=$2
+    execute_command "wget $url" "$message"
 }
 
 trap finish EXIT
 
-show_banner
-if $USE_GUM && ! command -v gum &> /dev/null; then
-    echo -e "\e[38;5;33mInstallation de gum...\e[0m"
-    pkg update -y > /dev/null 2>&1
-    pkg install -y gum > /dev/null 2>&1
-fi
-
-username="$1"
-
-pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
-
-for pkg in "${pkgs[@]}"; do
-    if $USE_GUM; then
-        gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de $pkg" -- pkg install "$pkg" -y
-    else
-        show_banner
-        echo -e "\e[38;5;33mInstallation de $pkg...\e[0m"
-        pkg install "$pkg" -y > /dev/null 2>&1
+# Fonction principale
+main() {
+    # Installation de gum si nécessaire
+    if $USE_GUM && ! command -v gum &> /dev/null; then
+        echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
+        pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
-done
 
-{
-    mkdir -p $HOME/Desktop
-    cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop
-    chmod +x $HOME/Desktop/firefox.desktop
-}
+    info_msg "❯ Installation de XFCE"
 
-# TODO : Ajouter l'alias
-#echo 'alias hud="GALLIUM_HUD=fps"' >> $PREFIX/etc/bash.bashrc
+    execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
-#if [ -f "$HOME/.zshrc" ]; then
-#    echo 'alias hud="GALLIUM_HUD=fps"' >> $HOME/.zshrc
-#fi
+    # Installation des packages
+    pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
 
-show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Téléchargement du fond d'écran" -- wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png
-else
-    echo -e "\e[38;5;33mTéléchargement du fond d'écran...\e[0m"
-    wget https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/files/waves.png > /dev/null 2>&1
-fi
 
-mkdir -p $PREFIX/share/backgrounds/xfce/
-mv waves.png $PREFIX/share/backgrounds/xfce/ > /dev/null 2>&1
+    for pkg in "${pkgs[@]}"; do
+        execute_command "pkg install $pkg -y" "Installation de $pkg"
+    done
 
-show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation WhiteSur-Dark" -- wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip
-else
-    echo -e "\e[38;5;33mInstallation WhiteSur-Dark...\e[0m"
-    wget https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip > /dev/null 2>&1
-fi
-{
-    unzip 2024.09.02.zip
-    tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz
-    mv WhiteSur-Dark/ $PREFIX/share/themes/
-    rm -rf WhiteSur*
-    rm 2024.09.02.zip
-} > /dev/null 2>&1
+    # Configuration du bureau
+    execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
-show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation Fluent Cursor" -- wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip
-else
-    echo -e "\e[38;5;33mInstallation Fluent Cursor...\e[0m"
-    wget https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip > /dev/null 2>&1
-fi
-{
-    unzip 2024-02-25.zip
-    mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/
-    mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/
-    rm -rf $HOME/Fluent*
-    rm 2024-02-25.zip
-} > /dev/null 2>&1
+    # Téléchargement du fond d'écran
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/waves.png" "Téléchargement du fond d'écran"
+    execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
 
-show_banner
-if $USE_GUM; then
-    gum spin --spinner.foreground="33" --title.foreground="33" --title="Installation de la configuration" -- wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip
-else
-    echo -e "\e[38;5;33mInstallation de la configuration...\e[0m"
-    wget https://github.com/GiGiDKR/OhMyTermux/raw/main/files/config.zip > /dev/null 2>&1
-fi
-{
-    unzip config.zip
-    rm config.zip
-} > /dev/null 2>&1
+    # Téléchargement du thème
+    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement de WhiteSur-Dark"
+    execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
+
+    # 
+    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
+    execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
+
+    # Téléchargement de la pré-configuration
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/config.zip" "Téléchargement de la configuration XFCE"
+        execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
+    }
+
+main "$@"

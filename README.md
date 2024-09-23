@@ -1,8 +1,8 @@
 # OhMyTermux 🧊
 
-**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
+**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.** 👀
 
-#### Optional installation of:
+Optional installation of:
 
 - **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro with a [XFCE](https://www.xfce.org/) desktop and an **[App-Installer](https://github.com/GiGiDKR/App-Installer)** which are not available in package manager.
 
@@ -12,9 +12,16 @@
 
 &nbsp;
 
+> [!CAUTION]
+> ⚠️ This project is under development, use it at your own risk.
+>
+> The various branches of the repository are currently not up to date.
+>
+> Please wait for version 1.1 before using this project or check the code before running it !
+
 > [!IMPORTANT]
-> This project is under active development but to facilitate progress the French language is preferred to provide the user CLI.
-> 
+> 🚩 To facilitate progress, the French language is preferred to provide the user CLI.
+>
 > A French version of this text is [available](README-FR.md).
 
 &nbsp;
@@ -23,41 +30,35 @@
 
 🧊 To install **OhMyTermux**
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 >[!TIP]
 > **[Gum](https://github.com/charmbracelet/gum)** allows simplified use of CLI scripts, it is recommended to use it by adding the `--gum` or `-g` argument.
 
 🔥 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
-
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
 >[!NOTE]
-> Since version 1.0.6 it is possible to execute only one function of the script by use the corresponding argument :
+> It is possible to execute only one function of the script by use the corresponding argument :
 > - Shell installation : `--shell` or `-sh`
 > - Packages installation : `--package` or `-pkg`
-> - Plugins installation : `--plugin` or `-plg`
 > - Fonts installation : `--font` or `-f`
 > - XFCE / Debian-Proot : `--xfce` or `-x`
-> - OhMyTermuxScript : `--script` or `-s`
-> - Skip initial configuration : `--noconf` or `-nc`
+> - OhMyTermuxScript : `--script` or `-sc`
+> - Skip initial configuration : `--skip` or `-sk`
 >
 > **Multiple arguments can be combined.**
+> 
+> - For help on a specific function, use the `-h` or `--help` argument.
 
 &nbsp;
 
-## About this program 
+### About this program 
 
-🧊 **Shell selection :**
-
-- [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
-- [ZSH](https://www.zsh.org/)
-- [Fish](https://github.com/fish-shell/fish-shell)
-
-🧊 **Packages installed by default :**
+#### 🧊 **Packages installed by default**
 
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
@@ -65,7 +66,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [zsh](https://github.com/zsh-users/zsh)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
-🧊 **Individually selectable packages :**
+#### 🧊 **Individually selectable packages**
 
 - [nala](https://github.com/volitank/nala)
 - [eza](https://github.com/eza-community/eza)
@@ -75,25 +76,24 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 - [lf](https://github.com/gokcehan/lf)
 - [fzf](https://github.com/junegunn/fzf)
 - [glow](https://github.com/charmbracelet/glow)
-- [tmux](https://github.com/tmux/tmux)
 - [python](https://github.com/python)
 - [nodejs](https://github.com/nodejs/node)
 - [nodejs-lts](https://github.com/nodejs/Release)
-- [rust](https://github.com/rust-lang/rust)
 - [micro](https://github.com/zyedidia/micro)
 - [vim](https://github.com/vim/vim)
 - [neovim](https://github.com/neovim/neovim)
 - [lazygit](https://github.com/jesseduffield/lazygit)
 - [open-ssh](https://www.openssh.com/)
 
-🧊 **Individually selectable modules  :**
 
-- [qobuz-dl](https://github.com/vitiko98/qobuz-dl)
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
-- [librosa](https://github.com/librosa/librosa)
-- [cmd-wrapped](https://github.com/YiNNx/cmd-wrapped)
+#### 🧊 **Shell selection**
 
-  🧊 **Configuration ZSH :**
+- [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
+- [ZSH](https://www.zsh.org/)
+- [Fish](https://github.com/fish-shell/fish-shell)
+
+
+  ##### 🧊 **ZSH configuration**
 
     - [Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)
     - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
@@ -102,7 +102,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
     - [zsh-abbr](https://github.com/olets/zsh-abbr)
     - [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
 
-  🧊 **Configuration Fish [^1] :**
+  ##### 🧊 **Fish configuration [^1]**
   
    - ~~[Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)~~
    - ~~[Fisher](https://github.com/jorgebucaran/fisher)~~
@@ -114,18 +114,18 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
    - ~~[Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)~~
    - ~~[Catppuccin for Fish](https://github.com/catppuccin/fish)~~
 
-🧊 **Configuring Termux Display :**
+  #### 🧊 **Termux Display**
 
 - [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) 
 - [Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
-🧊 **Helpful Termux configuration :**
+  #### 🧊 **Termux configuration**
 
 - Custom aliases
 - Symlink to internal storage user directories [^1]
 
-🧊 **Useful scripts [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1] :
+  #### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1]
 
 - Theme Selector
 - Nerd Fonts Installer
@@ -142,7 +142,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/install.sh -o
 
 &nbsp;
 
-# 🧊 **XFCE and Debian :**
+## **XFCE and Debian**
 
 Sets up a termux XFCE desktop and a Debian proot install.
 This setup uses Termux-X11, the termux-x11 server will be installed and you will be prompted to allow termux to install the Android APK.
@@ -151,7 +151,7 @@ You only need to pick your username and follow the prompts.
 > [!IMPORTANT]
 > This will take roughly 4GB of storage space
 
-## Starting the desktop
+### 🧊 Starting the desktop
 
 You will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
 
@@ -163,7 +163,7 @@ To enter the Debian proot install from terminal use the command ```debian```
 
 Also note, you do not need to set display in Debian proot as it is already set. This means you can use the terminal to start any GUI application and it will startup.
 
-## Debain Proot
+### 🧊 Debain Proot
 
 To enter proot use the command ```debian```, from there you can install aditional software with apt and use cp2menu in termux to copy the menu items over to termux xfce menu.
 
@@ -175,22 +175,48 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
-> [!CAUTION]
-> Process completed (signal 9) - press Enter
+
+> [!WARNING]
+> ***Process completed (signal 9) - press Enter***
 >
+> You need to run this adb command to fix the process 9 error that will force close Termux :
+> ```
+> adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"
+> ```
+>
+> To do this without using a PC you have several methods :
+>
+> First, Connect to WIFI.
+>
+> **Method 1 :**
+> 
+> Install adb in Termux by running this code:
+> ```
+> pkg install android-tools -y
+> ```
+> Then open settings and enable developer's options by selecting "About phone" then hit "Build" 7 times.
+> 
+> Back out of this menu and go into developer's options, enable wireless debugging then click into there to get the port number then click pair device to get the pairing code.
+> 
+> Put settings into split screen mode by pressing the square button on the bottom right of your phone, and hold the settings icon until the split screen icon shows up.
+> 
+> Then select Termux and in settings select pair with a code. In Termux type `adb pair` then enter your pairing info.
+> 
+> After you have completed this process you can type adb connect and connect to your phone with the ip and port provided in the wireless debugging menu. You can then run the fix command.
+> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+> 
+> **Method 2 :**
+> 
 > Install LADB from [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) or from [GitHub](https://github.com/hyperio546/ladb-builds/releases).
 > 
-> Connect to WIFI.  
->
 > In split screen have one side LADB and the other side showing developer settings.
 >
 > In developer settings, enable wireless debugging then click into there to get the port number then click pair device to get the pairing code.
 >
 > Enter both those values into LADB.
 >
-> Once it connects run this command :
-> 
-> ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+> Once it connects run the fix command.
+> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 
 &nbsp;
 
@@ -211,8 +237,22 @@ There are two scripts available for this setup as well :
     - Dynamic management of .zshrc configuration
 - Version 1.0.6 :
     - Global modification of the main script by splitting each step into a function that can be executed alone (or combined with others) with the addition of an argument to the execution command
+- Version 1.0.7 :
+    - Addition of the argument `--shell` to install a shell
+    - Addition of the argument `--package` to install packages
+    - Addition of the argument `--xfce` to install XFCE and Debian proot
+    - Addition of the argument `--font` to install fonts
+    - Addition of the argument `--script` to install [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
+    - Addition of the argument `--skip` to skip the initial configuration
+- Version 1.0.8 :
+    - Bug fixes and improvements
+- Version 1.0.9 :
+    - Overall improvement of the script
+    - Addition of the creation of a password for the Debian proot user
+    - Implementation of a non-verbose execution when gum is not used
+    - Implementation of a system for displaying the result of the execution of commands (success/failure)
 - Version 1.1 : 
-  - In development
+    - In development
 
 &nbsp;
 
