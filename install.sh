@@ -619,7 +619,6 @@ update_zshrc() {
 
     execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
 
-    # Ajouter la ligne pour zsh-completions après la section plugins
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
         if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
             sed -i '/^plugins=(/,/)/a\
