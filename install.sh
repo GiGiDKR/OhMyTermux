@@ -196,7 +196,7 @@ bash_banner() {
     local BANNER="
 ╔════════════════════════════════════════╗
 ║                                        ║
-║               OHMYTERMUX              ║
+║               OHMYTERMUX               ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
 
@@ -932,16 +932,15 @@ get_username() {
     echo "$username"
 }
 
-alias debian="proot-distro login debian --shared-tmp --user $(get_username)"'
+alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
+'
 
-        execute_command "echo '$bashrc_content' >> '$BASHRC'" "Configuration .bashrc termux"
+execute_command "echo '$bashrc_content' >> '$BASHRC'" "Configuration .bashrc termux"
 
-        # Ajout au fichier $ZSHRC si existant
-        if [ -f "$ZSHRC" ]; then
-            execute_command "echo '$bashrc_content' >> '$ZSHRC'" "Configuration .zshrc termux"
-        fi
-    fi
-}
+# Ajout au fichier $ZSHRC si existant
+if [ -f "$ZSHRC" ]; then
+    execute_command "echo '$bashrc_content' >> '$ZSHRC'" "Configuration .zshrc termux"
+fi
 
 # Fonction pour installer Termux-X11
 install_termux_x11() {
