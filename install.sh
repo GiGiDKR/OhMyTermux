@@ -190,6 +190,48 @@ execute_command() {
     fi
 }
 
+gum_confirm() {
+    local prompt="$1"
+    if $FULL_INSTALL; then
+        return 0 
+    else
+        gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" --selected.foreground="0" "$prompt"
+    fi
+}
+
+gum_choose() {
+    local prompt="$1"
+    shift
+    local selected=""
+    local options=()
+    local height=10  # Valeur par défaut
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --selected=*)
+                selected="${1#*=}"
+                ;;
+            --height=*)
+                height="${1#*=}"
+                ;;
+            *)
+                options+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    if $FULL_INSTALL; then
+        if [ -n "$selected" ]; then
+            echo "$selected"
+        else
+            echo "${options[@]}"
+        fi
+    else
+        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$height" --header="$prompt" --selected="$selected" "${options[@]}"
+    fi
+}
+
 # Fonction pour afficher la bannerière en mode texte
 bash_banner() {
     clear
@@ -399,7 +441,7 @@ install_shell() {
     if $SHELL_CHOICE; then
         info_msg "❯ Configuration du shell"
         if $USE_GUM; then
-            shell_choice=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" "bash" "zsh" "fish")
+            shell_choice=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" --height=5 "bash" "zsh" "fish")
         else
             echo -e "${COLOR_BLUE}Choisissez le shell à installer :${COLOR_RESET}"
             echo
@@ -502,7 +544,7 @@ install_shell() {
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
-        plugins_to_install=($(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
+        plugins_to_install=($(gum_choose --height =9 "Sélectionner avec ESPACE les plugins à installer :" --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
             plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
@@ -593,7 +635,7 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         info_msg "❯ Configuration des packages"
         if $USE_GUM; then
-            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
             echo -e "${COLOR_BLUE}Sélectionner les packages à installer (séparés par des espaces) :${COLOR_RESET}"
             echo
@@ -758,7 +800,7 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum_choose "Sélectionner la police à installer :" --selected="Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
+            FONT=$(gum_choose --height@=13 q"Sélectionner la police à installer :" --selected="Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
