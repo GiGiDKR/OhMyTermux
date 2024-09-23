@@ -562,14 +562,18 @@ update_zshrc() {
 
     execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
 
-    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
-    fi
-
+    # Ajouter la ligne pour zsh-completions après la section plugins
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
         if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
-            sed -i "1ifpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$ZSHRC"
+            sed -i '/^plugins=(/,/)/a\
+\
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\
+' "$ZSHRC" 2>/dev/null
         fi
+    fi
+
+    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
+        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
 }
 
