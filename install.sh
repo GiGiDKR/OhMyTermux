@@ -868,7 +868,7 @@ install_xfce() {
             for PACKAGE in "${PACKAGES[@]}"; do
                 execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
             done
-            # TODO : Modifier l'url selon la branche du réferenciel 
+            #! Modifier l'url selon la branche du réferenciel
             execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce.sh" "Téléchargement du script XFCE"
             execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
             
@@ -887,6 +887,7 @@ install_xfce() {
 install_proot() {
     info_msg "❯ Configuration de Proot"
     if $FULL_INSTALL || ($USE_GUM && gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?") || (! $USE_GUM && read -p "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}" choice && [ "$choice" = "o" ]); then
+        #! Modifier l'url selon la branche du réferenciel
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Téléchargement du script Proot"
         execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
         
@@ -929,7 +930,6 @@ install_utils() {
             execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 touch $bashrc_proot" "Création du fichier .bashrc"
         fi
 
-        # Ajouts au fichier $bashrc_proot
         execute_command "echo '
 export DISPLAY=:1.0
 
@@ -954,8 +954,6 @@ alias push=\"git pull && git add . && git commit -m \\\"mobile push\\\" && git p
 alias bashrc=\"nano \$HOME/.bashrc\"
 ' >> '$bashrc_proot'" "Configurations .bashrc proot"
 
-
-        # Contenu à ajouter au fichier $BASHRC
         bashrc_content='
 get_username() {
     user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
@@ -971,7 +969,6 @@ alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
 '
         execute_command "echo '$bashrc_content' >> '$BASHRC'" "Configuration .bashrc termux"
 
-        # Ajout au fichier $ZSHRC si existant
         if [ -f "$ZSHRC" ]; then
             execute_command "echo '$bashrc_content' >> '$ZSHRC'" "Configuration .zshrc termux"
         fi

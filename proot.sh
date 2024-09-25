@@ -1,9 +1,8 @@
 #!/bin/bash
 
-set -euo pipefail
-
+# Variables globales
 USE_GUM=false
-VERBOSE=false
+FULL_INSTALL=false
 
 # Couleurs en variables
 COLOR_BLUE="\e[38;5;33m"
@@ -44,6 +43,10 @@ for arg in "$@"; do
         --help|-h)
             show_help
             exit 0
+            ;;
+        --full)
+            FULL_INSTALL=true
+            shift
             ;;
         *)
             break
