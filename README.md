@@ -149,7 +149,7 @@ This setup uses Termux-X11, the termux-x11 server will be installed and you will
 You only need to pick your username and follow the prompts.
 
 > [!IMPORTANT]
-> This will take roughly 4GB of storage space
+> This will take roughly 4GB of storage space and will take a while to install.
 
 ### 🧊 Starting the desktop
 

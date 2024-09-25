@@ -186,7 +186,6 @@ execute_command() {
             log_error "$command"
             return 1
         fi
-
     fi
 }
 
@@ -637,8 +636,13 @@ fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\
 install_packages() {
     if $PACKAGES_CHOICE; then
         info_msg "❯ Configuration des packages"
-        if $USE_GUM; then
-            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+        if $FULL_INSTALL; then
+            PACKAGES="nala eza bat lf fzf python"
+        elif $USE_GUM; then
+            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=20 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            if [[ "$PACKAGES" == *"Tout installer"* ]]; then
+                PACKAGES="nala eza colorls lsd bat lf fzf glow tmux python nodejs nodejs-lts micro vim neovim lazygit open-ssh tsu"
+            fi
         else
             echo -e "${COLOR_BLUE}Sélectionner les packages à installer (séparés par des espaces) :${COLOR_RESET}"
             echo
@@ -856,56 +860,43 @@ INSTALL_UTILS=false
 install_xfce() {
     if $XFCE_CHOICE; then
         info_msg "❯ Configuration de XFCE"
-        if $USE_GUM; then
-            if ! gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
-                return
-            fi
-        else
-            read -p "${COLOR_BLUE}Installer XFCE ? (o/n)${COLOR_RESET}" choice
-            if [ "$choice" != "o" ]; then
-                return
-            fi
-        fi
+        if $FULL_INSTALL || ($USE_GUM && gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?") || (! $USE_GUM && read -p "${COLOR_BLUE}Installer XFCE ? (o/n)${COLOR_RESET}" choice && [ "$choice" = "o" ]); then
+            execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
 
-        execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
-
-        PACKAGES=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
-    
-        for PACKAGE in "${PACKAGES[@]}"; do
-            execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
-        done
-
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh" "Téléchargement du script XFCE"
-        execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
+            PACKAGES=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
         
-        if $USE_GUM; then
-            ./xfce.sh --gum
-        else
-            ./xfce.sh
+            for PACKAGE in "${PACKAGES[@]}"; do
+                execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
+            done
+            # TODO : Modifier l'url selon la branche du réferenciel 
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce.sh" "Téléchargement du script XFCE"
+            execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
+            
+            local xfce_options=""
+            $FULL_INSTALL && xfce_options+=" --full"
+            $USE_GUM && xfce_options+=" --gum"
+            
+            ./xfce.sh$xfce_options
+            
+            INSTALL_UTILS=true
         fi
-        
-        INSTALL_UTILS=true
     fi
 }
 
 # Fonction pour installer Proot
 install_proot() {
     info_msg "❯ Configuration de Proot"
-    if $USE_GUM; then
-        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script Proot"
-            execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
-            ./proot.sh --gum
-            INSTALL_UTILS=true
-        fi
-    else
-        read -p "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}" choice
-        if [ "$choice" = "o" ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script Proot"
-            execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
-            ./proot.sh
-            INSTALL_UTILS=true
-        fi
+    if $FULL_INSTALL || ($USE_GUM && gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?") || (! $USE_GUM && read -p "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}" choice && [ "$choice" = "o" ]); then
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Téléchargement du script Proot"
+        execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
+        
+        local proot_options=""
+        $FULL_INSTALL && proot_options+=" --full"
+        $USE_GUM && proot_options+=" --gum"
+        
+        ./proot.sh$proot_options
+        
+        INSTALL_UTILS=true
     fi
 }
 
@@ -974,7 +965,7 @@ get_username() {
         return 1
     fi
     echo "$username"
-    }
+}
 
 alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
 '
