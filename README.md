@@ -41,6 +41,16 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/install.sh -o 
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
+>[!TIP]
+> Ready to copy/paste, go get a coffee, come back with [OhMyTermux](https://github.com/GiGiDKR/OhMyTermux) installed ?
+>
+> Then use the default installation by adding the `--full` or `-f` argument.
+
+☕ To install the [recommended configuration](https://github.com/GiGiDKR/OhMyTermux/edit/dev/README.md#-recommanded-configuration)
+```bash
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum --full
+```
+
 >[!NOTE]
 > It is possible to execute only one function of the script by use the corresponding argument :
 > - Shell installation : `--shell` or `-sh`
@@ -217,6 +227,18 @@ There are two scripts available for this setup as well :
 >
 > Once it connects run the fix command.
 > > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+
+&nbsp;
+
+## ☕ Recommanded configuration
+
+Default installation contents (`--full` | `-f`) :
+
+-
+
+  -
+  
+-
 
 &nbsp;
 
