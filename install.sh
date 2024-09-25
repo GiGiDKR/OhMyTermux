@@ -1054,47 +1054,50 @@ install_script() {
 }
 
 # Fonction principale
-show_banner
-if $EXECUTE_INITIAL_CONFIG; then
-    initial_config
-fi
-install_shell
-install_packages
-common_alias
-install_font
-install_xfce
-install_proot
-install_utils
-install_termux_x11
-install_script
+main() {
+    show_banner
+    if $EXECUTE_INITIAL_CONFIG; then
+        initial_config
+    fi
+    install_shell
+    install_packages
+    common_alias
+    install_font
+    install_xfce
+    install_proot
+    install_utils
+    install_termux_x11
+    install_script
 
-info_msg "❯ Nettoyage des fichiers temporaires"
-# Nettoyage des fichiers temporaires
-rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
-success_msg "✓ Suppression des scripts d'installation"
+    info_msg "❯ Nettoyage des fichiers temporaires"
+    rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
+    success_msg "✓ Suppression des scripts d'installation"
 
-# Exécution de OhMyTermux
-if $USE_GUM; then
-    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
-        clear
-        if [ "$shell_choice" = "zsh" ]; then
-            exec zsh -l
+    # Exécution de OhMyTermux
+    if $USE_GUM; then
+        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
+            clear
+            if [ "$shell_choice" = "zsh" ]; then
+                exec zsh -l
+            else
+                exec $shell_choice
+            fi
         else
-            exec $shell_choice
+            echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
         fi
     else
-        echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
-    fi
-else
-    read -p "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}" choice
-    if [ "$choice" = "o" ]; then
-        clear
-        if [ "$shell_choice" = "zsh" ]; then
-            exec zsh -l
+        read -p "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}" choice
+        if [ "$choice" = "o" ]; then
+            clear
+            if [ "$shell_choice" = "zsh" ]; then
+                exec zsh -l
+            else
+                exec $shell_choice
+            fi
         else
-            exec $shell_choice
+            echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
         fi
-    else
-        echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
     fi
-fi
+}
+
+main
