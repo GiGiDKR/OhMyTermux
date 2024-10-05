@@ -853,19 +853,6 @@ install_font() {
     fi
 }
 
-        case $FONT in
-            "Police par défaut")
-                success_msg "✓ Police par défaut installée"
-                ;;
-            *)
-                font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
-                execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Installation de $FONT"
-                termux-reload-settings
-                ;;
-        esac
-    fi
-}
-
 # Variable globale pour suivre si XFCE ou Proot a été installé
 INSTALL_UTILS=false
 
