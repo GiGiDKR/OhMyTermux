@@ -359,7 +359,7 @@ configure_termux() {
     file_path="$termux_dir/colors.properties"
     if [ ! -f "$file_path" ]; then
         mkdir -p "$termux_dir"
-        "cat <<EOL > \"$file_path\"
+        cat <<EOL > "$file_path"
 ## Name: TokyoNight
 # Special
 foreground = #c0caf5
@@ -392,7 +392,7 @@ color15 = #c0caf5
 # Other
 color16 = #ff9e64
 color17 = #db4b4b
-EOL"
+EOL
     fi
 
     # Configuration de termux.properties
