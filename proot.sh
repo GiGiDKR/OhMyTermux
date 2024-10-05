@@ -87,6 +87,12 @@ log_error() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
 }
 
+# Fonction pour journaliser les erreurs
+log_error() {
+    local error_msg="$1"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+}
+
 # Fonction pour exécuter une commande et afficher le résultat
 execute_command() {
     local command="$1"
@@ -105,8 +111,12 @@ execute_command() {
     else
         info_msg "$info_msg"
         if eval "$command $redirect"; then
+            tput cuu1
+            tput el
             success_msg "$success_msg"
         else
+            tput cuu1
+            tput el
             error_msg "$error_msg"
             log_error "$command"
             return 1

@@ -180,8 +180,12 @@ execute_command() {
     else
         info_msg "$info_msg"
         if eval "$command $redirect"; then
+            tput cuu1
+            tput el
             success_msg "$success_msg"
         else
+            tput cuu1
+            tput el
             error_msg "$error_msg"
             log_error "$command"
             return 1
