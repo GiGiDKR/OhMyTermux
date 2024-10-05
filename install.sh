@@ -359,7 +359,7 @@ configure_termux() {
     file_path="$termux_dir/colors.properties"
     if [ ! -f "$file_path" ]; then
         mkdir -p "$termux_dir"
-        execute_command "cat <<EOL > \"$file_path\"
+        "cat <<EOL > \"$file_path\"
 ## Name: TokyoNight
 # Special
 foreground = #c0caf5
@@ -392,7 +392,7 @@ color15 = #c0caf5
 # Other
 color16 = #ff9e64
 color17 = #db4b4b
-EOL" "Installation du thème TokyoNight"
+EOL"
     fi
 
     # Configuration de termux.properties
@@ -412,7 +412,7 @@ EOL" "Configuration des propriétés Termux"
     fi
     
     # Suppression de la bannière de connexion
-    execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
+    touch $HOME/.hushlogin
 
     # Téléchargement de la police
     execute_command "curl -fLo "$HOME/.termux/font.ttf" https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/font.ttf" "Téléchargement de la police par défaut"
@@ -620,8 +620,10 @@ update_zshrc() {
     done
     new_plugins_section+=")\n\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src"
 
-    execute_command "sed -i '/^plugins=(/,/fpath+=/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
+    # Utiliser sed pour remplacer la section des plugins dans .zshrc
+    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
 
+    # Ajouter la ligne source $ZSH/oh-my-zsh.sh si elle n'existe pas déjà
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
         echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
@@ -634,7 +636,7 @@ install_packages() {
         if $FULL_INSTALL; then
             PACKAGES="nala eza bat lf fzf python"
         elif $USE_GUM; then
-            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --height=20 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --height=21 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
             if [[ "$PACKAGES" == *"Tout installer"* ]]; then
                 PACKAGES="nala eza colorls lsd bat lf fzf glow tmux python nodejs nodejs-lts micro vim neovim lazygit open-ssh tsu"
             fi
