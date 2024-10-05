@@ -547,7 +547,7 @@ install_shell() {
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
-        plugins_to_install=($(gum_choose --height =9 "Sélectionner avec ESPACE les plugins à installer :" --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
+        plugins_to_install=($(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --no-limit --height=9 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
             plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
@@ -802,25 +802,23 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum_choose --height=13 "Sélectionner la police à installer :" --selected="Police par défaut" "DejaVuSansM Nerd Font" "DroidSansM Nerd Font" "FiraCode Nerd Font" "Hack Nerd Font" "MesloLGS Nerd Font")
+            FONT=$(gum_choose "Sélectionner la police à installer :" --height=7 --selected="Police par défaut" "DroidSansM Nerd Font" "FiraCode Nerd Font" "Hack Nerd Font" "MesloLGS Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
             echo -e "${COLOR_BLUE}1) Police par défaut${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) DejaVuSansM Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) DroidSansM Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}4) FiraCode Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}5) Hack Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}6) MesloLGS Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) DroidSansM Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3) FiraCode Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4) Hack Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}5) MesloLGS Nerd Font${COLOR_RESET}"
             echo
             read -p "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}" choice
             case $choice in
                 1) FONT="Police par défaut" ;;
-                2) FONT="DejaVuSansM Nerd Font" ;;
-                3) FONT="DroidSansM Nerd Font" ;;
-                4) FONT="FiraCode Nerd Font" ;;
-                5) FONT="Hack Nerd Font" ;;
-                6) FONT="MesloLGS Nerd Font" ;;
+                2) FONT="DroidSansM Nerd Font" ;;
+                3) FONT="FiraCode Nerd Font" ;;
+                4) FONT="Hack Nerd Font" ;;
+                5) FONT="MesloLGS Nerd Font" ;;
                 *) FONT="Police par défaut" ;;
             esac
         fi
@@ -828,9 +826,6 @@ install_font() {
         case $FONT in
             "Police par défaut")
                 success_msg "✓ Police par défaut installée"
-                ;;
-            "DejaVuSansM Nerd Font")
-                font_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/DejaVuSansMNerdFont-Mono.ttf"
                 ;;
             "DroidSansM Nerd Font")
                 font_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/DroidSansMNerdFont-Regular.otf"
