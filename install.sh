@@ -415,7 +415,7 @@ EOL" "Configuration des propriétés Termux"
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
 
     # Téléchargement de la police
-    execute_command "curl -fLo "$HOME/.termux/font.ttf" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/font.ttf" "Téléchargement de la police par défaut"
+    execute_command "curl -fLo "$HOME/.termux/font.ttf" https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/font.ttf" "Téléchargement de la police par défaut"
 
     termux-reload-settings
 }
