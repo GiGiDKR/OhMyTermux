@@ -582,6 +582,10 @@ install_zsh_plugins() {
     done
 
     update_zshrc "${plugins_to_install[@]}"
+
+    if ! command -v tput &> /dev/null; then
+        execute_command "pkg install -y ncurses-utils" "Installation de ncurses-utils"
+    fi
 }
 
 # Fonction pour installer un plugin
@@ -1064,6 +1068,7 @@ main() {
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
             clear
             if [ "$shell_choice" = "zsh" ]; then
+                source $HOME/.bashrc
                 exec zsh -l
             else
                 exec $shell_choice
@@ -1076,6 +1081,7 @@ main() {
         if [ "$choice" = "o" ]; then
             clear
             if [ "$shell_choice" = "zsh" ]; then
+                source $HOME/.bashrc
                 exec zsh -l
             else
                 exec $shell_choice
