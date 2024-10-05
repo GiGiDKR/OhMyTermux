@@ -634,7 +634,7 @@ install_packages() {
         if $FULL_INSTALL; then
             PACKAGES="nala eza bat lf fzf python"
         elif $USE_GUM; then
-            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum_choose --height=20 --header="Sélectionner avec espace les packages à installer :" --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
             if [[ "$PACKAGES" == *"Tout installer"* ]]; then
                 PACKAGES="nala eza colorls lsd bat lf fzf glow tmux python nodejs nodejs-lts micro vim neovim lazygit open-ssh tsu"
             fi
