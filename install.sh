@@ -802,38 +802,56 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum_choose --height=13 "Sélectionner la police à installer :" --selected="Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
+            FONT=$(gum_choose --height=13 "Sélectionner la police à installer :" --selected="Police par défaut" "DejaVuSansM Nerd Font" "DroidSansM Nerd Font" "FiraCode Nerd Font" "Hack Nerd Font" "MesloLGS Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
             echo -e "${COLOR_BLUE}1) Police par défaut${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) CaskaydiaCove Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) FiraCode Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}4) Hack Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}5) JetBrainsMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}6) Meslo Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}7) RobotoMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}8) SourceCodePro Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}9) UbuntuMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) DejaVuSansM Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3) DroidSansM Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4) FiraCode Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}5) Hack Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}6) MesloLGS Nerd Font${COLOR_RESET}"
             echo
             read -p "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}" choice
             case $choice in
                 1) FONT="Police par défaut" ;;
-                2) FONT="CaskaydiaCove Nerd Font" ;;
-                3) FONT="FiraCode Nerd Font" ;;
-                4) FONT="Hack Nerd Font" ;;
-                5) FONT="JetBrainsMono Nerd Font" ;;
-                6) FONT="Meslo Nerd Font" ;;
-                7) FONT="RobotoMono Nerd Font" ;;
-                8) FONT="SourceCodePro Nerd Font" ;;
-                9) FONT="UbuntuMono Nerd Font" ;;
-                10) FONT="AnonymousPro Nerd Font" ;;
-                11) FONT="Terminus Nerd Font" ;;
+                2) FONT="DejaVuSansM Nerd Font" ;;
+                3) FONT="DroidSansM Nerd Font" ;;
+                4) FONT="FiraCode Nerd Font" ;;
+                5) FONT="Hack Nerd Font" ;;
+                6) FONT="MesloLGS Nerd Font" ;;
                 *) FONT="Police par défaut" ;;
             esac
         fi
+
+        case $FONT in
+            "Police par défaut")
+                success_msg "✓ Police par défaut installée"
+                ;;
+            "DejaVuSansM Nerd Font")
+                font_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/DejaVuSansMNerdFont-Mono.ttf"
+                ;;
+            "DroidSansM Nerd Font")
+                font_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/DroidSansMNerdFont-Regular.otf"
+                ;;
+            "FiraCode Nerd Font")
+                font_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/FiraCodeNerdFont-Regular.ttf"
+                ;;
+            "Hack Nerd Font")
+                font_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/HackNerdFont-Regular.ttf"
+                ;;
+            "MesloLGS Nerd Font")
+                font_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/files/MesloLGSNerdFont-Regular.ttf"
+                ;;
+        esac
+
+        if [ "$FONT" != "Police par défaut" ]; then
+            execute_command "curl -L -o $HOME/.termux/font.ttf \"$font_url\"" "Installation de $FONT"
+            termux-reload-settings
+        fi
+    fi
+}
 
         case $FONT in
             "Police par défaut")
