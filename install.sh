@@ -547,7 +547,7 @@ install_shell() {
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
-        plugins_to_install=($(gum_choose --height=9 --header="Sélectionner avec ESPACE les plugins à installer :" --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
+        plugins_to_install=($(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --height=9 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
             plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
@@ -634,7 +634,7 @@ install_packages() {
         if $FULL_INSTALL; then
             PACKAGES="nala eza bat lf fzf python"
         elif $USE_GUM; then
-            PACKAGES=$(gum_choose --height=20 --header="Sélectionner avec espace les packages à installer :" --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --height=20 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
             if [[ "$PACKAGES" == *"Tout installer"* ]]; then
                 PACKAGES="nala eza colorls lsd bat lf fzf glow tmux python nodejs nodejs-lts micro vim neovim lazygit open-ssh tsu"
             fi
@@ -802,7 +802,7 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum_choose --height=7 --header="Sélectionner la police à installer :" --selected="Police par défaut" "DroidSansM Nerd Font" "FiraCode Nerd Font" "Hack Nerd Font" "MesloLGS Nerd Font")
+            FONT=$(gum_choose "Sélectionner la police à installer :" --height=7 --selected="Police par défaut" "Police par défaut" "DroidSansM Nerd Font" "FiraCode Nerd Font" "Hack Nerd Font" "MesloLGS Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
