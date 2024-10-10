@@ -20,17 +20,21 @@ ZSHRC="$HOME/.zshrc"
 
 LOG_FILE="$HOME/ohmytermux.log"
 
-# Couleurs en variables
+# --- Couleurs ---
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
+COLOR_GREEN="\e[38;5;82m"
+COLOR_YELLOW="\e[38;5;208m"
 COLOR_RESET="\e[0m"
 
-# Configuration de la redirection
-if [ "$VERBOSE" = false ]; then
-    redirect="> /dev/null 2>&1"
-else
-    redirect=""
-fi
+# --- Redirection ---
+redirect_output() {
+    if [ "$VERBOSE" = false ]; then
+        "$@" > /dev/null 2>&1
+    else
+        "$@"
+    fi
+}
 
 # Fonction pour afficher l'aide
 show_help() {
@@ -130,22 +134,6 @@ if $ONLY_GUM; then
     XFCE_CHOICE=true
     SCRIPT_CHOICE=true
 fi
-
-# --- Couleurs ---
-COLOR_BLUE="\e[38;5;33m"
-COLOR_RED="\e[38;5;196m"
-COLOR_GREEN="\e[38;5;82m"
-COLOR_YELLOW="\e[38;5;208m"
-COLOR_RESET="\e[0m"
-
-# --- Redirection ---
-redirect_output() {
-    if [ "$VERBOSE" = false ]; then
-        "$@" > /dev/null 2>&1
-    else
-        "$@"
-    fi
-}
 
 # --- Fonctions ---
 
