@@ -18,6 +18,8 @@ ONLY_GUM=true
 BASHRC="$HOME/.bashrc"
 ZSHRC="$HOME/.zshrc"
 
+LOG_FILE="$HOME/ohmytermux.log"
+
 # Couleurs en variables
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
@@ -129,57 +131,73 @@ if $ONLY_GUM; then
     SCRIPT_CHOICE=true
 fi
 
-# Fonction pour afficher des messages d'information en bleu
+# --- Couleurs ---
+COLOR_BLUE="\e[38;5;33m"
+COLOR_RED="\e[38;5;196m"
+COLOR_GREEN="\e[38;5;82m"
+COLOR_YELLOW="\e[38;5;208m"
+COLOR_RESET="\e[0m"
+
+# --- Redirection ---
+redirect_output() {
+    if [ "$VERBOSE" = false ]; then
+        "$@" > /dev/null 2>&1
+    else
+        "$@"
+    fi
+}
+
+# --- Fonctions ---
+
+# Affiche un message d'information
 info_msg() {
+    local message="ℹ  $1"
     if $USE_GUM; then
-        gum style "${1//$'\n'/ }" --foreground 33
+        gum style "$message" --foreground 33
     else
-        echo -e "\e[38;5;33m$1\e[0m"
+        echo -e "${COLOR_BLUE}$message${COLOR_RESET}"
     fi
 }
 
-# Fonction pour afficher des messages de succès en vert
+# Affiche un message de succès
 success_msg() {
-    if $USE_GUM; then
-        gum style "${1//$'\n'/ }" --foreground 82
-    else
-        echo -e "\e[38;5;82m$1\e[0m"
-    fi
+    local message="✔ $1"
+    echo -e "${COLOR_GREEN}$message${COLOR_RESET}"
+    install_log "$message"
 }
 
-# Fonction pour afficher des messages d'erreur en rouge
+# Affiche un message d'erreur
 error_msg() {
-    if $USE_GUM; then
-        gum style "${1//$'\n'/ }" --foreground 196
-    else
-        echo -e "\e[38;5;196m$1\e[0m"
-    fi
+    local message="✗ $1"
+    echo -e "${COLOR_RED}$message${COLOR_RESET}"
+    install_log "$message"
 }
 
-# Fonction pour journaliser les erreurs
-log_error() {
-    local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+# Journalise un message
+install_log() {
+    local message="$1"
+    local timestamp=$(date +"%d.%m.%Y %H:%M:%S")
+    echo "$timestamp - $message" >> "$LOG_FILE"
 }
 
 # Fonction pour exécuter une commande et afficher le résultat
 execute_command() {
-    local command="$1"
-    local info_msg="$2"
-    local success_msg="✓ $info_msg"
-    local error_msg="✗ $info_msg"
+    local command=" $1"
+    local info_msg=" $2"
+    local success_msg=" $2"
+    local error_msg=" $2"
 
     if $USE_GUM; then
-        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command $redirect"; then
+        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "redirect_output $command"; then
             gum style "$success_msg" --foreground 82
         else
             gum style "$error_msg" --foreground 196
-            log_error "$command"
+            install_log "Erreur lors de l'exécution de la commande : $command"
             return 1
         fi
     else
-        info_msg "$info_msg"
-        if eval "$command $redirect"; then
+        info_msg "$2"
+        if redirect_output $command; then
             tput cuu1
             tput el
             success_msg "$success_msg"
@@ -187,7 +205,7 @@ execute_command() {
             tput cuu1
             tput el
             error_msg "$error_msg"
-            log_error "$command"
+            install_log "Erreur lors de l'exécution de la commande : $command"
             return 1
         fi
     fi
@@ -348,7 +366,7 @@ setup_storage() {
 # Fonction pour configurer Termux
 configure_termux() {
 
-    info_msg "❯ Configuration de Termux"
+    echo  "❯ Configuration de Termux"
 
     # Appel de la fonction de sauvegarde
     create_backups
@@ -442,7 +460,7 @@ initial_config() {
 # Fonction pour installer le shell
 install_shell() {
     if $SHELL_CHOICE; then
-        info_msg "❯ Configuration du shell"
+        echo -e "${COLOR_BLUE}❯ Configuration du shell${COLOR_RESET}"
         if $USE_GUM; then
             shell_choice=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" --height=5 "bash" "zsh" "fish")
         else
@@ -473,7 +491,7 @@ install_shell() {
                 fi
 
                 # Installation de Oh My Zsh et autres configurations ZSH
-                info_msg "❯ Configuration de ZSH"
+                echo -e "${COLOR_BLUE}❯ Configuration de ZSH${COLOR_RESET}"
                 if $USE_GUM; then
                     if gum_confirm "Installer Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
@@ -534,7 +552,7 @@ install_shell() {
                 chsh -s zsh
                 ;;
             "fish")
-                info_msg "❯ Configuration de Fish"
+                echo -e "${COLOR_BLUE}❯ Configuration de Fish${COLOR_RESET}"
                 execute_command "pkg install -y fish" "Installation de Fish"
                 # TODO : ajouter la configuration de Fish, de ses plugins et des alias (abbr)
                 chsh -s fish
@@ -636,7 +654,7 @@ update_zshrc() {
 # Fonction pour installer les packages
 install_packages() {
     if $PACKAGES_CHOICE; then
-        info_msg "❯ Configuration des packages"
+        echo -e "${COLOR_BLUE}❯ Configuration des packages${COLOR_RESET}"
         if $FULL_INSTALL; then
             PACKAGES="nala eza bat lf fzf python"
         elif $USE_GUM; then
@@ -806,7 +824,7 @@ fi
 # Fonction pour installer la police
 install_font() {
     if $FONT_CHOICE; then
-        info_msg "❯ Configuration de la police"
+        echo -e "${COLOR_BLUE}❯ Configuration de la police${COLOR_RESET}"
         if $USE_GUM; then
             FONT=$(gum_choose "Sélectionner la police à installer :" --height=7 --selected="Police par défaut" "Police par défaut" "DroidSansM Nerd Font" "FiraCode Nerd Font" "Hack Nerd Font" "MesloLGS Nerd Font")
         else
@@ -860,7 +878,7 @@ INSTALL_UTILS=false
 # Fonction pour installer XFCE
 install_xfce() {
     if $XFCE_CHOICE; then
-        info_msg "❯ Configuration de XFCE"
+        echo -e "${COLOR_BLUE}❯ Configuration de XFCE${COLOR_RESET}"
         if $FULL_INSTALL || ($USE_GUM && gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?") || (! $USE_GUM && read -p "${COLOR_BLUE}Installer XFCE ? (o/n)${COLOR_RESET}" choice && [ "$choice" = "o" ]); then
             execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
 
@@ -886,7 +904,7 @@ install_xfce() {
 
 # Fonction pour installer Proot
 install_proot() {
-    info_msg "❯ Configuration de Proot"
+    echo -e "${COLOR_BLUE}❯ Configuration de Proot${COLOR_RESET}"
     if $FULL_INSTALL || ($USE_GUM && gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?") || (! $USE_GUM && read -p "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}" choice && [ "$choice" = "o" ]); then
         #! Modifier l'url selon la branche du réferenciel
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Téléchargement du script Proot"
@@ -978,7 +996,7 @@ alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
 
 # Fonction pour installer Termux-X11
 install_termux_x11() {
-    info_msg "❯ Configuration de Termux-X11"
+    echo -e "${COLOR_BLUE}❯ Configuration de Termux-X11${COLOR_RESET}"
     local file_path="$HOME/.termux/termux.properties"
 
     if [ ! -f "$file_path" ]; then
@@ -1023,7 +1041,7 @@ EOL
 
 # Fonction pour installer OhMyTermuxScript
 install_script() {
-    info_msg "❯ Configuration de OhMyTermuxScript"
+    echo -e "${COLOR_BLUE}❯ Configuration de OhMyTermuxScript${COLOR_RESET}"
     if $SCRIPT_CHOICE; then
         SCRIPT_DIR="$HOME/OhMyTermuxScript"
         if [ ! -d "$SCRIPT_DIR" ]; then
@@ -1059,7 +1077,7 @@ main() {
     install_termux_x11
     install_script
 
-    info_msg "❯ Nettoyage des fichiers temporaires"
+    echo -e "${COLOR_BLUE}❯ Nettoyage des fichiers temporaires${COLOR_RESET}"
     rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
     success_msg "✓ Suppression des scripts d'installation"
 
