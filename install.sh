@@ -1052,6 +1052,9 @@ install_script() {
 # Fonction principale
 main() {
     show_banner
+    if [ ! $USE_GUM ]; then
+        pkg install ncurses-utils >/dev/null 2>&1
+    fi
     if $EXECUTE_INITIAL_CONFIG; then
         initial_config
     fi
