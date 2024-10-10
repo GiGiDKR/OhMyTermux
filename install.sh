@@ -243,6 +243,7 @@ gum_choose() {
 
 # Fonction pour afficher la bannerière en mode texte
 bash_banner() {
+    local color="$1"
     clear
     local BANNER="
 ╔════════════════════════════════════════╗
