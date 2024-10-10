@@ -326,6 +326,7 @@ create_backups() {
 
 # Fonction pour changer le répertoire de sources
 change_repo() {
+    local color="$1"
     show_banner
     if $USE_GUM; then
         if gum_confirm "Changer le répertoire de sources ?"; then
