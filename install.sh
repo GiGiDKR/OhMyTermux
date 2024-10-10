@@ -331,11 +331,13 @@ change_repo() {
     if $USE_GUM; then
         if gum_confirm "Changer le répertoire de sources ?"; then
             termux-change-repo
+            pkg install ncurses-utils >/dev/null 2>&1
         fi
     else
         read -p "${COLOR_BLUE}Changer le répertoire de sources ? (o/n) : ${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
             termux-change-repo
+            pkg install ncurses-utils >/dev/null 2>&1
         fi
     fi
 }
@@ -345,12 +347,11 @@ setup_storage() {
     show_banner
     if $USE_GUM; then
         if gum_confirm "Autoriser l'accès au stockage ?"; then
-            termux-setup-storage && pkg install ncurses-utils >/dev/null 2>&1
+            termux-setup-storage
         fi
     else
         read -p "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}" choice
-        [ "$choice" = "o" ] && termux-setup-storage && pkg install ncurses-utils >/dev/null 2>&1
-        fi
+        [ "$choice" = "o" ] && termux-setup-storage
     fi
 }
 
