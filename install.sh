@@ -1052,7 +1052,7 @@ install_script() {
 # Fonction principale
 main() {
     show_banner
-    if [ $USE_GUM=false ]; then
+    if $USE_GUM=false; then
         pkg install ncurses-utils >/dev/null 2>&1
     fi
     if $EXECUTE_INITIAL_CONFIG; then
