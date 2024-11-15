@@ -608,8 +608,8 @@ update_zshrc() {
     local default_plugins=(git command-not-found copyfile node npm vscode web-search timer)
     plugins+=("${default_plugins[@]}")
 
-    # Supprimer les doublons en utilisant awk à la place de readarray
-    local unique_plugins=($(printf '%s\n' "${plugins[@]}" | sort -u))
+    # Supprimer les doublons
+    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | sort -u)
 
     # Créer la section plugins avec un format correct
     local new_plugins_section="plugins=("
@@ -995,21 +995,35 @@ alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
 install_termux_x11() {
     info_msg "❯ Configuration de Termux-X11"
     local file_path="$HOME/.termux/termux.properties"
+
+    if [ ! -f "$file_path" ]; then
+        mkdir -p "$HOME/.termux"
+        cat <<EOL > "$file_path"
+allow-external-apps = true
+EOL
+    else
+        sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
+    fi
+
     local install_x11=false
+
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
             install_x11=true
         fi
-    else
-        read -p "${COLOR_BLUE}Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
-        if [ "$choice" = "o" ]; then
-            install_x11=true
+        else
+            read -p "${COLOR_BLUE}Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
+            if [ "$choice" = "o" ]; then
+                install_x11=true
+            fi
         fi
-    fi
-    if $install_x11; then
-        local apk_url="https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk"
-        local apk_file="$HOME/storage/downloads/termux-x11.apk"
+
+        if $install_x11; then
+            local apk_url="https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk"
+            local apk_file="$HOME/storage/downloads/termux-x11.apk"
+
         execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11"
+
         if [ -f "$apk_file" ]; then
             termux-open "$apk_file"
             echo -e "${COLOR_BLUE}Veuillez installer l'APK manuellement.${COLOR_RESET}"
@@ -1021,21 +1035,22 @@ install_termux_x11() {
         fi
     fi
 }
+
 # Fonction pour installer OhMyTermuxScript
 install_script() {
     info_msg "❯ Configuration de OhMyTermuxScript"
     if $SCRIPT_CHOICE; then
         SCRIPT_DIR="$HOME/OhMyTermuxScript"
         if [ ! -d "$SCRIPT_DIR" ]; then
-            if $USE_GUM; then    
+            if $USE_GUM; then
                 if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
                     execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
-                    info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script" 
+                    info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
                 fi
-            else 
+            else
                 read -p "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}" choice
                 if [ "$choice" = "o" ]; then
-                    execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript" 
+                    execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
                     info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
                 fi
             fi
@@ -1057,8 +1072,10 @@ install_proot
 install_utils
 install_termux_x11
 install_script
+
 info_msg "❯ Nettoyage des fichiers temporaires"
-rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+# Nettoyage des fichiers temporaires
+rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Exécution de OhMyTermux
