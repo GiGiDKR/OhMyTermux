@@ -608,8 +608,8 @@ update_zshrc() {
     local default_plugins=(git command-not-found copyfile node npm vscode web-search timer)
     plugins+=("${default_plugins[@]}")
 
-    # Supprimer les doublons
-    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | sort -u)
+    # Supprimer les doublons en utilisant awk à la place de readarray
+    local unique_plugins=($(printf '%s\n' "${plugins[@]}" | sort -u))
 
     # Créer la section plugins avec un format correct
     local new_plugins_section="plugins=("
