@@ -5,11 +5,8 @@ USE_GUM=false
 EXECUTE_INITIAL_CONFIG=true
 SHELL_CHOICE=false
 PACKAGES_CHOICE=false
-# Variable supprimée car inutilisée
-PLUGIN_CHOICE=false
 FONT_CHOICE=false
 XFCE_CHOICE=false
-SCRIPT_CHOICE=false
 VERBOSE=false
 FULL_INSTALL=false
 
@@ -42,10 +39,8 @@ show_help() {
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --shell | -sh     Module d'installation du shell"
     echo "  --package | -pkg  Module d'installation des packagés"
-    echo "  --plugin | -plg   Module d'installation de packages Python"
     echo "  --font | -f       Module d'installation de la police"
     echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
-    echo "  --script| -sc     Module d'installation de OhMyTermuxScript"
     echo "  --skip | -sk      Ignorer la configuration initiale"
     echo "  --uninstall| -u   Désinstallation de Debian Proot"
     echo "  --help | -h       Afficher ce message d'aide"
@@ -69,11 +64,6 @@ for arg in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --plugin|-plg)
-            PLUGIN_CHOICE=true
-            ONLY_GUM=false
-            shift
-            ;;
         --font)
             FONT_CHOICE=true
             ONLY_GUM=false
@@ -81,11 +71,6 @@ for arg in "$@"; do
             ;;
         --xfce|-x)
             XFCE_CHOICE=true
-            ONLY_GUM=false
-            shift
-            ;;
-        --script|-sc)
-            SCRIPT_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
@@ -617,22 +602,27 @@ update_zshrc() {
     done
     new_plugins_section+="\n)"
 
-    # Supprimer d'abord toutes les lignes fpath existantes
-    sed -i "/^fpath+=\${ZSH_CUSTOM:-\${ZSH:-~\/\.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src$/d" "$ZSHRC"
-
     # Remplacer la section plugins existante
     sed -i '/^plugins=(/,/)/c'"$new_plugins_section" "$ZSHRC"
-
-    # Ajouter fpath une seule fois si zsh-completions est présent
-    if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
-        if ! grep -q "fpath.*zsh-completions" "$ZSHRC"; then
-            echo -e "\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$ZSHRC"
-        fi
-    fi
 
     # S'assurer que la source de oh-my-zsh.sh est présente
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
         echo -e "\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
+    fi
+
+    # Configuration spéciale pour zsh-completions
+    if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
+        # Supprimer l'ancienne ligne fpath si elle existe
+        sed -i "/^fpath+=\${ZSH_CUSTOM:-~\/\.oh-my-zsh\/custom}\/plugins\/zsh-completions\/src$/d" "$ZSHRC"
+        
+        # Ajouter la nouvelle ligne fpath avant source "$ZSH/oh-my-zsh.sh"
+        sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/i fpath+=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions/src' "$ZSHRC"
+    fi
+
+    # Configuration spéciale pour zsh-syntax-highlighting
+    if [[ " ${unique_plugins[*]} " == *" zsh-syntax-highlighting "* ]]; then
+        # S'assurer que zsh-syntax-highlighting est chargé en dernier
+        sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/a source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' "$ZSHRC"
     fi
 }
 
@@ -1036,28 +1026,6 @@ EOL
     fi
 }
 
-# Fonction pour installer OhMyTermuxScript
-install_script() {
-    info_msg "❯ Configuration de OhMyTermuxScript"
-    if $SCRIPT_CHOICE; then
-        SCRIPT_DIR="$HOME/OhMyTermuxScript"
-        if [ ! -d "$SCRIPT_DIR" ]; then
-            if $USE_GUM; then
-                if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
-                    execute_command "git clone https://github.com/GiGiDKR/OhMyTermuxScript.git \"$HOME/OhMyTermuxScript\" && chmod +x \"$HOME/OhMyTermuxScript\"/*.sh" "Installation de OhMyTermuxScript"
-                    info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
-                fi
-            else
-                read -r -p "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}" choice
-                if [ "$choice" = "o" ]; then
-                    execute_command "git clone https://github.com/GiGiDKR/OhMyTermuxScript.git \"$HOME/OhMyTermuxScript\" && chmod +x \"$HOME/OhMyTermuxScript\"/*.sh" "Installation de OhMyTermuxScript"
-                    info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
-                fi
-            fi
-        fi
-    fi
-}
-
 # Fonction principale
 show_banner
 if $EXECUTE_INITIAL_CONFIG; then
@@ -1071,7 +1039,6 @@ install_xfce
 install_proot
 install_utils
 install_termux_x11
-install_script
 
 info_msg "❯ Nettoyage des fichiers temporaires"
 # Nettoyage des fichiers temporaires
