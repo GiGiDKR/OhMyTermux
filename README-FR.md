@@ -25,7 +25,7 @@ Installation optionnelle de :
 
 🧊 Pour installer **OhMyTermux** 
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 > [!TIP]
@@ -35,7 +35,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 🔥 Pour installer **OhMyTermux** avec **[Gum](https://github.com/charmbracelet/gum)**
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
 >[!NOTE]
