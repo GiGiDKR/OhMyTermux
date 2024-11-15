@@ -5,6 +5,7 @@ USE_GUM=false
 EXECUTE_INITIAL_CONFIG=true
 SHELL_CHOICE=false
 PACKAGES_CHOICE=false
+# Variable supprimée car inutilisée
 PLUGIN_CHOICE=false
 FONT_CHOICE=false
 XFCE_CHOICE=false
@@ -73,7 +74,7 @@ for arg in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --font|-f)
+        --font)
             FONT_CHOICE=true
             ONLY_GUM=false
             shift
@@ -101,11 +102,10 @@ for arg in "$@"; do
             redirect=""
             shift
             ;;
-        --full|-f)
+        --full)
             FULL_INSTALL=true
             SHELL_CHOICE=true
             PACKAGES_CHOICE=true
-            PLUGIN_CHOICE=true
             FONT_CHOICE=true
             XFCE_CHOICE=true
             SCRIPT_CHOICE=true
@@ -123,7 +123,6 @@ done
 if $ONLY_GUM; then
     SHELL_CHOICE=true
     PACKAGES_CHOICE=true
-    PLUGIN_CHOICE=true
     FONT_CHOICE=true
     XFCE_CHOICE=true
     SCRIPT_CHOICE=true
@@ -322,7 +321,7 @@ change_repo() {
             termux-change-repo
         fi
     else
-        read -p "${COLOR_BLUE}Changer le répertoire de sources ? (o/n) : ${COLOR_RESET}" choice
+        read -r -p "${COLOR_BLUE}Changer le répertoire de sources ? (o/n) : ${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
             termux-change-repo
         fi
@@ -337,7 +336,7 @@ setup_storage() {
             termux-setup-storage
         fi
     else
-        read -p "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}" choice
+        read -r -p "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}" choice
         [ "$choice" = "o" ] && termux-setup-storage
     fi
 }
@@ -412,7 +411,7 @@ EOL" "Configuration des propriétés Termux"
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
 
     # Téléchargement de la police
-    execute_command "curl -fLo "$HOME/.termux/font.ttf" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/font.ttf" "Téléchargement de la police par défaut"
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.1.0/files/font.ttf" "Téléchargement de la police par défaut"
 
     termux-reload-settings
 }
@@ -429,7 +428,7 @@ initial_config() {
         fi
     else
         show_banner
-        read -p "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}" choice
+        read -r -p "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
             configure_termux
         fi
@@ -449,7 +448,7 @@ install_shell() {
             echo -e "${COLOR_BLUE}2) zsh${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) fish${COLOR_RESET}"
             echo
-            read -p "Entrez le numéro de votre choix : " choice
+            read -r -p "Entrez le numéro de votre choix : " choice
             case $choice in
                 1) shell_choice="bash" ;;
                 2) shell_choice="zsh" ;;
@@ -478,7 +477,7 @@ install_shell() {
                         cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
-                    read -p "${COLOR_BLUE}Installer Oh-My-Zsh ? (o/n) : ${COLOR_RESET}" choice
+                    read -r -p "${COLOR_BLUE}Installer Oh-My-Zsh ? (o/n) : ${COLOR_RESET}" choice
                     if [ "$choice" = "o" ]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
@@ -486,7 +485,7 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/zshrc" "Téléchargement de la configuration"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/zshrc" "Téléchargement de la configuration"
 
                 if $USE_GUM; then
                     if gum_confirm "Installer PowerLevel10k ?"; then
@@ -494,7 +493,7 @@ install_shell() {
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         if gum_confirm "Installer le prompt OhMyTermux ?"; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -502,14 +501,14 @@ install_shell() {
                         fi
                     fi
                 else
-                    read -p "${COLOR_BLUE}Installer PowerLevel10k ? (o/n) : ${COLOR_RESET}" choice
+                    read -r -p "${COLOR_BLUE}Installer PowerLevel10k ? (o/n) : ${COLOR_RESET}" choice
                     if [ "$choice" = "o" ]; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        read -p "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}" choice
+                        read -r -p "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}" choice
                         if [ "$choice" = "o" ]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/p10k.zsh" "Téléchargement du prompt OhMyTermux"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -518,9 +517,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/aliases.zsh && 
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && 
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/help.md)" "Téléchargement de la configuration" || 
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/help.md)" "Téléchargement de la configuration" || 
                     error_msg "Erreur lors du téléchargement des fichiers"
 
                 if command -v zsh &> /dev/null; then
@@ -544,7 +543,7 @@ install_shell() {
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
-        plugins_to_install=($(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --height=9 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
+        mapfile -t plugins_to_install < <(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --height=9 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
             plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
@@ -559,7 +558,7 @@ install_zsh_plugins() {
         info_msg "6) zsh-alias-finder"
         info_msg "7) Tout installer"
         echo
-        read -p $"\e[33mEntrez les numéros des plugins : \e[0m" plugin_choices
+        read -r -p $"\e[33mEntrez les numéros des plugins : \e[0m" plugin_choices
         
         for choice in $plugin_choices; do
             case $choice in
@@ -619,10 +618,10 @@ update_zshrc() {
     new_plugins_section+="\n)"
 
     # Supprimer d'abord toutes les lignes fpath existantes
-    sed -i '/^fpath+=${ZSH_CUSTOM:-${ZSH:-~\/\.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src$/d' "$ZSHRC"
+    sed -i "/^fpath+=\${ZSH_CUSTOM:-\${ZSH:-~\/\.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src$/d" "$ZSHRC"
 
     # Remplacer la section plugins existante
-    sed -i '/^plugins=(/,/)/c\'"$new_plugins_section" "$ZSHRC"
+    sed -i '/^plugins=(/,/)/c'"$new_plugins_section" "$ZSHRC"
 
     # Ajouter fpath une seule fois si zsh-completions est présent
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
@@ -666,7 +665,7 @@ install_packages() {
             echo -e "${COLOR_BLUE}18) tsu${COLOR_RESET}"
             echo -e "${COLOR_BLUE}19) Tout installer${COLOR_RESET}"
             echo
-            read -p "${COLOR_BLUE}Entrez les numéros des packages : ${COLOR_RESET}" package_choices
+            read -r -p "${COLOR_BLUE}Entrez les numéros des packages : ${COLOR_RESET}" package_choices
             PACKAGES=""
             for choice in $package_choices; do
                 case $choice in
@@ -728,7 +727,7 @@ alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
 alias la="eza --icons -lgha --group-directories-first"
 alias lt="eza --icons --tree"
 alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"' >> $BASHRC
+alias dir="eza -lF --icons"' >> "$BASHRC"
             if [ -f "$ZSHRC" ]; then
                 echo -e '\nalias l="eza --icons"
 alias ls="eza -1 --icons"
@@ -736,13 +735,13 @@ alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
 alias la="eza --icons -lgha --group-directories-first"
 alias lt="eza --icons --tree"
 alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"' >> $ZSHRC
+alias dir="eza -lF --icons"' >> "$ZSHRC"
             fi
             ;;
         bat)
-            echo -e '\nalias cat="bat"' >> $BASHRC
+            echo -e '\nalias cat="bat"' >> "$BASHRC"
             if [ -f "$ZSHRC" ]; then
-                echo -e '\nalias cat="bat"' >> $ZSHRC
+                echo -e '\nalias cat="bat"' >> "$ZSHRC"
             fi
             ;;
         nala)
@@ -752,7 +751,7 @@ alias update="nala update"
 alias upgrade="nala upgrade -y"
 alias search="nala search"
 alias list="nala list --upgradeable"
-alias show="nala show"' >> $BASHRC
+alias show="nala show"' >> "$BASHRC"
             if [ -f "$ZSHRC" ]; then
                 echo -e '\nalias install="nala install -y"
 alias uninstall="nala remove -y"
@@ -760,7 +759,7 @@ alias update="nala update"
 alias upgrade="nala upgrade -y"
 alias search="nala search"
 alias list="nala list --upgradeable"
-alias show="nala show"' >> $ZSHRC
+alias show="nala show"' >> "$ZSHRC"
             fi
             ;;
         # TODO : Ajout d'alias pour d'autres packages
@@ -769,23 +768,23 @@ alias show="nala show"' >> $ZSHRC
 
 # Définition des alias communs
 common_alias() {
-aliases='alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias h="history"
-alias q="exit"
-alias c="clear"
-alias md="mkdir"
-alias rm="rm -rf"
-alias s="source"
-alias n="nano"
-alias bashrc="nano \$HOME/.bashrc"
-alias zshrc="nano \$HOME/.zshrc"
-alias cm="chmod +x"
-alias g="git"
-alias gc="git clone"
-alias push="git pull && git add . && git commit -m '\''mobile push'\'' && git push"'
+aliases="alias ..=\"cd ..\"
+alias ...=\"cd ../..\"
+alias ....=\"cd ../../..\"
+alias .....=\"cd ../../../..\"
+alias h=\"history\"
+alias q=\"exit\"
+alias c=\"clear\"
+alias md=\"mkdir\"
+alias rm=\"rm -rf\"
+alias s=\"source\"
+alias n=\"nano\"
+alias bashrc=\"nano \$HOME/.bashrc\"
+alias zshrc=\"nano \$HOME/.zshrc\"
+alias cm=\"chmod +x\"
+alias g=\"git\"
+alias gc=\"git clone\"
+alias push=\"git pull && git add . && git commit -m 'mobile push' && git push\""
 
 echo -e "$aliases" >> "$BASHRC"
 
@@ -823,7 +822,7 @@ install_font() {
             echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
             echo
-            read -p "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}" choice
+            read -r -p "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}" choice
             case $choice in
                 1) FONT="Police par défaut" ;;
                 2) FONT="CaskaydiaCove Nerd Font" ;;
@@ -866,7 +865,7 @@ install_xfce() {
                 return
             fi
         else
-            read -p "${COLOR_BLUE}Installer XFCE ? (o/n)${COLOR_RESET}" choice
+            read -r -p "${COLOR_BLUE}Installer XFCE ? (o/n)${COLOR_RESET}" choice
             if [ "$choice" != "o" ]; then
                 return
             fi
@@ -880,7 +879,7 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
 
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/xfce.sh" "Téléchargement du script XFCE"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/xfce.sh" "Téléchargement du script XFCE"
         execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
@@ -898,15 +897,15 @@ install_proot() {
     info_msg "❯ Configuration de Proot"
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script Proot"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/proot.sh" "Téléchargement du script Proot"
             execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
             ./proot.sh --gum
             INSTALL_UTILS=true
         fi
     else
-        read -p "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}" choice
+        read -r -p "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}" choice
         if [ "$choice" = "o" ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/proot.sh" "Téléchargement du script Proot"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/proot.sh" "Téléchargement du script Proot"
             execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
             ./proot.sh
             INSTALL_UTILS=true
@@ -915,8 +914,9 @@ install_proot() {
 }
 
 get_username() {
-    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
-    username=$(ls -1 "$user_dir" | head -n 1)
+    local user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
+    local username
+    username=$(find "$user_dir" -maxdepth 1 -type d -printf "%f\n" | grep -v '^$' | head -n 1)
     if [ -z "$username" ]; then
         echo "Aucun utilisateur trouvé" >&2
         return 1
@@ -927,12 +927,11 @@ get_username() {
 # Fonction pour installer les utilitaires
 install_utils() {
     if $INSTALL_UTILS; then
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/utils.sh" "Téléchargement du script Utils"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/utils.sh" "Téléchargement du script Utils"
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
 
-        username=$(get_username)
-        if [ $? -ne 0 ]; then
+        if ! username=$(get_username); then
             error_msg "Impossible de récupérer le nom d'utilisateur."
             return 1
         fi
@@ -944,7 +943,7 @@ install_utils() {
         fi
 
         # Utiliser une heredoc pour une meilleure lisibilité
-        cat << 'EOL' >> "$bashrc_proot"
+        cat << "EOL" >> "$bashrc_proot"
 export DISPLAY=:1.0
 
 alias zink="MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform"
@@ -969,19 +968,19 @@ alias bashrc="nano \$HOME/.bashrc"
 EOL
 
         # Ajout au fichier $BASHRC
-        bashrc_content='
+        bashrc_content="
 get_username() {
-    user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
-    username=$(ls -1 "$user_dir" | head -n 1)
-    if [ -z "$username" ]; then
-        echo "Aucun utilisateur trouvé" >&2
+    user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
+    username=\$(find \"\$user_dir\" -maxdepth 1 -type d -printf \"%f\\n\" | grep -v '^$' | head -n 1)
+    if [ -z \"\$username\" ]; then
+        echo \"Aucun utilisateur trouvé\" >&2
         return 1
     fi
-    echo "$username"
+    echo \"\$username\"
 }
 
-alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
-'
+alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"
+"
 
         execute_command "echo '$bashrc_content' >> '$BASHRC'" "Configuration .bashrc termux"
 
@@ -1013,7 +1012,7 @@ EOL
             install_x11=true
         fi
         else
-            read -p "${COLOR_BLUE}Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
+            read -r -p "${COLOR_BLUE}Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
             if [ "$choice" = "o" ]; then
                 install_x11=true
             fi
@@ -1045,13 +1044,13 @@ install_script() {
         if [ ! -d "$SCRIPT_DIR" ]; then
             if $USE_GUM; then
                 if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
-                    execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
+                    execute_command "git clone https://github.com/GiGiDKR/OhMyTermuxScript.git \"$HOME/OhMyTermuxScript\" && chmod +x \"$HOME/OhMyTermuxScript\"/*.sh" "Installation de OhMyTermuxScript"
                     info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
                 fi
             else
-                read -p "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}" choice
+                read -r -p "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}" choice
                 if [ "$choice" = "o" ]; then
-                    execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
+                    execute_command "git clone https://github.com/GiGiDKR/OhMyTermuxScript.git \"$HOME/OhMyTermuxScript\" && chmod +x \"$HOME/OhMyTermuxScript\"/*.sh" "Installation de OhMyTermuxScript"
                     info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
                 fi
             fi
@@ -1092,7 +1091,7 @@ if $USE_GUM; then
         echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
     fi
 else
-    read -p "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}" choice
+    read -r -p "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}" choice
     if [ "$choice" = "o" ]; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
