@@ -16,15 +16,9 @@ Optional installation of:
 
 > [!CAUTION]
 > ⚠️ This project is under development, use it at your own risk.
->
-> The various branches of the repository are currently not up to date.
->
-> Please wait for version 1.1 before using this project or check the code before running it !
 
 > [!IMPORTANT]
-> 🚩 To facilitate progress, the French language is preferred to provide the user CLI.
->
-> A French version of this text is [available](README-FR.md).
+> 🚩 French version is [available](README-FR.md).
 
 &nbsp;
 
