@@ -805,7 +805,7 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum_choose --height@=13 q"Sélectionner la police à installer :" --selected="Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
+            FONT=$(gum_choose --height=13 "Sélectionner la police à installer :" --selected="Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
@@ -935,39 +935,39 @@ install_utils() {
             return 1
         fi
 
-        bashrc_proot="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.bashrc"
+
+        bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
         if [ ! -f "$bashrc_proot" ]; then
             error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
-            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 touch $bashrc_proot" "Création du fichier .bashrc"
+            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Création du fichier .bashrc"
         fi
 
-        # Ajouts au fichier $bashrc_proot
-        execute_command "echo '
+        # Utiliser une heredoc pour une meilleure lisibilité
+        cat << 'EOL' >> "$bashrc_proot"
 export DISPLAY=:1.0
 
-alias zink=\"MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform\"
-alias hud=\"GALLIUM_HUD=fps\"
-alias ..=\"cd ..\"
-alias q=\"exit\"
-alias c=\"clear\"
-alias cat=\"bat\"
-alias apt=\"sudo nala\"
-alias install=\"sudo nala install -y\"
-alias update=\"sudo nala update\"
-alias upgrade=\"sudo nala upgrade -y\"
-alias remove=\"sudo nala remove -y\"
-alias list=\"nala list --upgradeable\"
-alias show=\"nala show\"
-alias search=\"nala search\"
-alias start=\"echo \\\"Veuillez exécuter depuis Termux et non Debian proot.\\\"\"
-alias cm=\"chmod +x\"
-alias clone=\"git clone\"
-alias push=\"git pull && git add . && git commit -m \\\"mobile push\\\" && git push\"
-alias bashrc=\"nano \$HOME/.bashrc\"
-' >> '$bashrc_proot'" "Configurations .bashrc proot"
+alias zink="MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform"
+alias hud="GALLIUM_HUD=fps"
+alias ..="cd .."
+alias q="exit"
+alias c="clear"
+alias cat="bat"
+alias apt="sudo nala"
+alias install="sudo nala install -y"
+alias update="sudo nala update"
+alias upgrade="sudo nala upgrade -y"
+alias remove="sudo nala remove -y"
+alias list="nala list --upgradeable"
+alias show="nala show"
+alias search="nala search"
+alias start='echo "Veuillez exécuter depuis Termux et non Debian proot."'
+alias cm="chmod +x"
+alias clone="git clone"
+alias push="git pull && git add . && git commit -m 'mobile push' && git push"
+alias bashrc="nano \$HOME/.bashrc"
+EOL
 
-
-        # Contenu à ajouter au fichier $BASHRC
+        # Ajout au fichier $BASHRC
         bashrc_content='
 get_username() {
     user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
@@ -1101,4 +1101,3 @@ else
         echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
     fi
 fi
-}
