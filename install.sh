@@ -621,10 +621,7 @@ update_zshrc() {
     # Remplacer la section plugins existante
     execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
 
-<<<<<<< Updated upstream
-=======
     # Ajouter la ligne fpath une seule fois après la section plugins
->>>>>>> Stashed changes
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
         # Supprimer d'abord toutes les lignes fpath existantes
         sed -i '/^fpath+=${ZSH_CUSTOM:-${ZSH:-~\/\.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src$/d' "$ZSHRC"
