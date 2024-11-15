@@ -612,29 +612,26 @@ update_zshrc() {
     readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | sort -u)
 
     # Créer la section plugins avec un format correct
-    local new_plugins_section="plugins=("
+    local new_plugins_section="plugins=(\n"
     for plugin in "${unique_plugins[@]}"; do
-        new_plugins_section+="\n\t$plugin"
+        new_plugins_section+="\t$plugin\n"
     done
     new_plugins_section+=")\n"
 
     # Remplacer la section plugins existante
-    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
+    sed -i '/^plugins=(/,/)/c\'"$new_plugins_section" "$ZSHRC"
 
-    # Ajouter la ligne fpath une seule fois après la section plugins
+    # Supprimer toutes les lignes fpath existantes
+    sed -i '/^fpath+=${ZSH_CUSTOM:-${ZSH:-~\/\.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src$/d' "$ZSHRC"
+
+    # Ajouter la ligne fpath une seule fois après la section plugins si zsh-completions est installé
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
-        # Supprimer d'abord toutes les lignes fpath existantes
-        sed -i '/^fpath+=${ZSH_CUSTOM:-${ZSH:-~\/\.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src$/d' "$ZSHRC"
-        
-        # Ajouter la ligne fpath une seule fois après la section plugins
-        sed -i '/^plugins=(/,/)/a\
-\
-fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+        sed -i '/^plugins=(/,/)/a\\\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
     fi
 
     # S'assurer que la source de oh-my-zsh.sh est présente
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+        echo -e "\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
     fi
 }
 
