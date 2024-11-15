@@ -935,7 +935,6 @@ install_utils() {
             return 1
         fi
 
-
         bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
         if [ ! -f "$bashrc_proot" ]; then
             error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
@@ -982,77 +981,79 @@ get_username() {
 alias debian="proot-distro login debian --shared-tmp --user $(get_username)"
 '
 
-execute_command "echo '$bashrc_content' >> '$BASHRC'" "Configuration .bashrc termux"
+        execute_command "echo '$bashrc_content' >> '$BASHRC'" "Configuration .bashrc termux"
 
-# Ajout au fichier $ZSHRC si existant
-if [ -f "$ZSHRC" ]; then
-    execute_command "echo '$bashrc_content' >> '$ZSHRC'" "Configuration .zshrc termux"
-fi
+        # Ajout au fichier $ZSHRC si existant
+        if [ -f "$ZSHRC" ]; then
+            execute_command "echo '$bashrc_content' >> '$ZSHRC'" "Configuration .zshrc termux"
+        fi
 
-# Fonction pour installer Termux-X11
-install_termux_x11() {
-    info_msg "❯ Configuration de Termux-X11"
-    local file_path="$HOME/.termux/termux.properties"
+        # Fonction pour installer Termux-X11
+        install_termux_x11() {
+            info_msg "❯ Configuration de Termux-X11"
+            local file_path="$HOME/.termux/termux.properties"
 
-    if [ ! -f "$file_path" ]; then
-        mkdir -p "$HOME/.termux"
-        cat <<EOL > "$file_path"
+            if [ ! -f "$file_path" ]; then
+                mkdir -p "$HOME/.termux"
+                cat <<EOL > "$file_path"
 allow-external-apps = true
 EOL
-    else
-        sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
-    fi
+            else
+                sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
+            fi
 
-    local install_x11=false
+            local install_x11=false
 
-    if $USE_GUM; then
-        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
-            install_x11=true
-        fi
-    else
-        read -p "${COLOR_BLUE}Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
-        if [ "$choice" = "o" ]; then
-            install_x11=true
-        fi
-    fi
-
-    if $install_x11; then
-        local apk_url="https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk"
-        local apk_file="$HOME/storage/downloads/termux-x11.apk"
-
-        execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11"
-
-        if [ -f "$apk_file" ]; then
-            termux-open "$apk_file"
-            echo -e "${COLOR_BLUE}Veuillez installer l'APK manuellement.${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}Une fois l'installation terminée, appuyez sur Entrée pour continuer.${COLOR_RESET}"
-            read -r
-            rm "$apk_file"
-        else
-            error_msg "✗ Erreur lors de l'installation de Termux-X11"
-        fi
-    fi
-}
-
-# Fonction pour installer OhMyTermuxScript
-install_script() {
-    info_msg "❯ Configuration de OhMyTermuxScript"
-    if $SCRIPT_CHOICE; then
-        SCRIPT_DIR="$HOME/OhMyTermuxScript"
-        if [ ! -d "$SCRIPT_DIR" ]; then
             if $USE_GUM; then
-                if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
-                    execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
-                    info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
+                if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
+                    install_x11=true
                 fi
             else
-                read -p "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}" choice
+                read -p "${COLOR_BLUE}Installer Termux-X11 ? (o/n)${COLOR_RESET}" choice
                 if [ "$choice" = "o" ]; then
-                    execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
-                    info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
+                    install_x11=true
                 fi
             fi
-        fi
+
+            if $install_x11; then
+                local apk_url="https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk"
+                local apk_file="$HOME/storage/downloads/termux-x11.apk"
+
+                execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11"
+
+                if [ -f "$apk_file" ]; then
+                    termux-open "$apk_file"
+                    echo -e "${COLOR_BLUE}Veuillez installer l'APK manuellement.${COLOR_RESET}"
+                    echo -e "${COLOR_BLUE}Une fois l'installation terminée, appuyez sur Entrée pour continuer.${COLOR_RESET}"
+                    read -r
+                    rm "$apk_file"
+                else
+                    error_msg "✗ Erreur lors de l'installation de Termux-X11"
+                fi
+            fi
+        }
+
+        # Fonction pour installer OhMyTermuxScript
+        install_script() {
+            info_msg "❯ Configuration de OhMyTermuxScript"
+            if $SCRIPT_CHOICE; then
+                SCRIPT_DIR="$HOME/OhMyTermuxScript"
+                if [ ! -d "$SCRIPT_DIR" ]; then
+                    if $USE_GUM; then
+                        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer OhMyTermuxScript ?"; then
+                            execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
+                            info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
+                        fi
+                    else
+                        read -p "${COLOR_BLUE}Installer OhMyTermuxScript ? (o/n)${COLOR_RESET}" choice
+                        if [ "$choice" = "o" ]; then
+                            execute_command 'git clone https://github.com/GiGiDKR/OhMyTermuxScript.git "$HOME/OhMyTermuxScript" && chmod +x $HOME/OhMyTermuxScript/*.sh' "Installation de OhMyTermuxScript"
+                            info_msg "Pour accéder à OhMyTermuxScript saisissez : 'cd $SCRIPT_DIR', 'ls' et './nomduscript.sh' pour exécuter un script"
+                        fi
+                    fi
+                fi
+            fi
+        }
     fi
 }
 
