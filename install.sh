@@ -544,7 +544,7 @@ install_shell() {
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
-        plugins_to_install=($(gum_choose --height =9 "Sélectionner avec ESPACE les plugins à installer :" --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
+        plugins_to_install=($(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --height=9 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer"))
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
             plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
@@ -612,21 +612,20 @@ update_zshrc() {
     readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | sort -u)
 
     # Créer la section plugins avec un format correct
-    local new_plugins_section="plugins=(\n"
+    local new_plugins_section="plugins=("
     for plugin in "${unique_plugins[@]}"; do
-        new_plugins_section+="\t$plugin\n"
+        new_plugins_section+="\n\t$plugin"
     done
-    new_plugins_section+=")\n"
+    new_plugins_section+="\n)"
 
-    # Remplacer la section plugins existante
-    sed -i '/^plugins=(/,/)/c\'"$new_plugins_section" "$ZSHRC"
-
-    # Supprimer toutes les lignes fpath existantes
+    # Supprimer d'abord toutes les lignes fpath existantes
     sed -i '/^fpath+=${ZSH_CUSTOM:-${ZSH:-~\/\.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src$/d' "$ZSHRC"
 
-    # Ajouter la ligne fpath une seule fois après la section plugins si zsh-completions est installé
+    # Remplacer la section plugins existante et ajouter fpath si nécessaire
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
-        sed -i '/^plugins=(/,/)/a\\\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+        sed -i '/^plugins=(/,/)/c\'"$new_plugins_section"'\n\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+    else
+        sed -i '/^plugins=(/,/)/c\'"$new_plugins_section" "$ZSHRC"
     fi
 
     # S'assurer que la source de oh-my-zsh.sh est présente
@@ -805,7 +804,7 @@ install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
         if $USE_GUM; then
-            FONT=$(gum_choose --height=13 "Sélectionner la police à installer :" --selected="Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
+            FONT=$(gum_choose "Sélectionner la police à installer :" --height=13 --selected="Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
