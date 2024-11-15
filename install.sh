@@ -621,11 +621,14 @@ update_zshrc() {
     # Supprimer d'abord toutes les lignes fpath existantes
     sed -i '/^fpath+=${ZSH_CUSTOM:-${ZSH:-~\/\.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src$/d' "$ZSHRC"
 
-    # Remplacer la section plugins existante et ajouter fpath si nécessaire
+    # Remplacer la section plugins existante
+    sed -i '/^plugins=(/,/)/c\'"$new_plugins_section" "$ZSHRC"
+
+    # Ajouter fpath une seule fois si zsh-completions est présent
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
-        sed -i '/^plugins=(/,/)/c\'"$new_plugins_section"'\n\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
-    else
-        sed -i '/^plugins=(/,/)/c\'"$new_plugins_section" "$ZSHRC"
+        if ! grep -q "fpath.*zsh-completions" "$ZSHRC"; then
+            echo -e "\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$ZSHRC"
+        fi
     fi
 
     # S'assurer que la source de oh-my-zsh.sh est présente
