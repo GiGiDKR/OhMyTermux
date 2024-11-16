@@ -19,6 +19,7 @@ ZSHRC="$HOME/.zshrc"
 # Couleurs en variables
 COLOR_BLUE='\033[38;5;33m'
 COLOR_GREEN='\033[38;5;82m'
+COLOR_GOLD='\033[38;5;220m'
 COLOR_RED='\033[38;5;196m'
 COLOR_RESET='\033[0m'
 
@@ -307,9 +308,9 @@ change_repo() {
             termux-change-repo
         fi
     else
-        printf "${COLOR_BLUE}Changer le répertoire de sources ? (o/n) : ${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Changer le répertoire de sources ? (o/n) : ${COLOR_RESET}"
         read -r choice
-        if [ "$choice" = "o" ]; then
+        if [ "$choice" = "oO" ]; then
             termux-change-repo
         fi
     fi
@@ -317,15 +318,17 @@ change_repo() {
 
 # Fonction pour configurer l'accès au stockage
 setup_storage() {
-    show_banner
-    if $USE_GUM; then
-        if gum_confirm "Autoriser l'accès au stockage ?"; then
-            termux-setup-storage
-        fi
-    else
-        printf "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}"
-        read -r choice
-        [ "$choice" = "o" ] && termux-setup-storage
+    if [ ! -d "$HOME/storage" ]; then
+        show_banner
+        if $USE_GUM; then
+            if gum_confirm "Autoriser l'accès au stockage ?"; then
+                termux-setup-storage
+            fi
+        else
+            echo -e "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}"
+            read -r choice
+            [ "$choice" = "oO" ] && termux-setup-storage
+            fi
     fi
 }
 
@@ -415,9 +418,9 @@ initial_config() {
         fi
     else
         show_banner
-        printf "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}"
         read -r choice
-        if [ "$choice" = "o" ]; then
+        if [ "$choice" = "oO" ]; then
             configure_termux
         fi
     fi
@@ -436,8 +439,10 @@ install_shell() {
             echo -e "${COLOR_BLUE}2) zsh${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) fish${COLOR_RESET}"
             echo
-            printf "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}"
+            printf "${COLOR_GOLD}Entrez le numéro de votre choix : ${COLOR_RESET}"
+            tput setaf 3
             read -r choice
+            tput sgr0
             case $choice in
                 1) shell_choice="bash" ;;
                 2) shell_choice="zsh" ;;
@@ -551,9 +556,10 @@ install_zsh_plugins() {
         info_msg "6) zsh-alias-finder"
         info_msg "7) Tout installer"
         echo
-        printf $"COLOR_BLUE\e[33mEntrez les numéros des plugins : \e[0mCOLOR_RESET"
+        printf "${COLOR_GOLD}Entrez les numéros des plugins : ${COLOR_RESET}"
+        tput setaf 3
         read -r plugin_choices
-        
+        tput sgr0
         for choice in $plugin_choices; do
             case $choice in
                 1) plugins_to_install+=("zsh-autosuggestions") ;;
@@ -604,20 +610,13 @@ update_zshrc() {
     plugins+=("${default_plugins[@]}")
 
     # Supprimer les doublons et zsh-completions de la liste des plugins
-    local unique_plugins=()
+    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | grep -v "zsh-completions" | sort -u)
+
+    # Vérifier si zsh-completions est dans la liste originale des plugins
     local has_completions=false
-    
-    # Vérifier si zsh-completions est dans la liste
-    for plugin in "${plugins[@]}"; do
-        if [ "$plugin" = "zsh-completions" ]; then
-            has_completions=true
-        else
-            # Ajouter le plugin s'il n'est pas déjà dans la liste
-            if [[ ! " ${unique_plugins[*]} " =~ " ${plugin} " ]]; then
-                unique_plugins+=("$plugin")
-            fi
-        fi
-    done
+    if [[ " ${plugins[*]} " == *" zsh-completions "* ]]; then
+        has_completions=true
+    fi
 
     # Créer la nouvelle section plugins
     local new_plugins_section="plugins=("
@@ -629,17 +628,15 @@ update_zshrc() {
     # Mettre à jour le fichier zshrc
     if $has_completions; then
         # Ajouter la configuration de zsh-completions avant la section plugins
-        if ! grep -q "fpath.*zsh-completions/src" "$ZSHRC"; then
-            sed -i '1ifpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
-        fi
+        execute_command "sed -i '/^plugins=(/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' '$ZSHRC'" "Configuration de zsh-completions"
     fi
 
     # Mettre à jour la section plugins
-    sed -i '/^plugins=(/,/)/c\'"$new_plugins_section" "$ZSHRC"
+    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
 
     # Ajouter source $ZSH/oh-my-zsh.sh si nécessaire
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\n# Source Oh-My-Zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
 }
 
@@ -672,8 +669,10 @@ install_packages() {
             echo -e "${COLOR_BLUE}18) tsu${COLOR_RESET}"
             echo -e "${COLOR_BLUE}19) Tout installer${COLOR_RESET}"
             echo            
-            printf "${COLOR_BLUE}Entrez les numéros des packages : ${COLOR_RESET}"
+            printf "${COLOR_GOLD}Entrez les numéros des packages : ${COLOR_RESET}"
+            tput setaf 3
             read -r package_choices
+            tput sgr0
             PACKAGES=""
             for choice in $package_choices; do
                 case $choice in
@@ -830,8 +829,10 @@ install_font() {
             echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
             echo
-            printf "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}"
+            printf "${COLOR_GOLD}Entrez le numéro de votre choix : ${COLOR_RESET}"
+            tput setaf 3
             read -r choice
+            tput sgr0
             case $choice in
                 1) FONT="Police par défaut" ;;
                 2) FONT="CaskaydiaCove Nerd Font" ;;
@@ -874,7 +875,7 @@ install_xfce() {
                 return
             fi
         else
-            printf "${COLOR_BLUE}Installer XFCE ? (o/n)${COLOR_RESET}"
+            printf "${COLOR_BLUE}Installer XFCE ? (o/n) : ${COLOR_RESET}"
             read -r choice
             if [ "$choice" != "o" ]; then
                 return
@@ -913,7 +914,7 @@ install_proot() {
             INSTALL_UTILS=true
         fi
     else    
-        printf "${COLOR_BLUE}Installer Debian Proot ? (o/n)${COLOR_RESET}"
+        printf "${COLOR_BLUE}Installer Debian Proot ? (o/n) : ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "o" ]; then
             execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
@@ -1022,7 +1023,7 @@ EOL
             install_x11=true
         fi
         else
-            printf "${COLOR_BLUE}Installer Termux-X11 ? (o/n)${COLOR_RESET}"
+            printf "${COLOR_BLUE}Installer Termux-X11 ? (o/n) : ${COLOR_RESET}"
             read -r choice
             if [ "$choice" = "o" ]; then
                 install_x11=true
@@ -1052,6 +1053,11 @@ show_banner
 if $EXECUTE_INITIAL_CONFIG; then
     initial_config
 fi
+if $USE_GUM; then
+    execute_command "pkg install -y ncurses-utils" "Installation des pré-requis"
+else
+    execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des pré-requis"
+fi
 install_shell
 install_packages
 common_alias
@@ -1060,9 +1066,7 @@ install_xfce
 install_proot
 install_utils
 install_termux_x11
-
 info_msg "❯ Nettoyage des fichiers temporaires"
-# Nettoyage des fichiers temporaires
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
@@ -1079,7 +1083,7 @@ if $USE_GUM; then
         echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
     fi
 else
-    printf "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n)${COLOR_RESET}"
+    printf "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n) : ${COLOR_RESET}"
     read -r choice
     if [ "$choice" = "o" ]; then
         clear
