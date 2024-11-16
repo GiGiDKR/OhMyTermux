@@ -287,7 +287,7 @@ create_backups() {
         "$HOME/.termux/colors.properties"
         "$HOME/.termux/termux.properties"
         "$HOME/.termux/font.ttf"
-        "$0"
+        #"$0"
     )
 
     # Copie des fichiers dans le répertoire de sauvegarde
@@ -396,10 +396,9 @@ EOL" "Configuration des propriétés Termux"
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
 
     # Téléchargement de la police
-    execute_command "curl -fLo "$HOME/.termux/font.ttf" https://github.com/GiGiDKR/OhMyTermux/raw/1.1.0/files/font.ttf" "Téléchargement de la police par défaut"
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.1.0/files/font.ttf" "Téléchargement de la police par défaut"
 
-    #FIX DEBUG
-    #termux-reload-settings
+    termux-reload-settings
 }
 
 # Fonction principale de configuration initiale
@@ -505,11 +504,10 @@ install_shell() {
                     fi
                 fi
 
-                #FIX DEBUG  
-                #execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/aliases.zsh && 
-                #    mkdir -p $HOME/.config/OhMyTermux && 
-                #    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/help.md)" "Téléchargement de la configuration" || 
-                #    error_msg "Erreur lors du téléchargement des fichiers"
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/aliases.zsh && 
+                    mkdir -p $HOME/.config/OhMyTermux && 
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/files/help.md)" "Téléchargement de la configuration" || 
+                    error_msg "Erreur lors du téléchargement des fichiers"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -609,11 +607,10 @@ update_zshrc() {
     # Remplacer la section plugins existante
     sed -i '/^plugins=(/,/)/c'"$new_plugins_section" "$ZSHRC"
 
-    #FIX DEBUG
     # S'assurer que la source de oh-my-zsh.sh est présente
-    #if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-    #    echo -e "\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
-    #fi
+    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
+        echo -e "\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
+    fi
 
     # Configuration spéciale pour zsh-completions
     if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
@@ -623,6 +620,12 @@ update_zshrc() {
         # Ajouter la nouvelle ligne fpath avant source "$ZSH/oh-my-zsh.sh"
         sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/i fpath+=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions/src' "$ZSHRC"
     fi
+
+    # Configuration spéciale pour zsh-syntax-highlighting
+    if [[ " ${unique_plugins[*]} " == *" zsh-syntax-highlighting "* ]]; then
+        # S'assurer que zsh-syntax-highlighting est chargé en dernier
+        sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/a source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' "$ZSHRC"
+    fi
 }
 
 # Fonction pour installer les packages
@@ -630,7 +633,7 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         info_msg "❯ Configuration des packages"
         if $USE_GUM; then
-            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
             echo -e "${COLOR_BLUE}Sélectionner les packages à installer (séparés par des espaces) :${COLOR_RESET}"
             echo
