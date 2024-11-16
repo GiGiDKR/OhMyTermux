@@ -238,7 +238,7 @@ check_and_install_gum() {
     fi
 }
 
-# TODO : Déplacer dans la fonction principale ?
+#FIX : Déplacer dans la fonction principale
 check_and_install_gum
 
 # Fonction de gestion des erreurs
@@ -459,14 +459,16 @@ install_shell() {
                     if gum_confirm "Installer Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        #FIX : DEBUG
+                        #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
                     read -r -p "${COLOR_BLUE}Installer Oh-My-Zsh ? (o/n) : ${COLOR_RESET}" choice
                     if [ "$choice" = "o" ]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        #FIX : DEBUG
+                        #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 fi
 
@@ -575,8 +577,8 @@ install_plugin() {
         "zsh-syntax-highlighting") plugin_url="https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
         "zsh-completions") plugin_url="https://github.com/zsh-users/zsh-completions.git" ;;
         "you-should-use") plugin_url="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
-        "zsh-abbr") plugin_url="https://github.com/olets/zsh-abbr" ;;
-        "zsh-alias-finder") plugin_url="https://github.com/akash329d/zsh-alias-finder" ;;
+        "zsh-abbr") plugin_url="https://github.com/olets/zsh-abbr.git" ;;
+        "zsh-alias-finder") plugin_url="https://github.com/akash329d/zsh-alias-finder.git" ;;
     esac
 
     if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$plugin_name" ]; then
@@ -932,7 +934,6 @@ install_utils() {
             execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Création du fichier .bashrc"
         fi
 
-        # Utiliser une heredoc pour une meilleure lisibilité
         cat << "EOL" >> "$bashrc_proot"
 export DISPLAY=:1.0
 
@@ -1050,7 +1051,8 @@ if $USE_GUM; then
     if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
-            exec zsh -l
+            source "$HOME/.bashrc"
+            zsh
         else
             exec $shell_choice
         fi
@@ -1062,7 +1064,8 @@ else
     if [ "$choice" = "o" ]; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
-            exec zsh -l
+            source "$HOME/.bashrc"
+            zsh
         else
             exec $shell_choice
         fi
