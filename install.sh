@@ -594,8 +594,14 @@ update_zshrc() {
     local default_plugins=(git command-not-found copyfile node npm vscode web-search timer)
     plugins+=("${default_plugins[@]}")
 
-    # Supprimer les doublons
-    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | sort -u)
+    # Supprimer zsh-completions et les doublons
+    local filtered_plugins=()
+    for plugin in "${plugins[@]}"; do
+        if [ "$plugin" != "zsh-completions" ]; then
+            filtered_plugins+=("$plugin")
+        fi
+    done
+    readarray -t unique_plugins < <(printf '%s\n' "${filtered_plugins[@]}" | sort -u)
 
     # Créer la section plugins avec un format correct
     local new_plugins_section="plugins=("
@@ -604,28 +610,30 @@ update_zshrc() {
     done
     new_plugins_section+="\n)"
 
-    # Remplacer la section plugins existante
-    sed -i '/^plugins=(/,/)/c'"$new_plugins_section" "$ZSHRC"
-
-    # S'assurer que la source de oh-my-zsh.sh est présente
+    # Vérifier si source $ZSH/oh-my-zsh.sh existe déjà
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
+        # Si non, ajouter la ligne source après la section plugins
+        sed -i '/^plugins=(/,/)/c'"$new_plugins_section"'\n\nsource $ZSH/oh-my-zsh.sh' "$ZSHRC"
+    else
+        # Si oui, mettre à jour uniquement la section plugins
+        sed -i '/^plugins=(/,/)/c'"$new_plugins_section" "$ZSHRC"
     fi
 
     # Configuration spéciale pour zsh-completions
-    if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
+    if [[ " ${plugins[*]} " == *" zsh-completions "* ]]; then
         # Supprimer l'ancienne ligne fpath si elle existe
         sed -i "/^fpath+=\${ZSH_CUSTOM:-~\/\.oh-my-zsh\/custom}\/plugins\/zsh-completions\/src$/d" "$ZSHRC"
         
         # Ajouter la nouvelle ligne fpath avant source "$ZSH/oh-my-zsh.sh"
         sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/i fpath+=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions/src' "$ZSHRC"
     fi
-
+    
+    #FIX DEBUG
     # Configuration spéciale pour zsh-syntax-highlighting
-    if [[ " ${unique_plugins[*]} " == *" zsh-syntax-highlighting "* ]]; then
+    #if [[ " ${unique_plugins[*]} " == *" zsh-syntax-highlighting "* ]]; then
         # S'assurer que zsh-syntax-highlighting est chargé en dernier
-        sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/a source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' "$ZSHRC"
-    fi
+    #    sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/a source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' "$ZSHRC"
+    #fi
 }
 
 # Fonction pour installer les packages
