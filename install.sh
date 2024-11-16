@@ -599,23 +599,31 @@ update_zshrc() {
     # Supprimer les doublons et zsh-completions de la liste des plugins
     readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | grep -v "zsh-completions" | sort -u)
 
-    local new_plugins_section="plugins=(\n"
-    for plugin in "${unique_plugins[@]}"; do
-        new_plugins_section+="\t$plugin\n"
-    done
-    new_plugins_section+=")"
-
-    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
-
-    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+    # Vérifier si zsh-completions est dans la liste originale des plugins
+    local has_completions=false
+    if [[ " ${plugins[*]} " == *" zsh-completions "* ]]; then
+        has_completions=true
     fi
 
-    # Ajouter la ligne pour zsh-completions avant source $ZSH/oh-my-zsh.sh
-    if [[ " ${plugins[*]} " == *" zsh-completions "* ]]; then
-        if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
-            sed -i '/source \$ZSH\/oh-my-zsh.sh/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
-        fi
+    # Créer la nouvelle section plugins
+    local new_plugins_section="plugins=("
+    for plugin in "${unique_plugins[@]}"; do
+        new_plugins_section+="\n\t$plugin"
+    done
+    new_plugins_section+="\n)"
+
+    # Mettre à jour le fichier zshrc
+    if $has_completions; then
+        # Ajouter la configuration de zsh-completions avant la section plugins
+        execute_command "sed -i '/^plugins=(/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' '$ZSHRC'" "Configuration de zsh-completions"
+    fi
+
+    # Mettre à jour la section plugins
+    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
+
+    # Ajouter source $ZSH/oh-my-zsh.sh si nécessaire
+    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
+        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
 }
 
