@@ -17,9 +17,9 @@ BASHRC="$HOME/.bashrc"
 ZSHRC="$HOME/.zshrc"
 
 # Couleurs en variables
-COLOR_BLUE="\e[38;5;33m"
-COLOR_RED="\e[38;5;196m"
-COLOR_RESET="\e[0m"
+COLOR_BLUE='\033[38;5;33m'
+COLOR_RED='\033[38;5;196m'
+COLOR_RESET='\033[0m'
 
 # Configuration de la redirection
 if [ "$VERBOSE" = false ]; then
@@ -118,7 +118,7 @@ info_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 33
     else
-        echo -e "\e[38;5;33m$1\e[0m"
+        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
     fi
 }
 
@@ -127,7 +127,7 @@ success_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 82
     else
-        echo -e "\e[38;5;82m$1\e[0m"
+        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
     fi
 }
 
@@ -136,7 +136,7 @@ error_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 196
     else
-        echo -e "\e[38;5;196m$1\e[0m"
+        echo -e "${COLOR_RED}$1${COLOR_RESET}"
     fi
 }
 
@@ -342,7 +342,7 @@ configure_termux() {
     file_path="$termux_dir/colors.properties.debug"
     if [ ! -f "$file_path" ]; then
         mkdir -p "$termux_dir"
-        execute_command "cat <<EOL > \"$file_path\"
+        execute_command "cat > \"$file_path\" << 'EOL'
 ## Name: TokyoNight
 # Special
 foreground = #c0caf5
@@ -381,7 +381,7 @@ EOL" "Installation du thème TokyoNight"
     # Configuration de termux.properties
     file_path="$termux_dir/termux.properties"
     if [ ! -f "$file_path" ]; then
-        execute_command "cat <<EOL > \"$file_path\"
+        execute_command "cat > \"$file_path\" << 'EOL'
 allow-external-apps = true
 use-black-ui = true
 bell-character = ignore
@@ -415,7 +415,8 @@ initial_config() {
         fi
     else
         show_banner
-        read -r -p "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}" choice
+        printf "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}"
+        read -r choice
         if [ "$choice" = "o" ]; then
             configure_termux
         fi
