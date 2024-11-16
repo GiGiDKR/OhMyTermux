@@ -345,7 +345,7 @@ configure_termux() {
     file_path="$termux_dir/colors.properties.debug"
     if [ ! -f "$file_path" ]; then
         mkdir -p "$termux_dir"
-        execute_command "cat > \"$file_path\" << 'EOL'
+        cat > "$file_path" << 'EOL'
 ## Name: TokyoNight
 # Special
 foreground = #c0caf5
@@ -378,23 +378,20 @@ color15 = #c0caf5
 # Other
 color16 = #ff9e64
 color17 = #db4b4b
-EOL" "Installation du thème TokyoNight"
+EOL
+        success_msg "Installation du thème TokyoNight"
     fi
 
     # Configuration de termux.properties
     file_path="$termux_dir/termux.properties"
     if [ ! -f "$file_path" ]; then
-        execute_command "cat > \"$file_path\" << 'EOL'
+        cat > "$file_path" << 'EOL'
 allow-external-apps = true
 use-black-ui = true
 bell-character = ignore
 fullscreen = true
-EOL" "Configuration des propriétés Termux"
-    else
-        execute_command "sed -i 's/^# allow-external-apps = true/allow-external-apps = true/; 
-            s/^# use-black-ui = true/use-black-ui = true/; 
-            s/^# bell-character = ignore/bell-character = ignore/; 
-            s/^# fullscreen = true/fullscreen = true/' \"$file_path\"" "Configuration des propriétés Termux"
+EOL
+        success_msg "Configuration des propriétés Termux"
     fi
     
     # Suppression de la bannière de connexion
@@ -439,7 +436,7 @@ install_shell() {
             echo -e "${COLOR_BLUE}2) zsh${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) fish${COLOR_RESET}"
             echo
-            printf "Entrez le numéro de votre choix : "
+            printf "${COLOR_BLUE}Entrez le numéro de votre choix : ${COLOR_RESET}"
             read -r choice
             case $choice in
                 1) shell_choice="bash" ;;
@@ -554,7 +551,7 @@ install_zsh_plugins() {
         info_msg "6) zsh-alias-finder"
         info_msg "7) Tout installer"
         echo
-        printf $"\e[33mEntrez les numéros des plugins : \e[0m"
+        printf $"COLOR_BLUE\e[33mEntrez les numéros des plugins : \e[0mCOLOR_RESET"
         read -r plugin_choices
         
         for choice in $plugin_choices; do
@@ -565,7 +562,9 @@ install_zsh_plugins() {
                 4) plugins_to_install+=("you-should-use") ;;
                 5) plugins_to_install+=("zsh-abbr") ;;
                 6) plugins_to_install+=("zsh-alias-finder") ;;
-                7) plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder") ;;
+                7) plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
+                break
+                ;;
             esac
         done
     fi
@@ -605,13 +604,20 @@ update_zshrc() {
     plugins+=("${default_plugins[@]}")
 
     # Supprimer les doublons et zsh-completions de la liste des plugins
-    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | grep -v "zsh-completions" | sort -u)
-
-    # Vérifier si zsh-completions est dans la liste originale des plugins
+    local unique_plugins=()
     local has_completions=false
-    if [[ " ${plugins[*]} " == *" zsh-completions "* ]]; then
-        has_completions=true
-    fi
+    
+    # Vérifier si zsh-completions est dans la liste
+    for plugin in "${plugins[@]}"; do
+        if [ "$plugin" = "zsh-completions" ]; then
+            has_completions=true
+        else
+            # Ajouter le plugin s'il n'est pas déjà dans la liste
+            if [[ ! " ${unique_plugins[*]} " =~ " ${plugin} " ]]; then
+                unique_plugins+=("$plugin")
+            fi
+        fi
+    done
 
     # Créer la nouvelle section plugins
     local new_plugins_section="plugins=("
@@ -623,15 +629,17 @@ update_zshrc() {
     # Mettre à jour le fichier zshrc
     if $has_completions; then
         # Ajouter la configuration de zsh-completions avant la section plugins
-        execute_command "sed -i '/^plugins=(/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' '$ZSHRC'" "Configuration de zsh-completions"
+        if ! grep -q "fpath.*zsh-completions/src" "$ZSHRC"; then
+            sed -i '1ifpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+        fi
     fi
 
     # Mettre à jour la section plugins
-    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
+    sed -i '/^plugins=(/,/)/c\'"$new_plugins_section" "$ZSHRC"
 
     # Ajouter source $ZSH/oh-my-zsh.sh si nécessaire
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+        echo -e "\n# Source Oh-My-Zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
 }
 
