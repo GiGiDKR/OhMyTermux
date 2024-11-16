@@ -337,7 +337,9 @@ configure_termux() {
     termux_dir="$HOME/.termux"
 
     # Configuration de colors.properties
-    file_path="$termux_dir/colors.properties"
+    #FIX DEBUG
+    #file_path="$termux_dir/colors.properties"
+    file_path="$termux_dir/colors.properties.debug"
     if [ ! -f "$file_path" ]; then
         mkdir -p "$termux_dir"
         execute_command "cat <<EOL > \"$file_path\"
@@ -457,7 +459,7 @@ install_shell() {
                 info_msg "❯ Configuration de ZSH"
                 if $USE_GUM; then
                     if gum_confirm "Installer Oh-My-Zsh ?"; then
-                        execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
+                        execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
                         #FIX : DEBUG
                         #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
@@ -465,7 +467,7 @@ install_shell() {
                 else
                     read -r -p "${COLOR_BLUE}Installer Oh-My-Zsh ? (o/n) : ${COLOR_RESET}" choice
                     if [ "$choice" = "o" ]; then
-                        execute_command "pkg install -y wget curl git unzip" "Installation des pré-requis"
+                        execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
                         #FIX : DEBUG
                         #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
@@ -863,7 +865,7 @@ install_xfce() {
             fi
         fi
 
-        execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des pré-requis"
+        execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des dépendances"
 
         PACKAGES=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
     
