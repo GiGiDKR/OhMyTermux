@@ -321,7 +321,8 @@ setup_storage() {
             termux-setup-storage
         fi
     else
-        read -r -p "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}" choice
+        printf "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}"
+        read -r choice
         [ "$choice" = "o" ] && termux-setup-storage
     fi
 }
