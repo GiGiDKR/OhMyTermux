@@ -592,24 +592,33 @@ install_plugin() {
 
 # Fonction pour mettre à jour la configuration de ZSH
 update_zshrc() {
-    local zshrc="$HOME/.zshrc"
-    cp "$zshrc" "${zshrc}.bak"
+    local plugins=("$@")
+    local default_plugins=(git command-not-found copyfile node npm vscode web-search timer)
+    plugins+=("${default_plugins[@]}")
 
-    existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
+    # Supprimer les doublons
+    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | sort -u)
 
-    local plugin_list="$existing_plugins"
-    for plugin in $PLUGINS; do
-        if [[ ! "$plugin_list" =~ "$plugin" ]]; then
-            plugin_list+="$plugin "
-        fi
+    local new_plugins_section="plugins=(\n"
+    for plugin in "${unique_plugins[@]}"; do
+        new_plugins_section+="\t$plugin\n"
     done
+    new_plugins_section+=")"
 
-    sed -i "/^plugins=(/,/)/c\plugins=(\n\t${plugin_list}\n)" "$zshrc"
-    
-    if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
-        if ! grep -q "fpath+=" "$zshrc"; then
-            sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
+    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
+
+    # Ajouter la ligne pour zsh-completions après la section plugins
+    if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
+        if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
+            sed -i '/^plugins=(/,/)/a\
+\
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\
+' "$ZSHRC" 2>/dev/null
         fi
+    fi
+
+    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
+        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
 }
 
