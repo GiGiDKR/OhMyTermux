@@ -592,41 +592,24 @@ install_plugin() {
 
 # Fonction pour mettre à jour la configuration de ZSH
 update_zshrc() {
-    local plugins=("$@")
-    local default_plugins=(git command-not-found copyfile node npm vscode web-search timer)
-    plugins+=("${default_plugins[@]}")
+    local zshrc="$HOME/.zshrc"
+    cp "$zshrc" "${zshrc}.bak"
 
-    # Supprimer les doublons
-    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | sort -u)
+    existing_plugins=$(sed -n '/^plugins=(/,/)/p' "$zshrc" | grep -v '^plugins=(' | grep -v ')' | sed 's/^[[:space:]]*//' | tr '\n' ' ')
 
-    # Créer la section plugins avec un format correct
-    local new_plugins_section="plugins=("
-    for plugin in "${unique_plugins[@]}"; do
-        new_plugins_section+="\n\t$plugin"
+    local plugin_list="$existing_plugins"
+    for plugin in $PLUGINS; do
+        if [[ ! "$plugin_list" =~ "$plugin" ]]; then
+            plugin_list+="$plugin "
+        fi
     done
-    new_plugins_section+="\n)"
 
-    # Remplacer la section plugins existante
-    sed -i '/^plugins=(/,/)/c'"$new_plugins_section" "$ZSHRC"
-
-    # S'assurer que la source de oh-my-zsh.sh est présente
-    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
-    fi
-
-    # Configuration spéciale pour zsh-completions
-    if [[ " ${unique_plugins[*]} " == *" zsh-completions "* ]]; then
-        # Supprimer l'ancienne ligne fpath si elle existe
-        sed -i "/^fpath+=\${ZSH_CUSTOM:-~\/\.oh-my-zsh\/custom}\/plugins\/zsh-completions\/src$/d" "$ZSHRC"
-        
-        # Ajouter la nouvelle ligne fpath avant source "$ZSH/oh-my-zsh.sh"
-        sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/i fpath+=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions/src' "$ZSHRC"
-    fi
-
-    # Configuration spéciale pour zsh-syntax-highlighting
-    if [[ " ${unique_plugins[*]} " == *" zsh-syntax-highlighting "* ]]; then
-        # S'assurer que zsh-syntax-highlighting est chargé en dernier
-        sed -i '/^source "\$ZSH\/oh-my-zsh.sh"/a source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' "$ZSHRC"
+    sed -i "/^plugins=(/,/)/c\plugins=(\n\t${plugin_list}\n)" "$zshrc"
+    
+    if [[ "$PLUGINS" == *"zsh-completions"* ]]; then
+        if ! grep -q "fpath+=" "$zshrc"; then
+            sed -i '/^source $ZSH\/oh-my-zsh.sh$/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$zshrc"
+        fi
     fi
 }
 
