@@ -614,8 +614,8 @@ update_zshrc() {
 
     # Mettre à jour le fichier zshrc
     if $has_completions; then
-        # Ajouter la configuration de zsh-completions avant la section plugins avec des lignes vides
-        execute_command "sed -i '/^plugins=(/i\\\n\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n' '$ZSHRC'" "Configuration de zsh-completions"
+        # Ajouter la configuration de zsh-completions avant la section plugins
+        execute_command "sed -i '/^plugins=(/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' '$ZSHRC'" "Configuration de zsh-completions"
     fi
 
     # Mettre à jour la section plugins
