@@ -615,15 +615,15 @@ update_zshrc() {
     # Mettre à jour le fichier zshrc
     if $has_completions; then
         # Ajouter la configuration de zsh-completions avant la section plugins
-        execute_command "sed -i '/^plugins=(/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' '$ZSHRC'" "Configuration de zsh-completions"
+        execute_command "sed -i '/^plugins=(/i\\\n\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n' '$ZSHRC'" "Configuration de zsh-completions"
     fi
 
     # Mettre à jour la section plugins
     execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
 
-    # Ajouter source $ZSH/oh-my-zsh.sh si nécessaire
+    # Ajouter source $ZSH/oh-my-zsh.sh après la section plugins si nécessaire
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+        sed -i '/^plugins=(/,/)/a\\\nsource $ZSH/oh-my-zsh.sh' "$ZSHRC"
     fi
 }
 
