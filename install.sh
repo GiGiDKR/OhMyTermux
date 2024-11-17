@@ -416,7 +416,7 @@ initial_config() {
         fi
     else
         show_banner
-        echo -e "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "oO" ]; then
             configure_termux
@@ -499,7 +499,7 @@ install_shell() {
                     printf "${COLOR_BLUE}Installer PowerLevel10k ? (o/n) : ${COLOR_RESET}"
                     read -r choice
                     if [ "$choice" = "o" ]; then
-                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
+                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" --quiet || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}"
@@ -552,7 +552,7 @@ install_zsh_plugins() {
         info_msg "4) you-should-use"
         info_msg "5) zsh-abbr"
         info_msg "6) zsh-alias-finder"
-        info_msg "7) Tout installer"
+        echo "7) Tout installer"
         echo
         printf "${COLOR_GOLD}Entrez les numéros des plugins : ${COLOR_RESET}"
         tput setaf 3
@@ -625,12 +625,21 @@ update_zshrc() {
 
     # Mettre à jour le fichier zshrc
     if $has_completions; then
-        # Ajouter la configuration de zsh-completions avant la section plugins
-        execute_command "sed -i '/^plugins=(/i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' '$ZSHRC'" "Configuration de zsh-completions"
+        # Vérifier si fpath+ existe déjà
+        if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
+            # Insérer fpath+ avant la section plugins ou au début du fichier s'il n'y a pas de section plugins
+            sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+        fi
     fi
 
-    # Mettre à jour la section plugins
-    execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Ajout des plugins à zshrc"
+    # Vérifier si la section plugins existe
+    if grep -q "^plugins=(" "$ZSHRC"; then
+        # Mettre à jour la section plugins existante
+        execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Mise à jour des plugins dans zshrc"
+    else
+        # Insérer la nouvelle section plugins avant source $ZSH/oh-my-zsh.sh
+        execute_command "sed -i '/source.*oh-my-zsh.sh/i\\${new_plugins_section}\n' '$ZSHRC'" "Ajout des plugins à zshrc"
+    fi
 
     # Ajouter source $ZSH/oh-my-zsh.sh si nécessaire
     if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
@@ -665,7 +674,7 @@ install_packages() {
             echo -e "${COLOR_BLUE}16) lazygit${COLOR_RESET}"
             echo -e "${COLOR_BLUE}17) open-ssh${COLOR_RESET}"
             echo -e "${COLOR_BLUE}18) tsu${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}19) Tout installer${COLOR_RESET}"
+            echo "19) Tout installer"
             echo            
             printf "${COLOR_GOLD}Entrez les numéros des packages : ${COLOR_RESET}"
             tput setaf 3
@@ -815,7 +824,7 @@ install_font() {
         else
             echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
             echo
-            echo -e "${COLOR_BLUE}1) Police par défaut${COLOR_RESET}"
+            echo "1) Police par défaut"
             echo -e "${COLOR_BLUE}2) CaskaydiaCove Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) FiraCode Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}4) Hack Nerd Font${COLOR_RESET}"
