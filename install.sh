@@ -311,7 +311,6 @@ change_repo() {
         printf "${COLOR_BLUE}Changer le miroir des dépôts ? (o/n) : ${COLOR_RESET}"
         read -r choice
         [[ "$choice" =~ ^[oO]$ ]] && termux-change-repo
-        fi
     fi
 }
 
