@@ -544,7 +544,7 @@ install_zsh_plugins() {
             plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
         fi
     else
-        info_msg "Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :"
+        echo "Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :"
         echo
         info_msg "1) zsh-autosuggestions"
         info_msg "2) zsh-syntax-highlighting"
@@ -619,31 +619,28 @@ update_zshrc() {
     # Créer la nouvelle section plugins
     local new_plugins_section="plugins=("
     for plugin in "${unique_plugins[@]}"; do
-        new_plugins_section+="\n\t$plugin"
+        new_plugins_section+="$plugin "
     done
-    new_plugins_section+="\n)"
+    new_plugins_section+=")"
 
     # Mettre à jour le fichier zshrc
     if $has_completions; then
         # Vérifier si fpath+ existe déjà
         if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
-            # Insérer fpath+ avant la section plugins ou au début du fichier s'il n'y a pas de section plugins
+            # Insérer fpath+ au début du fichier
             sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
         fi
     fi
 
-    # Vérifier si la section plugins existe
-    if grep -q "^plugins=(" "$ZSHRC"; then
-        # Mettre à jour la section plugins existante
-        execute_command "sed -i '/^plugins=(/,/)/c\\${new_plugins_section}' '$ZSHRC'" "Mise à jour des plugins dans zshrc"
+    # Trouver la position de source $ZSH/oh-my-zsh.sh
+    if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
+        # Si la ligne source existe, insérer la section plugins juste avant
+        local source_line=$(grep -n "source.*oh-my-zsh.sh" "$ZSHRC" | cut -d: -f1)
+        sed -i "${source_line}i\\${new_plugins_section}\n" "$ZSHRC"
     else
-        # Insérer la nouvelle section plugins avant source $ZSH/oh-my-zsh.sh
-        execute_command "sed -i '/source.*oh-my-zsh.sh/i\\${new_plugins_section}\n' '$ZSHRC'" "Ajout des plugins à zshrc"
-    fi
-
-    # Ajouter source $ZSH/oh-my-zsh.sh si nécessaire
-    if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$ZSHRC"; then
-        echo -e "\n\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+        # Si la ligne source n'existe pas, ajouter la section plugins et la ligne source
+        echo -e "\n${new_plugins_section}" >> "$ZSHRC"
+        echo -e "\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
 }
 
@@ -654,7 +651,7 @@ install_packages() {
         if $USE_GUM; then
             PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
-            echo -e "${COLOR_BLUE}Sélectionner les packages à installer (séparés par des espaces) :${COLOR_RESET}"
+            echo "Sélectionner les packages à installer (séparés par des espaces) :"
             echo
             echo -e "${COLOR_BLUE}1) nala${COLOR_RESET}"
             echo -e "${COLOR_BLUE}2) eza${COLOR_RESET}"
@@ -822,9 +819,9 @@ install_font() {
         if $USE_GUM; then
             FONT=$(gum_choose "Sélectionner la police à installer :" --height=13 --selected="Police par défaut" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
-            echo -e "${COLOR_BLUE}Sélectionner la police à installer :${COLOR_RESET}"
+            echo "Sélectionner la police à installer :"
             echo
-            echo "1) Police par défaut"
+            echo -e "${COLOR_BLUE}1) Police par défaut${COLOR_RESET}"
             echo -e "${COLOR_BLUE}2) CaskaydiaCove Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}3) FiraCode Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}4) Hack Nerd Font${COLOR_RESET}"
