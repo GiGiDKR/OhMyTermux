@@ -304,14 +304,13 @@ create_backups() {
 change_repo() {
     show_banner
     if $USE_GUM; then
-        if gum_confirm "Changer le répertoire de sources ?"; then
+        if gum_confirm "Changer le miroir des dépôts ?"; then
             termux-change-repo
         fi
     else
-        echo -e "${COLOR_BLUE}Changer le répertoire de sources ? (o/n) : ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Changer le miroir des dépôts ? (o/n) : ${COLOR_RESET}"
         read -r choice
-        if [ "$choice" = "oO" ]; then
-            termux-change-repo
+        [[ "$choice" =~ ^[oO]$ ]] && termux-change-repo
         fi
     fi
 }
@@ -325,10 +324,10 @@ setup_storage() {
                 termux-setup-storage
             fi
         else
-            echo -e "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}"
+            printf "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}"
             read -r choice
-            [ "$choice" = "oO" ] && termux-setup-storage
-            fi
+            [[ "$choice" =~ ^[oO]$ ]] && termux-setup-storage
+        fi
     fi
 }
 
