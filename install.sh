@@ -691,18 +691,16 @@ update_zshrc() {
     fi
 
     # Créer la nouvelle section plugins
-    local new_plugins_section="plugins=("
+    local new_plugins_section="plugins=(\n"
     for plugin in "${unique_plugins[@]}"; do
-        new_plugins_section+="$plugin "
+        new_plugins_section+="    $plugin\n"
     done
     new_plugins_section+=")"
 
-    # Mettre à jour le fichier zshrc
+    # Plugin zsh-completions
     if $has_completions; then
         if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
-            if grep -q "# Load oh-my-zsh" "$ZSHRC"; then
-                sed -i "/# Load oh-my-zsh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n" "$ZSHRC"
-            elif grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
+            if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
                 sed -i "/source.*oh-my-zsh.sh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n" "$ZSHRC"
             else
                 sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n' "$ZSHRC"
@@ -710,13 +708,15 @@ update_zshrc() {
         fi
     fi
 
-    # Trouver la position de source $ZSH/oh-my-zsh.sh
+    # Autres plugins ZSH
     if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
         local source_line=$(grep -n "source.*oh-my-zsh.sh" "$ZSHRC" | cut -d: -f1)
+        sed -i "${source_line}d" "$ZSHRC"
         sed -i "${source_line}i\\${new_plugins_section}\n" "$ZSHRC"
+        sed -i "${source_line}i\\# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" "$ZSHRC"
     else
         echo -e "\n${new_plugins_section}" >> "$ZSHRC"
-        echo -e "\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+        echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
 }
 
