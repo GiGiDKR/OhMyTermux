@@ -677,61 +677,48 @@ update_zshrc() {
     local has_completions="$3"
     local has_ohmytermux="$4"
 
-    # Supprimer les anciennes lignes de completions si présentes
-    sed -i '/fpath.*zsh-completions\/src/d' "$zshrc"
-
-    # Mettre à jour la section plugins
-    local default_plugins="git command-not-found copyfile node npm timer vscode web-search z"
-    # Retirer zsh-completions de la liste des plugins sélectionnés
-    local filtered_plugins=$(echo "$selected_plugins" | sed 's/zsh-completions//')
-    local all_plugins="$default_plugins $filtered_plugins"
+    # Créer un fichier temporaire
+    local temp_file=$(mktemp)
     
-    # Créer le contenu de la section plugins
-    local plugins_section="plugins=(\n"
-    for plugin in $all_plugins; do
-        plugins_section+="    $plugin\n"
+    # Copier le contenu existant jusqu'à ZSH_THEME
+    sed -n '1,/^ZSH_THEME/p' "$zshrc" > "$temp_file"
+    
+    # Ajouter la section plugins
+    echo -e "\n# Liste des plugins" >> "$temp_file"
+    echo "plugins=(" >> "$temp_file"
+    # Plugins par défaut
+    for plugin in git command-not-found copyfile node npm timer vscode web-search z; do
+        echo "    $plugin" >> "$temp_file"
     done
-    plugins_section+=")\n"
+    # Plugins sélectionnés (en excluant zsh-completions)
+    for plugin in $selected_plugins; do
+        if [ "$plugin" != "zsh-completions" ]; then
+            echo "    $plugin" >> "$temp_file"
+        fi
+    done
+    echo ")" >> "$temp_file"
 
-    # Supprimer l'ancienne section plugins
-    sed -i '/^plugins=(/,/)/d' "$zshrc"
-    
-    # Si la ligne source $ZSH/oh-my-zsh.sh existe
-    if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-        # Insérer la section plugins juste avant
-        sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\$plugins_section" "$zshrc"
-    else
-        # Sinon, ajouter la section plugins à la fin
-        printf "\n$plugins_section" >> "$zshrc"
-    fi
-
-    # Ajouter zsh-completions path si installé
+    # Ajouter zsh-completions si nécessaire
     if [ "$has_completions" = "true" ]; then
-        # Si la ligne source $ZSH/oh-my-zsh.sh existe
-        if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            # Insérer fpath+ juste avant
-            sed -i '/source \$ZSH\/oh-my-zsh.sh/i\# Ajout du chemin pour zsh-completions\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src\n' "$zshrc"
-        else
-            # Sinon, ajouter à la fin avec source $ZSH/oh-my-zsh.sh
-            echo -e "\n# Ajout du chemin pour zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
-        fi
-    else
-        # Si zsh-completions n'est pas installé mais que source $ZSH/oh-my-zsh.sh n'existe pas
-        if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
-        fi
+        echo -e "\n# Ajout du chemin pour zsh-completions" >> "$temp_file"
+        echo 'fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' >> "$temp_file"
     fi
 
-    # Gérer les lignes OhMyTermux
+    # Ajouter le chargement de oh-my-zsh
+    echo -e "\n# Load oh-my-zsh" >> "$temp_file"
+    echo "source \$ZSH/oh-my-zsh.sh" >> "$temp_file"
+
+    # Ajouter PowerLevel10k si nécessaire
     if [ "$has_ohmytermux" = "true" ]; then
-        # Supprimer les anciennes lignes si présentes
-        sed -i '/# To customize prompt, run/d' "$zshrc"
-        sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\] || source/d' "$zshrc"
-        
-        # Ajouter les nouvelles lignes après source $ZSH/oh-my-zsh.sh
-        echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$zshrc"
-        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
+        echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$temp_file"
+        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$temp_file"
     fi
+
+    # Copier le reste du fichier (aliases, etc.)
+    sed -n '/^source \$ZSH\/oh-my-zsh.sh/,$p' "$zshrc" | grep -v "^source \$ZSH/oh-my-zsh.sh" >> "$temp_file"
+
+    # Remplacer le fichier original
+    mv "$temp_file" "$zshrc"
 }
 
 #------------------------------------------------------------------------------
