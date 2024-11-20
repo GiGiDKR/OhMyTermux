@@ -678,7 +678,7 @@ install_plugin() {
 #------------------------------------------------------------------------------
 update_zshrc() {
     local plugins=("$@")
-    local default_plugins=(git command-not-found copyfile node npm vscode web-search timer)
+    local default_plugins=(git z command-not-found copyfile node npm vscode web-search timer)
     plugins+=("${default_plugins[@]}")
 
     # Supprimer les doublons et zsh-completions de la liste des plugins
@@ -709,15 +709,11 @@ update_zshrc() {
     fi
 
     # Autres plugins ZSH
-    if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
-        local source_line=$(grep -n "source.*oh-my-zsh.sh" "$ZSHRC" | cut -d: -f1)
-        sed -i "${source_line}d" "$ZSHRC"
-        sed -i "${source_line}i\\${new_plugins_section}\n" "$ZSHRC"
-        sed -i "${source_line}i\\# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" "$ZSHRC"
-    else
-        echo -e "\n${new_plugins_section}" >> "$ZSHRC"
-        echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
-    fi
+    sed -i '/^plugins=(/,/^)/d' "$ZSHRC"
+    sed -i '/^# Load oh-my-zsh/d' "$ZSHRC"
+    sed -i '/^source.*oh-my-zsh.sh/d' "$ZSHRC"
+    printf "%b\n" "${new_plugins_section}" >> "$ZSHRC"
+    echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
 }
 
 #------------------------------------------------------------------------------
