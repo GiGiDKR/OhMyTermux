@@ -278,10 +278,10 @@ show_banner() {
 
 # Fonction pour sauvegarder les fichiers
 create_backups() {
-    local backup_dir="$HOME/backup"
+    local backup_dir="$HOME/.backup"
     
     # Création du répertoire de sauvegarde
-    execute_command "mkdir -p \"$backup_dir\"" "Création du répertoire ~/backup"
+    execute_command "mkdir -p \"$backup_dir\"" "Création du répertoire ~/.backup"
 
     # Liste des fichiers à sauvegarder
     local files_to_backup=(
@@ -539,9 +539,9 @@ install_shell() {
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
-        mapfile -t plugins_to_install < <(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --height=9 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder" "Tout installer")
+        mapfile -t plugins_to_install < <(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --height=8 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder" "Tout installer")
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
-            plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
+            plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
         fi
     else
         echo "Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :"
@@ -550,9 +550,8 @@ install_zsh_plugins() {
         info_msg "2) zsh-syntax-highlighting"
         info_msg "3) zsh-completions"
         info_msg "4) you-should-use"
-        info_msg "5) zsh-abbr"
-        info_msg "6) zsh-alias-finder"
-        echo "7) Tout installer"
+        info_msg "5) zsh-alias-finder"
+        info_msg "6) Tout installer"
         echo
         printf "${COLOR_GOLD}Entrez les numéros des plugins : ${COLOR_RESET}"
         tput setaf 3
@@ -564,9 +563,8 @@ install_zsh_plugins() {
                 2) plugins_to_install+=("zsh-syntax-highlighting") ;;
                 3) plugins_to_install+=("zsh-completions") ;;
                 4) plugins_to_install+=("you-should-use") ;;
-                5) plugins_to_install+=("zsh-abbr") ;;
-                6) plugins_to_install+=("zsh-alias-finder") ;;
-                7) plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-abbr" "zsh-alias-finder")
+                5) plugins_to_install+=("zsh-alias-finder") ;;
+                6) plugins_to_install=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
                 break
                 ;;
             esac
@@ -590,7 +588,6 @@ install_plugin() {
         "zsh-syntax-highlighting") plugin_url="https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
         "zsh-completions") plugin_url="https://github.com/zsh-users/zsh-completions.git" ;;
         "you-should-use") plugin_url="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
-        "zsh-abbr") plugin_url="https://github.com/olets/zsh-abbr.git" ;;
         "zsh-alias-finder") plugin_url="https://github.com/akash329d/zsh-alias-finder.git" ;;
     esac
 
@@ -627,8 +624,13 @@ update_zshrc() {
     if $has_completions; then
         # Vérifier si fpath+ existe déjà
         if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
-            # Insérer fpath+ au début du fichier
-            sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+            if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
+                # Ajouter avant la ligne source
+                sed -i "/source.*oh-my-zsh.sh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$ZSHRC"
+            else
+                # Ajouter au début du fichier
+                sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+            fi
         fi
     fi
 
