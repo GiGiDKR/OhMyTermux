@@ -779,7 +779,8 @@ alias show="nala show"' >> "$ZSHRC"
 
 # Définition des alias communs
 common_alias() {
-aliases="alias ..=\"cd ..\"
+aliases="
+alias ..=\"cd ..\"
 alias ...=\"cd ../..\"
 alias ....=\"cd ../../..\"
 alias .....=\"cd ../../../..\"
