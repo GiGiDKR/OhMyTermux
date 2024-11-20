@@ -676,7 +676,7 @@ update_zshrc() {
     local default_plugins=(git z command-not-found copyfile node npm vscode web-search timer)
     plugins+=("${default_plugins[@]}")
 
-    # Supprimer les doublons et trier les plugins
+    # Supprimer les doublons et zsh-completions de la liste des plugins
     readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | grep -v "zsh-completions" | sort -u)
 
     # Vérifier si zsh-completions est dans la liste originale des plugins
@@ -685,44 +685,35 @@ update_zshrc() {
         has_completions=true
     fi
 
-    # Vérifier si p10k est déjà configuré
-    local has_p10k=false
-    if grep -q "p10k configure" "$ZSHRC"; then
-        has_p10k=true
-    fi
+    # Créer la nouvelle section plugins
+    local new_plugins_section="plugins=(\n"
+    for plugin in "${unique_plugins[@]}"; do
+        new_plugins_section+="    $plugin\n"
+    done
+    new_plugins_section+=")"
 
-    # Créer un fichier temporaire
-    local temp_file=$(mktemp)
-
-    # Copier tout le contenu jusqu'à la section des plugins
-    sed '/^fpath+=/,$d' "$ZSHRC" > "$temp_file"
-    echo >> "$temp_file"
-
-    # Ajouter fpath+ si zsh-completions est installé
     if $has_completions; then
-        echo 'fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' >> "$temp_file"
-        echo >> "$temp_file"
+        if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
+            if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
+                sed -i "/source.*oh-my-zsh.sh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$ZSHRC"
+            else
+                sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+            fi
+        fi
     fi
 
-    # Ajouter la nouvelle section plugins
-    echo "plugins=(" >> "$temp_file"
-    printf "    %s\n" "${unique_plugins[@]}" >> "$temp_file"
-    echo ")" >> "$temp_file"
-    echo >> "$temp_file"
+    # Supprimer les anciennes configurations
+    sed -i '/^plugins=(/,/^)/d' "$ZSHRC"
+    sed -i '/^# Load oh-my-zsh/d' "$ZSHRC"
+    sed -i '/^source.*oh-my-zsh.sh/d' "$ZSHRC"
+    sed -i '/^# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh./d' "$ZSHRC"
+    sed -i '/^\[\[ ! -f ~/.p10k.zsh \]\] || source ~/.p10k.zsh/d' "$ZSHRC"
 
-    # Ajouter les configurations finales
-    echo "# Load oh-my-zsh" >> "$temp_file"
-    echo "source \$ZSH/oh-my-zsh.sh" >> "$temp_file"
-
-    # Ajouter la configuration p10k seulement si elle existait déjà
-    if $has_p10k; then
-        echo >> "$temp_file"
-        echo "# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$temp_file"
-        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$temp_file"
-    fi
-
-    # Remplacer le fichier original
-    mv "$temp_file" "$ZSHRC"
+    # Ajouter les nouvelles configurations
+    printf "%b\n" "${new_plugins_section}" >> "$ZSHRC"
+    echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
+    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
 }
 
 #------------------------------------------------------------------------------
