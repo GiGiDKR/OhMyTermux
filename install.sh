@@ -410,12 +410,9 @@ configure_termux() {
     termux_dir="$HOME/.termux"
 
     # Configuration de colors.properties
-    #FIX 
-    #file_path="$termux_dir/colors.properties"
-    file_path="$termux_dir/colors.properties.debug"
+    file_path="$termux_dir/colors.properties"
     if [ ! -f "$file_path" ]; then
-        mkdir -p "$termux_dir"
-        cat > "$file_path" << 'EOL'
+        execute_command "mkdir -p \"$termux_dir\" && cat > \"$file_path\" << 'EOL'
 ## Name: TokyoNight
 # Special
 foreground = #c0caf5
@@ -448,20 +445,18 @@ color15 = #c0caf5
 # Other
 color16 = #ff9e64
 color17 = #db4b4b
-EOL
-        success_msg "Installation du thème TokyoNight"
+EOL" "Installation du thème TokyoNight"
     fi
 
     # Configuration de termux.properties
     file_path="$termux_dir/termux.properties"
     if [ ! -f "$file_path" ]; then
-        cat > "$file_path" << 'EOL'
+        execute_command "cat > \"$file_path\" << 'EOL'
 allow-external-apps = true
 use-black-ui = true
 bell-character = ignore
 fullscreen = true
-EOL
-        success_msg "Configuration des propriétés Termux"
+EOL" "Configuration des propriétés Termux"
     fi
     
     # Suppression de la bannière de connexion
@@ -707,9 +702,14 @@ update_zshrc() {
         fi
     fi
 
+    # Supprimer les anciennes configurations
     sed -i '/^plugins=(/,/^)/d' "$ZSHRC"
     sed -i '/^# Load oh-my-zsh/d' "$ZSHRC"
     sed -i '/^source.*oh-my-zsh.sh/d' "$ZSHRC"
+    sed -i '/^# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh./d' "$ZSHRC"
+    sed -i '/^\[\[ ! -f ~/.p10k.zsh \]\] || source ~/.p10k.zsh/d' "$ZSHRC"
+
+    # Ajouter les nouvelles configurations
     printf "%b\n" "${new_plugins_section}" >> "$ZSHRC"
     echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
     echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
@@ -1030,10 +1030,20 @@ get_username() {
 # INSTALLATION DES UTILITAIRES
 #------------------------------------------------------------------------------
 install_utils() {
-    if $INSTALL_UTILS; then
+    if [ "$INSTALL_UTILS" = true ]; then
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
+
+        get_username() {
+            user_dir="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home"
+            username=$(find "$user_dir" -maxdepth 1 -type d -printf "%f\n" | grep -v '^$' | head -n 1)
+            if [ -z "$username" ]; then
+                echo "Aucun utilisateur trouvé" >&2
+                return 1
+            fi
+            echo "$username"
+        }
 
         if ! username=$(get_username); then
             error_msg "Impossible de récupérer le nom d'utilisateur."
@@ -1070,8 +1080,8 @@ alias push="git pull && git add . && git commit -m 'mobile push' && git push"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
-        # Ajout au fichier $BASHRC
-        bashrc_content="
+        # Ajout aux fichiers $BASHRC et $ZSHRC
+        rc_content="
 get_username() {
     user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
     username=\$(find \"\$user_dir\" -maxdepth 1 -type d -printf \"%f\\n\" | grep -v '^$' | head -n 1)
@@ -1084,12 +1094,13 @@ get_username() {
 
 alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"
 "
-
-        execute_command "echo '$bashrc_content' >> '$BASHRC'" "Configuration .bashrc termux"
-
+        # Ajout au fichier $BASHRC si existant
+        if [ -f "$BASHRC" ]; then
+            execute_command "echo '$rc_content' >> '$BASHRC'" "Configuration .bashrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $BASHRC"
+        fi
         # Ajout au fichier $ZSHRC si existant
         if [ -f "$ZSHRC" ]; then
-            execute_command "echo '$bashrc_content' >> '$ZSHRC'" "Configuration .zshrc termux"
+            execute_command "echo '$rc_content' >> '$ZSHRC'" "Configuration .zshrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $ZSHRC"
         fi
     fi
 }
