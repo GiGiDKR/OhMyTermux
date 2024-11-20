@@ -697,23 +697,23 @@ update_zshrc() {
     done
     new_plugins_section+=")"
 
-    # Plugin zsh-completions
     if $has_completions; then
         if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
             if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
-                sed -i "/source.*oh-my-zsh.sh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n" "$ZSHRC"
+                sed -i "/source.*oh-my-zsh.sh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$ZSHRC"
             else
-                sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n' "$ZSHRC"
+                sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
             fi
         fi
     fi
 
-    # Autres plugins ZSH
     sed -i '/^plugins=(/,/^)/d' "$ZSHRC"
     sed -i '/^# Load oh-my-zsh/d' "$ZSHRC"
     sed -i '/^source.*oh-my-zsh.sh/d' "$ZSHRC"
     printf "%b\n" "${new_plugins_section}" >> "$ZSHRC"
-    echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
+    echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
+    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
 }
 
 #------------------------------------------------------------------------------
