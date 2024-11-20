@@ -686,16 +686,23 @@ update_zshrc() {
     local filtered_plugins=$(echo "$selected_plugins" | sed 's/zsh-completions//')
     local all_plugins="$default_plugins $filtered_plugins"
     
+    # Créer le contenu de la section plugins
+    local plugins_section="plugins=(\n"
+    for plugin in $all_plugins; do
+        plugins_section+="    $plugin\n"
+    done
+    plugins_section+=")\n"
+
     # Supprimer l'ancienne section plugins
     sed -i '/^plugins=(/,/)/d' "$zshrc"
     
     # Si la ligne source $ZSH/oh-my-zsh.sh existe
     if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
         # Insérer la section plugins juste avant
-        sed -i '/source \$ZSH\/oh-my-zsh.sh/i\plugins=(\n    '"${all_plugins// /\\n    }"'\n)\n' "$zshrc"
+        sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\$plugins_section" "$zshrc"
     else
         # Sinon, ajouter la section plugins à la fin
-        echo -e "\nplugins=(\n    ${all_plugins// /\\n    }\n)" >> "$zshrc"
+        printf "\n$plugins_section" >> "$zshrc"
     fi
 
     # Ajouter zsh-completions path si installé
