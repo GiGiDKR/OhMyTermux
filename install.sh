@@ -1,27 +1,60 @@
 #!/bin/bash
 
-# Variables globales
+#------------------------------------------------------------------------------
+# VARIABLES DE CONTROLE PRINCIPALE
+#------------------------------------------------------------------------------
+# USE_GUM: Active l'interface utilisateur interactive avec gum
 USE_GUM=false
+
+# EXECUTE_INITIAL_CONFIG: Détermine si la configuration initiale doit être exécutée
 EXECUTE_INITIAL_CONFIG=true
-SHELL_CHOICE=false
-PACKAGES_CHOICE=false
-FONT_CHOICE=false
-XFCE_CHOICE=false
+
+# VERBOSE: Active l'affichage détaillé des opérations
 VERBOSE=false
+
+#------------------------------------------------------------------------------
+# SELECTEURS DE MODULES
+#------------------------------------------------------------------------------
+# SHELL_CHOICE: Active l'installation et configuration du shell (zsh/bash)
+SHELL_CHOICE=false
+
+# PACKAGES_CHOICE: Active l'installation des paquets additionnels
+PACKAGES_CHOICE=false
+
+# FONT_CHOICE: Active l'installation des polices personnalisées
+FONT_CHOICE=false
+    
+# XFCE_CHOICE: Active l'installation de l'environnement XFCE et Debian Proot
+XFCE_CHOICE=false
+
+# FULL_INSTALL: Active l'installation complète de tous les modules sans confirmation
 FULL_INSTALL=false
 
+# ONLY_GUM: Active l'utilisation de gum pour toutes les interactions
 ONLY_GUM=true
 
-# Variables de fichiers de configuration
+#------------------------------------------------------------------------------
+# FICHIERS DE CONFIGURATION
+#------------------------------------------------------------------------------
+# Chemin vers le fichier de configuration Bash
 BASHRC="$HOME/.bashrc"
+
+# Chemin vers le fichier de configuration Zsh
 ZSHRC="$HOME/.zshrc"
 
-# Couleurs en variables
-COLOR_BLUE='\033[38;5;33m'
-COLOR_GREEN='\033[38;5;82m'
-COLOR_GOLD='\033[38;5;220m'
-COLOR_RED='\033[38;5;196m'
-COLOR_RESET='\033[0m'
+#TODO 
+# Chemin vers le fichier de configuration Fish
+#FISHRC="$HOME/.config/fish/config.fish"
+
+#------------------------------------------------------------------------------
+# CODES COULEUR POUR L'AFFICHAGE
+#------------------------------------------------------------------------------
+# Définition des codes ANSI pour la colorisation des sorties
+COLOR_BLUE='\033[38;5;33m'    # Information
+COLOR_GREEN='\033[38;5;82m'   # Succès
+COLOR_GOLD='\033[38;5;220m'   # Avertissement
+COLOR_RED='\033[38;5;196m'    # Erreur
+COLOR_RESET='\033[0m'         # Réinitialisation
 
 # Configuration de la redirection
 if [ "$VERBOSE" = false ]; then
@@ -30,7 +63,9 @@ else
     redirect=""
 fi
 
-# Fonction pour afficher l'aide
+#------------------------------------------------------------------------------
+# FONCTION D'AIDE
+#------------------------------------------------------------------------------
 show_help() {
     clear
     echo "Aide OhMyTermux"
@@ -49,7 +84,9 @@ show_help() {
     echo "  --full | -f       Installer tous les modules sans confirmation"
 }
 
-# Gestion des arguments
+#------------------------------------------------------------------------------
+# GESTION DES ARGUMENTS
+#------------------------------------------------------------------------------
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -106,7 +143,7 @@ for arg in "$@"; do
     esac
 done
 
-# Activer tous les modules si --gum est utilisé seul
+# Activer tous les modules si --gum|-g est utilisé comme seul argument
 if $ONLY_GUM; then
     SHELL_CHOICE=true
     PACKAGES_CHOICE=true
@@ -115,7 +152,9 @@ if $ONLY_GUM; then
     SCRIPT_CHOICE=true
 fi
 
-# Fonction pour afficher des messages d'information en bleu
+#------------------------------------------------------------------------------
+# AFFICHAGE DES MESSAGES D'INFORMATION
+#------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 33
@@ -124,7 +163,9 @@ info_msg() {
     fi
 }
 
-# Fonction pour afficher des messages de succès en vert
+#------------------------------------------------------------------------------
+# AFFICHAGE DES MESSAGES DE SUCCÈS
+#------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 82
@@ -133,7 +174,9 @@ success_msg() {
     fi
 }
 
-# Fonction pour afficher des messages d'erreur en rouge
+#------------------------------------------------------------------------------
+# AFFICHAGE DES MESSAGES D'ERREUR
+#------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 196
@@ -142,13 +185,17 @@ error_msg() {
     fi
 }
 
-# Fonction pour journaliser les erreurs
+#------------------------------------------------------------------------------
+# JOURNALISATION DES ERREURS
+#------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
 }
 
-# Fonction pour exécuter une commande et afficher le résultat
+#------------------------------------------------------------------------------
+# EXECUTION D'UNE COMMANDE ET AFFICHAGE DU RÉSULTAT
+#------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
     local info_msg="$2"
@@ -176,6 +223,9 @@ execute_command() {
     fi
 }
 
+#------------------------------------------------------------------------------
+# CONFIRMATION AVEC GUM
+#------------------------------------------------------------------------------
 gum_confirm() {
     local prompt="$1"
     if $FULL_INSTALL; then
@@ -185,6 +235,9 @@ gum_confirm() {
     fi
 }
 
+#------------------------------------------------------------------------------
+# SÉLECTION AVEC GUM
+#------------------------------------------------------------------------------
 gum_choose() {
     local prompt="$1"
     shift
@@ -218,7 +271,9 @@ gum_choose() {
     fi
 }
 
-# Fonction pour afficher la bannerière en mode texte
+#------------------------------------------------------------------------------
+# AFFICHAGE DE LA BANNIERE EN MODE TEXTE
+#------------------------------------------------------------------------------
 bash_banner() {
     clear
     local BANNER="
@@ -231,7 +286,9 @@ bash_banner() {
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
-# Fonction pour vérifier et installer gum
+#------------------------------------------------------------------------------
+# VÉRIFICATION ET INSTALLATION DE GUM
+#------------------------------------------------------------------------------
 check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
         bash_banner
@@ -240,10 +297,12 @@ check_and_install_gum() {
     fi
 }
 
-#FIX : Déplacer dans la fonction principale
+#FIX 
 check_and_install_gum
 
-# Fonction de gestion des erreurs
+#------------------------------------------------------------------------------
+# GESTION DES ERREURS
+#------------------------------------------------------------------------------
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -259,7 +318,9 @@ finish() {
 
 trap finish EXIT
 
-# Fonction pour afficher la bannerière en mode graphique
+#------------------------------------------------------------------------------
+# AFFICHAGE DE LA BANNIERE EN MODE GRAPHIQUE
+#------------------------------------------------------------------------------
 show_banner() {
     clear
     if $USE_GUM; then
@@ -276,7 +337,9 @@ show_banner() {
     fi
 }
 
-# Fonction pour sauvegarder les fichiers
+#------------------------------------------------------------------------------
+# SAUVEGARDE DES FICHIERS
+#------------------------------------------------------------------------------
 create_backups() {
     local backup_dir="$HOME/.backup"
     
@@ -300,7 +363,9 @@ create_backups() {
     done
 }
 
-# Fonction pour changer le répertoire de sources
+#------------------------------------------------------------------------------
+# CHANGEMENT DE DEPOT
+#------------------------------------------------------------------------------
 change_repo() {
     show_banner
     if $USE_GUM; then
@@ -314,7 +379,9 @@ change_repo() {
     fi
 }
 
-# Fonction pour configurer l'accès au stockage
+#------------------------------------------------------------------------------
+# CONFIGURATION DU STOCKAGE
+#------------------------------------------------------------------------------
 setup_storage() {
     if [ ! -d "$HOME/storage" ]; then
         show_banner
@@ -330,7 +397,9 @@ setup_storage() {
     fi
 }
 
-# Fonction pour configurer Termux
+#------------------------------------------------------------------------------
+# CONFIGURATION DE TERMUX
+#------------------------------------------------------------------------------
 configure_termux() {
 
     info_msg "❯ Configuration de Termux"
@@ -341,7 +410,7 @@ configure_termux() {
     termux_dir="$HOME/.termux"
 
     # Configuration de colors.properties
-    #FIX DEBUG
+    #FIX 
     #file_path="$termux_dir/colors.properties"
     file_path="$termux_dir/colors.properties.debug"
     if [ ! -f "$file_path" ]; then
@@ -397,14 +466,14 @@ EOL
     
     # Suppression de la bannière de connexion
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
-
     # Téléchargement de la police
     execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.1.0/files/font.ttf" "Téléchargement de la police par défaut" || error_msg "Impossible de télécharger la police par défaut"
-
     termux-reload-settings
 }
 
-# Fonction principale de configuration initiale
+#------------------------------------------------------------------------------
+# CONFIGURATION INITIALE
+#------------------------------------------------------------------------------
 initial_config() {
     change_repo
     setup_storage
@@ -424,7 +493,9 @@ initial_config() {
     fi
 }
 
-# Fonction pour installer le shell
+#------------------------------------------------------------------------------
+# INSTALLATION DU SHELL
+#------------------------------------------------------------------------------
 install_shell() {
     if $SHELL_CHOICE; then
         info_msg "❯ Configuration du shell"
@@ -466,7 +537,7 @@ install_shell() {
                     if gum_confirm "Installer Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        #FIX : DEBUG
+                        #FIX 
                         #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
@@ -475,7 +546,7 @@ install_shell() {
                     if [ "$choice" = "o" ]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        #FIX : DEBUG
+                        #FIX 
                         #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 fi
@@ -528,14 +599,16 @@ install_shell() {
             "fish")
                 info_msg "❯ Configuration de Fish"
                 execute_command "pkg install -y fish" "Installation de Fish"
-                # TODO : ajouter la configuration de Fish, de ses plugins et des alias (abbr)
+                #TODO 
                 chsh -s fish
                 ;;
         esac
     fi
 }
 
-# Fonction pour installer les plugins
+#------------------------------------------------------------------------------
+# SÉLECTION DES PLUGINS ZSH 
+#------------------------------------------------------------------------------
 install_zsh_plugins() {
     local plugins_to_install=()
     if $USE_GUM; then
@@ -578,7 +651,9 @@ install_zsh_plugins() {
     update_zshrc "${plugins_to_install[@]}"
 }
 
-# Fonction pour installer un plugin
+#------------------------------------------------------------------------------
+# INSTALLATION DES PLUGINS ZSH
+#------------------------------------------------------------------------------
 install_plugin() {
     local plugin_name=$1
     local plugin_url=""
@@ -598,7 +673,9 @@ install_plugin() {
     fi
 }
 
-# Fonction pour mettre à jour la configuration de ZSH
+#------------------------------------------------------------------------------
+# MISE À JOUR DE LA CONFIGURATION DE ZSH
+#------------------------------------------------------------------------------
 update_zshrc() {
     local plugins=("$@")
     local default_plugins=(git command-not-found copyfile node npm vscode web-search timer)
@@ -622,31 +699,30 @@ update_zshrc() {
 
     # Mettre à jour le fichier zshrc
     if $has_completions; then
-        # Vérifier si fpath+ existe déjà
         if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
-            if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
-                # Ajouter avant la ligne source
-                sed -i "/source.*oh-my-zsh.sh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$ZSHRC"
+            if grep -q "# Load oh-my-zsh" "$ZSHRC"; then
+                sed -i "/# Load oh-my-zsh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n" "$ZSHRC"
+            elif grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
+                sed -i "/source.*oh-my-zsh.sh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n" "$ZSHRC"
             else
-                # Ajouter au début du fichier
-                sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
+                sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n' "$ZSHRC"
             fi
         fi
     fi
 
     # Trouver la position de source $ZSH/oh-my-zsh.sh
     if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
-        # Si la ligne source existe, insérer la section plugins juste avant
         local source_line=$(grep -n "source.*oh-my-zsh.sh" "$ZSHRC" | cut -d: -f1)
         sed -i "${source_line}i\\${new_plugins_section}\n" "$ZSHRC"
     else
-        # Si la ligne source n'existe pas, ajouter la section plugins et la ligne source
         echo -e "\n${new_plugins_section}" >> "$ZSHRC"
         echo -e "\nsource \$ZSH/oh-my-zsh.sh\n" >> "$ZSHRC"
     fi
 }
 
-# Fonction pour installer les packages
+#------------------------------------------------------------------------------
+# INSTALLATION DES PAQUETS ADDITIONNELS
+#------------------------------------------------------------------------------
 install_packages() {
     if $PACKAGES_CHOICE; then
         info_msg "❯ Configuration des packages"
@@ -720,7 +796,7 @@ install_packages() {
                     nala)
                         add_aliases_to_rc "nala"
                         ;;
-                    # TODO : Ajout d'alias supplémentaires pour d'autres packages
+                    #TODO 
                 esac
             done
         else
@@ -729,7 +805,9 @@ install_packages() {
     fi
 }
 
-# Fonction pour ajouter des alias
+#------------------------------------------------------------------------------
+# CONFIGURATION DES ALIAS SPECIFIQUES
+#------------------------------------------------------------------------------
 add_aliases_to_rc() {
     local package=$1
     case $package in
@@ -775,11 +853,13 @@ alias list="nala list --upgradeable"
 alias show="nala show"' >> "$ZSHRC"
             fi
             ;;
-        # TODO : Ajout d'alias pour d'autres packages
+        #TODO 
     esac
 }
 
-# Définition des alias communs
+#------------------------------------------------------------------------------
+# CONFIGURATION DES ALIAS COMMUNS
+#------------------------------------------------------------------------------
 common_alias() {
 aliases="
 alias ..=\"cd ..\"
@@ -806,16 +886,16 @@ if [ -f "$ZSHRC" ]; then
     echo -e "$aliases" >> "$ZSHRC"
 fi
 
-# TODO : Ajout d'alias pour Fish
+#TODO 
 #if [ -f "$HOME/.config/fish/config.fish" ]; then
 #    # Convertir les alias bash en format fish
 #    echo "$aliases" | sed 's/alias \(.*\)="\(.*\)"/alias \1 "\2"/' >> "$HOME/.config/fish/config.fish"
 #fi
 }
 
-# TODO : Ajout de plugins pour Python
-
-# Fonction pour installer la police
+#------------------------------------------------------------------------------
+# INSTALLATION DE LA POLICE
+#------------------------------------------------------------------------------
 install_font() {
     if $FONT_CHOICE; then
         info_msg "❯ Configuration de la police"
@@ -873,7 +953,9 @@ install_font() {
 # Variable globale pour suivre si XFCE ou Proot a été installé
 INSTALL_UTILS=false
 
-# Fonction pour installer XFCE
+#------------------------------------------------------------------------------
+# INSTALLATION DE L'ENVIRONNEMENT XFCE
+#------------------------------------------------------------------------------
 install_xfce() {
     if $XFCE_CHOICE; then
         info_msg "❯ Configuration de XFCE"
@@ -910,7 +992,9 @@ install_xfce() {
     fi
 }
 
-# Fonction pour installer Proot
+#------------------------------------------------------------------------------
+# INSTALLATION DE DEBIAN PROOT
+#------------------------------------------------------------------------------
 install_proot() {
     info_msg "❯ Configuration de Proot"
     if $USE_GUM; then
@@ -932,6 +1016,9 @@ install_proot() {
     fi
 }
 
+#------------------------------------------------------------------------------
+# RECUPERATION DU NOM D'UTILISATEUR
+#------------------------------------------------------------------------------
 get_username() {
     local user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
     local username
@@ -943,7 +1030,9 @@ get_username() {
     echo "$username"
 }
 
-# Fonction pour installer les utilitaires
+#------------------------------------------------------------------------------
+# INSTALLATION DES UTILITAIRES
+#------------------------------------------------------------------------------
 install_utils() {
     if $INSTALL_UTILS; then
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
@@ -1009,7 +1098,9 @@ alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"
     fi
 }
 
-# Fonction pour installer Termux-X11
+#------------------------------------------------------------------------------
+# INSTALLATION DE TERMUX-X11
+#------------------------------------------------------------------------------
 install_termux_x11() {
     info_msg "❯ Configuration de Termux-X11"
     local file_path="$HOME/.termux/termux.properties"
@@ -1055,15 +1146,17 @@ EOL
     fi
 }
 
-# Fonction principale
+#------------------------------------------------------------------------------
+# FONCTION PRINCIPALE
+#------------------------------------------------------------------------------
 show_banner
 if $EXECUTE_INITIAL_CONFIG; then
     initial_config
 fi
 if $USE_GUM; then
-    execute_command "pkg install -y ncurses-utils" "Installation des pré-requis"
+    execute_command "pkg install -y ncurses-utils" "Installation des dépendances"
 else
-    execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des pré-requis"
+    execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des dépendances"
 fi
 install_shell
 install_packages
