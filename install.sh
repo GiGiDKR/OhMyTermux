@@ -689,18 +689,24 @@ update_zshrc() {
     # Supprimer l'ancienne section plugins
     sed -i '/^plugins=(/,/)/d' "$zshrc"
     
-    # Ajouter la nouvelle section plugins
-    echo -e "\nplugins=(\n    ${all_plugins// /\\n    }\n)" >> "$zshrc"
+    # Si la ligne source $ZSH/oh-my-zsh.sh existe
+    if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
+        # Insérer la section plugins juste avant
+        sed -i '/source \$ZSH\/oh-my-zsh.sh/i\plugins=(\n    '"${all_plugins// /\\n    }"'\n)\n' "$zshrc"
+    else
+        # Sinon, ajouter la section plugins à la fin
+        echo -e "\nplugins=(\n    ${all_plugins// /\\n    }\n)" >> "$zshrc"
+    fi
 
     # Ajouter zsh-completions path si installé
     if [ "$has_completions" = "true" ]; then
         # Si la ligne source $ZSH/oh-my-zsh.sh existe
         if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
             # Insérer fpath+ juste avant
-            sed -i '/source \$ZSH\/oh-my-zsh.sh/i\# Loadzsh-completions\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src\n' "$zshrc"
+            sed -i '/source \$ZSH\/oh-my-zsh.sh/i\# Ajout du chemin pour zsh-completions\nfpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}\/custom}\/plugins\/zsh-completions\/src\n' "$zshrc"
         else
             # Sinon, ajouter à la fin avec source $ZSH/oh-my-zsh.sh
-            echo -e "\n# Load zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
+            echo -e "\n# Ajout du chemin pour zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
         fi
     else
         # Si zsh-completions n'est pas installé mais que source $ZSH/oh-my-zsh.sh n'existe pas
