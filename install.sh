@@ -499,7 +499,7 @@ install_shell() {
                     printf "${COLOR_BLUE}Installer PowerLevel10k ? (o/n) : ${COLOR_RESET}"
                     read -r choice
                     if [ "$choice" = "o" ]; then
-                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" --quiet || true" "Installation de PowerLevel10k"
+                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}"
