@@ -193,7 +193,7 @@ main() {
     execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
     # Téléchargement du fond d'écran
-    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/files/waves.png" "Téléchargement du fond d'écran"
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/src/waves.png" "Téléchargement du fond d'écran"
     execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
 
     # Téléchargement du thème
@@ -205,7 +205,7 @@ main() {
     execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
     # Téléchargement de la pré-configuration
-    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.9/files/config.zip" "Téléchargement de la configuration XFCE"
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.1.0/src/config.zip" "Téléchargement de la configuration XFCE"
         execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
     }
 

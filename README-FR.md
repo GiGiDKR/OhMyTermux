@@ -1,3 +1,5 @@
+![Logo OhMyTermux](assets/logo.jpg)
+
 # OhMyTermux 🧊
 
 **Installation automatisée et personnalisée de [Termux](https://github.com/termux) : packages, shell, plugins, prompts, polices et thèmes sélectionnables.** 👀
