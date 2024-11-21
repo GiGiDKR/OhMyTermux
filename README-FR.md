@@ -60,7 +60,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
 - [git](https://github.com/git/git)
-- [zsh](https://github.com/zsh-users/zsh)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
 ### 🧊 **Packages sélectionnables individuellement**
@@ -117,7 +116,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -
 
 ### 🧊 **Configuration de Termux :**
 
-- Alias personnalisés
+- Alias personnalisés (alias communs + alias spécifiques selon le package ou le plugin installé)
 - Lien symbolique vers les répertoires utilisateur du stockage interne [^1]
 
 ### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1]

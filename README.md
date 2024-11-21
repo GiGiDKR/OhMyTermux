@@ -59,7 +59,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
 - [git](https://github.com/git/git)
-- [zsh](https://github.com/zsh-users/zsh)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
 #### 🧊 **Individually selectable packages**
@@ -95,7 +94,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -
     - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
     - [zsh-completions](https://github.com/zsh-users/zsh-completions)
     - [zsh-you-should-use](https://github.com/MichaelAquilina/zsh-you-should-use)
-    - [zsh-abbr](https://github.com/olets/zsh-abbr)
     - [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
 
   ##### 🧊 **Fish configuration [^1]**
@@ -118,7 +116,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -
 
   #### 🧊 **Termux configuration**
 
-- Custom aliases
+- Custom aliases (common aliases + specific aliases depending on the package or plugin installed)
 - Symlink to internal storage user directories [^1]
 
   #### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1]
