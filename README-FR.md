@@ -1,39 +1,38 @@
 ![Logo OhMyTermux](assets/logo.jpg)
 
+> [!CAUTION]
+> :warning: Ce projet est en cours de développement, utilisez-le à vos propres risques.
+> 
+> :construction: État actuel du projet : **beta v1** <sup>(en développement)</sup>
+> 
+> :information_source: *Je ne suis qu'un programmeur amateur avec quelques compétences en administration système, donc j'apprends de mes erreurs que vous verrez* 👀
+
+
 # OhMyTermux 🧊
 
-**Installation automatisée et personnalisée de [Termux](https://github.com/termux) : packages, shell, plugins, prompts, polices et thèmes sélectionnables.** 👀
+**Installation automatisée et personnalisée de [Termux](https://github.com/termux) : paquets, shell, plugins, prompts, polices et thèmes sélectionnables.**
 
-Installation optionnelle de :
-- **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README-FR.md#-xfce-and-debian-)** : Une distribution proot [Debian](https://www.debian.org/) personnalisée avec un bureau [XFCE](https://www.xfce.org/) et un [App-Installer](https://github.com/GiGiDKR/App-Installer) afin d'obtenir des logiciels non-disponible avec le gestionnaire de paquets.
+<details>
 
-- **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : Une collection de scripts exécutables depuis le script principal ou ultérieurement. [^1]
+<summary>Liste des installations optionnelles</summary>
 
-- **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Synchroniser Obsidian sur Android en utilisant Termux et Git. [^1]
+- **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-et-debian-)** : Un [Debian](https://www.debian.org/) proot-distro personnalisé avec un bureau [XFCE](https://www.xfce.org/) et un **[App-Installer](https://github.com/GiGiDKR/App-Installer)** qui ne sont pas disponibles dans le gestionnaire de paquets.
 
-> [!CAUTION]
-> ⚠️ Ce projet est en développement, utilisez-le à vos propres risque
->
-> Les différentes branches du dépôt ne sont actuellement pas à jour. 
->
-> Veuillez attendre la version 1.1 avant d'utiliser ce projet ou vérifiez le code avant de l'exécuter.
+- **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : Une collection de scripts utiles, exécutables depuis le script principal ou ultérieurement. [^1]
 
-> [!IMPORTANT]
-> 🚩 Pour faciliter l'avancement, la langue française est privilégiée pour fournir l'interface en ligne de commande.
-> 
-> Une version Anglaise de ce texte est [disponible](README.md).
+- **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Synchronisez Obsidian sur Android en utilisant Termux et Git. [^1]
+
+</details>
 
 ## Installation
 
-🧊 Pour installer **OhMyTermux** 
+🧊 Pour installer **OhMyTermux**
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
-> [!TIP]
-> **[Gum](https://github.com/charmbracelet/gum)** permet une utilisation simplifiée des scripts CLI comme la sélection multiple avec Espace.
-> 
-> Il est recommandé de l'utiliser en ajoutant le paramètre `--gum` ou `-g` à la commande.
+>[!IMPORTANT]
+> **[Gum](https://github.com/charmbracelet/gum) permet une utilisation simplifiée des scripts CLI, _il est recommandé_ de l'utiliser en ajoutant l'argument `--gum` ou `-g`.**
 
 🔥 Pour installer **OhMyTermux** avec **[Gum](https://github.com/charmbracelet/gum)**
 ```bash
@@ -41,28 +40,33 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -
 ```
 
 >[!NOTE]
-> Il est possible d'exécuter une seule fonction du script en utilisant l'argument correspondant :
-> - Istallation du shell : `--shell` or `-sh`
-> - Intallation des paquets : `--package` or `-pkg`
-> - Installation de la police : `--font` or `-f`
-> - XFCE / Debian-Proot : `--xfce` or `-x`
-> - OhMyTermuxScript : `--script` or `-sc`
-> - Passer la configuration initiale : `--skip` or `-sk`
->
-> **Plusieurs arguments peuvent être combinés.**
-> 
-> - Pour obtenir de l'aide sur une fonction spécifique, utilisez l'argument `-h` ou `--help`.
+> Il est possible de sélectionner les fonctions indépendamment (et de les combiner) :
+> - Installation du shell : `--shell | sh`
+> - Installation des paquets : `--package | pkg`
+> - Installation des polices : `--font | f`
+> - XFCE / Debian-Proot : `--xfce | -x`
+> - Ignorer la configuration initiale : `--skip` ou `-sk`
+> - :fuelpump: Installation complète : `--full | -f`
+> - Afficher les sorties détaillées : `--verbose | -v`
+> - Section d'aide : `--help | -h`
+&nbsp;
 
-## À propos de ce programme
+### À propos de ce programme 
 
-### 🧊 **Packages installés par défaut**
+<details>
+
+<summary>🧊 Paquets installés par défaut</summary>
 
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
 - [git](https://github.com/git/git)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
-### 🧊 **Packages sélectionnables individuellement**
+</details>
+
+<details>
+
+<summary>🧊 Paquets sélectionnables individuellement</summary>
 
 - [nala](https://github.com/volitank/nala)
 - [eza](https://github.com/eza-community/eza)
@@ -81,175 +85,249 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -
 - [lazygit](https://github.com/jesseduffield/lazygit)
 - [open-ssh](https://www.openssh.com/)
 
-### 🧊 **Sélection du shell**
+</details>
+
+<details>
+
+<summary>🧊 Sélection du shell</summary>
 
 - [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
 - [ZSH](https://www.zsh.org/)
 - [Fish](https://github.com/fish-shell/fish-shell)
 
-#### 🧊 **Configuration ZSH**
+</details>
+
+<details>
+
+<summary>🧊🧊 Configuration Zsh</summary>
 
 - [Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)
 - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
 - [zsh-completions](https://github.com/zsh-users/zsh-completions)
 - [zsh-you-should-use](https://github.com/MichaelAquilina/zsh-you-should-use)
-- [zsh-abbr](https://github.com/olets/zsh-abbr)
 - [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
 
-#### 🧊 **Configuration Fish [^1]**
+</details>
 
-- ~~[Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)~~
-- ~~[Fisher](https://github.com/jorgebucaran/fisher)~~
-- ~~[Pure](https://github.com/pure-fish/pure)~~
-- ~~[Fishline](https://github.com/0rax/fishline)~~
-- ~~[Virtualfish](https://github.com/justinmayer/virtualfish)~~
-- ~~[Fish Abbreviation Tips](https://github.com/gazorby/fish-abbreviation-tips)~~
-- ~~[Bang-Bang](https://github.com/oh-my-fish/plugin-bang-bang)~~
-- ~~[Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)~~
-- ~~[Catppuccin for Fish](https://github.com/catppuccin/fish)~~
+<details>
 
-### 🧊 **Configuration de l'affichage Termux :**
+<summary>🧊🧊 Configuration Fish</summary>
+
+- [Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)
+- [Fisher](https://github.com/jorgebucaran/fisher)
+- [Pure](https://github.com/pure-fish/pure)
+- [Fishline](https://github.com/0rax/fishline)
+- [Virtualfish](https://github.com/justinmayer/virtualfish)
+- [Fish Abbreviation Tips](https://github.com/gazorby/fish-abbreviation-tips)
+- [Bang-Bang](https://github.com/oh-my-fish/plugin-bang-bang)
+- [Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)
+- [Catppuccin pour Fish](https://github.com/catppuccin/fish)
+
+</details>
+
+<details>
+
+<summary>🧊 Affichage Termux</summary>
 
 - [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
-- [Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
+- [Schémas de couleurs](https://github.com/mbadolato/iTerm2-Color-Schemes)
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
-### 🧊 **Configuration de Termux :**
+</details>
 
-- Alias personnalisés (alias communs + alias spécifiques selon le package ou le plugin installé)
-- Lien symbolique vers les répertoires utilisateur du stockage interne [^1]
+<details>
 
-### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1]
+<summary>🧊 Configuration Termux</summary>
 
-- Sélecteur de thèmes
+- Alias personnalisés (alias communs + alias spécifiques selon le paquet ou le plugin installé)
+- Lien symbolique vers les répertoires utilisateur du stockage interne
+
+</details>
+
+<details>
+
+<summary>🧊 OhMyTermuxScript</summary>
+
+- Sélecteur de thème
 - Installateur de Nerd Fonts
-- App-Installer (VSCode, PyCharm, Obsidian...) [^2]
-- Bureau XFCE4 natif de Termux sur Termux-X11 [^1]
+- App-Installer (VSCode, PyCharm, Obsidian...)
+- Bureau XFCE4 natif Termux sur Termux-X11
 - Oh-My-Zsh [^2]
 - Oh-My-Posh [^1]
 - Electron Node.js
 - XDRP (Termux natif ou proot-distro)
 
-[^1]: À venir dans la version 1.1 avec l'intégration complète de OhMyTermuxScript
-[^2]: Intégration optionnelle dans le script principal
+</details>
+
+[^1]: En développement : à venir dans la version 1.0
+[^2]: Intégré en option dans le script principal
+[^3]: En développement (pas de date de sortie prévue)
+
+&nbsp;
 
 ## **XFCE et Debian**
 
-Configure un bureau XFCE et une installation proot Debian.
-
-Cette configuration utilise Termux-X11, le serveur termux-x11 sera installé et vous serez invité à autoriser Termux à installer l'APK.
-
+Configurez un bureau XFCE termux et une installation Debian proot.
+Cette configuration utilise Termux-X11, le serveur termux-x11 sera installé et il vous sera demandé d'autoriser termux à installer l'APK Android.
 Vous n'avez qu'à choisir votre nom d'utilisateur et suivre les instructions.
 
 > [!IMPORTANT]
-> L'installation nécessite 4 Go
+> Cela prendra environ 4 Go d'espace de stockage
 
-### 🧊 Démarrer le bureau
+<details>
 
-Vous recevrez une notification pour autoriser les installations depuis termux, cela ouvrira l'APK pour l'application Android Termux-X11. Bien que vous n'ayez pas besoin d'autoriser les installations depuis termux, vous devrez tout de même l'installer manuellement en utilisant un explorateur de fichiers et en trouvant l'APK dans votre dossier de téléchargements.
+<summary>🧊 Démarrer le bureau</summary>
 
-Utilisez la commande ```start``` pour initier une session Termux-X11.
+Vous recevrez une fenêtre contextuelle pour autoriser les installations depuis termux, cela ouvrira l'APK pour l'application Android Termux-X11. Bien que vous n'ayez pas à autoriser les installations depuis termux, vous devrez quand même installer manuellement en utilisant un explorateur de fichiers et en trouvant l'APK dans votre dossier de téléchargements.
 
-Cela démarrera le serveur termux-x11, le bureau XFCE4 et ouvrira l'application Termux-X11 directement sur le bureau.
+Utilisez la commande ```start``` pour lancer une session Termux-X11.
 
-Pour entrer dans l'installation proot Debian depuis le terminal, utilisez la commande ```debian```
+Cela démarrera le serveur termux-x11, le bureau XFCE4 et ouvrira l'application Termux-X11 directement dans le bureau.
 
-Notez également que vous n'avez pas besoin de définir l'affichage dans le proot Debian car il est déjà configuré. Cela signifie que vous pouvez utiliser le terminal pour démarrer n'importe quelle application GUI et elle se lancera.
+Pour entrer dans l'installation Debian proot depuis le terminal, utilisez la commande ```debian```
 
-### 🧊 Debian Proot
+Notez également que vous n'avez pas besoin de définir l'affichage dans Debian proot car il est déjà configuré. Cela signifie que vous pouvez utiliser le terminal pour démarrer n'importe quelle application GUI et elle démarrera.
 
-Pour entrer dans le proot, utilisez la commande ```debian```, à partir de là, vous pouvez installer des logiciels supplémentaires avec apt et utiliser cp2menu dans termux pour copier les éléments de menu dans le menu xfce de termux.
+</details>
 
-Deux scripts sont également disponibles pour cette configuration :
+<details>
 
-```prun``` En exécutant cela suivi d'une commande que vous souhaitez exécuter depuis l'installation proot Debian, vous pourrez exécuter des choses depuis le terminal termux sans exécuter ```debian``` pour entrer dans le proot lui-même.
+<summary>🧊 Debian Proot</summary>
 
-```cp2menu``` En exécutant cela, une fenêtre s'ouvrira vous permettant de copier des fichiers .desktop depuis le proot Debian dans le menu "démarrer" de termux xfce afin que vous n'ayez pas besoin de les lancer depuis le terminal. Un lanceur est disponible dans la section du menu Système.
+Pour entrer dans proot, utilisez la commande ```debian```, à partir de là, vous pouvez installer des logiciels supplémentaires avec apt et utiliser cp2menu dans termux pour copier les éléments du menu vers le menu xfce de termux.
+
+Il existe deux scripts disponibles pour cette configuration :
+
+```prun``` En exécutant ceci suivi d'une commande que vous souhaitez exécuter depuis l'installation debian proot, vous pourrez exécuter des choses depuis le terminal termux sans avoir à exécuter ```debian``` pour entrer dans le proot lui-même.
+
+```cp2menu``` En exécutant ceci, une fenêtre apparaîtra vous permettant de copier les fichiers .desktop du proot debian dans le menu "démarrer" de termux xfce afin que vous n'ayez pas besoin de les lancer depuis le terminal. Un lanceur est disponible dans la section menu Système.
+
+</details>
+
+&nbsp;
 
 > [!WARNING]
-> ***Process completed (signal 9) - press Enter***
->
-> Vous devez exécuter cette commande adb pour corriger l'erreur du processus 9 qui force la fermeture de Termux :
-> ```
-> adb shell "/system/bin /device_config put activity_manager max_phantom_processes 2147483647"
-> ```
-> Pour le faire sans utiliser de PC, vous avez plusieurs solutions :
->
-> Tout d'abord, connectez-vous au WIFI.
->
-> **Méthode 1 :**
->
-> Installez adb dans Termux en exécutant ce code :
-> ```
-> pkg install android-tools -y
-> ```
-> Ouvrez ensuite les paramètres et activez les options du développeur en sélectionnant "À propos du téléphone", puis appuyez 7 fois sur "Build".
->
-> Sortez de ce menu et accédez aux options du développeur, activez le débogage sans fil et cliquez dessus pour obtenir le numéro de port. Ensuite, cliquez sur "Pair device" pour obtenir le code d'appairage.
->
-> Mettez les paramètres en mode écran partagé.
->
-> Sélectionnez Termux et dans les paramètres, sélectionnez appairer avec un code. Saisissez `adb pair` puis entrez vos informations d'appairage.
->
-> Une fois ce processus terminé, saisissez `adb connect` pour vous connecter avec l'adresse IP et le port fournis dans le menu de débogage sans fil.
->
-> Enfin, exécutez la commande
-> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
->
-> **Méthode 2 :**
->
-> Installez LADB depuis [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) ou depuis [GitHub](https: //github.com/hyperio546/ladb-builds/releases).
->
-> En écran partagé, ayez un côté LADB et l'autre côté affichant les paramètres du développeur.
->
-> Dans les paramètres du développeur, activez le débogage sans fil, puis cliquez dessus pour obtenir le numéro de port, puis cliquez sur associer l'appareil pour obtenir le code d'association.
->
-> Entrez ces deux valeurs dans LADB.
->
-> Une fois connecté, exécutez la commande
-> > ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+> **Processus terminé (signal 9) - appuyez sur Entrée**
+
+<details>
+
+<summary>Comment corriger cette erreur Termux</summary>
+
+Vous devez exécuter cette commande adb pour corriger l'erreur du processus 9 qui forcera la fermeture de Termux :
+```
+adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"
+```
+Pour faire cela sans utiliser un PC, vous avez plusieurs méthodes :
+D'abord, connectez-vous au WIFI.
+
+**Méthode 1 :**
+Installez adb dans Termux en exécutant ce code :
+```
+pkg install android-tools -y
+```
+Ensuite, ouvrez les paramètres et activez les options développeur en sélectionnant "À propos du téléphone" puis appuyez sur "Build" 7 fois.
+
+Revenez en arrière et allez dans les options développeur, activez le débogage sans fil puis cliquez dessus pour obtenir le numéro de port puis cliquez sur appairer l'appareil pour obtenir le code d'appairage.
+
+Mettez les paramètres en mode écran partagé en appuyant sur le bouton carré en bas à droite de votre téléphone, et maintenez l'icône des paramètres jusqu'à ce que l'icône d'écran partagé apparaisse.
+
+Puis sélectionnez Termux et dans les paramètres sélectionnez appairer avec un code. Dans Termux tapez `adb pair` puis entrez vos informations d'appairage.
+
+Après avoir terminé ce processus, vous pouvez taper adb connect et vous connecter à votre téléphone avec l'ip et le port fournis dans le menu de débogage sans fil. Vous pouvez ensuite exécuter la commande de correction :
+
+```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+
+**Méthode 2 :**
+
+Installez LADB depuis le [Playstore](https://play.google.com/store/apps/details?id=com.draco.ladb) ou depuis [GitHub](https://github.com/hyperio546/ladb-builds/releases).
+
+En écran partagé, ayez d'un côté LADB et de l'autre les paramètres développeur.
+Dans les paramètres développeur, activez le débogage sans fil puis cliquez dessus pour obtenir le numéro de port puis cliquez sur appairer l'appareil pour obtenir le code d'appairage.
+Entrez ces deux valeurs dans LADB.
+Une fois connecté, exécutez la commande de correction :
+
+```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
+
+</details>
+
+&nbsp;
 
 ## 💻 Historique des versions
 
-- Version 1.0.0 :
-  - Téléchargement initial
-- Version 1.0.1 :
-  - Modifications de l'interface en ligne de commande
-  - Installation de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
-- Version 1.0.2 :
-  ~~- Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)~~ (Retour arrière)
-- Version 1.0.3 :
-  - Optimisation du système d'alias selon la sélection de paquets et de shell
-- Version 1.0.4 :
-  - Ajout de paquets sélectionnables à la liste
-- Version 1.0.5 :
-    - Gestion dynamique de la configuration de .zshrc
-- Version 1.0.6 :
-    - Modification globale du script principal en divisant chaque étape en une fonction exécutable seule (ou combinée avec d'autres) avec l'ajout d'un argument à la commande d'exécution
-- Version 1.0.7 :
-    - Ajout de l'argument `--shell` pour installer un shell
-    - Ajout de l'argument `--package` pour installer des paquets
-    - Ajout de l'argument `--xfce` pour installer XFCE et Debian proot
-    - Ajout de l'argument `--font` pour installer des polices
-    - Ajout de l'argument `--script` pour installer [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]
-    - Ajout de l'argument `--skip` pour passer la configuration initiale
-- Version 1.0.8 :
-    - Correction de bugs et améliorations
-- Version 1.0.9 :
-    - Amélioration globale du script
-    - Ajout de la création d'un mot de passe pour l'utilisateur Debian proot
-    - Implémentation d'un exécution non-verbeuse lorsque gum n'est pas utilisé
-    - Implémentation d'un système pour afficher le résultat de l'exécution des commandes (succès/échec)
-- Version 1.1 :
-  - En développement
+<details>
+<summary>Version 0.0.1</summary>
+Upload initial
+</details>
+
+<details>
+<summary>Version 0.0.2</summary>
+Modifications de l'interface en ligne de commande
+</details>
+
+<details>
+<summary>Version 0.0.3</summary>
+~~Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)~~ (Retour en arrière)
+</details>
+
+<details>
+<summary>Version 0.0.4</summary>
+Optimisation du système d'alias selon la sélection des paquets et du shell
+</details>
+
+<details>
+<summary>Version 0.0.5</summary>
+Ajout de paquets à la liste sélectionnable
+</details>
+
+<details>
+<summary>Version 0.0.6</summary>
+Gestion dynamique de la configuration .zshrc
+</details>
+
+<details>
+<summary>Version 0.0.7</summary>
+Modification globale du script principal en divisant chaque étape en une fonction pouvant être exécutée seule (ou combinée avec d'autres) avec l'ajout d'un argument à la commande d'exécution
+</details>
+
+<details>
+<summary>Version 0.0.8</summary>
+
+- Ajout de l'argument `--shell` pour installer un shell
+- Ajout de l'argument `--package` pour installer des paquets
+- Ajout de l'argument `--xfce` pour installer XFCE et Debian proot
+- Ajout de l'argument `--font` pour installer des polices
+- ~~Ajout de l'argument `--script` pour installer [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]~~ (Retour en arrière)
+- Ajout de l'argument `--skip` pour ignorer la configuration initiale
+</details>
+
+<details>
+<summary>Version 0.0.9</summary>
+Corrections de bugs et améliorations
+</details>
+
+<details>
+<summary>Version 1.0.0</summary>
+- Amélioration globale du script
+- Ajout de la création d'un mot de passe pour l'utilisateur Debian proot
+- Implémentation d'une exécution non verbeuse lorsque gum n'est pas utilisé
+- Implémentation d'un système d'affichage du résultat de l'exécution des commandes (succès/échec)
+- :checkered_flag: Le reste est en développement
+</details>
+
+&nbsp;
 
 ## 📖 À faire
-
-- [X] Installation de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
-- [ ] Execution de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
+- [ ] Intégration de [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
 - [ ] Intégration de [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 - [ ] Intégrer la configuration Fish (Plugins, Prompts, Alias)
-- [ ] Ajouter plus de packages sélectionnables et de modules Python
-- [ ] Intégrer dans le script principal la sélection de thèmes (Schémas de couleurs)
-- [ ] Séparer l'installation XFCE / Debian pour exécuter XFCE natif de Termux
+- [ ] Ajouter plus de paquets et modules Python sélectionnables
+- [ ] Intégrer dans le script principal la sélection de thème (Schémas de couleurs)
+- [ ] Séparer l'installation XFCE / Debian pour exécuter XFCE natif Termux
 - [ ] Ajouter des options pour Debian (Thèmes, Polices, Fonds d'écran)
+- [ ] Ajout d'un argument pou ne pas supprimer le script principal afin de pouvoir le réexécuter
+- [ ] Créer une fonction $PREFIX/bin pour exécuter le script principal préservé
+
+&nbsp;
+
+> [!TIP]
+> 🚩 La version anglaise est [disponible](README.md).
