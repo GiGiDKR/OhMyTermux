@@ -800,20 +800,18 @@ install_packages() {
             for PACKAGE in $PACKAGES; do
                 execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
 
-                # Managing aliases by installed package
+                # Ajout des alias spécifiques après l'installation
                 case $PACKAGE in
-                    eza)
-                        add_aliases_to_rc "eza"
+                    eza|bat|nala)
+                        add_aliases_to_rc "$PACKAGE"
                         ;;
-                    bat)
-                        add_aliases_to_rc "bat"
-                        ;;
-                    nala)
-                        add_aliases_to_rc "nala"
-                        ;;
-                    #TODO 
                 esac
             done
+
+            # Recharger les alias pour les rendre disponibles immédiatement
+            if [ -f "$HOME/.config/OhMyTermux/aliases" ]; then
+                source "$HOME/.config/OhMyTermux/aliases"
+            fi
         else
             echo -e "${COLOR_BLUE}Aucun package sélectionné.${COLOR_RESET}"
         fi
