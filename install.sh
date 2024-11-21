@@ -711,14 +711,14 @@ $plugins_section" "$zshrc"
         printf "\n$plugins_section" >> "$zshrc"
     fi
 
-    # Ajouter zsh-completions path
+    # Ajouter zsh-completions path si nécessaire
     if [ "$has_completions" = "true" ]; then
         if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            sed -i '/source \$ZSH\/oh-my-zsh.sh/i\\
-# Ajout du chemin pour zsh-completions\n\
-fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n' "$zshrc"
+            sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
+# Load zsh-completions\\
+fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$zshrc"
         else
-            echo -e "\n# Ajout du chemin pour zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
+            echo -e "\n# Load zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
         fi
     else
         if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
