@@ -75,7 +75,7 @@ show_help() {
     echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --shell | -sh     Module d'installation du shell"
-    echo "  --package | -pkg  Module d'installation des packagés"
+    echo "  --package | -pkg  Module d'installation des packages"
     echo "  --font | -f       Module d'installation de la police"
     echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
     echo "  --skip | -sk      Ignorer la configuration initiale"
@@ -643,7 +643,18 @@ install_zsh_plugins() {
         install_plugin "$plugin"
     done
 
-    update_zshrc "${plugins_to_install[@]}"
+    # Définir les variables nécessaires
+    local zshrc="$HOME/.zshrc"
+    local selected_plugins="${plugins_to_install[*]}"
+    local has_completions=false
+    local has_ohmytermux=true  # Adapter selon votre configuration
+
+    # Vérifier si zsh-completions est installé
+    if [[ " ${plugins_to_install[*]} " == *" zsh-completions "* ]]; then
+        has_completions=true
+    fi
+
+    update_zshrc "$zshrc" "$selected_plugins" "$has_completions" "$has_ohmytermux"
 }
 
 #------------------------------------------------------------------------------
@@ -672,48 +683,56 @@ install_plugin() {
 # MISE À JOUR DE LA CONFIGURATION DE ZSH
 #------------------------------------------------------------------------------
 update_zshrc() {
-    local plugins=("$@")
-    local default_plugins=(git z command-not-found copyfile node npm vscode web-search timer)
-    plugins+=("${default_plugins[@]}")
+    local zshrc="$1"
+    local selected_plugins="$2"
+    local has_completions="$3"
+    local has_ohmytermux="$4"
 
-    # Supprimer les doublons et zsh-completions de la liste des plugins
-    readarray -t unique_plugins < <(printf '%s\n' "${plugins[@]}" | grep -v "zsh-completions" | sort -u)
+    sed -i '/fpath.*zsh-completions\/src/d' "$zshrc"
 
-    # Vérifier si zsh-completions est dans la liste originale des plugins
-    local has_completions=false
-    if [[ " ${plugins[*]} " == *" zsh-completions "* ]]; then
-        has_completions=true
+    # Mettre à jour la section plugins
+    local default_plugins="git command-not-found copyfile node npm timer vscode web-search z"
+    local filtered_plugins=$(echo "$selected_plugins" | sed 's/zsh-completions//g')
+    local all_plugins="$default_plugins $filtered_plugins"
+
+    # Créer le contenu de la section plugins
+    local plugins_section="plugins=(\n"
+    for plugin in $all_plugins; do
+        plugins_section+="    $plugin\n"
+    done
+    plugins_section+=")\n"
+
+    # Supprimer et remplacer la section plugins
+    sed -i '/^plugins=(/,/)/d' "$zshrc"
+    if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
+        sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
+$plugins_section" "$zshrc"
+    else
+        printf "\n$plugins_section" >> "$zshrc"
     fi
 
-    # Créer la nouvelle section plugins
-    local new_plugins_section="plugins=(\n"
-    for plugin in "${unique_plugins[@]}"; do
-        new_plugins_section+="    $plugin\n"
-    done
-    new_plugins_section+=")"
-
-    if $has_completions; then
-        if ! grep -q "fpath+=.*zsh-completions" "$ZSHRC"; then
-            if grep -q "source.*oh-my-zsh.sh" "$ZSHRC"; then
-                sed -i "/source.*oh-my-zsh.sh/i\\fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$ZSHRC"
-            else
-                sed -i '1i\fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src' "$ZSHRC"
-            fi
+    # Ajouter zsh-completions path si nécessaire
+    if [ "$has_completions" = "true" ]; then
+        if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
+            sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
+# Load zsh-completions\\
+fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$zshrc"
+        else
+            echo -e "\n# Load zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
+        fi
+    else
+        if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
+            echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
         fi
     fi
 
-    # Supprimer les anciennes configurations
-    sed -i '/^plugins=(/,/^)/d' "$ZSHRC"
-    sed -i '/^# Load oh-my-zsh/d' "$ZSHRC"
-    sed -i '/^source.*oh-my-zsh.sh/d' "$ZSHRC"
-    sed -i '/^# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh./d' "$ZSHRC"
-    sed -i '/^\[\[ ! -f ~/.p10k.zsh \]\] || source ~/.p10k.zsh/d' "$ZSHRC"
+    if [ "$has_ohmytermux" = "true" ]; then
+        sed -i '/# To customize prompt, run/d' "$zshrc"
+        sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\] || source/d' "$zshrc"
 
-    # Ajouter les nouvelles configurations
-    printf "%b\n" "${new_plugins_section}" >> "$ZSHRC"
-    echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
-    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
-    echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
+        echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$zshrc"
+        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
+    fi
 }
 
 #------------------------------------------------------------------------------
@@ -781,20 +800,18 @@ install_packages() {
             for PACKAGE in $PACKAGES; do
                 execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
 
-                # Managing aliases by installed package
+                # Ajout des alias spécifiques après l'installation
                 case $PACKAGE in
-                    eza)
-                        add_aliases_to_rc "eza"
+                    eza|bat|nala)
+                        add_aliases_to_rc "$PACKAGE"
                         ;;
-                    bat)
-                        add_aliases_to_rc "bat"
-                        ;;
-                    nala)
-                        add_aliases_to_rc "nala"
-                        ;;
-                    #TODO 
                 esac
             done
+
+            # Recharger les alias pour les rendre disponibles immédiatement
+            if [ -f "$HOME/.config/OhMyTermux/aliases" ]; then
+                source "$HOME/.config/OhMyTermux/aliases"
+            fi
         else
             echo -e "${COLOR_BLUE}Aucun package sélectionné.${COLOR_RESET}"
         fi
@@ -806,50 +823,42 @@ install_packages() {
 #------------------------------------------------------------------------------
 add_aliases_to_rc() {
     local package=$1
+    local aliases_file="$HOME/.config/OhMyTermux/aliases"
+    
     case $package in
         eza)
-            echo -e '\nalias l="eza --icons"
+            cat >> "$aliases_file" << 'EOL'
+
+# Alias eza
+alias l="eza --icons"
 alias ls="eza -1 --icons"
 alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
 alias la="eza --icons -lgha --group-directories-first"
 alias lt="eza --icons --tree"
 alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"' >> "$BASHRC"
-            if [ -f "$ZSHRC" ]; then
-                echo -e '\nalias l="eza --icons"
-alias ls="eza -1 --icons"
-alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
-alias la="eza --icons -lgha --group-directories-first"
-alias lt="eza --icons --tree"
-alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"' >> "$ZSHRC"
-            fi
+alias dir="eza -lF --icons"
+EOL
             ;;
         bat)
-            echo -e '\nalias cat="bat"' >> "$BASHRC"
-            if [ -f "$ZSHRC" ]; then
-                echo -e '\nalias cat="bat"' >> "$ZSHRC"
-            fi
+            cat >> "$aliases_file" << 'EOL'
+
+# Alias bat
+alias cat="bat"
+EOL
             ;;
         nala)
-            echo -e '\nalias install="nala install -y"
+            cat >> "$aliases_file" << 'EOL'
+
+# Alias nala
+alias install="nala install -y"
 alias uninstall="nala remove -y"
 alias update="nala update"
 alias upgrade="nala upgrade -y"
 alias search="nala search"
 alias list="nala list --upgradeable"
-alias show="nala show"' >> "$BASHRC"
-            if [ -f "$ZSHRC" ]; then
-                echo -e '\nalias install="nala install -y"
-alias uninstall="nala remove -y"
-alias update="nala update"
-alias upgrade="nala upgrade -y"
-alias search="nala search"
-alias list="nala list --upgradeable"
-alias show="nala show"' >> "$ZSHRC"
-            fi
+alias show="nala show"
+EOL
             ;;
-        #TODO 
     esac
 }
 
@@ -857,36 +866,46 @@ alias show="nala show"' >> "$ZSHRC"
 # CONFIGURATION DES ALIAS COMMUNS
 #------------------------------------------------------------------------------
 common_alias() {
-aliases="
-alias ..=\"cd ..\"
-alias ...=\"cd ../..\"
-alias ....=\"cd ../../..\"
-alias .....=\"cd ../../../..\"
-alias h=\"history\"
-alias q=\"exit\"
-alias c=\"clear\"
-alias md=\"mkdir\"
-alias rm=\"rm -rf\"
-alias s=\"source\"
-alias n=\"nano\"
-alias bashrc=\"nano \$HOME/.bashrc\"
-alias zshrc=\"nano \$HOME/.zshrc\"
-alias cm=\"chmod +x\"
-alias g=\"git\"
-alias gc=\"git clone\"
-alias push=\"git pull && git add . && git commit -m 'mobile push' && git push\""
+    # Création du fichier d'alias centralisé
+    execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Création du dossier de configuration"
+    
+    aliases_file="$HOME/.config/OhMyTermux/aliases"
+    
+    cat > "$aliases_file" << 'EOL'
+# Navigation
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
 
-echo -e "$aliases" >> "$BASHRC"
+# Commandes de base
+alias h="history"
+alias q="exit"
+alias c="clear"
+alias md="mkdir"
+alias rm="rm -rf"
+alias s="source"
+alias n="nano"
+alias cm="chmod +x"
 
-if [ -f "$ZSHRC" ]; then
-    echo -e "$aliases" >> "$ZSHRC"
-fi
+# Configuration
+alias bashrc="nano $HOME/.bashrc"
+alias zshrc="nano $HOME/.zshrc"
+alias aliases="nano $HOME/.config/OhMyTermux/aliases"
 
-#TODO 
-#if [ -f "$HOME/.config/fish/config.fish" ]; then
-#    # Convertir les alias bash en format fish
-#    echo "$aliases" | sed 's/alias \(.*\)="\(.*\)"/alias \1 "\2"/' >> "$HOME/.config/fish/config.fish"
-#fi
+# Git
+alias g="git"
+alias gc="git clone"
+alias push="git pull && git add . && git commit -m 'mobile push' && git push"
+EOL
+
+    # Ajout du sourcing dans .bashrc
+    echo -e "\n# Source des alias personnalisés\n[ -f \"$aliases_file\" ] && . \"$aliases_file\"" >> "$BASHRC"
+
+    # Ajout du sourcing dans .zshrc si existant
+    if [ -f "$ZSHRC" ]; then
+        echo -e "\n# Source des alias personnalisés\n[ -f \"$aliases_file\" ] && . \"$aliases_file\"" >> "$ZSHRC"
+    fi
 }
 
 #------------------------------------------------------------------------------
@@ -1035,16 +1054,6 @@ install_utils() {
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
 
-        get_username() {
-            user_dir="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home"
-            username=$(find "$user_dir" -maxdepth 1 -type d -printf "%f\n" | grep -v '^$' | head -n 1)
-            if [ -z "$username" ]; then
-                echo "Aucun utilisateur trouvé" >&2
-                return 1
-            fi
-            echo "$username"
-        }
-
         if ! username=$(get_username); then
             error_msg "Impossible de récupérer le nom d'utilisateur."
             return 1
@@ -1094,13 +1103,19 @@ get_username() {
 
 alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"
 "
-        # Ajout au fichier $BASHRC si existant
+
+        # Ajout au fichier $BASHRC
         if [ -f "$BASHRC" ]; then
-            execute_command "echo '$rc_content' >> '$BASHRC'" "Configuration .bashrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $BASHRC"
+            execute_command "printf '%s\n' '$rc_content' >> '$BASHRC'" "Configuration .bashrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $BASHRC"
+        else
+            execute_command "touch '$BASHRC' && echo '$rc_content' >> '$BASHRC'" "Création et configuration de .bashrc termux"
         fi
-        # Ajout au fichier $ZSHRC si existant
+
+        # Ajout au fichier $ZSHRC
         if [ -f "$ZSHRC" ]; then
-            execute_command "echo '$rc_content' >> '$ZSHRC'" "Configuration .zshrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $ZSHRC"
+            execute_command "printf '%s\n' '$rc_content' >> '$ZSHRC'" "Configuration .zshrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $ZSHRC"
+        else
+            execute_command "touch '$ZSHRC' && echo '$rc_content' >> '$ZSHRC'" "Création et configuration de .zshrc termux"
         fi
     fi
 }
@@ -1166,8 +1181,8 @@ else
     execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des dépendances"
 fi
 install_shell
-install_packages
 common_alias
+install_packages
 install_font
 install_xfce
 install_proot
