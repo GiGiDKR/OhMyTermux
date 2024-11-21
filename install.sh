@@ -75,7 +75,7 @@ show_help() {
     echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --shell | -sh     Module d'installation du shell"
-    echo "  --package | -pkg  Module d'installation des packagés"
+    echo "  --package | -pkg  Module d'installation des packages"
     echo "  --font | -f       Module d'installation de la police"
     echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
     echo "  --skip | -sk      Ignorer la configuration initiale"
