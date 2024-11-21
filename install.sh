@@ -75,7 +75,7 @@ show_help() {
     echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --shell | -sh     Module d'installation du shell"
-    echo "  --package | -pkg  Module d'installation des packagés"
+    echo "  --package | -pkg  Module d'installation des packages"
     echo "  --font | -f       Module d'installation de la police"
     echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
     echo "  --skip | -sk      Ignorer la configuration initiale"
@@ -994,7 +994,7 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
         execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
@@ -1014,7 +1014,7 @@ install_proot() {
     info_msg "❯ Configuration de Proot"
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
             execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
             ./proot.sh --gum
             INSTALL_UTILS=true
@@ -1023,7 +1023,7 @@ install_proot() {
         printf "${COLOR_BLUE}Installer Debian Proot ? (o/n) : ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "o" ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
             execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
             ./proot.sh
             INSTALL_UTILS=true
@@ -1050,7 +1050,7 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     if [ "$INSTALL_UTILS" = true ]; then
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
 
