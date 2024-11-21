@@ -825,50 +825,42 @@ install_packages() {
 #------------------------------------------------------------------------------
 add_aliases_to_rc() {
     local package=$1
+    local aliases_file="$HOME/.config/OhMyTermux/aliases"
+    
     case $package in
         eza)
-            echo -e '\nalias l="eza --icons"
+            cat >> "$aliases_file" << 'EOL'
+
+# Alias eza
+alias l="eza --icons"
 alias ls="eza -1 --icons"
 alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
 alias la="eza --icons -lgha --group-directories-first"
 alias lt="eza --icons --tree"
 alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"' >> "$BASHRC"
-            if [ -f "$ZSHRC" ]; then
-                echo -e '\nalias l="eza --icons"
-alias ls="eza -1 --icons"
-alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
-alias la="eza --icons -lgha --group-directories-first"
-alias lt="eza --icons --tree"
-alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"' >> "$ZSHRC"
-            fi
+alias dir="eza -lF --icons"
+EOL
             ;;
         bat)
-            echo -e '\nalias cat="bat"' >> "$BASHRC"
-            if [ -f "$ZSHRC" ]; then
-                echo -e '\nalias cat="bat"' >> "$ZSHRC"
-            fi
+            cat >> "$aliases_file" << 'EOL'
+
+# Alias bat
+alias cat="bat"
+EOL
             ;;
         nala)
-            echo -e '\nalias install="nala install -y"
+            cat >> "$aliases_file" << 'EOL'
+
+# Alias nala
+alias install="nala install -y"
 alias uninstall="nala remove -y"
 alias update="nala update"
 alias upgrade="nala upgrade -y"
 alias search="nala search"
 alias list="nala list --upgradeable"
-alias show="nala show"' >> "$BASHRC"
-            if [ -f "$ZSHRC" ]; then
-                echo -e '\nalias install="nala install -y"
-alias uninstall="nala remove -y"
-alias update="nala update"
-alias upgrade="nala upgrade -y"
-alias search="nala search"
-alias list="nala list --upgradeable"
-alias show="nala show"' >> "$ZSHRC"
-            fi
+alias show="nala show"
+EOL
             ;;
-        #TODO 
     esac
 }
 
@@ -876,36 +868,46 @@ alias show="nala show"' >> "$ZSHRC"
 # CONFIGURATION DES ALIAS COMMUNS
 #------------------------------------------------------------------------------
 common_alias() {
-aliases="
-alias ..=\"cd ..\"
-alias ...=\"cd ../..\"
-alias ....=\"cd ../../..\"
-alias .....=\"cd ../../../..\"
-alias h=\"history\"
-alias q=\"exit\"
-alias c=\"clear\"
-alias md=\"mkdir\"
-alias rm=\"rm -rf\"
-alias s=\"source\"
-alias n=\"nano\"
-alias bashrc=\"nano \$HOME/.bashrc\"
-alias zshrc=\"nano \$HOME/.zshrc\"
-alias cm=\"chmod +x\"
-alias g=\"git\"
-alias gc=\"git clone\"
-alias push=\"git pull && git add . && git commit -m 'mobile push' && git push\""
+    # Création du fichier d'alias centralisé
+    execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Création du dossier de configuration"
+    
+    aliases_file="$HOME/.config/OhMyTermux/aliases"
+    
+    cat > "$aliases_file" << 'EOL'
+# Navigation
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
 
-echo -e "$aliases" >> "$BASHRC"
+# Commandes de base
+alias h="history"
+alias q="exit"
+alias c="clear"
+alias md="mkdir"
+alias rm="rm -rf"
+alias s="source"
+alias n="nano"
+alias cm="chmod +x"
 
-if [ -f "$ZSHRC" ]; then
-    echo -e "$aliases" >> "$ZSHRC"
-fi
+# Configuration
+alias bashrc="nano $HOME/.bashrc"
+alias zshrc="nano $HOME/.zshrc"
+alias aliases="nano $HOME/.config/OhMyTermux/aliases"
 
-#TODO 
-#if [ -f "$HOME/.config/fish/config.fish" ]; then
-#    # Convertir les alias bash en format fish
-#    echo "$aliases" | sed 's/alias \(.*\)="\(.*\)"/alias \1 "\2"/' >> "$HOME/.config/fish/config.fish"
-#fi
+# Git
+alias g="git"
+alias gc="git clone"
+alias push="git pull && git add . && git commit -m 'mobile push' && git push"
+EOL
+
+    # Ajout du sourcing dans .bashrc
+    echo -e "\n# Source des alias personnalisés\n[ -f \"$aliases_file\" ] && . \"$aliases_file\"" >> "$BASHRC"
+
+    # Ajout du sourcing dans .zshrc si existant
+    if [ -f "$ZSHRC" ]; then
+        echo -e "\n# Source des alias personnalisés\n[ -f \"$aliases_file\" ] && . \"$aliases_file\"" >> "$ZSHRC"
+    fi
 }
 
 #------------------------------------------------------------------------------
@@ -1054,16 +1056,6 @@ install_utils() {
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
 
-        get_username() {
-            user_dir="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home"
-            username=$(find "$user_dir" -maxdepth 1 -type d -printf "%f\n" | grep -v '^$' | head -n 1)
-            if [ -z "$username" ]; then
-                echo "Aucun utilisateur trouvé" >&2
-                return 1
-            fi
-            echo "$username"
-        }
-
         if ! username=$(get_username); then
             error_msg "Impossible de récupérer le nom d'utilisateur."
             return 1
@@ -1113,13 +1105,19 @@ get_username() {
 
 alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"
 "
-        # Ajout au fichier $BASHRC si existant
+
+        # Ajout au fichier $BASHRC
         if [ -f "$BASHRC" ]; then
-            execute_command "echo '$rc_content' >> '$BASHRC'" "Configuration .bashrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $BASHRC"
+            execute_command "printf '%s\n' '$rc_content' >> '$BASHRC'" "Configuration .bashrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $BASHRC"
+        else
+            execute_command "touch '$BASHRC' && echo '$rc_content' >> '$BASHRC'" "Création et configuration de .bashrc termux"
         fi
-        # Ajout au fichier $ZSHRC si existant
+
+        # Ajout au fichier $ZSHRC
         if [ -f "$ZSHRC" ]; then
-            execute_command "echo '$rc_content' >> '$ZSHRC'" "Configuration .zshrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $ZSHRC"
+            execute_command "printf '%s\n' '$rc_content' >> '$ZSHRC'" "Configuration .zshrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $ZSHRC"
+        else
+            execute_command "touch '$ZSHRC' && echo '$rc_content' >> '$ZSHRC'" "Création et configuration de .zshrc termux"
         fi
     fi
 }
