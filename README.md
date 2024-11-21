@@ -1,8 +1,8 @@
-![Logo OhMyTermux](logo.jpg)
+![Logo OhMyTermux](assets/logo.jpg)
 
-## Automated and custom installation of [Termux](https://github.com/termux) 🧊
+# OhMyTermux 🧊
 
-**Packages, shell, plugins, prompts, fonts and themes selectable.** 👀
+**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.** 👀
 
 Optional installation of:
 
@@ -16,15 +16,9 @@ Optional installation of:
 
 > [!CAUTION]
 > ⚠️ This project is under development, use it at your own risk.
->
-> The various branches of the repository are currently not up to date.
->
-> Please wait for version 1.1 before using this project or check the code before running it !
 
 > [!IMPORTANT]
-> 🚩 To facilitate progress, the French language is preferred to provide the user CLI.
->
-> A French version of this text is [available](README-FR.md).
+> 🚩 French version is [available](README-FR.md).
 
 &nbsp;
 
@@ -32,7 +26,7 @@ Optional installation of:
 
 🧊 To install **OhMyTermux**
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 >[!TIP]
@@ -40,7 +34,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 🔥 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
 >[!NOTE]
@@ -65,7 +59,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
 - [git](https://github.com/git/git)
-- [zsh](https://github.com/zsh-users/zsh)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
 #### 🧊 **Individually selectable packages**
@@ -101,7 +94,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
     - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
     - [zsh-completions](https://github.com/zsh-users/zsh-completions)
     - [zsh-you-should-use](https://github.com/MichaelAquilina/zsh-you-should-use)
-    - [zsh-abbr](https://github.com/olets/zsh-abbr)
     - [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
 
   ##### 🧊 **Fish configuration [^1]**
@@ -124,7 +116,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
   #### 🧊 **Termux configuration**
 
-- Custom aliases
+- Custom aliases (common aliases + specific aliases depending on the package or plugin installed)
 - Symlink to internal storage user directories [^1]
 
   #### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1]
@@ -272,10 +264,3 @@ There are two scripts available for this setup as well :
 
 &nbsp;
 
-## 📝 Notes
-
-- The `xfce.sh` script is used to install XFCE on Termux.
-- The `proot.sh` script is used to install Proot on Termux.
-- The `utils.sh` script is used to manage the desktop menu.
-- The `install.sh` script is the main script that will install everything.
-- The `files` folder contains the files needed for the installation.

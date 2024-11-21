@@ -1,3 +1,5 @@
+![Logo OhMyTermux](assets/logo.jpg)
+
 # OhMyTermux 🧊
 
 **Installation automatisée et personnalisée de [Termux](https://github.com/termux) : packages, shell, plugins, prompts, polices et thèmes sélectionnables.** 👀
@@ -25,7 +27,7 @@ Installation optionnelle de :
 
 🧊 Pour installer **OhMyTermux** 
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 > [!TIP]
@@ -35,7 +37,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 🔥 Pour installer **OhMyTermux** avec **[Gum](https://github.com/charmbracelet/gum)**
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
 >[!NOTE]
@@ -58,7 +60,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
 - [git](https://github.com/git/git)
-- [zsh](https://github.com/zsh-users/zsh)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
 ### 🧊 **Packages sélectionnables individuellement**
@@ -115,7 +116,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.9/install.sh -
 
 ### 🧊 **Configuration de Termux :**
 
-- Alias personnalisés
+- Alias personnalisés (alias communs + alias spécifiques selon le package ou le plugin installé)
 - Lien symbolique vers les répertoires utilisateur du stockage interne [^1]
 
 ### 🧊 **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** [^1]
@@ -252,13 +253,3 @@ Deux scripts sont également disponibles pour cette configuration :
 - [ ] Intégrer dans le script principal la sélection de thèmes (Schémas de couleurs)
 - [ ] Séparer l'installation XFCE / Debian pour exécuter XFCE natif de Termux
 - [ ] Ajouter des options pour Debian (Thèmes, Polices, Fonds d'écran)
-
-&nbsp;
-
-## 📝 Notes
-
-- Le script `xfce.sh` est utilisé pour installer XFCE sur Termux.
-- Le script `proot.sh` est utilisé pour installer Proot sur Termux.
-- Le script `utils.sh` est utilisé pour gérer le menu de bureau.
-- Le script `install.sh` est le script principal qui installera tout le reste.
-- Le dossier `files` contient les fichiers nécessaires pour l'installation.
