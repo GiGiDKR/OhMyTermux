@@ -865,7 +865,7 @@ EOL
 #------------------------------------------------------------------------------
 # CONFIGURATION DES ALIAS COMMUNS
 #------------------------------------------------------------------------------
-common_alias () {
+common_alias() {
     # Création du fichier d'alias centralisé
     execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Création du dossier de configuration"
     
