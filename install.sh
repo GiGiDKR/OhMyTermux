@@ -462,7 +462,7 @@ EOL" "Configuring Termux properties"
     # Remove login banner
     execute_command "touch $HOME/.hushlogin" "Removing login banner"
     # Download font
-    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/font.ttf" "Downloading default font" || error_msg "Unable to download default font"
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/font.ttf" "Downloading default font" || error_msg "Unable to download default font"
     termux-reload-settings
 }
 
@@ -542,7 +542,7 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/zshrc" "Downloading configuration" || error_msg "Unable to download configuration"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/zshrc" "Downloading configuration" || error_msg "Unable to download configuration"
 
                 if $USE_GUM; then
                     if gum_confirm "Install PowerLevel10k?"; then
@@ -550,7 +550,7 @@ install_shell() {
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         if gum_confirm "Install OhMyTermux prompt?"; then                            
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Downloading OhMyTermux prompt" || error_msg "Unable to download OhMyTermux prompt"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Downloading OhMyTermux prompt" || error_msg "Unable to download OhMyTermux prompt"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~\/.p10k.zsh ]] || source ~\/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -567,7 +567,7 @@ install_shell() {
                         printf "${COLOR_BLUE}Install OhMyTermux prompt? (y/n): ${COLOR_RESET}"
                         read -r choice
                         if [ "$choice" = "y" ]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Downloading OhMyTermux prompt" || error_msg "Unable to download OhMyTermux prompt"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Downloading OhMyTermux prompt" || error_msg "Unable to download OhMyTermux prompt"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~\/.p10k.zsh ]] || source ~\/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -576,9 +576,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/aliases.zsh && 
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && \
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/help.md)" "Downloading configuration" || error_msg "Unable to download configuration"
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Downloading configuration" || error_msg "Unable to download configuration"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -990,7 +990,7 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installing $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.sh" "Downloading XFCE script" || error_msg "Unable to download XFCE script"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce.sh" "Downloading XFCE script" || error_msg "Unable to download XFCE script"
         execute_command "chmod +x xfce.sh" "Setting execution permissions"
         
         if $USE_GUM; then
@@ -1010,7 +1010,7 @@ install_proot() {
     info_msg "❯ Proot Configuration"
     if $USE_GUM; then
         if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install Debian Proot?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
             execute_command "chmod +x proot.sh" "Setting execution permissions"
             ./proot.sh --gum
             INSTALL_UTILS=true
@@ -1019,7 +1019,7 @@ install_proot() {
         printf "${COLOR_BLUE}Install Debian Proot? (y/n): ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "y" ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
             execute_command "chmod +x proot.sh" "Setting execution permissions"
             ./proot.sh
             INSTALL_UTILS=true
@@ -1046,7 +1046,7 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     if [ "$INSTALL_UTILS" = true ]; then
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils.sh" "Downloading Utils script" || error_msg "Unable to download Utils script"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Downloading Utils script" || error_msg "Unable to download Utils script"
         execute_command "chmod +x utils.sh" "Setting execution permissions"
         ./utils.sh
 
