@@ -867,7 +867,7 @@ EOL
 #------------------------------------------------------------------------------
 # CONFIGURATION DES ALIAS COMMUNS
 #------------------------------------------------------------------------------
-common_alias() {
+() {
     # Création du fichier d'alias centralisé
     execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Création du dossier de configuration"
     
@@ -1183,8 +1183,8 @@ else
     execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des dépendances"
 fi
 install_shell
-install_packages
 common_alias
+install_packages
 install_font
 install_xfce
 install_proot
