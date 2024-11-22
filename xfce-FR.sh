@@ -92,40 +92,61 @@ finish() {
     fi
 }
 
-# Fonction pour afficher des messages d'information en bleu
+#------------------------------------------------------------------------------
+# MESSAGES D'INFORMATION
+#------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
-        gum style --foreground 33 "$1"
+        gum style "${1//$'\n'/ }" --foreground 33
     else
         echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
     fi
 }
 
-# Fonction pour afficher des messages de succès en vert
+#------------------------------------------------------------------------------
+# MESSAGES DE SUCCÈS
+#------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
-        gum style --foreground 76 "$1"
+        gum style "${1//$'\n'/ }" --foreground 82
     else
-        echo -e "\e[38;5;76m$1${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}$1${COLOR_RESET}"
     fi
 }
 
-# Fonction pour afficher des messages d'erreur en rouge
+#------------------------------------------------------------------------------
+# MESSAGES D'ERREUR
+#------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
-        gum style --foreground 196 "$1"
+        gum style "${1//$'\n'/ }" --foreground 196
     else
         echo -e "${COLOR_RED}$1${COLOR_RESET}"
     fi
 }
 
-# Fonction pour journaliser les erreurs
-log_error() {
-    local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+#------------------------------------------------------------------------------
+# MESSAGES DE TITRE
+#------------------------------------------------------------------------------
+title_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 220 --bold
+    else
+        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+    fi
 }
 
-# Fonction pour exécuter une commande et afficher le résultat
+#------------------------------------------------------------------------------
+# JOURNALISATION DES ERREURS
+#------------------------------------------------------------------------------
+log_error() {
+    local error_msg="$1"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >>  "$HOME/.config/OhMyTermux/install.log"
+}
+
+#------------------------------------------------------------------------------
+# EXECUTION D'UNE COMMANDE ET AFFICHAGE DYNAMIQUE DU RÉSULTAT
+#------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
     local info_msg="$2"
@@ -152,15 +173,16 @@ execute_command() {
     fi
 }
 
-# TODO Implémenter la fonction install_package
+# TODO: Implémenter la fonction install_package
 # Fonction pour installer un package
 #install_package() {
 #    local pkg=$1
 #    execute_command "pkg install $pkg -y" "Installation de $pkg"
 #}
 
-# Fonction pour télécharger un fichier
-
+#------------------------------------------------------------------------------
+# TÉLÉCHARGEMENT D'UN FICHIER
+#------------------------------------------------------------------------------
 download_file() {
     local url=$1
     local message=$2
@@ -169,7 +191,9 @@ download_file() {
 
 trap finish EXIT
 
-# Fonction principale
+#------------------------------------------------------------------------------
+# FONCTION PRINCIPALE
+#------------------------------------------------------------------------------
 main() {
     # Installation de gum si nécessaire
     if $USE_GUM && ! command -v gum &> /dev/null; then
@@ -177,13 +201,12 @@ main() {
         pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 
-    info_msg "❯ Installation de XFCE"
+    title_msg "❯ Installation de XFCE"
 
     execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
     # Installation des packages
     pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
-
 
     for pkg in "${pkgs[@]}"; do
         execute_command "pkg install $pkg -y" "Installation de $pkg"
@@ -205,7 +228,7 @@ main() {
     execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
     # Téléchargement de la pré-configuration
-    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/config.zip" "Téléchargement de la configuration XFCE"
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
         execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
     }
 
