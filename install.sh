@@ -1170,7 +1170,9 @@ fi
 
 # Note: Check if specific arguments have been provided
 if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ]; then
-    # Execute only the requested functions
+    if $EXECUTE_INITIAL_CONFIG; then
+        initial_config
+    fi
     if [ "$SHELL_CHOICE" = true ]; then
         install_shell
     fi

@@ -117,11 +117,10 @@ for arg in "$@"; do
             EXECUTE_INITIAL_CONFIG=false
             shift
             ;;
-        # TODO: Fonction de désinstalation à implémenter
-        #--uninstall|-u)
-        #    uninstall_proot
-        #    exit 0
-        #    ;;
+        --uninstall|-u)
+            uninstall_proot
+            exit 0
+            ;;
         --verbose|-v)
             verbose=true
             redirect=""
@@ -1171,7 +1170,9 @@ fi
 
 # Note: Vérifier si des arguments spécifiques ont été fournis
 if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ]; then
-    # Exécuter uniquement les fonctions demandées
+    if $EXECUTE_INITIAL_CONFIG; then
+        initial_config
+    fi
     if [ "$SHELL_CHOICE" = true ]; then
         install_shell
     fi
