@@ -3,60 +3,60 @@
 #------------------------------------------------------------------------------
 # MAIN CONTROL VARIABLES
 #------------------------------------------------------------------------------
-# USE_GUM: Activates interactive user interface with gum
+# Note: Activates interactive user interface with gum
 USE_GUM=false
 
-# EXECUTE_INITIAL_CONFIG: Determines if initial configuration should be executed
+# Note: Determines if initial configuration should be executed
 EXECUTE_INITIAL_CONFIG=true
 
-# VERBOSE: Activates detailed operation display
+# Note: Activates detailed operation display
 VERBOSE=false
 
 #------------------------------------------------------------------------------
 # MODULE SELECTORS
 #------------------------------------------------------------------------------
-# SHELL_CHOICE: Activates shell installation and configuration (zsh/bash)
+# Note: Activates shell installation and configuration (zsh/bash)
 SHELL_CHOICE=false
 
-# PACKAGES_CHOICE: Activates additional package installation
+# Note: Activates additional package installation
 PACKAGES_CHOICE=false
 
-# FONT_CHOICE: Activates custom font installation
+# Note: Activates custom font installation
 FONT_CHOICE=false
     
-# XFCE_CHOICE: Activates XFCE environment and Debian Proot installation
+# Note: Activates XFCE environment and Debian Proot installation
 XFCE_CHOICE=false
 
-# FULL_INSTALL: Activates complete installation of all modules without confirmation
+# Note: Activates complete installation of all modules without confirmation
 FULL_INSTALL=false
 
-# ONLY_GUM: Activates gum usage for all interactions
+# Note: Activates gum usage for all interactions
 ONLY_GUM=true
 
 #------------------------------------------------------------------------------
 # CONFIGURATION FILES
 #------------------------------------------------------------------------------
-# Path to Bash configuration file
+# Note: Path to Bash configuration file
 BASHRC="$HOME/.bashrc"
 
-# Path to Zsh configuration file
+# Note: Path to Zsh configuration file
 ZSHRC="$HOME/.zshrc"
 
-#TODO 
-# Path to Fish configuration file
+# TODO: Fish 
+# Note: Path to Fish configuration file
 #FISHRC="$HOME/.config/fish/config.fish"
 
 #------------------------------------------------------------------------------
 # COLOR CODES FOR DISPLAY
 #------------------------------------------------------------------------------
-# Definition of ANSI codes for output colorization
+# Note: Definition of ANSI codes for output colorization
 COLOR_BLUE='\033[38;5;33m'    # Information
 COLOR_GREEN='\033[38;5;82m'   # Success
 COLOR_GOLD='\033[38;5;220m'   # Warning
 COLOR_RED='\033[38;5;196m'    # Error
 COLOR_RESET='\033[0m'         # Reset
 
-# Redirect configuration
+# Note: Redirect configuration
 if [ "$VERBOSE" = false ]; then
     redirect="> /dev/null 2>&1"
 else
@@ -297,7 +297,7 @@ check_and_install_gum() {
     fi
 }
 
-#FIX 
+# FIXME: Move to main function
 check_and_install_gum
 
 #------------------------------------------------------------------------------
@@ -532,6 +532,8 @@ install_shell() {
                     if gum_confirm "Install Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installing dependencies"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installing Oh-My-Zsh"
+                        # FIXME: Optional ?
+                        #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
                     printf "${COLOR_BLUE}Install Oh-My-Zsh ? (Y/n): ${COLOR_RESET}"
@@ -539,6 +541,8 @@ install_shell() {
                     if [[ "$choice" =~ ^[yY]$ ]]; then
                         execute_command "pkg install -y wget curl git unzip" "Installing dependencies"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installing Oh-My-Zsh"
+                        # FIXME: Optional ?
+                        #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 fi
 
@@ -590,7 +594,7 @@ install_shell() {
             "fish")
                 info_msg "❯ Fish Configuration"
                 execute_command "pkg install -y fish" "Installing Fish"
-                #TODO 
+                # TODO: Fish
                 chsh -s fish
                 ;;
         esac
@@ -961,7 +965,7 @@ install_font() {
     fi
 }
 
-# Global variable to track if XFCE or Proot has been installed
+# Note: Global variable to track if XFCE or Proot has been installed
 INSTALL_UTILS=false
 
 #------------------------------------------------------------------------------
@@ -1171,14 +1175,14 @@ EOL
 #------------------------------------------------------------------------------
 show_banner
 
-# Installation dependencies
+# Note: Installation dependencies
 if $USE_GUM; then
     execute_command "pkg install -y ncurses-utils" "Installation dependencies"
 else
     execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation dependencies"
 fi
 
-# Check if specific arguments have been provided
+# Note: Check if specific arguments have been provided
 if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ]; then
     # Execute only the requested functions
     if [ "$SHELL_CHOICE" = true ]; then
@@ -1211,12 +1215,12 @@ else
     install_termux_x11
 fi
 
-# Cleaning temporary files
+# Note: Cleaning temporary files
 info_msg "❯ Cleaning temporary files"
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 success_msg "✓ Removing installation scripts"
 
-# Running OhMyTermux
+# Note: Reloading the shell
 if $USE_GUM; then
     if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Run OhMyTermux (reload the shell) ?"; then
         clear

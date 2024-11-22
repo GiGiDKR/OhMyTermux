@@ -152,7 +152,7 @@ execute_command() {
     fi
 }
 
-# TODO Implement the install_package function
+# TODO: Implement the install_package function
 # Function to install a package
 #install_package() {
 #    local pkg=$1
