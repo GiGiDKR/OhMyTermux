@@ -3,47 +3,43 @@
 #------------------------------------------------------------------------------
 # VARIABLES DE CONTROLE PRINCIPALE
 #------------------------------------------------------------------------------
-# Note: Active l'interface utilisateur interactive avec gum
+# Note: Interface interactive avec gum
 USE_GUM=false
 
-# Note: Détermine si la configuration initiale doit être exécutée
+# Note: Configuration initiale
 EXECUTE_INITIAL_CONFIG=true
 
-# Note: Active l'affichage détaillé des opérations
+# Note: Affichage détaillé des opérations
 VERBOSE=false
 
 #------------------------------------------------------------------------------
 # SELECTEURS DE MODULES
 #------------------------------------------------------------------------------
-# Note: Active l'installation et configuration du shell (zsh/bash)
+# Note: Selection du shell
 SHELL_CHOICE=false
 
-# Note: Active l'installation des paquets additionnels
+# Note: Installation de paquets additionnels
 PACKAGES_CHOICE=false
 
-# Note: Active l'installation des polices personnalisées
+# Note: Installation de polices personnalisées
 FONT_CHOICE=false
     
-# Note: Active l'installation de l'environnement XFCE et Debian Proot
+# Note: Installation de l'environnement XFCE et Debian Proot
 XFCE_CHOICE=false
 
-# Note: Active l'installation complète de tous les modules sans confirmation
+# Note: Installation complète sans interactions
 FULL_INSTALL=false
 
-# Note: Active l'utilisation de gum pour toutes les interactions
+# Note: Utilisation de gum pour les interactions
 ONLY_GUM=true
 
 #------------------------------------------------------------------------------
 # FICHIERS DE CONFIGURATION
 #------------------------------------------------------------------------------
-# Note: Chemin vers le fichier de configuration Bash
 BASHRC="$HOME/.bashrc"
-
-# Note: Chemin vers le fichier de configuration Zsh
 ZSHRC="$HOME/.zshrc"
 
 # TODO: Fish
-# Note: Chemin vers le fichier de configuration Fish
 #FISHRC="$HOME/.config/fish/config.fish"
 
 #------------------------------------------------------------------------------
@@ -143,7 +139,7 @@ for arg in "$@"; do
     esac
 done
 
-# Note: Activer tous les modules si --gum|-g est utilisé comme seul argument
+# Note: Activation de tous les modules si --gum est le seul argument
 if $ONLY_GUM; then
     SHELL_CHOICE=true
     PACKAGES_CHOICE=true
@@ -201,11 +197,11 @@ title_msg() {
 #------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/.config/OhMyTermux/ohmytermux.log"
 }
 
 #------------------------------------------------------------------------------
-# EXECUTION D'UNE COMMANDE ET AFFICHAGE DU RÉSULTAT
+# EXECUTION D'UNE COMMANDE ET AFFICHAGE DYNAMIQUE DU RÉSULTAT
 #------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
@@ -235,7 +231,7 @@ execute_command() {
 }
 
 #------------------------------------------------------------------------------
-# CONFIRMATION AVEC GUM
+# CONFIRMATION GUM
 #------------------------------------------------------------------------------
 gum_confirm() {
     local prompt="$1"
@@ -247,7 +243,7 @@ gum_confirm() {
 }
 
 #------------------------------------------------------------------------------
-# SÉLECTION AVEC GUM
+# SÉLECTION GUM
 #------------------------------------------------------------------------------
 gum_choose() {
     local prompt="$1"
@@ -298,7 +294,7 @@ bash_banner() {
 }
 
 #------------------------------------------------------------------------------
-# VÉRIFICATION ET INSTALLATION DE GUM
+# INSTALLATION DE GUM
 #------------------------------------------------------------------------------
 check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
@@ -352,10 +348,10 @@ show_banner() {
 # SAUVEGARDE DES FICHIERS
 #------------------------------------------------------------------------------
 create_backups() {
-    local backup_dir="$HOME/.backup"
+    local backup_dir="$HOME/.config/OhMyTermux/backup"
     
     # Création du répertoire de sauvegarde
-    execute_command "mkdir -p \"$backup_dir\"" "Création du répertoire ~/.backup"
+    execute_command "mkdir -p \"$backup_dir\"" "Création du répertoire de sauvegarde"
 
     # Liste des fichiers à sauvegarder
     local files_to_backup=(
@@ -469,7 +465,7 @@ bell-character = ignore
 fullscreen = true
 EOL" "Configuration des propriétés Termux"
     fi
-    
+
     # Suppression de la bannière de connexion
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
     # Téléchargement de la police
