@@ -1092,36 +1092,38 @@ EOL
         # D'abord, obtenir le nom d'utilisateur
         username=$(get_username)
 
-        # Créer le fichier temporaire
-        touch /tmp/rc_content
+        # Créer le fichier temporaire dans le dossier temporaire de Termux
+        tmp_file="${TMPDIR}/rc_content"
+        touch "$tmp_file"
 
         # Ensuite, créer le contenu avec le nom d'utilisateur
-        cat << EOL >> /tmp/rc_content
+        cat << EOL >> "$tmp_file"
 # Alias pour se connecter à Debian Proot
 alias debian="proot-distro login debian --shared-tmp --user ${username}"
 EOL
 
         # Ajout au fichier $BASHRC
         if [ -f "$BASHRC" ]; then
-            cat /tmp/rc_content >> "$BASHRC"
+            cat "$tmp_file" >> "$BASHRC"
             success_msg "✓ Configuration .bashrc termux"
         else
             touch "$BASHRC" 
-            cat /tmp/rc_content >> "$BASHRC"
+            cat "$tmp_file" >> "$BASHRC"
             success_msg "✓ Création et configuration de .bashrc termux"
         fi
 
         # Ajout au fichier $ZSHRC
         if [ -f "$ZSHRC" ]; then
-            cat /tmp/rc_content >> "$ZSHRC"
+            cat "$tmp_file" >> "$ZSHRC"
             success_msg "✓ Configuration .zshrc termux"
         else
             touch "$ZSHRC"
-            cat /tmp/rc_content >> "$ZSHRC"
+            cat "$tmp_file" >> "$ZSHRC"
             success_msg "✓ Création et configuration de .zshrc termux"
         fi
 
-        rm /tmp/rc_content
+        # Nettoyage
+        rm "$tmp_file"
     fi
 }
 
