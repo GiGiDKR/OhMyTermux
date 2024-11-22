@@ -92,40 +92,61 @@ finish() {
     fi
 }
 
-# Function to display information messages in blue
+#------------------------------------------------------------------------------
+# INFORMATION MESSAGES
+#------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
-        gum style --foreground 33 "$1"
+        gum style "${1//$'\n'/ }" --foreground 33
     else
         echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
     fi
 }
 
-# Function to display success messages in green
+#------------------------------------------------------------------------------
+# SUCCESS MESSAGES
+#------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
-        gum style --foreground 76 "$1"
+        gum style "${1//$'\n'/ }" --foreground 82
     else
-        echo -e "\e[38;5;76m$1${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}$1${COLOR_RESET}"
     fi
 }
 
-# Function to display error messages in red
+#------------------------------------------------------------------------------
+# ERROR MESSAGES
+#------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
-        gum style --foreground 196 "$1"
+        gum style "${1//$'\n'/ }" --foreground 196
     else
         echo -e "${COLOR_RED}$1${COLOR_RESET}"
     fi
 }
 
-# Function to log errors
-log_error() {
-    local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+#------------------------------------------------------------------------------
+# TITLE MESSAGES
+#------------------------------------------------------------------------------
+title_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 220 --bold
+    else
+        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+    fi
 }
 
-# Function to execute a command and display the result
+#------------------------------------------------------------------------------
+# ERROR LOGGING
+#------------------------------------------------------------------------------
+log_error() {
+    local error_msg="$1"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/.config/OhMyTermux/install.log"
+}
+
+#------------------------------------------------------------------------------
+# EXECUTION COMMAND AND DYNAMIC DISPLAY RESULT
+#------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
     local info_msg="$2"
@@ -152,14 +173,16 @@ execute_command() {
     fi
 }
 
-# TODO Implement the install_package function
+# TODO: Implement the install_package function
 # Function to install a package
 #install_package() {
 #    local pkg=$1
 #    execute_command "pkg install $pkg -y" "Installation de $pkg"
 #}
 
-# Function to download a file
+#------------------------------------------------------------------------------
+# DOWNLOAD FILES
+#------------------------------------------------------------------------------
 download_file() {
     local url=$1
     local message=$2
@@ -168,7 +191,9 @@ download_file() {
 
 trap finish EXIT
 
-# Main function
+#------------------------------------------------------------------------------
+# MAIN FUNCTION
+#------------------------------------------------------------------------------
 main() {
     # Install gum if necessary
     if $USE_GUM && ! command -v gum &> /dev/null; then
@@ -176,7 +201,7 @@ main() {
         pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 
-    info_msg "❯ Installing XFCE"
+    title_msg "❯ Installing XFCE"
 
     execute_command "pkg update -y && pkg upgrade -y" "Updating packages"
 
@@ -192,7 +217,7 @@ main() {
     execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configure desktop"
 
     # Download wallpaper
-    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/waves.png" "Download wallpaper"
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/src/waves.png" "Download wallpaper"
     execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configure wallpaper"
 
     # Download theme
@@ -204,7 +229,7 @@ main() {
     execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Install cursors"
 
     # Download configuration
-    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/config.zip" "Download XFCE configuration"
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Download XFCE configuration"
     execute_command "unzip -o config.zip && rm config.zip" "Install configuration"
 }
 

@@ -51,40 +51,61 @@ for arg in "$@"; do
     esac
 done
 
-# Function to display information messages in blue
+#------------------------------------------------------------------------------
+# INFORMATION MESSAGES
+#------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 33
     else
-        echo -e "\e[38;5;33m$1\e[0m"
+        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
     fi
 }
 
-# Function to display success messages in green
+#------------------------------------------------------------------------------
+# SUCCESS MESSAGES
+#------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 82
     else
-        echo -e "\e[38;5;82m$1\e[0m"
+        echo -e "${COLOR_GREEN}$1${COLOR_RESET}"
     fi
 }
 
-# Function to display error messages in red
+#------------------------------------------------------------------------------
+# ERROR MESSAGES
+#------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 196
     else
-        echo -e "\e[38;5;196m$1\e[0m"
+        echo -e "${COLOR_RED}$1${COLOR_RESET}"
     fi
 }
 
-# Function to log errors
-log_error() {
-    local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $error_msg" >> "$HOME/ohmytermux.log"
+#------------------------------------------------------------------------------
+# TITLE MESSAGES
+#------------------------------------------------------------------------------
+title_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 220 --bold
+    else
+        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+    fi
 }
 
-# Function to execute a command and display the result
+#------------------------------------------------------------------------------
+# ERROR LOGGING
+#------------------------------------------------------------------------------
+log_error() {
+    local error_msg="$1"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $error_msg" >> "$HOME/.config/OhMyTermux/install.log"
+}
+
+#------------------------------------------------------------------------------
+# EXECUTION COMMAND AND DYNAMIC DISPLAY RESULT
+#------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
     local info_msg="$2"
@@ -111,7 +132,9 @@ execute_command() {
     fi
 }
 
-# Function to check required dependencies
+#------------------------------------------------------------------------------
+# CHECK REQUIRED DEPENDENCIES
+#------------------------------------------------------------------------------
 check_dependencies() {
     if [ "$USE_GUM" = true ]; then
         if $USE_GUM && ! command -v gum &> /dev/null; then
@@ -126,7 +149,9 @@ check_dependencies() {
     fi
 }
 
-# Function to display the banner
+#------------------------------------------------------------------------------
+# DISPLAY BANNER
+#------------------------------------------------------------------------------
 bash_banner() {
     clear
     local BANNER="
@@ -155,7 +180,9 @@ show_banner() {
     fi
 }
 
-# Error handling function
+#------------------------------------------------------------------------------
+# ERROR HANDLING FUNCTION
+#------------------------------------------------------------------------------
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -171,7 +198,9 @@ finish() {
 
 trap finish EXIT
 
-# Function to install required packages in proot
+#------------------------------------------------------------------------------
+# INSTALL REQUIRED PACKAGES IN PROOT
+#------------------------------------------------------------------------------
 install_packages_proot() {
     local pkgs_proot=('sudo' 'wget' 'nala' 'jq')
     for pkg in "${pkgs_proot[@]}"; do
@@ -179,7 +208,9 @@ install_packages_proot() {
     done
 }
 
-# Function to create a user in proot with password
+#------------------------------------------------------------------------------
+# CREATE A USER IN PROOT WITH PASSWORD
+#------------------------------------------------------------------------------
 create_user_proot() {
     execute_command "
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
@@ -189,19 +220,23 @@ create_user_proot() {
     " "Creating user"
 }
 
-# Function to configure user rights
+#------------------------------------------------------------------------------
+# CONFIGURE USER RIGHTS
+#------------------------------------------------------------------------------
 configure_user_rights() {
     execute_command '
         chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-        echo "$username ALL=(ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+        echo "$username ALL=(ALL:ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
         chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-    ' "Adding user rights"
+    ' "User rights elevation"
 }
 
-# Function to install Mesa-Vulkan
+#------------------------------------------------------------------------------
+# INSTALL MESA-VULKAN
+#------------------------------------------------------------------------------
 install_mesa_vulkan() {
     local mesa_package="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
-    local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/$mesa_package"
+    local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/$mesa_package"
     
     if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dpkg -s mesa-vulkan-kgsl &> /dev/null; then
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Downloading Mesa-Vulkan"
@@ -211,9 +246,12 @@ install_mesa_vulkan() {
     fi
 }
 
-# Fonction principale
-check_dependencies
-info_msg "❯ Installing Debian Proot"
+#------------------------------------------------------------------------------
+# MAIN FUNCTION
+#------------------------------------------------------------------------------
+main() {
+    check_dependencies
+    title_msg "❯ Installing Debian Proot"
 
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
@@ -277,7 +315,9 @@ fi
 
 execute_command "proot-distro install debian" "Installation of the distribution"
 
-# Check installation of Debian
+#------------------------------------------------------------------------------
+# CHECK INSTALLATION OF DEBIAN
+#------------------------------------------------------------------------------
 if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
     error_msg "Debian installation failed."
     exit 1
@@ -291,23 +331,31 @@ install_packages_proot
 create_user_proot
 configure_user_rights
 
-# Configure timezone
+#------------------------------------------------------------------------------
+# CONFIGURE TIMEZONE
+#------------------------------------------------------------------------------
 timezone=$(getprop persist.sys.timezone)
 execute_command "
     proot-distro login debian -- rm /etc/localtime
     proot-distro login debian -- cp /usr/share/zoneinfo/$timezone /etc/localtime
 " "Configuring timezone"
 
-# Configure icons and themes
+#------------------------------------------------------------------------------
+# CONFIGURE ICONS AND THEMES
+#------------------------------------------------------------------------------
 mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
 execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/dist-dark" "Configuring icons"
 
-# Configure .Xresources
+#------------------------------------------------------------------------------
+# CONFIGURE CURSORS
+#------------------------------------------------------------------------------
 execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
 Xcursor.theme: dist-dark
 EOF" "Configuring cursors"
 
-# Creating necessary directories
+#------------------------------------------------------------------------------
+# CONFIGURE THEMES AND FONTS
+#------------------------------------------------------------------------------
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuring themes and fonts"
 
 install_mesa_vulkan
