@@ -211,8 +211,12 @@ create_user_proot() {
 # Fonction pour configurer les droits de l'utilisateur
 configure_user_rights() {
     execute_command '
+        # Ajout de la configuration sudo
+        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 usermod -aG sudo "$username"
+        
+        # Configuration des droits sudoers
         chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-        echo "$username ALL=(ALL:ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
+        echo "%sudo ALL=(ALL:ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
         chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
     ' "Élevation des droits utilisateur"
 }
