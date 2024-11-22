@@ -75,7 +75,7 @@ show_help() {
     echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --shell | -sh     Module d'installation du shell"
-    echo "  --package | -pkg  Module d'installation des packages"
+    echo "  --package | -pkg  Module d'installation des packagés"
     echo "  --font | -f       Module d'installation de la police"
     echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
     echo "  --skip | -sk      Ignorer la configuration initiale"
@@ -462,7 +462,7 @@ EOL" "Configuration des propriétés Termux"
     # Suppression de la bannière de connexion
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
     # Téléchargement de la police
-    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/font.ttf" "Téléchargement de la police par défaut" || error_msg "Impossible de télécharger la police par défaut"
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/font.ttf" "Téléchargement de la police par défaut" || error_msg "Impossible de télécharger la police par défaut"
     termux-reload-settings
 }
 
@@ -546,7 +546,7 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/zshrc" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/zshrc" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
 
                 if $USE_GUM; then
                     if gum_confirm "Installer PowerLevel10k ?"; then
@@ -554,7 +554,7 @@ install_shell() {
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         if gum_confirm "Installer le prompt OhMyTermux ?"; then                            
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -571,7 +571,7 @@ install_shell() {
                         printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}"
                         read -r choice
                         if [ "$choice" = "o" ]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -580,9 +580,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/aliases.zsh && 
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && \
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/help.md)" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -994,13 +994,13 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
-        execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce-FR.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+        execute_command "chmod +x xfce-FR.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
-            ./xfce.sh --gum
+            ./xfce-FR.sh --gum
         else
-            ./xfce.sh
+            ./xfce-FR.sh
         fi
         
         INSTALL_UTILS=true
@@ -1014,18 +1014,18 @@ install_proot() {
     info_msg "❯ Configuration de Proot"
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-            execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
-            ./proot.sh --gum
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+            execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
+            ./proot-FR.sh --gum
             INSTALL_UTILS=true
         fi
     else    
         printf "${COLOR_BLUE}Installer Debian Proot ? (o/n) : ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "o" ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-            execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
-            ./proot.sh
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+            execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
+            ./proot-FR.sh
             INSTALL_UTILS=true
         fi
     fi
@@ -1037,7 +1037,7 @@ install_proot() {
 get_username() {
     local user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
     local username
-    username=$(find "$user_dir" -maxdepth 1 -type d -printf "%f\n" | grep -v '^$' | head -n 1)
+    username=$(ls -1 "$user_dir" 2>/dev/null | grep -v '^$' | head -n 1)
     if [ -z "$username" ]; then
         echo "Aucun utilisateur trouvé" >&2
         return 1
@@ -1050,7 +1050,7 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     if [ "$INSTALL_UTILS" = true ]; then
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
         execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
         ./utils.sh
 
@@ -1089,34 +1089,36 @@ alias push="git pull && git add . && git commit -m 'mobile push' && git push"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
-        # Ajout aux fichiers $BASHRC et $ZSHRC
-        rc_content="
-get_username() {
-    user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
-    username=\$(find \"\$user_dir\" -maxdepth 1 -type d -printf \"%f\\n\" | grep -v '^$' | head -n 1)
-    if [ -z \"\$username\" ]; then
-        echo \"Aucun utilisateur trouvé\" >&2
-        return 1
-    fi
-    echo \"\$username\"
-}
+        username=$(get_username)
 
-alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"
-"
+        tmp_file="${TMPDIR}/rc_content"
+        touch "$tmp_file"
 
-        # Ajout au fichier $BASHRC
+        cat << EOL >> "$tmp_file"
+
+# Alias pour se connecter à Debian Proot
+alias debian="proot-distro login debian --shared-tmp --user ${username}"
+EOL
+
         if [ -f "$BASHRC" ]; then
-            execute_command "printf '%s\n' '$rc_content' >> '$BASHRC'" "Configuration .bashrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $BASHRC"
+            cat "$tmp_file" >> "$BASHRC"
+            success_msg "✓ Configuration de .bashrc termux"
         else
-            execute_command "touch '$BASHRC' && echo '$rc_content' >> '$BASHRC'" "Création et configuration de .bashrc termux"
+            touch "$BASHRC" 
+            cat "$tmp_file" >> "$BASHRC"
+            success_msg "✓ Création et configuration de .bashrc termux"
         fi
 
-        # Ajout au fichier $ZSHRC
         if [ -f "$ZSHRC" ]; then
-            execute_command "printf '%s\n' '$rc_content' >> '$ZSHRC'" "Configuration .zshrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $ZSHRC"
+            cat "$tmp_file" >> "$ZSHRC"
+            success_msg "✓ Configuration de .zshrc termux"
         else
-            execute_command "touch '$ZSHRC' && echo '$rc_content' >> '$ZSHRC'" "Création et configuration de .zshrc termux"
+            touch "$ZSHRC"
+            cat "$tmp_file" >> "$ZSHRC"
+            success_msg "✓ Création et configuration de .zshrc termux"
         fi
+
+        rm "$tmp_file"
     fi
 }
 
@@ -1172,29 +1174,55 @@ EOL
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 show_banner
-if $EXECUTE_INITIAL_CONFIG; then
-    initial_config
-fi
+
+# Installation des dépendances nécessaires
 if $USE_GUM; then
     execute_command "pkg install -y ncurses-utils" "Installation des dépendances"
 else
     execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des dépendances"
 fi
-install_shell
-common_alias
-install_packages
-install_font
-install_xfce
-install_proot
-install_utils
-install_termux_x11
+
+# Vérifier si des arguments spécifiques ont été fournis
+if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ]; then
+    # Exécuter uniquement les fonctions demandées
+    if [ "$SHELL_CHOICE" = true ]; then
+        install_shell
+    fi
+    if [ "$PACKAGES_CHOICE" = true ]; then
+        install_packages
+    fi
+    if [ "$FONT_CHOICE" = true ]; then
+        install_font
+    fi
+    if [ "$XFCE_CHOICE" = true ]; then
+        install_xfce
+        install_proot
+        install_utils
+        install_termux_x11
+    fi
+else
+    # Exécuter l'installation complète si aucun argument spécifique n'est fourni
+    if $EXECUTE_INITIAL_CONFIG; then
+        initial_config
+    fi
+    install_shell
+    common_alias
+    install_packages
+    install_font
+    install_xfce
+    install_proot
+    install_utils
+    install_termux_x11
+fi
+
+# Nettoyage et message de fin
 info_msg "❯ Nettoyage des fichiers temporaires"
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Exécution de OhMyTermux
 if $USE_GUM; then
-    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
+    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux (recharger le shell) ?"; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
@@ -1202,7 +1230,10 @@ if $USE_GUM; then
             exec $shell_choice
         fi
     else
-        echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Pour utiliser toutes les fonctionnalités, saisir :${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}exec zsh -l${COLOR_RESET} ${COLOR_BLUE}(recommandé - recharge complètement le shell)${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}source ~/.zshrc${COLOR_RESET} ${COLOR_BLUE}(recharge uniquement .zshrc)${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Ou redémarrer Termux${COLOR_RESET}"
     fi
 else
     printf "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n) : ${COLOR_RESET}"
