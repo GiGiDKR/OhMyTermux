@@ -1092,6 +1092,9 @@ EOL
         # D'abord, obtenir le nom d'utilisateur
         username=$(get_username)
 
+        # Créer le fichier temporaire
+        touch /tmp/rc_content
+
         # Ensuite, créer le contenu avec le nom d'utilisateur
         cat << EOL >> /tmp/rc_content
 # Alias pour se connecter à Debian Proot
