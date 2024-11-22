@@ -92,30 +92,47 @@ finish() {
     fi
 }
 
-# Function to display information messages in blue
+#------------------------------------------------------------------------------
+# INFORMATION MESSAGES
+#------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
-        gum style --foreground 33 "$1"
+        gum style "${1//$'\n'/ }" --foreground 33
     else
         echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
     fi
 }
 
-# Function to display success messages in green
+#------------------------------------------------------------------------------
+# SUCCESS MESSAGES
+#------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
-        gum style --foreground 76 "$1"
+        gum style "${1//$'\n'/ }" --foreground 82
     else
-        echo -e "\e[38;5;76m$1${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}$1${COLOR_RESET}"
     fi
 }
 
-# Function to display error messages in red
+#------------------------------------------------------------------------------
+# ERROR MESSAGES
+#------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
-        gum style --foreground 196 "$1"
+        gum style "${1//$'\n'/ }" --foreground 196
     else
         echo -e "${COLOR_RED}$1${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# TITLE MESSAGES
+#------------------------------------------------------------------------------
+title_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 220 --bold
+    else
+        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
     fi
 }
 
@@ -176,7 +193,7 @@ main() {
         pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 
-    info_msg "❯ Installing XFCE"
+    title_msg "❯ Installing XFCE"
 
     execute_command "pkg update -y && pkg upgrade -y" "Updating packages"
 

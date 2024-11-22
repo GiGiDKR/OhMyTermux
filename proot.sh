@@ -51,30 +51,47 @@ for arg in "$@"; do
     esac
 done
 
-# Function to display information messages in blue
+#------------------------------------------------------------------------------
+# INFORMATION MESSAGES
+#------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 33
     else
-        echo -e "\e[38;5;33m$1\e[0m"
+        echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
     fi
 }
 
-# Function to display success messages in green
+#------------------------------------------------------------------------------
+# SUCCESS MESSAGES
+#------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 82
     else
-        echo -e "\e[38;5;82m$1\e[0m"
+        echo -e "${COLOR_GREEN}$1${COLOR_RESET}"
     fi
 }
 
-# Function to display error messages in red
+#------------------------------------------------------------------------------
+# ERROR MESSAGES
+#------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 196
     else
-        echo -e "\e[38;5;196m$1\e[0m"
+        echo -e "${COLOR_RED}$1${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# TITLE MESSAGES
+#------------------------------------------------------------------------------
+title_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 220 --bold
+    else
+        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
     fi
 }
 
@@ -213,7 +230,7 @@ install_mesa_vulkan() {
 
 # Fonction principale
 check_dependencies
-info_msg "❯ Installing Debian Proot"
+title_msg "❯ Installing Debian Proot"
 
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then

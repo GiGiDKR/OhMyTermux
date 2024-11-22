@@ -153,7 +153,7 @@ if $ONLY_GUM; then
 fi
 
 #------------------------------------------------------------------------------
-# AFFICHAGE DES MESSAGES D'INFORMATION
+# MESSAGES D'INFORMATION
 #------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
@@ -164,7 +164,7 @@ info_msg() {
 }
 
 #------------------------------------------------------------------------------
-# AFFICHAGE DES MESSAGES DE SUCCÈS
+# MESSAGES DE SUCCÈS
 #------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
@@ -175,13 +175,24 @@ success_msg() {
 }
 
 #------------------------------------------------------------------------------
-# AFFICHAGE DES MESSAGES D'ERREUR
+# MESSAGES D'ERREUR
 #------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 196
     else
         echo -e "${COLOR_RED}$1${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# MESSAGES DE TITRE
+#------------------------------------------------------------------------------
+title_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 220 --bold
+    else
+        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
     fi
 }
 
@@ -402,7 +413,7 @@ setup_storage() {
 #------------------------------------------------------------------------------
 configure_termux() {
 
-    info_msg "❯ Configuration de Termux"
+    title_msg "❯ Configuration de Termux"
 
     # Appel de la fonction de sauvegarde
     create_backups
@@ -493,7 +504,7 @@ initial_config() {
 #------------------------------------------------------------------------------
 install_shell() {
     if $SHELL_CHOICE; then
-        info_msg "❯ Configuration du shell"
+        title_msg "❯ Configuration du shell"
         if $USE_GUM; then
             shell_choice=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" --height=5 "bash" "zsh" "fish")
         else
@@ -527,7 +538,7 @@ install_shell() {
                 fi
 
                 # Installation de Oh My Zsh et autres configurations ZSH
-                info_msg "❯ Configuration de ZSH"
+                title_msg "❯ Configuration de ZSH"
                 if $USE_GUM; then
                     if gum_confirm "Installer Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
@@ -592,7 +603,7 @@ install_shell() {
                 chsh -s zsh
                 ;;
             "fish")
-                info_msg "❯ Configuration de Fish"
+                title_msg "❯ Configuration de Fish"
                 execute_command "pkg install -y fish" "Installation de Fish"
                 # TODO: Fish 
                 chsh -s fish
@@ -726,7 +737,7 @@ update_zshrc() {
 #------------------------------------------------------------------------------
 install_packages() {
     if $PACKAGES_CHOICE; then
-        info_msg "❯ Configuration des packages"
+        title_msg "❯ Configuration des packages"
         if $USE_GUM; then
             PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
@@ -899,7 +910,7 @@ EOL
 #------------------------------------------------------------------------------
 install_font() {
     if $FONT_CHOICE; then
-        info_msg "❯ Configuration de la police"
+        title_msg "❯ Configuration de la police"
         if $USE_GUM; then
             FONT=$(gum_choose "Sélectionner la police à installer :" --height=13 --selected="Police par défaut" "Police par défaut" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
@@ -959,7 +970,7 @@ INSTALL_UTILS=false
 #------------------------------------------------------------------------------
 install_xfce() {
     if $XFCE_CHOICE; then
-        info_msg "❯ Configuration de XFCE"
+        title_msg "❯ Configuration de XFCE"
         if $USE_GUM; then
             if ! gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
                 return
@@ -974,7 +985,7 @@ install_xfce() {
 
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des dépendances"
 
-        PACKAGES=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
+        PACKAGES=('wget' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
     
         for PACKAGE in "${PACKAGES[@]}"; do
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
@@ -997,7 +1008,7 @@ install_xfce() {
 # INSTALLATION DE DEBIAN PROOT
 #------------------------------------------------------------------------------
 install_proot() {
-    info_msg "❯ Configuration de Proot"
+    title_msg "❯ Configuration de Proot"
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
             execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
@@ -1112,7 +1123,7 @@ EOL
 # INSTALLATION DE TERMUX-X11
 #------------------------------------------------------------------------------
 install_termux_x11() {
-    info_msg "❯ Configuration de Termux-X11"
+    title_msg "❯ Configuration de Termux-X11"
     local file_path="$HOME/.termux/termux.properties"
 
     if [ ! -f "$file_path" ]; then
@@ -1204,7 +1215,7 @@ else
 fi
 
 # Note: Nettoyage et message de fin
-info_msg "❯ Nettoyage des fichiers temporaires"
+title_msg "❯ Nettoyage des fichiers temporaires"
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 

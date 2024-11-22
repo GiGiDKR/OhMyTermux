@@ -92,30 +92,47 @@ finish() {
     fi
 }
 
-# Fonction pour afficher des messages d'information en bleu
+#------------------------------------------------------------------------------
+# MESSAGES D'INFORMATION
+#------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
-        gum style --foreground 33 "$1"
+        gum style "${1//$'\n'/ }" --foreground 33
     else
         echo -e "${COLOR_BLUE}$1${COLOR_RESET}"
     fi
 }
 
-# Fonction pour afficher des messages de succès en vert
+#------------------------------------------------------------------------------
+# MESSAGES DE SUCCÈS
+#------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
-        gum style --foreground 76 "$1"
+        gum style "${1//$'\n'/ }" --foreground 82
     else
-        echo -e "\e[38;5;76m$1${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}$1${COLOR_RESET}"
     fi
 }
 
-# Fonction pour afficher des messages d'erreur en rouge
+#------------------------------------------------------------------------------
+# MESSAGES D'ERREUR
+#------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
-        gum style --foreground 196 "$1"
+        gum style "${1//$'\n'/ }" --foreground 196
     else
         echo -e "${COLOR_RED}$1${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# MESSAGES DE TITRE
+#------------------------------------------------------------------------------
+title_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 220 --bold
+    else
+        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
     fi
 }
 
@@ -177,7 +194,7 @@ main() {
         pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 
-    info_msg "❯ Installation de XFCE"
+    title_msg "❯ Installation de XFCE"
 
     execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
@@ -191,7 +208,8 @@ main() {
     done
 
     # Configuration du bureau
-    execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
+    # FIX: DEBUG
+    #execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
     # Téléchargement du fond d'écran
     download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Téléchargement du fond d'écran"

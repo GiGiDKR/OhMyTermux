@@ -186,6 +186,17 @@ error_msg() {
 }
 
 #------------------------------------------------------------------------------
+# TITLE MESSAGES
+#------------------------------------------------------------------------------
+title_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 220 --bold
+    else
+        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
 # ERROR LOGGING
 #------------------------------------------------------------------------------
 log_error() {
@@ -402,7 +413,7 @@ setup_storage() {
 #------------------------------------------------------------------------------
 configure_termux() {
 
-    info_msg "❯ Termux Configuration"
+    title_msg "❯ Termux Configuration"
 
     # Call backup function
     create_backups
@@ -493,7 +504,7 @@ initial_config() {
 #------------------------------------------------------------------------------
 install_shell() {
     if $SHELL_CHOICE; then
-        info_msg "❯ Shell configuration"
+        title_msg "❯ Shell configuration"
         if $USE_GUM; then
             shell_choice=$(gum_choose "Choose shell to install:" --selected="zsh" --height=5 "bash" "zsh" "fish")
         else
@@ -527,7 +538,7 @@ install_shell() {
                 fi
 
                 # Oh My Zsh installation and other ZSH configurations
-                info_msg "❯ ZSH Configuration"
+                title_msg "❯ ZSH Configuration"
                 if $USE_GUM; then
                     if gum_confirm "Install Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installing dependencies"
@@ -592,7 +603,7 @@ install_shell() {
                 chsh -s zsh
                 ;;
             "fish")
-                info_msg "❯ Fish Configuration"
+                title_msg "❯ Fish Configuration"
                 execute_command "pkg install -y fish" "Installing Fish"
                 # TODO: Fish
                 chsh -s fish
@@ -726,7 +737,7 @@ update_zshrc() {
 #------------------------------------------------------------------------------
 install_packages() {
     if $PACKAGES_CHOICE; then
-        info_msg "❯ Package configuration"
+        title_msg "❯ Package configuration"
         if $USE_GUM; then
             PACKAGES=$(gum_choose "Select packages to install with SPACE:" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Install All")
         else
@@ -899,7 +910,7 @@ EOL
 #------------------------------------------------------------------------------
 install_font() {
     if $FONT_CHOICE; then
-        info_msg "❯ Font configuration"
+        title_msg "❯ Font configuration"
         if $USE_GUM; then
             FONT=$(gum_choose "Select font to install:" --height=13 --selected="Default Font" "Default Font" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
@@ -959,7 +970,7 @@ INSTALL_UTILS=false
 #------------------------------------------------------------------------------
 install_xfce() {
     if $XFCE_CHOICE; then
-        info_msg "❯ XFCE Configuration"
+        title_msg "❯ XFCE Configuration"
         if $USE_GUM; then
             if ! gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install XFCE ?"; then
                 return
@@ -974,7 +985,7 @@ install_xfce() {
 
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installing dependencies"
 
-        PACKAGES=('wget' 'ncurses-utils' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
+        PACKAGES=('wget' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
     
         for PACKAGE in "${PACKAGES[@]}"; do
             execute_command "pkg install -y $PACKAGE" "Installing $PACKAGE"
@@ -997,7 +1008,7 @@ install_xfce() {
 # INSTALL DEBIAN PROOT
 #------------------------------------------------------------------------------
 install_proot() {
-    info_msg "❯ Proot Configuration"
+    title_msg "❯ Proot Configuration"
     if $USE_GUM; then
         if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install Debian Proot ?"; then
             execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
@@ -1112,7 +1123,7 @@ EOL
 # INSTALL TERMUX-X11
 #------------------------------------------------------------------------------
 install_termux_x11() {
-    info_msg "❯ Termux-X11 Configuration"
+    title_msg "❯ Termux-X11 Configuration"
     local file_path="$HOME/.termux/termux.properties"
 
     if [ ! -f "$file_path" ]; then
@@ -1204,8 +1215,8 @@ else
 fi
 
 # Note: Cleaning temporary files
-info_msg "❯ Cleaning temporary files"
-rm -f xfce-FR.sh proot-FR.sh utils.sh install-FR.sh >/dev/null 2>&1
+title_msg "❯ Cleaning temporary files"
+rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 success_msg "✓ Removing installation scripts"
 
 # Note: Reloading the shell
