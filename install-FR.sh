@@ -538,7 +538,7 @@ install_shell() {
                 else
                     printf "${COLOR_BLUE}Installer Oh-My-Zsh ? (O/n) : ${COLOR_RESET}"
                     read -r choice
-                    if [[ ! "$choice" =~ ^[oO]$ ]]; then
+                    if [[ "$choice" =~ ^[oO]$ ]]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
                         #FIX 
@@ -564,13 +564,13 @@ install_shell() {
                 else
                     printf "${COLOR_BLUE}Installer PowerLevel10k ? (O/n) : ${COLOR_RESET}"
                     read -r choice
-                    if [[ ! "$choice" =~ ^[oO]$ ]]; then
+                    if [[ "$choice" =~ ^[oO]$ ]]; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (O/n) : ${COLOR_RESET}"
                         read -r choice
-                        if [[ ! "$choice" =~ ^[oO]$ ]]; then
+                        if [[ "$choice" =~ ^[oO]$ ]]; then
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
                             echo -e "\n# Pour customiser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
@@ -1025,7 +1025,7 @@ install_proot() {
     else    
         printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
         read -r choice
-        if [[ ! "$choice" =~ ^[oO]$ ]]; then
+        if [[ "$choice" =~ ^[oO]$ ]]; then
             execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
             execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
             ./proot-FR.sh
@@ -1150,7 +1150,7 @@ EOL
         else
             printf "${COLOR_BLUE}Installer Termux-X11 ? (O/n) : ${COLOR_RESET}"
             read -r choice
-            if [[ ! "$choice" =~ ^[oO]$ ]]; then
+            if [[ "$choice" =~ ^[oO]$ ]]; then
                 install_x11=true
             fi
         fi
@@ -1241,7 +1241,7 @@ if $USE_GUM; then
 else
     printf "${COLOR_BLUE}Exécuter OhMyTermux ? (O/n) : ${COLOR_RESET}"
     read -r choice
-    if [[ ! "$choice" =~ ^[oO]$ ]]; then
+    if [[ "$choice" =~ ^[oO]$ ]]; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
