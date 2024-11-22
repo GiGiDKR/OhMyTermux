@@ -556,7 +556,7 @@ install_shell() {
 
                         if gum_confirm "Installer le prompt OhMyTermux ?"; then                            
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
-                            echo -e "\n# Pour customiser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
+                            echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
                             echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt en exécutant 'p10k configure'.${COLOR_RESET}"
@@ -573,7 +573,7 @@ install_shell() {
                         read -r choice
                         if [[ "$choice" =~ ^[oO]$ ]]; then
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
-                            echo -e "\n# Pour customiser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
+                            echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
                             echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt en exécutant 'p10k configure'.${COLOR_RESET}"
@@ -689,7 +689,11 @@ update_zshrc() {
     local has_completions="$3"
     local has_ohmytermux="$4"
 
+    # Supprimer les lignes existantes
     sed -i '/fpath.*zsh-completions\/src/d' "$zshrc"
+    sed -i '/source \$ZSH\/oh-my-zsh.sh/d' "$zshrc"
+    sed -i '/# Pour personnaliser le prompt/d' "$zshrc"
+    sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\]/d' "$zshrc"
 
     # Mettre à jour la section plugins
     local default_plugins="git command-not-found copyfile node npm timer vscode web-search z"
@@ -705,34 +709,17 @@ update_zshrc() {
 
     # Supprimer et remplacer la section plugins
     sed -i '/^plugins=(/,/)/d' "$zshrc"
-    if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-        sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-$plugins_section" "$zshrc"
-    else
-        printf "\n$plugins_section" >> "$zshrc"
+    echo -e "$plugins_section" >> "$zshrc"
+
+    # Ajouter les nouvelles sections dans l'ordre souhaité
+    if [ "$has_completions" = "true" ]; then
+        echo -e "\n# Charger zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$zshrc"
     fi
 
-    # Ajouter zsh-completions path si nécessaire
-    if [ "$has_completions" = "true" ]; then
-        if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-# Charger zsh-completions\\
-fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$zshrc"
-        else
-            echo -e "\n# Charger zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
-        fi
-    else
-        if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
-        fi
-    fi
+    echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
 
     if [ "$has_ohmytermux" = "true" ]; then
-        sed -i '/# Pour personnaliser le prompt, exécuter/d' "$zshrc"
-        sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\] || source/d' "$zshrc"
-
-        echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$zshrc"
-        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
+        echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
     fi
 }
 
