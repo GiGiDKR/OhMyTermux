@@ -201,7 +201,7 @@ configure_user_rights() {
 # Fonction pour installer Mesa-Vulkan
 install_mesa_vulkan() {
     local mesa_package="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
-    local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/$mesa_package"
+    local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/$mesa_package"
     
     if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dpkg -s mesa-vulkan-kgsl &> /dev/null; then
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"

@@ -192,7 +192,7 @@ main() {
     execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configure desktop"
 
     # Download wallpaper
-    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/waves.png" "Download wallpaper"
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Download wallpaper"
     execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configure wallpaper"
 
     # Download theme
@@ -204,7 +204,7 @@ main() {
     execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Install cursors"
 
     # Download configuration
-    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/config.zip" "Download XFCE configuration"
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Download XFCE configuration"
     execute_command "unzip -o config.zip && rm config.zip" "Install configuration"
 }
 
