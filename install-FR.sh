@@ -1091,17 +1091,8 @@ EOL
 
         # Ajout aux fichiers $BASHRC et $ZSHRC
         rc_content="
-get_username() {
-    user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
-    username=\$(find \"\$user_dir\" -maxdepth 1 -type d -printf \"%f\\n\" | grep -v '^$' | head -n 1)
-    if [ -z \"\$username\" ]; then
-        echo \"Aucun utilisateur trouvé\" >&2
-        return 1
-    fi
-    echo \"\$username\"
-}
-
-alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"
+# Alias pour se connecter à Debian Proot
+alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\" 
 "
 
         # Ajout au fichier $BASHRC
