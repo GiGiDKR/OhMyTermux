@@ -3,31 +3,31 @@
 USE_GUM=false
 VERBOSE=false
 
-# Colors in variables
+# Couleurs en variables
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
 COLOR_RESET="\e[0m"
 
-# Redirect configuration
+# Configuration de la redirection
 if [ "$VERBOSE" = false ]; then
     redirect=">/dev/null 2>&1"
 else
     redirect=""
 fi
 
-# Function to display help
+# Fonction pour afficher l'aide
 show_help() {
     clear
-    echo "OhMyTermux help"
+    echo "Aide OhMyTermux"
     echo 
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
-    echo "  --gum | -g     Use gum for the user interface"
-    echo "  --verbose | -v Show detailed outputs"
-    echo "  --help | -h    Show this help message"
+    echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose | -v Afficher les sorties détaillées"
+    echo "  --help | -h    Afficher ce message d'aide"
 }
 
-# Arguments management
+# Gestion des arguments
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -49,7 +49,7 @@ for arg in "$@"; do
     esac
 done
 
-# Function to display the banner
+# Fonction pour afficher la bannerière
 bash_banner() {
     clear
     local BANNER="
@@ -78,21 +78,21 @@ show_banner() {
     fi
 }
 
-# Function to manage errors
+# Fonction de gestion des erreurs
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
         echo
         if $USE_GUM; then
-            gum style --foreground 196 "ERROR: Installation of OhMyTermux impossible."
+            gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
         else
-            echo -e "${COLOR_RED}ERROR: Installation of OhMyTermux impossible.${COLOR_RESET}"
+            echo -e "${COLOR_RED}ERREUR: Installation de OhMyTermux impossible.${COLOR_RESET}"
         fi
-        echo -e "${COLOR_BLUE}Please refer to the error message(s) above.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Veuillez vous référer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
     fi
 }
 
-# Function to display information messages in blue
+# Fonction pour afficher des messages d'information en bleu
 info_msg() {
     if $USE_GUM; then
         gum style --foreground 33 "$1"
@@ -101,7 +101,7 @@ info_msg() {
     fi
 }
 
-# Function to display success messages in green
+# Fonction pour afficher des messages de succès en vert
 success_msg() {
     if $USE_GUM; then
         gum style --foreground 76 "$1"
@@ -110,7 +110,7 @@ success_msg() {
     fi
 }
 
-# Function to display error messages in red
+# Fonction pour afficher des messages d'erreur en rouge
 error_msg() {
     if $USE_GUM; then
         gum style --foreground 196 "$1"
@@ -119,13 +119,13 @@ error_msg() {
     fi
 }
 
-# Function to log errors
+# Fonction pour journaliser les erreurs
 log_error() {
     local error_msg="$1"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
 }
 
-# Function to execute a command and display the result
+# Fonction pour exécuter une commande et afficher le résultat
 execute_command() {
     local command="$1"
     local info_msg="$2"
@@ -152,14 +152,15 @@ execute_command() {
     fi
 }
 
-# TODO Implement the install_package function
-# Function to install a package
+# TODO Implémenter la fonction install_package
+# Fonction pour installer un package
 #install_package() {
 #    local pkg=$1
 #    execute_command "pkg install $pkg -y" "Installation de $pkg"
 #}
 
-# Function to download a file
+# Fonction pour télécharger un fichier
+
 download_file() {
     local url=$1
     local message=$2
@@ -168,44 +169,44 @@ download_file() {
 
 trap finish EXIT
 
-# Main function
+# Fonction principale
 main() {
-    # Install gum if necessary
+    # Installation de gum si nécessaire
     if $USE_GUM && ! command -v gum &> /dev/null; then
-        echo -e "${COLOR_BLUE}Installing gum${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
         pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 
-    info_msg "❯ Installing XFCE"
+    info_msg "❯ Installation de XFCE"
 
-    execute_command "pkg update -y && pkg upgrade -y" "Updating packages"
+    execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
-    # Install packages
+    # Installation des packages
     pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
 
 
     for pkg in "${pkgs[@]}"; do
-        execute_command "pkg install $pkg -y" "Installing $pkg"
+        execute_command "pkg install $pkg -y" "Installation de $pkg"
     done
 
-    # Configure desktop
-    execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configure desktop"
+    # Configuration du bureau
+    execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
-    # Download wallpaper
-    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/waves.png" "Download wallpaper"
-    execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configure wallpaper"
+    # Téléchargement du fond d'écran
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/waves.png" "Téléchargement du fond d'écran"
+    execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
 
-    # Download theme
-    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Download WhiteSur-Dark"
-    execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Install theme"
+    # Téléchargement du thème
+    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement de WhiteSur-Dark"
+    execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
 
-    # Download cursor
-    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Download Fluent Cursor"
-    execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Install cursors"
+    # 
+    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
+    execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
-    # Download configuration
-    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/config.zip" "Download XFCE configuration"
-    execute_command "unzip -o config.zip && rm config.zip" "Install configuration"
-}
+    # Téléchargement de la pré-configuration
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/config.zip" "Téléchargement de la configuration XFCE"
+        execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
+    }
 
 main "$@"

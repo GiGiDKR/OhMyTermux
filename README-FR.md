@@ -27,7 +27,7 @@
 ## Installation
 
 🧊 Pour installer **OhMyTermux**
-```bashhy
+```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/install-FR.sh -o install-FR.sh && chmod +x install-FR.sh && ./install-FR.sh
 ```
 

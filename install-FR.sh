@@ -994,13 +994,13 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
-        execute_command "chmod +x xfce.sh" "Attribution des permissions d'exécution"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce-FR.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+        execute_command "chmod +x xfce-FR.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
-            ./xfce.sh --gum
+            ./xfce-FR.sh --gum
         else
-            ./xfce.sh
+            ./xfce-FR.sh
         fi
         
         INSTALL_UTILS=true
@@ -1014,18 +1014,18 @@ install_proot() {
     info_msg "❯ Configuration de Proot"
     if $USE_GUM; then
         if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-            execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
-            ./proot.sh --gum
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+            execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
+            ./proot-FR.sh --gum
             INSTALL_UTILS=true
         fi
     else    
         printf "${COLOR_BLUE}Installer Debian Proot ? (o/n) : ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "o" ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-            execute_command "chmod +x proot.sh" "Attribution des permissions d'exécution"
-            ./proot.sh
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+            execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
+            ./proot-FR.sh
             INSTALL_UTILS=true
         fi
     fi
