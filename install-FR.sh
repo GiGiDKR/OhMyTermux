@@ -1089,25 +1089,36 @@ alias push="git pull && git add . && git commit -m 'mobile push' && git push"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
-        # Ajout aux fichiers $BASHRC et $ZSHRC
-        rc_content="
+        # D'abord, obtenir le nom d'utilisateur
+        username=$(get_username)
+
+        # Ensuite, créer le contenu avec le nom d'utilisateur
+        cat << EOL >> /tmp/rc_content
 # Alias pour se connecter à Debian Proot
-alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\" 
-"
+alias debian="proot-distro login debian --shared-tmp --user ${username}"
+EOL
 
         # Ajout au fichier $BASHRC
         if [ -f "$BASHRC" ]; then
-            execute_command "printf '%s\n' '$rc_content' >> '$BASHRC'" "Configuration .bashrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $BASHRC"
+            cat /tmp/rc_content >> "$BASHRC"
+            success_msg "✓ Configuration .bashrc termux"
         else
-            execute_command "touch '$BASHRC' && echo '$rc_content' >> '$BASHRC'" "Création et configuration de .bashrc termux"
+            touch "$BASHRC" 
+            cat /tmp/rc_content >> "$BASHRC"
+            success_msg "✓ Création et configuration de .bashrc termux"
         fi
 
         # Ajout au fichier $ZSHRC
         if [ -f "$ZSHRC" ]; then
-            execute_command "printf '%s\n' '$rc_content' >> '$ZSHRC'" "Configuration .zshrc termux" || error_msg "Impossible d'ajouter le contenu dans le fichier $ZSHRC"
+            cat /tmp/rc_content >> "$ZSHRC"
+            success_msg "✓ Configuration .zshrc termux"
         else
-            execute_command "touch '$ZSHRC' && echo '$rc_content' >> '$ZSHRC'" "Création et configuration de .zshrc termux"
+            touch "$ZSHRC"
+            cat /tmp/rc_content >> "$ZSHRC"
+            success_msg "✓ Création et configuration de .zshrc termux"
         fi
+
+        rm /tmp/rc_content
     fi
 }
 
