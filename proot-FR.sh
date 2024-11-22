@@ -210,15 +210,21 @@ create_user_proot() {
 
 # Fonction pour configurer les droits de l'utilisateur
 configure_user_rights() {
-    execute_command '
-        # Ajout de la configuration sudo
-        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 usermod -aG sudo "$username"
+    execute_command "
+        # Ajout de l'utilisateur au groupe sudo
+        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 usermod -aG sudo '$username'
         
-        # Configuration des droits sudoers
-        chmod u+rw "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-        echo "%sudo ALL=(ALL:ALL) ALL" | tee -a "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-        chmod u-w "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers"
-    ' "Élevation des droits utilisateur"
+        # Création du fichier sudoers.d pour l'utilisateur
+        echo '$username ALL=(ALL) NOPASSWD: ALL' > '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$username'
+        chmod 0440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$username'
+        
+        # Configuration du fichier sudoers principal
+        echo '%sudo ALL=(ALL:ALL) ALL' >> '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
+        
+        # Vérification des permissions
+        chmod 440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
+        chown root:root '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
+    " "Configuration des droits sudo"
 }
 
 # Fonction pour installer Mesa-Vulkan
