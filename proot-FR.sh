@@ -173,7 +173,9 @@ trap finish EXIT
 
 # Fonction pour installer les paquets nécessaires dans proot
 install_packages_proot() {
-    local pkgs_proot=('sudo' 'wget' 'nala' 'jq')
+    # FIX: DEBUG
+    #local pkgs_proot=('sudo' 'wget' 'nala' 'jq')
+    local pkgs_proot=('sudo' 'wget' 'jq')
     for pkg in "${pkgs_proot[@]}"; do
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
     done

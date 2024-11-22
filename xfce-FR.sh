@@ -182,9 +182,10 @@ main() {
     execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
     # Installation des packages
-    pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
-
-
+    # FIX: DEBUG
+    #pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
+    pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'pavucontrol-qt' 'jq' 'wmctrl' 'netcat-openbsd' 'termux-x11-nightly')
+ 
     for pkg in "${pkgs[@]}"; do
         execute_command "pkg install $pkg -y" "Installation de $pkg"
     done

@@ -1210,7 +1210,7 @@ success_msg "✓ Suppression des scripts d'installation"
 
 # Note: Rechargement du shell
 if $USE_GUM; then
-    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux (recharger le shell) ?"; then
+    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Recharger le shell ?"; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
@@ -1224,7 +1224,7 @@ if $USE_GUM; then
         echo -e "${COLOR_BLUE}Ou redémarrer Termux${COLOR_RESET}"
     fi
 else
-    printf "${COLOR_BLUE}Exécuter OhMyTermux ? (O/n) : ${COLOR_RESET}"
+    printf "${COLOR_BLUE}Recharger le shell ? (O/n) : ${COLOR_RESET}"
     read -r choice
     if [[ "$choice" =~ ^[oO]$ ]]; then
         clear

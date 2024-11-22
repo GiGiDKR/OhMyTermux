@@ -1205,12 +1205,12 @@ fi
 
 # Note: Cleaning temporary files
 info_msg "❯ Cleaning temporary files"
-rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
+rm -f xfce-FR.sh proot-FR.sh utils.sh install-FR.sh >/dev/null 2>&1
 success_msg "✓ Removing installation scripts"
 
 # Note: Reloading the shell
 if $USE_GUM; then
-    if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Run OhMyTermux (reload the shell) ?"; then
+    if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Reload the shell ? ?"; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
@@ -1224,7 +1224,7 @@ if $USE_GUM; then
         echo -e "${COLOR_BLUE}Or restart Termux${COLOR_RESET}"
     fi
 else
-    printf "${COLOR_BLUE}Run OhMyTermux (reload the shell) ? (Y/n): ${COLOR_RESET}"
+    printf "${COLOR_BLUE}Reload the shell ? (Y/n): ${COLOR_RESET}"
     read -r choice
     if [[ "$choice" =~ ^[yY]$ ]]; then
         clear
