@@ -689,6 +689,18 @@ update_zshrc() {
     local has_completions="$3"
     local has_ohmytermux="$4"
 
+    # Vérifier si le fichier existe, sinon le créer avec la configuration de base
+    if [ ! -f "$zshrc" ]; then
+        cat > "$zshrc" << 'EOL'
+# Path to your oh-my-zsh installation
+export ZSH=$HOME/.oh-my-zsh
+
+# Theme configuration
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+EOL
+    fi
+
     sed -i '/fpath.*zsh-completions\/src/d; /^# Load zsh-completions/!d' "$zshrc"
 
     # Mettre à jour la section plugins
@@ -703,32 +715,31 @@ update_zshrc() {
     done
     plugins_section+=")\n"
 
-    # Supprimer et remplacer la section plugins
-    sed -i '/^plugins=(/,/)/d' "$zshrc"
-    if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-        sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-$plugins_section" "$zshrc"
-    else
-        printf "\n$plugins_section" >> "$zshrc"
-    fi
+    # Sauvegarder temporairement le contenu avant la section plugins
+    sed -n '1,/^plugins=(/{/^plugins=(/!p}' "$zshrc" > "$zshrc.tmp"
+
+    # Sauvegarder le contenu après source $ZSH/oh-my-zsh.sh
+    sed -n '/source \$ZSH\/oh-my-zsh.sh/,$p' "$zshrc" > "$zshrc.tmp2"
+
+    # Reconstruire le fichier
+    cat "$zshrc.tmp" > "$zshrc"
+    echo -e "$plugins_section" >> "$zshrc"
 
     # Ajouter zsh-completions path si nécessaire
     if [ "$has_completions" = "true" ]; then
-        if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-# Charger zsh-completions\\
-fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$zshrc"
-        else
-            echo -e "\n# Charger zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
-        fi
-    else
-        if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-# Charger oh-my-zsh" "$zshrc"
-        else
-            echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$zshrc"
-        fi
+        echo -e "# Charger zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n" >> "$zshrc"
     fi
+
+    echo "# Charger oh-my-zsh" >> "$zshrc"
+    echo "source \$ZSH/oh-my-zsh.sh" >> "$zshrc"
+
+    # Restaurer le reste du contenu
+    if [ -f "$zshrc.tmp2" ]; then
+        grep -v "source \$ZSH/oh-my-zsh.sh" "$zshrc.tmp2" >> "$zshrc"
+    fi
+
+    # Nettoyer les fichiers temporaires
+    rm -f "$zshrc.tmp" "$zshrc.tmp2"
 
     if [ "$has_ohmytermux" = "true" ]; then
         sed -i '/# Pour customiser le prompt, exécuter/d' "$zshrc"
