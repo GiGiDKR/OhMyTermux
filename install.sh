@@ -558,7 +558,7 @@ install_shell() {
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~\/.p10k.zsh ]] || source ~\/.p10k.zsh" >> "$ZSHRC"
                         else
-                            echo -e "${COLOR_BLUE}You can customize the PowerLevel10k prompt manually by running 'p10k configure' after installation.${COLOR_RESET}"
+                            echo -e "${COLOR_BLUE}You can customize the prompt by running 'p10k configure'.${COLOR_RESET}"
                         fi
                     fi
                 else
@@ -575,7 +575,7 @@ install_shell() {
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~\/.p10k.zsh ]] || source ~\/.p10k.zsh" >> "$ZSHRC"
                         else
-                            echo -e "${COLOR_BLUE}You can customize the PowerLevel10k prompt manually by running 'p10k configure' after installation.${COLOR_RESET}"
+                            echo -e "${COLOR_BLUE}You can customize the prompt by running 'p10k configure'.${COLOR_RESET}"
                         fi
                     fi
                 fi
@@ -688,50 +688,36 @@ update_zshrc() {
     local has_completions="$3"
     local has_ohmytermux="$4"
 
+    # Deletes actual configuration
     sed -i '/fpath.*zsh-completions\/src/d' "$zshrc"
+    sed -i '/source \$ZSH\/oh-my-zsh.sh/d' "$zshrc"
+    sed -i '/# To customize prompt/d' "$zshrc"
+    sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\]/d' "$zshrc"
 
-    # Update plugins section
+    # Create plugins section content
     local default_plugins="git command-not-found copyfile node npm timer vscode web-search z"
     local filtered_plugins=$(echo "$selected_plugins" | sed 's/zsh-completions//g')
     local all_plugins="$default_plugins $filtered_plugins"
 
-    # Create plugins section content
     local plugins_section="plugins=(\n"
     for plugin in $all_plugins; do
         plugins_section+="    $plugin\n"
     done
     plugins_section+=")\n"
 
-    # Remove and replace plugins section
+    # Delete and replace plugins section
     sed -i '/^plugins=(/,/)/d' "$zshrc"
-    if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-        sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-$plugins_section" "$zshrc"
-    else
-        printf "\n$plugins_section" >> "$zshrc"
+    echo -e "$plugins_section" >> "$zshrc"
+
+    # Add configuration by section
+    if [ "$has_completions" = "true" ]; then
+        echo -e "\n# Load zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$zshrc"
     fi
 
-    # Add zsh-completions path if necessary
-    if [ "$has_completions" = "true" ]; then
-        if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-# Load zsh-completions\\
-fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$zshrc"
-        else
-            echo -e "\n# Load zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
-        fi
-    else
-        if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
-        fi
-    fi
+    echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
 
     if [ "$has_ohmytermux" = "true" ]; then
-        sed -i '/# To customize prompt, run/d' "$zshrc"
-        sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\] || source/d' "$zshrc"
-
-        echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$zshrc"
-        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
+        echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
     fi
 }
 

@@ -689,29 +689,28 @@ update_zshrc() {
     local has_completions="$3"
     local has_ohmytermux="$4"
 
-    # Supprimer les lignes existantes
+    # Suppriessions de la configuration existante
     sed -i '/fpath.*zsh-completions\/src/d' "$zshrc"
     sed -i '/source \$ZSH\/oh-my-zsh.sh/d' "$zshrc"
     sed -i '/# Pour personnaliser le prompt/d' "$zshrc"
     sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\]/d' "$zshrc"
 
-    # Mettre à jour la section plugins
+    # Création du contenu de la section plugins
     local default_plugins="git command-not-found copyfile node npm timer vscode web-search z"
     local filtered_plugins=$(echo "$selected_plugins" | sed 's/zsh-completions//g')
     local all_plugins="$default_plugins $filtered_plugins"
 
-    # Créer le contenu de la section plugins
     local plugins_section="plugins=(\n"
     for plugin in $all_plugins; do
         plugins_section+="    $plugin\n"
     done
     plugins_section+=")\n"
 
-    # Supprimer et remplacer la section plugins
+    # Suppression et remplacement de la section plugins
     sed -i '/^plugins=(/,/)/d' "$zshrc"
     echo -e "$plugins_section" >> "$zshrc"
 
-    # Ajouter les nouvelles sections dans l'ordre souhaité
+    # Ajout de la configuration par séction
     if [ "$has_completions" = "true" ]; then
         echo -e "\n# Charger zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$zshrc"
     fi
