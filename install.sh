@@ -3,47 +3,43 @@
 #------------------------------------------------------------------------------
 # MAIN CONTROL VARIABLES
 #------------------------------------------------------------------------------
-# Note: Activates interactive user interface with gum
+# Note: Interactive interface with gum
 USE_GUM=false
 
-# Note: Determines if initial configuration should be executed
+# Note: Initial configuration
 EXECUTE_INITIAL_CONFIG=true
 
-# Note: Activates detailed operation display
+# Note: Detailed operation display
 VERBOSE=false
 
 #------------------------------------------------------------------------------
 # MODULE SELECTORS
 #------------------------------------------------------------------------------
-# Note: Activates shell installation and configuration (zsh/bash)
+# Note: Shell selection
 SHELL_CHOICE=false
 
-# Note: Activates additional package installation
+# Note: Additional package installation
 PACKAGES_CHOICE=false
 
-# Note: Activates custom font installation
+# Note: Custom font installation
 FONT_CHOICE=false
     
-# Note: Activates XFCE environment and Debian Proot installation
+# Note: XFCE environment and Debian Proot installation
 XFCE_CHOICE=false
 
-# Note: Activates complete installation of all modules without confirmation
+# Note: Complete installation of all modules without confirmation
 FULL_INSTALL=false
 
-# Note: Activates gum usage for all interactions
+# Note: Gum usage for all interactions
 ONLY_GUM=true
 
 #------------------------------------------------------------------------------
 # CONFIGURATION FILES
 #------------------------------------------------------------------------------
-# Note: Path to Bash configuration file
 BASHRC="$HOME/.bashrc"
-
-# Note: Path to Zsh configuration file
 ZSHRC="$HOME/.zshrc"
 
 # TODO: Fish 
-# Note: Path to Fish configuration file
 #FISHRC="$HOME/.config/fish/config.fish"
 
 #------------------------------------------------------------------------------
@@ -143,7 +139,7 @@ for arg in "$@"; do
     esac
 done
 
-# Activate all modules if --gum|-g is used as the only argument
+# Activate all modules if --gum|-g is only argument
 if $ONLY_GUM; then
     SHELL_CHOICE=true
     PACKAGES_CHOICE=true
@@ -201,11 +197,11 @@ title_msg() {
 #------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $error_msg" >> "$HOME/ohmytermux.log"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $error_msg" >> "$HOME/.config/OhMyTermux/install.log"
 }
 
 #------------------------------------------------------------------------------
-# EXECUTION OF A COMMAND AND DISPLAY THE RESULT
+# EXECUTION COMMAND AND DYNAMIC DISPLAY RESULT
 #------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
@@ -235,7 +231,7 @@ execute_command() {
 }
 
 #------------------------------------------------------------------------------
-# CONFIRMATION WITH GUM
+# CONFIRMATION GUM
 #------------------------------------------------------------------------------
 gum_confirm() {
     local prompt="$1"
@@ -247,7 +243,7 @@ gum_confirm() {
 }
 
 #------------------------------------------------------------------------------
-# SELECTION WITH GUM
+# SELECTION GUM
 #------------------------------------------------------------------------------
 gum_choose() {
     local prompt="$1"
@@ -298,7 +294,7 @@ bash_banner() {
 }
 
 #------------------------------------------------------------------------------
-# CHECK AND INSTALL GUM
+# INSTALL GUM
 #------------------------------------------------------------------------------
 check_and_install_gum() {
     if $USE_GUM && ! command -v gum &> /dev/null; then
@@ -352,10 +348,10 @@ show_banner() {
 # BACKUP FILES
 #------------------------------------------------------------------------------
 create_backups() {
-    local backup_dir="$HOME/.backup"
+    local backup_dir="$HOME/.config/OhMyTermux/backup"
     
     # Create backup directory
-    execute_command "mkdir -p \"$backup_dir\"" "Creating ~/.backup directory"
+    execute_command "mkdir -p \"$backup_dir\"" "Creating backup directory"
 
     # List of files to backup
     local files_to_backup=(
@@ -412,14 +408,11 @@ setup_storage() {
 # CONFIGURE TERMUX
 #------------------------------------------------------------------------------
 configure_termux() {
-
     title_msg "❯ Termux Configuration"
 
-    # Call backup function
     create_backups
 
     termux_dir="$HOME/.termux"
-
     # Configuration of colors.properties
     file_path="$termux_dir/colors.properties"
     if [ ! -f "$file_path" ]; then
@@ -468,8 +461,12 @@ use-black-ui = true
 bell-character = ignore
 fullscreen = true
 EOL" "Configuring Termux properties"
+    else
+        execute_command "sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' \"$file_path\" && \
+        sed -i 's/^# use-black-ui = true/use-black-ui = true/' \"$file_path\" && \
+        sed -i 's/^# bell-character = ignore/bell-character = ignore/' \"$file_path\" && \
+        sed -i 's/^# fullscreen = true/fullscreen = true/' \"$file_path\"" "Termux configuration"
     fi
-    
     # Remove login banner
     execute_command "touch $HOME/.hushlogin" "Removing login banner"
     # Download font
@@ -543,8 +540,7 @@ install_shell() {
                     if gum_confirm "Install Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installing dependencies"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installing Oh-My-Zsh"
-                        # FIXME: Optional ?
-                        #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
                     printf "${COLOR_BLUE}Install Oh-My-Zsh ? (Y/n): ${COLOR_RESET}"
@@ -552,8 +548,7 @@ install_shell() {
                     if [[ "$choice" =~ ^[yY]$ ]]; then
                         execute_command "pkg install -y wget curl git unzip" "Installing dependencies"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installing Oh-My-Zsh"
-                        # FIXME: Optional ?
-                        #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 fi
 
@@ -739,7 +734,7 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         title_msg "❯ Package configuration"
         if $USE_GUM; then
-            PACKAGES=$(gum_choose "Select packages to install with SPACE:" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Install All")
+            PACKAGES=$(gum_choose "Select packages to install with SPACE:" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Install All")
         else
             echo "Select packages to install (separated by spaces):"
             echo
@@ -1059,16 +1054,21 @@ install_utils() {
         bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
         if [ ! -f "$bashrc_proot" ]; then
             error_msg "The .bashrc file doesn't exist for user $username."
-            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Creating .bashrc file"
+            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration bash debian"
         fi
 
         cat << "EOL" >> "$bashrc_proot"
+
 export DISPLAY=:1.0
 
 alias zink="MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform"
 alias hud="GALLIUM_HUD=fps"
 alias ..="cd .."
+alias l="ls -CF"
+alias ll="ls -l"
+alias la="ls -A"
 alias q="exit"
+alias s="source"
 alias c="clear"
 alias cat="bat"
 alias apt="sudo nala"
@@ -1083,6 +1083,8 @@ alias start='echo "Please run from Termux and not Debian proot."'
 alias cm="chmod +x"
 alias clone="git clone"
 alias push="git pull && git add . && git commit -m 'mobile push' && git push"
+alias g="git"
+alias n="nano"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
@@ -1099,22 +1101,20 @@ EOL
 
         if [ -f "$BASHRC" ]; then
             cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Configuration of .bashrc termux"
+            success_msg "✓ Configuration bash termux"
         else
             touch "$BASHRC" 
             cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Creation and configuration of .bashrc termux"
+            success_msg "✓ Creation and configuration bash termux"
         fi
-
         if [ -f "$ZSHRC" ]; then
             cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Configuration of .zshrc termux"
+            success_msg "✓ Configuration zsh termux"
         else
             touch "$ZSHRC"
             cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Creation and configuration of .zshrc termux"
+            success_msg "✓ Creation and configuration zsh termux"
         fi
-
         rm "$tmp_file"
     fi
 }
@@ -1229,10 +1229,9 @@ if $USE_GUM; then
             exec $shell_choice
         fi
     else
-        echo -e "${COLOR_BLUE}For use all the functions, you can type :${COLOR_RESET}"
-        echo -e "${COLOR_GREEN}exec zsh -l${COLOR_RESET} ${COLOR_BLUE}(recommended - reload the shell)${COLOR_RESET}"
-        echo -e "${COLOR_GREEN}source ~/.zshrc${COLOR_RESET} ${COLOR_BLUE}(reload only .zshrc)${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}Or restart Termux${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}For use all the functions :${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Type : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Or restart Termux${COLOR_RESET}"
     fi
 else
     printf "${COLOR_BLUE}Reload the shell ? (Y/n): ${COLOR_RESET}"
@@ -1245,6 +1244,8 @@ else
             exec $shell_choice
         fi
     else
-        echo -e "${COLOR_BLUE}OhMyTermux will be active on next Termux startup.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}For use all the functions :${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Type : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Or restart Termux${COLOR_RESET}"
     fi
 fi

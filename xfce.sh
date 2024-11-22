@@ -136,13 +136,17 @@ title_msg() {
     fi
 }
 
-# Function to log errors
+#------------------------------------------------------------------------------
+# ERROR LOGGING
+#------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/.config/OhMyTermux/install.log"
 }
 
-# Function to execute a command and display the result
+#------------------------------------------------------------------------------
+# EXECUTION COMMAND AND DYNAMIC DISPLAY RESULT
+#------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
     local info_msg="$2"
@@ -176,7 +180,9 @@ execute_command() {
 #    execute_command "pkg install $pkg -y" "Installation de $pkg"
 #}
 
-# Function to download a file
+#------------------------------------------------------------------------------
+# DOWNLOAD FILES
+#------------------------------------------------------------------------------
 download_file() {
     local url=$1
     local message=$2
@@ -185,7 +191,9 @@ download_file() {
 
 trap finish EXIT
 
-# Main function
+#------------------------------------------------------------------------------
+# MAIN FUNCTION
+#------------------------------------------------------------------------------
 main() {
     # Install gum if necessary
     if $USE_GUM && ! command -v gum &> /dev/null; then

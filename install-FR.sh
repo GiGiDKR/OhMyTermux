@@ -197,7 +197,7 @@ title_msg() {
 #------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/.config/OhMyTermux/ohmytermux.log"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/.config/OhMyTermux/install.log"
 }
 
 #------------------------------------------------------------------------------
@@ -408,14 +408,10 @@ setup_storage() {
 # CONFIGURATION DE TERMUX
 #------------------------------------------------------------------------------
 configure_termux() {
-
     title_msg "❯ Configuration de Termux"
-
-    # Appel de la fonction de sauvegarde
+    # Sauvegarde des fichiers existants
     create_backups
-
     termux_dir="$HOME/.termux"
-
     # Configuration de colors.properties
     file_path="$termux_dir/colors.properties"
     if [ ! -f "$file_path" ]; then
@@ -454,7 +450,6 @@ color16 = #ff9e64
 color17 = #db4b4b
 EOL" "Installation du thème TokyoNight"
     fi
-
     # Configuration de termux.properties
     file_path="$termux_dir/termux.properties"
     if [ ! -f "$file_path" ]; then
@@ -464,8 +459,12 @@ use-black-ui = true
 bell-character = ignore
 fullscreen = true
 EOL" "Configuration des propriétés Termux"
+    else
+        execute_command "sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' \"$file_path\" && \
+        sed -i 's/^# use-black-ui = true/use-black-ui = true/' \"$file_path\" && \
+        sed -i 's/^# bell-character = ignore/bell-character = ignore/' \"$file_path\" && \
+        sed -i 's/^# fullscreen = true/fullscreen = true/' \"$file_path\"" "Configuration de Termux"
     fi
-
     # Suppression de la bannière de connexion
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
     # Téléchargement de la police
@@ -539,8 +538,7 @@ install_shell() {
                     if gum_confirm "Installer Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        # FIXME: Optionel ?
-                        #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
                     printf "${COLOR_BLUE}Installer Oh-My-Zsh ? (O/n) : ${COLOR_RESET}"
@@ -548,8 +546,7 @@ install_shell() {
                     if [[ "$choice" =~ ^[oO]$ ]]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        # FIXME: Optionel ? 
-                        #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 fi
 
@@ -1055,16 +1052,21 @@ install_utils() {
         bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
         if [ ! -f "$bashrc_proot" ]; then
             error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
-            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Création du fichier .bashrc"
+            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration bash debian"
         fi
 
         cat << "EOL" >> "$bashrc_proot"
+
 export DISPLAY=:1.0
 
 alias zink="MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform"
 alias hud="GALLIUM_HUD=fps"
 alias ..="cd .."
+alias l="ls -CF"
+alias ll="ls -l"
+alias la="ls -A"
 alias q="exit"
+alias s="source"
 alias c="clear"
 alias cat="bat"
 alias apt="sudo nala"
@@ -1075,10 +1077,12 @@ alias remove="sudo nala remove -y"
 alias list="nala list --upgradeable"
 alias show="nala show"
 alias search="nala search"
-alias start='echo "Veuillez exécuter depuis Termux et non Debian proot."'
+alias start='echo "Please run from Termux and not Debian proot."'
 alias cm="chmod +x"
 alias clone="git clone"
 alias push="git pull && git add . && git commit -m 'mobile push' && git push"
+alias g="git"
+alias n="nano"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
@@ -1095,22 +1099,20 @@ EOL
 
         if [ -f "$BASHRC" ]; then
             cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Configuration de .bashrc termux"
+            success_msg "✓ Configuration bash termux"
         else
             touch "$BASHRC" 
             cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Création et configuration de .bashrc termux"
+            success_msg "✓ Création et configuration bash termux"
         fi
-
         if [ -f "$ZSHRC" ]; then
             cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Configuration de .zshrc termux"
+            success_msg "✓ Configuration zsh termux"
         else
             touch "$ZSHRC"
             cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Création et configuration de .zshrc termux"
+            success_msg "✓ Création et configuration zsh termux"
         fi
-
         rm "$tmp_file"
     fi
 }
@@ -1212,12 +1214,12 @@ fi
 
 # Note: Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
+rm -f xfce-FR.sh proot-FR.sh utils.sh install-FR.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Note: Rechargement du shell
 if $USE_GUM; then
-    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Recharger le shell ?"; then
+    if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
@@ -1225,13 +1227,12 @@ if $USE_GUM; then
             exec $shell_choice
         fi
     else
-        echo -e "${COLOR_BLUE}Pour utiliser toutes les fonctionnalités, saisir :${COLOR_RESET}"
-        echo -e "${COLOR_GREEN}exec zsh -l${COLOR_RESET} ${COLOR_BLUE}(recommandé - recharge complètement le shell)${COLOR_RESET}"
-        echo -e "${COLOR_GREEN}source ~/.zshrc${COLOR_RESET} ${COLOR_BLUE}(recharge uniquement .zshrc)${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}Ou redémarrer Termux${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Pour utiliser toutes les fonctionnalités :${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Saisir : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Ou redémarrer Termux${COLOR_RESET}"
     fi
 else
-    printf "${COLOR_BLUE}Recharger le shell ? (O/n) : ${COLOR_RESET}"
+    printf "${COLOR_BLUE}Exécuter OhMyTermux ? (O/n) : ${COLOR_RESET}"
     read -r choice
     if [[ "$choice" =~ ^[oO]$ ]]; then
         clear
@@ -1241,6 +1242,8 @@ else
             exec $shell_choice
         fi
     else
-        echo -e "${COLOR_BLUE}OhMyTermux sera actif au prochain démarrage de Termux.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Pour utiliser toutes les fonctionnalités :${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Saisir : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Ou redémarrer Termux${COLOR_RESET}"
     fi
 fi

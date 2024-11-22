@@ -136,13 +136,17 @@ title_msg() {
     fi
 }
 
-# Fonction pour journaliser les erreurs
+#------------------------------------------------------------------------------
+# JOURNALISATION DES ERREURS
+#------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/ohmytermux.log"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >>  "$HOME/.config/OhMyTermux/install.log"
 }
 
-# Fonction pour exécuter une commande et afficher le résultat
+#------------------------------------------------------------------------------
+# EXECUTION D'UNE COMMANDE ET AFFICHAGE DYNAMIQUE DU RÉSULTAT
+#------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
     local info_msg="$2"
@@ -176,8 +180,9 @@ execute_command() {
 #    execute_command "pkg install $pkg -y" "Installation de $pkg"
 #}
 
-# Fonction pour télécharger un fichier
-
+#------------------------------------------------------------------------------
+# TÉLÉCHARGEMENT D'UN FICHIER
+#------------------------------------------------------------------------------
 download_file() {
     local url=$1
     local message=$2
@@ -186,7 +191,9 @@ download_file() {
 
 trap finish EXIT
 
-# Fonction principale
+#------------------------------------------------------------------------------
+# FONCTION PRINCIPALE
+#------------------------------------------------------------------------------
 main() {
     # Installation de gum si nécessaire
     if $USE_GUM && ! command -v gum &> /dev/null; then
@@ -199,17 +206,14 @@ main() {
     execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
     # Installation des packages
-    # FIX: DEBUG
-    #pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
-    pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'pavucontrol-qt' 'jq' 'wmctrl' 'netcat-openbsd' 'termux-x11-nightly')
- 
+    pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
+
     for pkg in "${pkgs[@]}"; do
         execute_command "pkg install $pkg -y" "Installation de $pkg"
     done
 
     # Configuration du bureau
-    # FIX: DEBUG
-    #execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
+    execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
     # Téléchargement du fond d'écran
     download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Téléchargement du fond d'écran"
