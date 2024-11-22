@@ -1033,7 +1033,7 @@ install_proot() {
 get_username() {
     local user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
     local username
-    username=$(find "$user_dir" -maxdepth 1 -type d -printf "%f\n" | grep -v '^$' | head -n 1)
+    username=$(ls -1 "$user_dir" 2>/dev/null | grep -v '^$' | head -n 1)
     if [ -z "$username" ]; then
         echo "No user found" >&2
         return 1

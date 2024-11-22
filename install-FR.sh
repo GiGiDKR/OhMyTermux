@@ -1037,7 +1037,7 @@ install_proot() {
 get_username() {
     local user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
     local username
-    username=$(find "$user_dir" -maxdepth 1 -type d -printf "%f\n" | grep -v '^$' | head -n 1)
+    username=$(ls -1 "$user_dir" 2>/dev/null | grep -v '^$' | head -n 1)
     if [ -z "$username" ]; then
         echo "Aucun utilisateur trouvé" >&2
         return 1
@@ -1172,22 +1172,48 @@ EOL
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 show_banner
-if $EXECUTE_INITIAL_CONFIG; then
-    initial_config
-fi
+
+# Installation des dépendances nécessaires
 if $USE_GUM; then
     execute_command "pkg install -y ncurses-utils" "Installation des dépendances"
 else
     execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des dépendances"
 fi
-install_shell
-common_alias
-install_packages
-install_font
-install_xfce
-install_proot
-install_utils
-install_termux_x11
+
+# Vérifier si des arguments spécifiques ont été fournis
+if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ]; then
+    # Exécuter uniquement les fonctions demandées
+    if [ "$SHELL_CHOICE" = true ]; then
+        install_shell
+    fi
+    if [ "$PACKAGES_CHOICE" = true ]; then
+        install_packages
+    fi
+    if [ "$FONT_CHOICE" = true ]; then
+        install_font
+    fi
+    if [ "$XFCE_CHOICE" = true ]; then
+        install_xfce
+        install_proot
+        install_utils
+        install_termux_x11
+    fi
+else
+    # Exécuter l'installation complète si aucun argument spécifique n'est fourni
+    if $EXECUTE_INITIAL_CONFIG; then
+        initial_config
+    fi
+    install_shell
+    common_alias
+    install_packages
+    install_font
+    install_xfce
+    install_proot
+    install_utils
+    install_termux_x11
+fi
+
+# Nettoyage et message de fin
 info_msg "❯ Nettoyage des fichiers temporaires"
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
