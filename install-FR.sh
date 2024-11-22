@@ -373,7 +373,7 @@ change_repo() {
             termux-change-repo
         fi
     else
-        printf "${COLOR_BLUE}Changer le miroir des dépôts ? (o/n) : ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Changer le miroir des dépôts ? (O/n) : ${COLOR_RESET}"
         read -r choice
         [[ "$choice" =~ ^[oO]$ ]] && termux-change-repo
     fi
@@ -390,7 +390,7 @@ setup_storage() {
                 termux-setup-storage
             fi
         else
-            printf "${COLOR_BLUE}Autoriser l'accès au stockage ? (o/n) : ${COLOR_RESET}"
+            printf "${COLOR_BLUE}Autoriser l'accès au stockage ? (O/n) : ${COLOR_RESET}"
             read -r choice
             [[ "$choice" =~ ^[oO]$ ]] && termux-setup-storage
         fi
@@ -480,7 +480,7 @@ initial_config() {
         fi
     else
         show_banner
-        printf "${COLOR_BLUE}Activer la configuration recommandée ? (o/n) : ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Activer la configuration recommandée ? (O/n) : ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "oO" ]; then
             configure_termux
@@ -536,9 +536,9 @@ install_shell() {
                         #cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
                     fi
                 else
-                    printf "${COLOR_BLUE}Installer Oh-My-Zsh ? (o/n) : ${COLOR_RESET}"
+                    printf "${COLOR_BLUE}Installer Oh-My-Zsh ? (O/n) : ${COLOR_RESET}"
                     read -r choice
-                    if [ "$choice" = "o" ]; then
+                    if [[ ! "$choice" =~ ^[oO]$ ]]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
                         #FIX 
@@ -555,27 +555,27 @@ install_shell() {
 
                         if gum_confirm "Installer le prompt OhMyTermux ?"; then                            
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
-                            echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                            echo -e "\n# Pour customiser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
-                            echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.${COLOR_RESET}"
+                            echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt en exécutant 'p10k configure'.${COLOR_RESET}"
                         fi
                     fi
                 else
-                    printf "${COLOR_BLUE}Installer PowerLevel10k ? (o/n) : ${COLOR_RESET}"
+                    printf "${COLOR_BLUE}Installer PowerLevel10k ? (O/n) : ${COLOR_RESET}"
                     read -r choice
-                    if [ "$choice" = "o" ]; then
+                    if [[ ! "$choice" =~ ^[oO]$ ]]; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (o/n) : ${COLOR_RESET}"
+                        printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (O/n) : ${COLOR_RESET}"
                         read -r choice
-                        if [ "$choice" = "o" ]; then
+                        if [[ ! "$choice" =~ ^[oO]$ ]]; then
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
-                            echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                            echo -e "\n# Pour customiser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
-                            echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt PowerLevel10k manuellement en exécutant 'p10k configure' après l'installation.${COLOR_RESET}"
+                            echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt en exécutant 'p10k configure'.${COLOR_RESET}"
                         fi
                     fi
                 fi
@@ -688,7 +688,7 @@ update_zshrc() {
     local has_completions="$3"
     local has_ohmytermux="$4"
 
-    sed -i '/fpath.*zsh-completions\/src/d' "$zshrc"
+    sed -i '/fpath.*zsh-completions\/src/d; /^# Load zsh-completions/!d' "$zshrc"
 
     # Mettre à jour la section plugins
     local default_plugins="git command-not-found copyfile node npm timer vscode web-search z"
@@ -715,22 +715,25 @@ $plugins_section" "$zshrc"
     if [ "$has_completions" = "true" ]; then
         if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
             sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-# Load zsh-completions\\
+# Charger zsh-completions\\
 fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" "$zshrc"
         else
-            echo -e "\n# Load zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
+            echo -e "\n# Charger zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
         fi
     else
-        if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
+        if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
+            sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
+# Charger oh-my-zsh" "$zshrc"
+        else
+            echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$zshrc"
         fi
     fi
 
     if [ "$has_ohmytermux" = "true" ]; then
-        sed -i '/# To customize prompt, run/d' "$zshrc"
+        sed -i '/# Pour customiser le prompt, exécuter/d' "$zshrc"
         sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\] || source/d' "$zshrc"
 
-        echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$zshrc"
+        echo -e "\n# Pour customiser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$zshrc"
         echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
     fi
 }
@@ -742,7 +745,7 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         info_msg "❯ Configuration des packages"
         if $USE_GUM; then
-            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf,python" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=12 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
             echo "Sélectionner les packages à installer (séparés par des espaces) :"
             echo
@@ -979,7 +982,7 @@ install_xfce() {
                 return
             fi
         else
-            printf "${COLOR_BLUE}Installer XFCE ? (o/n) : ${COLOR_RESET}"
+            printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
             read -r choice
             if [ "$choice" != "o" ]; then
                 return
@@ -1020,9 +1023,9 @@ install_proot() {
             INSTALL_UTILS=true
         fi
     else    
-        printf "${COLOR_BLUE}Installer Debian Proot ? (o/n) : ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
         read -r choice
-        if [ "$choice" = "o" ]; then
+        if [[ ! "$choice" =~ ^[oO]$ ]]; then
             execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
             execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
             ./proot-FR.sh
@@ -1145,9 +1148,9 @@ EOL
             install_x11=true
         fi
         else
-            printf "${COLOR_BLUE}Installer Termux-X11 ? (o/n) : ${COLOR_RESET}"
+            printf "${COLOR_BLUE}Installer Termux-X11 ? (O/n) : ${COLOR_RESET}"
             read -r choice
-            if [ "$choice" = "o" ]; then
+            if [[ ! "$choice" =~ ^[oO]$ ]]; then
                 install_x11=true
             fi
         fi
@@ -1236,9 +1239,9 @@ if $USE_GUM; then
         echo -e "${COLOR_BLUE}Ou redémarrer Termux${COLOR_RESET}"
     fi
 else
-    printf "${COLOR_BLUE}Exécuter OhMyTermux ? (o/n) : ${COLOR_RESET}"
+    printf "${COLOR_BLUE}Exécuter OhMyTermux ? (O/n) : ${COLOR_RESET}"
     read -r choice
-    if [ "$choice" = "o" ]; then
+    if [[ ! "$choice" =~ ^[oO]$ ]]; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
