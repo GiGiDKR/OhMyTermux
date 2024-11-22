@@ -369,11 +369,11 @@ create_backups() {
 change_repo() {
     show_banner
     if $USE_GUM; then
-        if gum_confirm "Change repository mirror?"; then
+        if gum_confirm "Change repository mirror ?"; then
             termux-change-repo
         fi
     else
-        printf "${COLOR_BLUE}Change repository mirror? (y/n): ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Change repository mirror ? (y/n): ${COLOR_RESET}"
         read -r choice
         [[ "$choice" =~ ^[yY]$ ]] && termux-change-repo
     fi
@@ -386,11 +386,11 @@ setup_storage() {
     if [ ! -d "$HOME/storage" ]; then
         show_banner
         if $USE_GUM; then
-            if gum_confirm "Allow access to storage?"; then
+            if gum_confirm "Allow access to storage ?"; then
                 termux-setup-storage
             fi
         else
-            printf "${COLOR_BLUE}Allow access to storage? (y/n): ${COLOR_RESET}"
+            printf "${COLOR_BLUE}Allow access to storage ? (y/n): ${COLOR_RESET}"
             read -r choice
             [[ "$choice" =~ ^[yY]$ ]] && termux-setup-storage
         fi
@@ -462,7 +462,7 @@ EOL" "Configuring Termux properties"
     # Remove login banner
     execute_command "touch $HOME/.hushlogin" "Removing login banner"
     # Download font
-    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/font.ttf" "Downloading default font" || error_msg "Unable to download default font"
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/font.ttf" "Downloading default font" || error_msg "Unable to download default font"
     termux-reload-settings
 }
 
@@ -475,12 +475,12 @@ initial_config() {
 
     if $USE_GUM; then
         show_banner
-        if gum_confirm "Enable recommended configuration?"; then
+        if gum_confirm "Enable recommended configuration ?"; then
             configure_termux
         fi
     else
         show_banner
-        printf "${COLOR_BLUE}Enable recommended configuration? (y/n): ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Enable recommended configuration ? (y/n): ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "yY" ]; then
             configure_termux
@@ -529,12 +529,12 @@ install_shell() {
                 # Oh My Zsh installation and other ZSH configurations
                 info_msg "❯ ZSH Configuration"
                 if $USE_GUM; then
-                    if gum_confirm "Install Oh-My-Zsh?"; then
+                    if gum_confirm "Install Oh-My-Zsh ?"; then
                         execute_command "pkg install -y wget curl git unzip" "Installing dependencies"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installing Oh-My-Zsh"
                     fi
                 else
-                    printf "${COLOR_BLUE}Install Oh-My-Zsh? (y/n): ${COLOR_RESET}"
+                    printf "${COLOR_BLUE}Install Oh-My-Zsh ? (y/n): ${COLOR_RESET}"
                     read -r choice
                     if [ "$choice" = "y" ]; then
                         execute_command "pkg install -y wget curl git unzip" "Installing dependencies"
@@ -542,15 +542,15 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/zshrc" "Downloading configuration" || error_msg "Unable to download configuration"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/zshrc" "Downloading configuration" || error_msg "Unable to download configuration"
 
                 if $USE_GUM; then
-                    if gum_confirm "Install PowerLevel10k?"; then
+                    if gum_confirm "Install PowerLevel10k ?"; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installing PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        if gum_confirm "Install OhMyTermux prompt?"; then                            
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Downloading OhMyTermux prompt" || error_msg "Unable to download OhMyTermux prompt"
+                        if gum_confirm "Install OhMyTermux prompt ?"; then                            
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Downloading OhMyTermux prompt" || error_msg "Unable to download OhMyTermux prompt"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~\/.p10k.zsh ]] || source ~\/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -558,16 +558,16 @@ install_shell() {
                         fi
                     fi
                 else
-                    printf "${COLOR_BLUE}Install PowerLevel10k? (y/n): ${COLOR_RESET}"
+                    printf "${COLOR_BLUE}Install PowerLevel10k ? (y/n): ${COLOR_RESET}"
                     read -r choice
                     if [ "$choice" = "y" ]; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installing PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        printf "${COLOR_BLUE}Install OhMyTermux prompt? (y/n): ${COLOR_RESET}"
+                        printf "${COLOR_BLUE}Install OhMyTermux prompt ? (y/n): ${COLOR_RESET}"
                         read -r choice
                         if [ "$choice" = "y" ]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Downloading OhMyTermux prompt" || error_msg "Unable to download OhMyTermux prompt"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Downloading OhMyTermux prompt" || error_msg "Unable to download OhMyTermux prompt"
                             echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~\/.p10k.zsh ]] || source ~\/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -576,9 +576,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/aliases.zsh && 
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && \
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/help.md)" "Downloading configuration" || error_msg "Unable to download configuration"
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Downloading configuration" || error_msg "Unable to download configuration"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -971,11 +971,11 @@ install_xfce() {
     if $XFCE_CHOICE; then
         info_msg "❯ XFCE Configuration"
         if $USE_GUM; then
-            if ! gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install XFCE?"; then
+            if ! gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install XFCE ?"; then
                 return
             fi
         else
-            printf "${COLOR_BLUE}Install XFCE? (y/n): ${COLOR_RESET}"
+            printf "${COLOR_BLUE}Install XFCE ? (y/n): ${COLOR_RESET}"
             read -r choice
             if [ "$choice" != "y" ]; then
                 return
@@ -990,7 +990,7 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installing $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.sh" "Downloading XFCE script" || error_msg "Unable to download XFCE script"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce.sh" "Downloading XFCE script" || error_msg "Unable to download XFCE script"
         execute_command "chmod +x xfce.sh" "Setting execution permissions"
         
         if $USE_GUM; then
@@ -1009,17 +1009,17 @@ install_xfce() {
 install_proot() {
     info_msg "❯ Proot Configuration"
     if $USE_GUM; then
-        if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install Debian Proot?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
+        if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install Debian Proot ?"; then
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
             execute_command "chmod +x proot.sh" "Setting execution permissions"
             ./proot.sh --gum
             INSTALL_UTILS=true
         fi
     else    
-        printf "${COLOR_BLUE}Install Debian Proot? (y/n): ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Install Debian Proot ? (y/n): ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "y" ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.sh" "Downloading Proot script" || error_msg "Unable to download Proot script"
             execute_command "chmod +x proot.sh" "Setting execution permissions"
             ./proot.sh
             INSTALL_UTILS=true
@@ -1033,7 +1033,7 @@ install_proot() {
 get_username() {
     local user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
     local username
-    username=$(find "$user_dir" -maxdepth 1 -type d -printf "%f\n" | grep -v '^$' | head -n 1)
+    username=$(ls -1 "$user_dir" 2>/dev/null | grep -v '^$' | head -n 1)
     if [ -z "$username" ]; then
         echo "No user found" >&2
         return 1
@@ -1046,7 +1046,7 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     if [ "$INSTALL_UTILS" = true ]; then
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils.sh" "Downloading Utils script" || error_msg "Unable to download Utils script"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Downloading Utils script" || error_msg "Unable to download Utils script"
         execute_command "chmod +x utils.sh" "Setting execution permissions"
         ./utils.sh
 
@@ -1085,34 +1085,36 @@ alias push="git pull && git add . && git commit -m 'mobile push' && git push"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
-        # Add to .bashrc and .zshrc
-        rc_content="
-get_username() {
-    user_dir=\"\$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home\"
-    username=\$(find \"\$user_dir\" -maxdepth 1 -type d -printf \"%f\\n\" | grep -v '^$' | head -n 1)
-    if [ -z \"\$username\" ]; then
-        echo \"No user found\" >&2
-        return 1
-    fi
-    echo \"\$username\"
-}
+        username=$(get_username)
 
-alias debian=\"proot-distro login debian --shared-tmp --user \$(get_username)\"
-"
+        tmp_file="${TMPDIR}/rc_content"
+        touch "$tmp_file"
 
-        # Add to .bashrc
+        cat << EOL >> "$tmp_file"
+
+# Alias to connect to Debian Proot
+alias debian="proot-distro login debian --shared-tmp --user ${username}"
+EOL
+
         if [ -f "$BASHRC" ]; then
-            execute_command "printf '%s\n' '$rc_content' >> '$BASHRC'" "Configuration .bashrc termux" || error_msg "Unable to add content to file $BASHRC"
+            cat "$tmp_file" >> "$BASHRC"
+            success_msg "✓ Configuration of .bashrc termux"
         else
-            execute_command "touch '$BASHRC' && echo '$rc_content' >> '$BASHRC'" "Creating and configuring .bashrc termux"
+            touch "$BASHRC" 
+            cat "$tmp_file" >> "$BASHRC"
+            success_msg "✓ Creation and configuration of .bashrc termux"
         fi
 
-        # Add to .zshrc
         if [ -f "$ZSHRC" ]; then
-            execute_command "printf '%s\n' '$rc_content' >> '$ZSHRC'" "Configuration .zshrc termux" || error_msg "Unable to add content to file $ZSHRC"
+            cat "$tmp_file" >> "$ZSHRC"
+            success_msg "✓ Configuration of .zshrc termux"
         else
-            execute_command "touch '$ZSHRC' && echo '$rc_content' >> '$ZSHRC'" "Creating and configuring .zshrc termux"
+            touch "$ZSHRC"
+            cat "$tmp_file" >> "$ZSHRC"
+            success_msg "✓ Creation and configuration of .zshrc termux"
         fi
+
+        rm "$tmp_file"
     fi
 }
 
@@ -1135,11 +1137,11 @@ EOL
     local install_x11=false
 
     if $USE_GUM; then
-        if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install Termux-X11?"; then
+        if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install Termux-X11 ?"; then
             install_x11=true
         fi
     else
-        printf "${COLOR_BLUE}Install Termux-X11? (y/n): ${COLOR_RESET}"
+        printf "${COLOR_BLUE}Install Termux-X11 ? (y/n): ${COLOR_RESET}"
         read -r choice
         if [ "$choice" = "y" ]; then
             install_x11=true
@@ -1168,29 +1170,55 @@ EOL
 # MAIN FUNCTION
 #------------------------------------------------------------------------------
 show_banner
-if $EXECUTE_INITIAL_CONFIG; then
-    initial_config
-fi
+
+# Installation dependencies
 if $USE_GUM; then
-    execute_command "pkg install -y ncurses-utils" "Installing dependencies"
+    execute_command "pkg install -y ncurses-utils" "Installation dependencies"
 else
-    execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installing dependencies"
+    execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation dependencies"
 fi
-install_shell
-common_alias
-install_packages
-install_font
-install_xfce
-install_proot
-install_utils
-install_termux_x11
+
+# Check if specific arguments have been provided
+if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ]; then
+    # Execute only the requested functions
+    if [ "$SHELL_CHOICE" = true ]; then
+        install_shell
+    fi
+    if [ "$PACKAGES_CHOICE" = true ]; then
+        install_packages
+    fi
+    if [ "$FONT_CHOICE" = true ]; then
+        install_font
+    fi
+    if [ "$XFCE_CHOICE" = true ]; then
+        install_xfce
+        install_proot
+        install_utils
+        install_termux_x11
+    fi
+else
+    # Execute the complete installation if no specific argument is provided
+    if $EXECUTE_INITIAL_CONFIG; then
+        initial_config
+    fi
+    install_shell
+    common_alias
+    install_packages
+    install_font
+    install_xfce
+    install_proot
+    install_utils
+    install_termux_x11
+fi
+
+# Cleaning temporary files
 info_msg "❯ Cleaning temporary files"
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 success_msg "✓ Removing installation scripts"
 
 # Running OhMyTermux
 if $USE_GUM; then
-    if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Run OhMyTermux?"; then
+    if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Run OhMyTermux (reload the shell) ?"; then
         clear
         if [ "$shell_choice" = "zsh" ]; then
             exec zsh -l
@@ -1198,10 +1226,13 @@ if $USE_GUM; then
             exec $shell_choice
         fi
     else
-        echo -e "${COLOR_BLUE}OhMyTermux will be active on next Termux startup.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}For use all the functions, you can type :${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}exec zsh -l${COLOR_RESET} ${COLOR_BLUE}(recommended - reload the shell)${COLOR_RESET}"
+        echo -e "${COLOR_GREEN}source ~/.zshrc${COLOR_RESET} ${COLOR_BLUE}(reload only .zshrc)${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Or restart Termux${COLOR_RESET}"
     fi
 else
-    printf "${COLOR_BLUE}Run OhMyTermux? (y/n): ${COLOR_RESET}"
+    printf "${COLOR_BLUE}Run OhMyTermux (reload the shell) ? (y/n): ${COLOR_RESET}"
     read -r choice
     if [ "$choice" = "y" ]; then
         clear
