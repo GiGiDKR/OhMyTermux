@@ -689,7 +689,7 @@ update_zshrc() {
     local has_completions="$3"
     local has_ohmytermux="$4"
 
-    sed -i '/fpath.*zsh-completions\/src/d; /^# Load zsh-completions/!d' "$zshrc"
+    sed -i '/fpath.*zsh-completions\/src/d' "$zshrc"
 
     # Mettre à jour la section plugins
     local default_plugins="git command-not-found copyfile node npm timer vscode web-search z"
@@ -722,19 +722,16 @@ fpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src"
             echo -e "\n# Charger zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src\n\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
         fi
     else
-        if grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
-            sed -i "/source \$ZSH\/oh-my-zsh.sh/i\\
-# Charger oh-my-zsh" "$zshrc"
-        else
-            echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh\n" >> "$zshrc"
+        if ! grep -q "source \$ZSH/oh-my-zsh.sh" "$zshrc"; then
+            echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$zshrc"
         fi
     fi
 
     if [ "$has_ohmytermux" = "true" ]; then
-        sed -i '/# Pour customiser le prompt, exécuter/d' "$zshrc"
+        sed -i '/# Pour personnaliser le prompt, exécuter/d' "$zshrc"
         sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\] || source/d' "$zshrc"
 
-        echo -e "\n# Pour customiser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$zshrc"
+        echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$zshrc"
         echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
     fi
 }
