@@ -120,7 +120,7 @@ for arg in "$@"; do
             exit 0
             ;;
         --verbose|-v)
-            verbose=true
+            VERBOSE=true
             redirect=""
             shift
             ;;
