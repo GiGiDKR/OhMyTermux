@@ -52,7 +52,9 @@ COLOR_GOLD='\033[38;5;220m'   # Avertissement
 COLOR_RED='\033[38;5;196m'    # Erreur
 COLOR_RESET='\033[0m'         # Réinitialisation
 
-# Note: Configuration de la redirection
+#------------------------------------------------------------------------------
+# CONFIGURATION DE LA REDIRECTION
+#------------------------------------------------------------------------------
 if [ "$VERBOSE" = false ]; then
     redirect="> /dev/null 2>&1"
 else
@@ -594,11 +596,9 @@ install_shell() {
                 fi
                 chsh -s zsh
                 ;;
-# TODO: IMPLEMENTATION DE FISH 
             "fish")
                 title_msg "❯ Configuration de Fish"
                 execute_command "pkg install -y fish" "Installation de Fish"
-                #execute_command "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher" "Installation de Fisher"
                 chsh -s fish
                 ;;
         esac

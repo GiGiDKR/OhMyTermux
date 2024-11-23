@@ -52,7 +52,9 @@ COLOR_GOLD='\033[38;5;220m'   # Warning
 COLOR_RED='\033[38;5;196m'    # Error
 COLOR_RESET='\033[0m'         # Reset
 
-# Note: Redirect configuration
+#------------------------------------------------------------------------------
+# REDIRECTION CONFIGURATION
+#------------------------------------------------------------------------------
 if [ "$VERBOSE" = false ]; then
     redirect="> /dev/null 2>&1"
 else
@@ -533,7 +535,6 @@ install_shell() {
                 else
                     success_msg="✓ Zsh already installed"
                 fi
-
                 # Oh My Zsh installation and other ZSH configurations
                 title_msg "❯ ZSH Configuration"
                 if $USE_GUM; then
