@@ -1,4 +1,6 @@
 .vscode
 *.bak
-install copy.shts/
+.cursorrules
+dev.sh
+fish.sh
 assets/pictures
