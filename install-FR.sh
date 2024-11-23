@@ -531,7 +531,6 @@ install_shell() {
                 else
                     success_msg="✓ Zsh déjà installé"
                 fi
-
                 # Installation de Oh My Zsh et autres configurations ZSH
                 title_msg "❯ Configuration de ZSH"
                 if $USE_GUM; then
@@ -595,10 +594,11 @@ install_shell() {
                 fi
                 chsh -s zsh
                 ;;
+# TODO: IMPLEMENTATION DE FISH 
             "fish")
                 title_msg "❯ Configuration de Fish"
                 execute_command "pkg install -y fish" "Installation de Fish"
-                # TODO: Fish 
+                #execute_command "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher" "Installation de Fisher"
                 chsh -s fish
                 ;;
         esac
