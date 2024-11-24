@@ -220,15 +220,20 @@ execute_command() {
             return 1
         fi
     else
+        tput sc
         info_msg "$info_msg"
+        
         if eval "$command $redirect"; then
+            tput rc
+            tput el
             success_msg "$success_msg"
         else
+            tput rc
+            tput el
             error_msg "$error_msg"
             log_error "$command"
             return 1
         fi
-
     fi
 }
 
@@ -1170,11 +1175,13 @@ EOL
 #------------------------------------------------------------------------------
 show_banner
 
-# Note: Installation des dépendances nécessaires
-if $USE_GUM; then
-    execute_command "pkg install -y ncurses-utils" "Installation des dépendances"
-else
-    execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des dépendances"
+# Note: Vérification et installation des dépendances nécessaires
+if ! command -v tput &> /dev/null; then
+    if $USE_GUM; then
+        execute_command "pkg install -y ncurses-utils" "Installation des dépendances"
+    else
+        execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des dépendances"
+    fi
 fi
 
 # Note: Vérifier si des arguments spécifiques ont été fournis
