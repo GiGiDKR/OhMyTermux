@@ -475,8 +475,10 @@ EOL" "Configuration des propriétés Termux"
     # Suppression de la bannière de connexion
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
     # Téléchargement de la police
-    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/font.ttf" "Téléchargement de la police par défaut" || error_msg "Impossible de télécharger la police par défaut"
-    #FIX
+    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf'" "Installation de la police par défaut"
+    termux-reload-settings
+    #FIXME:
+    #execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/font.ttf" "Téléchargement de la police par défaut" || error_msg "Impossible de télécharger la police par défaut"
     #termux-reload-settings
 }
 
@@ -564,8 +566,8 @@ install_shell() {
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        if gum_confirm "Installer le prompt OhMyTermux ?"; then                            
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
+                        if gum_confirm "Installer le prompt personnalisé OhMyTermux ?"; then                            
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt personnalisé OhMyTermux" || error_msg "Impossible de télécharger le prompt personnalisé OhMyTermux"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -1044,6 +1046,11 @@ install_proot() {
             INSTALL_UTILS=true
         fi
     fi
+    #TODO
+    # Création "user" avec mot de passe "user" si --full est utilisé
+    #if $FULL_INSTALL; then
+    #    execute_command "proot-distro login debian --shared-tmp --user root -- bash -c 'useradd -m -s /bin/bash user && echo user:user | chpasswd'" "Création de l'utilisateur Proot 'user'"
+    #fi
 }
 
 #------------------------------------------------------------------------------

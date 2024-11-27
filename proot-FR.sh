@@ -53,6 +53,12 @@ for arg in "$@"; do
             show_help
             exit 0
             ;;
+        --full)
+            username="user"
+            password="user"
+            USE_GUM=false
+            shift
+            ;;
         *)
             break
             ;;
@@ -275,64 +281,66 @@ install_mesa_vulkan() {
 check_dependencies
 title_msg "❯ Installation de Debian Proot"
 
-if [ $# -eq 0 ]; then
-    if [ "$USE_GUM" = true ]; then
-        username=$(gum input --prompt "Nom d'utilisateur : " --placeholder "Entrez votre nom d'utilisateur")
-        while true; do
-            password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
-            password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
-            if [ "$password" = "$password_confirm" ]; then
-                break
-            else
-                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
-            fi
-        done
+if [ -z "$username" ] && [ -z "$password" ]; then
+    if [ $# -eq 0 ]; then
+        if [ "$USE_GUM" = true ]; then
+            username=$(gum input --prompt "Nom d'utilisateur : " --placeholder "Entrez votre nom d'utilisateur")
+            while true; do
+                password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
+                password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
+                if [ "$password" = "$password_confirm" ]; then
+                    break
+                else
+                    gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                fi
+            done
+        else
+            echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
+            read -r username
+            while true; do
+                echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+                read -rs password
+                echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
+                read -rs password_confirm
+                if [ "$password" = "$password_confirm" ]; then
+                    break
+                else
+                    echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                fi
+            done
+        fi
+    elif [ $# -eq 1 ]; then
+        username="$1"
+        if [ "$USE_GUM" = true ]; then
+            while true; do
+                password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
+                password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
+                if [ "$password" = "$password_confirm" ]; then
+                    break
+                else
+                    gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                fi
+            done
+        else
+            while true; do
+                echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+                read -rs password
+                echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
+                read -rs password_confirm
+                if [ "$password" = "$password_confirm" ]; then
+                    break
+                else
+                    echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                fi
+            done
+        fi
+    elif [ $# -eq 2 ]; then
+        username="$1"
+        password="$2"
     else
-        echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
-        read -r username
-        while true; do
-            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
-            read -rs password
-            echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
-            read -rs password_confirm
-            if [ "$password" = "$password_confirm" ]; then
-                break
-            else
-                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
-            fi
-        done
+        show_help
+        exit 1
     fi
-elif [ $# -eq 1 ]; then
-    username="$1"
-    if [ "$USE_GUM" = true ]; then
-        while true; do
-            password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
-            password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
-            if [ "$password" = "$password_confirm" ]; then
-                break
-            else
-                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
-            fi
-        done
-    else
-        while true; do
-            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
-            read -rs password
-            echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
-            read -rs password_confirm
-            if [ "$password" = "$password_confirm" ]; then
-                break
-            else
-                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
-            fi
-        done
-    fi
-elif [ $# -eq 2 ]; then
-    username="$1"
-    password="$2"
-else
-    show_help
-    exit 1
 fi
 
 execute_command "proot-distro install debian" "Installation de la distribution"
