@@ -180,7 +180,7 @@ execute_command() {
         fi
     else
         info_msg "$info_msg"
-        if eval "$command $redirect"; then
+        if eval "$command $redirect" > /dev/null 2>&1; then
             success_msg "$success_msg"
         else
             error_msg "$error_msg"
@@ -205,9 +205,14 @@ trap finish EXIT
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 main() {
+    log_file="$HOME/.config/xfce-debian/install.log"
+    mkdir -p "$(dirname "$log_file")"
+    touch "$log_file"
+
     # Vérification des privilèges sudo
     if [ "$(id -u)" -ne 0 ]; then
         error_msg "Ce script doit être exécuté avec les privilèges sudo"
+        sudo "$0" "$@"
         exit 1
     fi
 
@@ -250,14 +255,14 @@ main() {
 
     # Téléchargement du thème
     download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème WhiteSur"
-    execute_command "unzip 2024-11.18.zip && \
-                    cd WhiteSur-gtk-theme-2024-11-18 && \
-                    ./install.sh -d /usr/share/themes && \
-                    cd .. && \
-                    rm -rf WhiteSur-gtk-theme-2024-11-18 2024-11-18.zip" "Installation du thème"
+    execute_command "unzip 2024-11-18.zip && \
+                    tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
+                    mv WhiteSur-Dark/ /usr/share/themes/ && \
+                    rm -rf WhiteSur* && \
+                    rm 2024-11-18.zip" "Installation du thème"
 
-    # Téléchargement et installation du thème d'icônes WhiteSur
-    download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes WhiteSur"
+    # Téléchargement et installation des icônes WhiteSur
+    download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des cônes WhiteSur"
     execute_command "unzip master.zip && \
                     cd WhiteSur-icon-theme-master && \
                     ./install.sh --dest /usr/share/icons && \
