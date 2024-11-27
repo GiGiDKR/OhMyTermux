@@ -173,8 +173,9 @@ execute_command() {
     fi
 }
 
-# TODO: Implémenter la fonction install_package
-# Fonction pour installer un package
+#------------------------------------------------------------------------------
+# INSTALLATION D'UN PAQUET
+#------------------------------------------------------------------------------
 #install_package() {
 #    local pkg=$1
 #    execute_command "pkg install $pkg -y" "Installation de $pkg"
@@ -220,8 +221,8 @@ main() {
     execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
 
     # Téléchargement du thème
-    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement de WhiteSur-Dark"
-    execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
+    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.11.18.zip" "Téléchargement de WhiteSur-Dark"
+    execute_command "unzip 2024.11.18.zip && tar -xf WhiteSur-gtk-theme-2024.11.18/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.11.18.zip" "Installation du thème"
 
     # 
     download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
@@ -229,7 +230,7 @@ main() {
 
     # Téléchargement de la pré-configuration
     download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
-        execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
-    }
+    execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
+}
 
 main "$@"
