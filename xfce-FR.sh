@@ -243,11 +243,11 @@ main() {
     if [ "$BROWSER" = "firefox" ]; then
         pkgs+=('firefox')
     elif [ "$BROWSER" = "chromium" ]; then
-        pkgs+=('chromium' 'chromium-l10n')
+        pkgs+=('chromium')
     elif [ "$BROWSER" = "aucun" ]; then
         info_msg "Aucun navigateur web installé."
     else
-        echo "Navigateur non reconnu: $BROWSER. Installation de Firefox par défaut."
+        info_msg "Navigateur inconnu. Installation de Firefox."
         pkgs+=('firefox')
     fi
 

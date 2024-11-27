@@ -987,7 +987,7 @@ install_xfce() {
         # Sélection du navigateur
         local browser_choice
         if $USE_GUM; then
-            browser_choice=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="firefox" "firefox" "chromium" "aucun")
+            browser_choice=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "firefox" "chromium" "aucun")
         else
             echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
             echo "1) Firefox (par défaut)"
@@ -1262,7 +1262,7 @@ if $USE_GUM; then
         fi
     else
         echo -e "${COLOR_BLUE}Pour utiliser toutes les fonctionnalités :${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}- Saisir : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Saisir : ${COLOR_RESET} ${COLOR_GR  EEN}exec zsh -l${COLOR_RESET}"
         echo -e "${COLOR_BLUE}- Ou redémarrer Termux${COLOR_RESET}"
     fi
 else

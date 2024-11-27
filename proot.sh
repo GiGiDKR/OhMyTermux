@@ -260,9 +260,8 @@ install_mesa_vulkan() {
 #------------------------------------------------------------------------------
 # MAIN FUNCTION
 #------------------------------------------------------------------------------
-main() {
-    check_dependencies
-    title_msg "❯ Installing Debian Proot"
+check_dependencies
+title_msg "❯ Installing Debian Proot"
 
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
