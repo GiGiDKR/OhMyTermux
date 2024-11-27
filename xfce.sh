@@ -3,19 +3,25 @@
 USE_GUM=false
 VERBOSE=false
 
-# Colors in variables
+#------------------------------------------------------------------------------
+# COLORS
+#------------------------------------------------------------------------------
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
 COLOR_RESET="\e[0m"
 
-# Redirect configuration
+#------------------------------------------------------------------------------
+# REDIRECT CONFIGURATION
+#------------------------------------------------------------------------------
 if [ "$VERBOSE" = false ]; then
     redirect=">/dev/null 2>&1"
 else
     redirect=""
 fi
 
-# Function to display help
+#------------------------------------------------------------------------------
+# HELP
+#------------------------------------------------------------------------------
 show_help() {
     clear
     echo "OhMyTermux help"
@@ -27,7 +33,9 @@ show_help() {
     echo "  --help | -h    Show this help message"
 }
 
-# Arguments management
+#------------------------------------------------------------------------------
+# ARGUMENTS MANAGEMENT
+#------------------------------------------------------------------------------
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -49,7 +57,9 @@ for arg in "$@"; do
     esac
 done
 
-# Function to display the banner
+#------------------------------------------------------------------------------
+# BANNER
+#------------------------------------------------------------------------------
 bash_banner() {
     clear
     local BANNER="
@@ -78,7 +88,9 @@ show_banner() {
     fi
 }
 
-# Function to manage errors
+#------------------------------------------------------------------------------
+# FINISH
+#------------------------------------------------------------------------------
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -173,11 +185,12 @@ execute_command() {
     fi
 }
 
-# TODO: Implement the install_package function
-# Function to install a package
+#------------------------------------------------------------------------------
+# INSTALL PACKAGE
+#------------------------------------------------------------------------------
 #install_package() {
 #    local pkg=$1
-#    execute_command "pkg install $pkg -y" "Installation de $pkg"
+#    execute_command "pkg install $pkg -y" "Install $pkg"
 #}
 
 #------------------------------------------------------------------------------
@@ -217,12 +230,12 @@ main() {
     execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configure desktop"
 
     # Download wallpaper
-    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/src/waves.png" "Download wallpaper"
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Download wallpaper"
     execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configure wallpaper"
 
     # Download theme
-    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Download WhiteSur-Dark"
-    execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Install theme"
+    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.11.18.zip" "Download WhiteSur-Dark"
+    execute_command "unzip 2024.11.18.zip && tar -xf WhiteSur-gtk-theme-2024.11.18/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.11.18.zip" "Install theme"
 
     # Download cursor
     download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Download Fluent Cursor"

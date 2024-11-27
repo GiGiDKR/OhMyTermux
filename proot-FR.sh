@@ -5,19 +5,25 @@ set -euo pipefail
 USE_GUM=false
 VERBOSE=false
 
-# Couleurs en variables
+#------------------------------------------------------------------------------
+# COULEURS
+#------------------------------------------------------------------------------
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
 COLOR_RESET="\e[0m"
 
-# Configuration de la redirection
+#------------------------------------------------------------------------------
+# REDIRECTION
+#------------------------------------------------------------------------------
 if [ "$VERBOSE" = false ]; then
     redirect=">/dev/null 2>&1"
 else
     redirect=""
 fi
 
-# Fonction pour afficher l'aide
+#------------------------------------------------------------------------------
+# AFFICHAGE DE L'AIDE
+#------------------------------------------------------------------------------
 show_help() {
     clear
     echo "Aide OhMyTermux"
@@ -29,7 +35,9 @@ show_help() {
     echo "  --help | -h    Afficher ce message d'aide"
 }
 
-# Gestion des arguments
+#------------------------------------------------------------------------------
+# GESTION DES ARGUMENTS
+#------------------------------------------------------------------------------
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -164,6 +172,9 @@ bash_banner() {
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
+#------------------------------------------------------------------------------
+# AFFICHAGE DE LA BANNIERE
+#------------------------------------------------------------------------------
 show_banner() {
     clear
     if $USE_GUM; then

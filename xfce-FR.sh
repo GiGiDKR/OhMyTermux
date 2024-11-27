@@ -3,19 +3,25 @@
 USE_GUM=false
 VERBOSE=false
 
-# Couleurs en variables
+#------------------------------------------------------------------------------
+# COULEURS
+#------------------------------------------------------------------------------
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
 COLOR_RESET="\e[0m"
 
-# Configuration de la redirection
+#------------------------------------------------------------------------------
+# REDIRECTION
+#------------------------------------------------------------------------------
 if [ "$VERBOSE" = false ]; then
     redirect=">/dev/null 2>&1"
 else
     redirect=""
 fi
 
-# Fonction pour afficher l'aide
+#------------------------------------------------------------------------------
+# AFFICHAGE DE L'AIDE
+#------------------------------------------------------------------------------
 show_help() {
     clear
     echo "Aide OhMyTermux"
@@ -27,7 +33,9 @@ show_help() {
     echo "  --help | -h    Afficher ce message d'aide"
 }
 
-# Gestion des arguments
+#------------------------------------------------------------------------------
+# GESTION DES ARGUMENTS
+#------------------------------------------------------------------------------
 for arg in "$@"; do
     case $arg in
         --gum|-g)
@@ -49,7 +57,9 @@ for arg in "$@"; do
     esac
 done
 
-# Fonction pour afficher la bannerière
+#------------------------------------------------------------------------------
+# AFFICHAGE DE LA BANNIERE EN MODE TEXTE
+#------------------------------------------------------------------------------
 bash_banner() {
     clear
     local BANNER="
@@ -62,6 +72,9 @@ bash_banner() {
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
+#------------------------------------------------------------------------------
+# AFFICHAGE DE LA BANNIERE EN MODE GRAPHIQUE
+#------------------------------------------------------------------------------
 show_banner() {
     clear
     if $USE_GUM; then
@@ -78,7 +91,9 @@ show_banner() {
     fi
 }
 
-# Fonction de gestion des erreurs
+#------------------------------------------------------------------------------
+# GESTION DES ERREURS
+#------------------------------------------------------------------------------
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
@@ -173,8 +188,9 @@ execute_command() {
     fi
 }
 
-# TODO: Implémenter la fonction install_package
-# Fonction pour installer un package
+#------------------------------------------------------------------------------
+# INSTALLATION D'UN PAQUET
+#------------------------------------------------------------------------------
 #install_package() {
 #    local pkg=$1
 #    execute_command "pkg install $pkg -y" "Installation de $pkg"
@@ -216,12 +232,12 @@ main() {
     execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
     # Téléchargement du fond d'écran
-    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/main/src/waves.png" "Téléchargement du fond d'écran"
+    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Téléchargement du fond d'écran"
     execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
 
     # Téléchargement du thème
-    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.09.02.zip" "Téléchargement de WhiteSur-Dark"
-    execute_command "unzip 2024.09.02.zip && tar -xf WhiteSur-gtk-theme-2024.09.02/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.09.02.zip" "Installation du thème"
+    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.11.18.zip" "Téléchargement de WhiteSur-Dark"
+    execute_command "unzip 2024.11.18.zip && tar -xf WhiteSur-gtk-theme-2024.11.18/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.11.18.zip" "Installation du thème"
 
     # 
     download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
@@ -229,7 +245,7 @@ main() {
 
     # Téléchargement de la pré-configuration
     download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
-        execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
-    }
+    execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
+}
 
 main "$@"
