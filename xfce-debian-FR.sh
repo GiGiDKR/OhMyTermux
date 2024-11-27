@@ -229,6 +229,7 @@ main() {
 
     # Installation des paquets XFCE
     pkgs=(
+        'wget'
         'xfce4'
         'xfce4-goodies'
         'pavucontrol'
@@ -236,7 +237,6 @@ main() {
         'wmctrl'
         'firefox-esr'
         'netcat-openbsd'
-        'lightdm'
     )
     
     for pkg in "${pkgs[@]}"; do
@@ -249,8 +249,8 @@ main() {
     # Téléchargement et installation des fonds d'écran WhiteSur
     download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran WhiteSur"
     execute_command "unzip main.zip && \
-                    mkdir -p /usr/share/backgrounds/WhiteSur && \
-                    cp -r WhiteSur-wallpapers-main/4k/* /usr/share/backgrounds/WhiteSur/ && \
+                    mkdir -p /usr/share/backgrounds/whitesur && \
+                    cp -r WhiteSur-wallpapers-main/4k/* /usr/share/backgrounds/whitesur/ && \
                     rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran"
 
     # Téléchargement du thème
@@ -280,11 +280,7 @@ main() {
                     cd ../.. && \
                     rm -rf Fluent-icon-theme-2024-02-25 2024-02-25.zip" "Installation des curseurs"
 
-    # Configuration de LightDM
-    execute_command "systemctl enable lightdm" "Activation de LightDM"
-
     success_msg "✓ Installation de XFCE terminée"
-    info_msg "Redémarrez votre système pour utiliser XFCE"
 }
 
 main "$@" 

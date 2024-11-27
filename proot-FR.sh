@@ -364,13 +364,13 @@ execute_command "
 # CONFIGURATION DES ICONES ET THÈMES
 #------------------------------------------------------------------------------
 mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
-execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/dist-dark" "Configuration des icônes"
+execute_command "cp -r $PREFIX/share/icons/WithSur-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/WithSur-dark" "Configuration des icônes"
 
 #------------------------------------------------------------------------------
 # CONFIGURATION DES CURSEURS
 #------------------------------------------------------------------------------
 execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
-Xcursor.theme: dist-dark
+Xcursor.theme: WithSur-dark
 EOF" "Configuration des curseurs"
 
 #------------------------------------------------------------------------------
