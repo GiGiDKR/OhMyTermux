@@ -232,14 +232,30 @@ main() {
     execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
 
     # Téléchargement du fond d'écran
-    download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Téléchargement du fond d'écran"
-    execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
+    #download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Téléchargement du fond d'écran"
+    #execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
+
+    # Téléchargement et installation des fonds d'écran WhiteSur
+    download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran WhiteSur"
+    execute_command "unzip main.zip && \
+                    mkdir -p $PREFIX/share/backgrounds/WhiteSur && \
+                    cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/WhiteSur/ && \
+                    rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran"
 
     # Téléchargement du thème
-    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.11.18.zip" "Téléchargement de WhiteSur-Dark"
+    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024.11.18.zip" "Téléchargement du thème WhiteSur"
     execute_command "unzip 2024.11.18.zip && tar -xf WhiteSur-gtk-theme-2024.11.18/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024.11.18.zip" "Installation du thème"
 
-    # 
+    # Téléchargement et installation du thème d'icônes WhiteSur
+    download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes WhiteSur"
+    execute_command "unzip master.zip && \
+                    cd WhiteSur-icon-theme-master && \
+                    mkdir -p $PREFIX/share/icons && \
+                    ./install.sh --dest $PREFIX/share/icons && \
+                    cd .. && \
+                    rm -rf WhiteSur-icon-theme-master master.zip" "Installation des icônes"
+
+    # Téléchargement des curseurs
     download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
     execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
 
