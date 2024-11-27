@@ -566,8 +566,8 @@ install_shell() {
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        if gum_confirm "Installer le prompt personnalisé OhMyTermux ?"; then                            
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt personnalisé OhMyTermux" || error_msg "Impossible de télécharger le prompt personnalisé OhMyTermux"
+                        if gum_confirm "Installer le prompt personnalisé ?"; then                            
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt personnalisé" || error_msg "Impossible de télécharger le prompt personnalisé"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
