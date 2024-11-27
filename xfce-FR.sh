@@ -243,11 +243,14 @@ main() {
     if [ "$BROWSER" = "firefox" ]; then
         pkgs+=('firefox')
     elif [ "$BROWSER" = "chromium" ]; then
-        pkgs+=('chromium' 'chromium-l10n')
+        pkgs+=('chromium')
+        # Vérifier si chromium-l10n est disponible
+        if apt-cache show chromium-l10n &> /dev/null; then
+            pkgs+=('chromium-l10n')
+        fi
     elif [ "$BROWSER" = "aucun" ]; then
         info_msg "Aucun navigateur web installé."
     else
-        echo "Navigateur non reconnu: $BROWSER. Installation de Firefox par défaut."
         pkgs+=('firefox')
     fi
 
@@ -263,41 +266,50 @@ main() {
     fi
 
     # Téléchargement et installation des fonds d'écran WhiteSur
-    download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran WhiteSur"
+    download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran White-Sur"
     execute_command "unzip main.zip && \
                     mkdir -p $PREFIX/share/backgrounds/whitesur && \
                     cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/whitesur/ && \
-                    rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran"
+                    rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran White-Sur"
 
     # Téléchargement du thème
-    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème WhiteSur"
+    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème White-Sur"
     execute_command "unzip 2024-11-18.zip && \
                     tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
                     mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
                     rm -rf WhiteSur* && \
-                    rm 2024-11-18.zip" "Installation du thème"
+                    rm 2024-11-18.zip" "Installation du thème White-Sur"
 
     # Téléchargement et installation du thème d'icônes WhiteSur
-    download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes WhiteSur"
+    download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes White-Sur"
     execute_command "unzip master.zip && \
                     cd WhiteSur-icon-theme-master && \
                     mkdir -p $PREFIX/share/icons && \
                     ./install.sh --dest $PREFIX/share/icons && \
                     cd .. && \
-                    rm -rf WhiteSur-icon-theme-master master.zip" "Installation des icônes"
+                    rm -rf WhiteSur-icon-theme-master master.zip" "Installation des icônes White-Sur"
 
     # Téléchargement des curseurs
-    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
+    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement des curseurs Fluent"
     execute_command "unzip 2024-02-25.zip && \
                     mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && \
                     mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && \
                     rm -rf $HOME/Fluent* && \
-                    rm 2024-02-25.zip" "Installation des curseurs"
+                    rm 2024-02-25.zip" "Installation des curseurs Fluent"
 
     # Téléchargement de la pré-configuration
     download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
     execute_command "unzip -o config.zip && \
                     rm config.zip" "Installation de la configuration XFCE"
+
+    # Définition du fond d'écran
+    #set_wallpaper() {
+
+    #    local wallpaper_path="$PREFIX/share/backgrounds/whitesur/Monterey.jpg"
+    #    xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/workspace0/last-image -s "$wallpaper_path"
+    #}
+
+    #set_wallpaper
 }
 
 main "$@"
