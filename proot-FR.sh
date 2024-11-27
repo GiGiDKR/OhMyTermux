@@ -53,12 +53,6 @@ for arg in "$@"; do
             show_help
             exit 0
             ;;
-        --full)
-            username="user"
-            password="user"
-            USE_GUM=false
-            shift
-            ;;
         *)
             break
             ;;
@@ -219,9 +213,7 @@ trap finish EXIT
 # INSTALLATION DES PAQUETS PROOT
 #------------------------------------------------------------------------------
 install_packages_proot() {
-    #FIX
-    local pkgs_proot=('sudo' 'wget' 'nala')
-    #local pkgs_proot=('sudo' 'wget' 'nala' 'jq')
+    local pkgs_proot=('sudo' 'wget' 'nala' 'jq')
     for pkg in "${pkgs_proot[@]}"; do
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
     done

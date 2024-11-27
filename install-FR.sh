@@ -987,10 +987,10 @@ install_xfce() {
         # Sélection du navigateur
         local browser_choice
         if $USE_GUM; then
-            browser_choice=$(gum_choose "Séléctionner un navigateur web :" --height=5 "firefox" "chromium" "aucun")
+            browser_choice=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="firefox" "firefox" "chromium" "aucun")
         else
             echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
-            echo "1) Firefox"
+            echo "1) Firefox (par défaut)"
             echo "2) Chromium"
             echo "3) Aucun"
             printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
@@ -999,7 +999,7 @@ install_xfce() {
                 1) browser_choice="firefox" ;;
                 2) browser_choice="chromium" ;;
                 3) browser_choice="aucun" ;;
-                *) browser_choice="aucun" ;;
+                *) browser_choice="firefox" ;;
             esac
         fi
 
