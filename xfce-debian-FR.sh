@@ -8,6 +8,8 @@ VERBOSE=false
 #------------------------------------------------------------------------------
 COLOR_BLUE="\e[38;5;33m"
 COLOR_RED="\e[38;5;196m"
+COLOR_GREEN="\e[38;5;82m"
+COLOR_GOLD="\e[38;5;220m"
 COLOR_RESET="\e[0m"
 
 #------------------------------------------------------------------------------
@@ -24,9 +26,9 @@ fi
 #------------------------------------------------------------------------------
 show_help() {
     clear
-    echo "Aide OhMyTermux"
+    echo "Aide Installation XFCE sur Debian"
     echo 
-    echo "Usage: $0 [OPTIONS] [username] [password]"
+    echo "Usage: $0 [OPTIONS]"
     echo "Options:"
     echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v Afficher les sorties détaillées"
@@ -65,7 +67,7 @@ bash_banner() {
     local BANNER="
 ╔════════════════════════════════════════╗
 ║                                        ║
-║               OHMYTERMUX               ║
+║             XFCE SUR DEBIAN            ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
 
@@ -85,7 +87,7 @@ show_banner() {
             --align center \
             --width 40 \
             --margin "1 1 1 0" \
-            "" "OHMYTERMUX" ""
+            "" "XFCE SUR DEBIAN" ""
     else
         bash_banner
     fi
@@ -99,9 +101,9 @@ finish() {
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
         echo
         if $USE_GUM; then
-            gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
+            gum style --foreground 196 "ERREUR: Installation de XFCE impossible."
         else
-            echo -e "${COLOR_RED}ERREUR: Installation de OhMyTermux impossible.${COLOR_RESET}"
+            echo -e "${COLOR_RED}ERREUR: Installation de XFCE impossible.${COLOR_RESET}"
         fi
         echo -e "${COLOR_BLUE}Veuillez vous référer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
     fi
@@ -156,7 +158,7 @@ title_msg() {
 #------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >>  "$HOME/.config/OhMyTermux/install.log"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/.config/xfce-debian/install.log"
 }
 
 #------------------------------------------------------------------------------
@@ -189,14 +191,6 @@ execute_command() {
 }
 
 #------------------------------------------------------------------------------
-# INSTALLATION D'UN PAQUET
-#------------------------------------------------------------------------------
-#install_package() {
-#    local pkg=$1
-#    execute_command "pkg install $pkg -y" "Installation de $pkg"
-#}
-
-#------------------------------------------------------------------------------
 # TÉLÉCHARGEMENT D'UN FICHIER
 #------------------------------------------------------------------------------
 download_file() {
@@ -211,68 +205,81 @@ trap finish EXIT
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 main() {
+    # Vérification des privilèges sudo
+    if [ "$(id -u)" -ne 0 ]; then
+        error_msg "Ce script doit être exécuté avec les privilèges sudo"
+        exit 1
+    fi
+
     # Installation de gum si nécessaire
     if $USE_GUM && ! command -v gum &> /dev/null; then
         echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
-        pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
+        apt update -y > /dev/null 2>&1 && apt install gum -y > /dev/null 2>&1
     fi
 
     title_msg "❯ Installation de XFCE"
 
-    execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
+    # Mise à jour du système
+    execute_command "apt update -y && apt upgrade -y" "Mise à jour du système"
 
-    # Installation des packages
-    #pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
+    # Installation des paquets XFCE
     pkgs=(
-        'virglrenderer-android'
         'xfce4'
         'xfce4-goodies'
-        'pavucontrol-qt'
+        'pavucontrol'
         'jq'
         'wmctrl'
-        'firefox'
+        'firefox-esr'
         'netcat-openbsd'
-        'termux-x11-nightly'
+        'lightdm'
     )
     
     for pkg in "${pkgs[@]}"; do
-        execute_command "pkg install $pkg -y" "Installation de $pkg"
+        execute_command "apt install -y $pkg" "Installation de $pkg"
     done
 
     # Configuration du bureau
-    execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
-
-    # Téléchargement du fond d'écran
-    #download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Téléchargement du fond d'écran"
-    #execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
+    execute_command "mkdir -p /usr/share/desktop-base" "Création du répertoire desktop-base"
 
     # Téléchargement et installation des fonds d'écran WhiteSur
     download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran WhiteSur"
     execute_command "unzip main.zip && \
-                    mkdir -p $PREFIX/share/backgrounds/WhiteSur && \
-                    cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/WhiteSur/ && \
+                    mkdir -p /usr/share/backgrounds/WhiteSur && \
+                    cp -r WhiteSur-wallpapers-main/4k/* /usr/share/backgrounds/WhiteSur/ && \
                     rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran"
 
     # Téléchargement du thème
     download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème WhiteSur"
-    execute_command "unzip 2024-11-18.zip && tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && mv WhiteSur-Dark/ $PREFIX/share/themes/ && rm -rf WhiteSur* && rm 2024-11-18.zip" "Installation du thème"
+    execute_command "unzip 2024-11.18.zip && \
+                    cd WhiteSur-gtk-theme-2024-11-18 && \
+                    ./install.sh -d /usr/share/themes && \
+                    cd .. && \
+                    rm -rf WhiteSur-gtk-theme-2024-11-18 2024-11-18.zip" "Installation du thème"
 
     # Téléchargement et installation du thème d'icônes WhiteSur
     download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes WhiteSur"
     execute_command "unzip master.zip && \
                     cd WhiteSur-icon-theme-master && \
-                    mkdir -p $PREFIX/share/icons && \
-                    ./install.sh --dest $PREFIX/share/icons && \
+                    ./install.sh --dest /usr/share/icons && \
                     cd .. && \
                     rm -rf WhiteSur-icon-theme-master master.zip" "Installation des icônes"
 
     # Téléchargement des curseurs
     download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
-    execute_command "unzip 2024-02-25.zip && mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && rm -rf $HOME/Fluent* && rm 2024-02-25.zip" "Installation des curseurs"
+    execute_command "unzip 2024-02-25.zip && \
+                    cd Fluent-icon-theme-2024-02-25/cursors && \
+                    mkdir -p /usr/share/icons/Fluent-cursors && \
+                    cp -r dist/* /usr/share/icons/Fluent-cursors/ && \
+                    mkdir -p /usr/share/icons/Fluent-cursors-dark && \
+                    cp -r dist-dark/* /usr/share/icons/Fluent-cursors-dark/ && \
+                    cd ../.. && \
+                    rm -rf Fluent-icon-theme-2024-02-25 2024-02-25.zip" "Installation des curseurs"
 
-    # Téléchargement de la pré-configuration
-    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
-    execute_command "unzip -o config.zip && rm config.zip" "Installation de la configuration XFCE"
+    # Configuration de LightDM
+    execute_command "systemctl enable lightdm" "Activation de LightDM"
+
+    success_msg "✓ Installation de XFCE terminée"
+    info_msg "Redémarrez votre système pour utiliser XFCE"
 }
 
-main "$@"
+main "$@" 
