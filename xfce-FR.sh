@@ -2,6 +2,7 @@
 
 USE_GUM=false
 VERBOSE=false
+BROWSER="firefox"
 
 #------------------------------------------------------------------------------
 # COULEURS
@@ -31,6 +32,7 @@ show_help() {
     echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v Afficher les sorties détaillées"
     echo "  --help | -h    Afficher ce message d'aide"
+    echo "  --browser=    Choisir le navigateur (firefox ou chromium)"
 }
 
 #------------------------------------------------------------------------------
@@ -50,6 +52,10 @@ for arg in "$@"; do
         --help|-h)
             show_help
             exit 0
+            ;;
+        --browser=*)
+            BROWSER="${arg#*=}"
+            shift
             ;;
         *)
             break
@@ -222,7 +228,6 @@ main() {
     execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
     # Installation des packages
-    #pkgs=('virglrenderer-android' 'xfce4' 'xfce4-goodies' 'papirus-icon-theme' 'pavucontrol-qt' 'jq' 'wmctrl' 'firefox' 'netcat-openbsd' 'termux-x11-nightly')
     pkgs=(
         'virglrenderer-android'
         'xfce4'
@@ -230,22 +235,32 @@ main() {
         'pavucontrol-qt'
         'jq'
         'wmctrl'
-        'firefox'
         'netcat-openbsd'
         'termux-x11-nightly'
     )
-    
+
+    # Ajouter le navigateur choisi
+    if [ "$BROWSER" = "firefox" ]; then
+        pkgs+=('firefox')
+    elif [ "$BROWSER" = "chromium" ]; then
+        pkgs+=('chromium' 'chromium-l10n')
+    elif [ "$BROWSER" = "aucun" ]; then
+        info_msg "Aucun navigateur web installé."
+    else
+        echo "Navigateur non reconnu: $BROWSER. Installation de Firefox par défaut."
+        pkgs+=('firefox')
+    fi
+
     for pkg in "${pkgs[@]}"; do
         execute_command "pkg install $pkg -y" "Installation de $pkg"
     done
 
     # Configuration du bureau
-    execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
-
-    # Téléchargement du fond d'écran
-    #download_file "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/waves.png" "Téléchargement du fond d'écran"
-    #execute_command "mkdir -p $PREFIX/share/backgrounds/xfce/ && \
-    #                mv waves.png $PREFIX/share/backgrounds/xfce/" "Configuration du fond d'écran"
+    if [ "$BROWSER" = "firefox" ]; then
+        execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du bureau"
+    elif [ "$BROWSER" = "chromium" ]; then
+        execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/chromium.desktop $HOME/Desktop && chmod +x $HOME/Desktop/chromium.desktop" "Configuration du bureau"
+    fi
 
     # Téléchargement et installation des fonds d'écran WhiteSur
     download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran WhiteSur"

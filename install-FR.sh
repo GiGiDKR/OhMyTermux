@@ -476,7 +476,8 @@ EOL" "Configuration des propriétés Termux"
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
     # Téléchargement de la police
     execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/font.ttf" "Téléchargement de la police par défaut" || error_msg "Impossible de télécharger la police par défaut"
-    termux-reload-settings
+    #FIX
+    #termux-reload-settings
 }
 
 #------------------------------------------------------------------------------
@@ -981,6 +982,25 @@ install_xfce() {
             fi
         fi
 
+        # Sélection du navigateur
+        local browser_choice
+        if $USE_GUM; then
+            browser_choice=$(gum choose --header="Séléctionner un navigateur web :" --height=5 "firefox" "chromium" "aucun")
+        else
+            echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
+            echo "1) Firefox"
+            echo "2) Chromium"
+            echo "3) Aucun"
+            printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+            read -r choice
+            case $choice in
+                1) browser_choice="firefox" ;;
+                2) browser_choice="chromium" ;;
+                3) browser_choice="aucun" ;;
+                *) browser_choice="aucun" ;;
+            esac
+        fi
+
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des dépendances"
 
         PACKAGES=('wget' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
@@ -993,9 +1013,9 @@ install_xfce() {
         execute_command "chmod +x xfce-FR.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
-            ./xfce-FR.sh --gum
+            ./xfce-FR.sh --gum --browser="$browser_choice"
         else
-            ./xfce-FR.sh
+            ./xfce-FR.sh --browser="$browser_choice"
         fi
         
         INSTALL_UTILS=true
