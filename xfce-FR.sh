@@ -287,7 +287,7 @@ main() {
                     rm -rf WhiteSur-icon-theme-master master.zip" "Installation des icônes"
 
     # Téléchargement des curseurs
-    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement de Fluent Cursor"
+    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement des curseurs Fluent"
     execute_command "unzip 2024-02-25.zip && \
                     mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && \
                     mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && \

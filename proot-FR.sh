@@ -379,9 +379,9 @@ EOF" "Configuration des curseurs"
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration des thèmes et polices"
 
 # Ajout de la configuration du fond d'écran par défaut
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo -u $username xfconf-query \
-    --channel xfce4-desktop \
-    --property /backdrop/screen0/monitorVNC-0/workspace0/last-image \
-    --set $PREFIX/share/backgrounds/whitesur/Monterey.jpg" "Configuration du fond d'écran"
+#execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo -u $username xfconf-query \
+#    --channel xfce4-desktop \
+#    --property /backdrop/screen0/monitorVNC-0/workspace0/last-image \
+#    --set $PREFIX/share/backgrounds/whitesur/Monterey.jpg" "Configuration du fond d'écran"
 
 install_mesa_vulkan
