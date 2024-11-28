@@ -1,10 +1,10 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Stop
+Name=Name=Kill Termux X11
 Comment=
 Exec=kill_termux_x11
-Icon=shutdown
+Icon=system-shutdown
 Categories=System;
 Path=
 StartupNotify=false
