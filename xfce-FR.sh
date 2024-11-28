@@ -282,7 +282,7 @@ main() {
     execute_command "unzip master.zip && \
                     cd WhiteSur-icon-theme-master && \
                     mkdir -p $PREFIX/share/icons && \
-                    ./install.sh --dest $PREFIX/share/icons && \
+                    ./install.sh --dest $PREFIX/share/icons --name WhiteSur && \
                     cd .. && \
                     rm -rf WhiteSur-icon-theme-master master.zip" "Installation des icônes"
 

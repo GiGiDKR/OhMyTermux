@@ -213,7 +213,7 @@ trap finish EXIT
 # INSTALLATION DES PAQUETS PROOT
 #------------------------------------------------------------------------------
 install_packages_proot() {
-    local pkgs_proot=('sudo' 'wget' 'nala' 'jq')
+    local pkgs_proot=('sudo' 'wget' 'nala' 'jq' 'xfconf')
     for pkg in "${pkgs_proot[@]}"; do
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
     done
@@ -364,18 +364,24 @@ execute_command "
 # CONFIGURATION DES ICONES ET THÈMES
 #------------------------------------------------------------------------------
 mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
-execute_command "cp -r $PREFIX/share/icons/WithSur-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/WithSur-dark" "Configuration des icônes"
+execute_command "cp -r $PREFIX/share/icons/WhiteSur $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/WhiteSur" "Configuration des icônes"
 
 #------------------------------------------------------------------------------
 # CONFIGURATION DES CURSEURS
 #------------------------------------------------------------------------------
 execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
-Xcursor.theme: WithSur-dark
+Xcursor.theme: WhiteSur
 EOF" "Configuration des curseurs"
 
 #------------------------------------------------------------------------------
 # CONFIGURATION DES THÈMES ET POLICES
 #------------------------------------------------------------------------------
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration des thèmes et polices"
+
+# Ajout de la configuration du fond d'écran par défaut
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo -u $username xfconf-query \
+    --channel xfce4-desktop \
+    --property /backdrop/screen0/monitorVNC-0/workspace0/last-image \
+    --set $PREFIX/share/backgrounds/whitesur/Monterey.jpg" "Configuration du fond d'écran"
 
 install_mesa_vulkan

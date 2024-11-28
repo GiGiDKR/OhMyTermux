@@ -27,6 +27,12 @@ FONT_CHOICE=false
 # Note: Installation de l'environnement XFCE et Debian Proot
 XFCE_CHOICE=false
 
+# Note: Installation de Debian Proot uniquement
+PROOT_CHOICE=false
+
+# Note: Installation de Termux-X11 uniquement
+X11_CHOICE=false
+
 # Note: Installation complète sans interactions
 FULL_INSTALL=false
 
@@ -76,6 +82,8 @@ show_help() {
     echo "  --package | -pkg  Module d'installation des packagés"
     echo "  --font | -f       Module d'installation de la police"
     echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
+    echo "  --proot | -p      Module d'installation de Debian Proot uniquement"
+    echo "  --x11 | -x11      Module d'installation de Termux-X11 uniquement"
     echo "  --skip | -sk      Ignorer la configuration initiale"
     echo "  --uninstall| -u   Désinstallation de Debian Proot"
     echo "  --help | -h       Afficher ce message d'aide"
@@ -108,6 +116,16 @@ for arg in "$@"; do
             ;;
         --xfce|-x)
             XFCE_CHOICE=true
+            ONLY_GUM=false
+            shift
+            ;;
+        --proot|-p)
+            PROOT_CHOICE=true
+            ONLY_GUM=false
+            shift
+            ;;
+        --x11|-x11)
+            X11_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
@@ -1212,7 +1230,7 @@ if ! command -v tput &> /dev/null; then
 fi
 
 # Note: Vérifier si des arguments spécifiques ont été fournis
-if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ]; then
+if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ] || [ "$PROOT_CHOICE" = true ] || [ "$X11_CHOICE" = true ]; then
     if $EXECUTE_INITIAL_CONFIG; then
         initial_config
     fi
@@ -1227,8 +1245,12 @@ if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOIC
     fi
     if [ "$XFCE_CHOICE" = true ]; then
         install_xfce
+    fi
+    if [ "$PROOT_CHOICE" = true ]; then
         install_proot
         install_utils
+    fi
+    if [ "$X11_CHOICE" = true ]; then
         install_termux_x11
     fi
 else
@@ -1262,7 +1284,7 @@ if $USE_GUM; then
         fi
     else
         echo -e "${COLOR_BLUE}Pour utiliser toutes les fonctionnalités :${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}- Saisir : ${COLOR_RESET} ${COLOR_GR  EEN}exec zsh -l${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Saisir : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
         echo -e "${COLOR_BLUE}- Ou redémarrer Termux${COLOR_RESET}"
     fi
 else
