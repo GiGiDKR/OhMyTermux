@@ -615,8 +615,8 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && 
-                    mkdir -p $HOME/.config/OhMyTermux && \
+                #execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && 
+                execute_command "mkdir -p $HOME/.config/OhMyTermux && \
                     curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
 
                 if command -v zsh &> /dev/null; then
@@ -919,6 +919,7 @@ alias cm="chmod +x"
 alias bashrc="nano $HOME/.bashrc"
 alias zshrc="nano $HOME/.zshrc"
 alias aliases="nano $HOME/.config/OhMyTermux/aliases"
+alias help="cat $HOME/.config/OhMyTermux/help.md"
 
 # Git
 alias g="git"
