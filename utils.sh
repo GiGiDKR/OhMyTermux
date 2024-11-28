@@ -225,10 +225,10 @@ chmod +x $PREFIX/bin/kill_termux_x11
 echo "[Desktop Entry]
 Version=1.0
 Type=Application
-Name=Kill Termux X11
+Name=Stop
 Comment=
 Exec=kill_termux_x11
-Icon=system-shutdown
+Icon=shutdown
 Categories=System;
 Path=
 StartupNotify=false

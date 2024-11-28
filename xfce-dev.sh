@@ -215,6 +215,108 @@ download_file() {
 
 trap finish EXIT
 
+# Fonction pour configurer XFCE selon le type d'installation
+configure_xfce() {
+    local config_dir="$HOME/.config/xfce4/xfconf/xfce-perchannel-xml"
+    local install_type="$1"
+
+    # Créer le répertoire de configuration si nécessaire
+    mkdir -p "$config_dir"
+
+    case "$install_type" in
+        "complète")
+            # Configuration complète avec tous les éléments
+            cat > "$config_dir/xsettings.xml" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xsettings" version="1.0">
+  <property name="Net" type="empty">
+    <property name="ThemeName" type="string" value="WhiteSur-Dark"/>
+    <property name="IconThemeName" type="string" value="WhiteSur-dark"/>
+  </property>
+  <property name="Gtk" type="empty">
+    <property name="CursorThemeName" type="string" value="dist-dark"/>
+    <property name="CursorThemeSize" type="int" value="32"/>
+  </property>
+</channel>
+EOF
+
+            cat > "$config_dir/xfwm4.xml" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfwm4" version="1.0">
+  <property name="general" type="empty">
+    <property name="theme" type="string" value="WhiteSur-Dark"/>
+  </property>
+</channel>
+EOF
+            ;;
+            
+        "minimale"|"personnalisée")
+            # Configuration de base
+            local theme_value="Default"
+            local icon_value="Adwaita"
+            local cursor_value="default"
+            local wallpaper="/data/data/com.termux/files/usr/share/backgrounds/xfce/xfce-stripes.png"
+
+            # Ajuster selon les choix personnalisés
+            [ "$install_theme" = true ] && theme_value="WhiteSur-Dark"
+            [ "$install_icons" = true ] && icon_value="WhiteSur-dark"
+            [ "$install_cursors" = true ] && cursor_value="dist-dark"
+            [ "$install_wallpapers" = true ] && wallpaper="/data/data/com.termux/files/usr/share/backgrounds/whitesur/dark_waves.png"
+
+            # Générer xsettings.xml
+            cat > "$config_dir/xsettings.xml" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xsettings" version="1.0">
+  <property name="Net" type="empty">
+    <property name="ThemeName" type="string" value="$theme_value"/>
+    <property name="IconThemeName" type="string" value="$icon_value"/>
+  </property>
+  <property name="Gtk" type="empty">
+    <property name="CursorThemeName" type="string" value="$cursor_value"/>
+    <property name="CursorThemeSize" type="int" value="32"/>
+  </property>
+</channel>
+EOF
+
+            # Générer xfwm4.xml
+            cat > "$config_dir/xfwm4.xml" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfwm4" version="1.0">
+  <property name="general" type="empty">
+    <property name="theme" type="string" value="$theme_value"/>
+  </property>
+</channel>
+EOF
+
+            # Générer xfce4-desktop.xml
+            cat > "$config_dir/xfce4-desktop.xml" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfce4-desktop" version="1.0">
+  <property name="backdrop" type="empty">
+    <property name="screen0" type="empty">
+      <property name="monitorVNC-0" type="empty">
+        <property name="workspace0" type="empty">
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="$wallpaper"/>
+        </property>
+      </property>
+      <property name="monitorscreen" type="empty">
+        <property name="workspace0" type="empty">
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="$wallpaper"/>
+        </property>
+      </property>
+    </property>
+  </property>
+</channel>
+EOF
+            ;;
+    esac
+
+    # Appliquer les permissions
+    chmod 644 "$config_dir"/*.xml
+}
+
 #------------------------------------------------------------------------------
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
@@ -300,6 +402,19 @@ main() {
     download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
     execute_command "unzip -o config.zip && \
                     rm config.zip" "Installation de la configuration"
+
+    # Configuration de XFCE selon le type d'installation
+    case "$INSTALL_TYPE" in
+        "complète")
+            configure_xfce "complète"
+            ;;
+        "minimale")
+            configure_xfce "minimale"
+            ;;
+        "personnalisée")
+            configure_xfce "personnalisée"
+            ;;
+    esac
 }
 
 main "$@"
