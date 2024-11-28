@@ -681,7 +681,7 @@ install_zsh_plugins() {
     local zshrc="$HOME/.zshrc"
     local selected_plugins="${plugins_to_install[*]}"
     local has_completions=false
-    local has_ohmytermux=true  # Adapter selon votre configuration
+    local has_ohmytermux=true
 
     # Vérifier si zsh-completions est installé
     if [[ " ${plugins_to_install[*]} " == *" zsh-completions "* ]]; then
@@ -709,7 +709,7 @@ install_plugin() {
     if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$plugin_name" ]; then
         execute_command "git clone '$plugin_url' '$HOME/.oh-my-zsh/custom/plugins/$plugin_name' --quiet" "Installation de $plugin_name"
     else
-        info_msg "$plugin_name est déjà installé"
+        info_msg "- $plugin_name est déjà installé"
     fi
 }
 
@@ -722,11 +722,13 @@ update_zshrc() {
     local has_completions="$3"
     local has_ohmytermux="$4"
 
-    # Suppriessions de la configuration existante
+    # Suppression de la configuration existante
     sed -i '/fpath.*zsh-completions\/src/d' "$zshrc"
     sed -i '/source \$ZSH\/oh-my-zsh.sh/d' "$zshrc"
     sed -i '/# Pour personnaliser le prompt/d' "$zshrc"
     sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\]/d' "$zshrc"
+    sed -i '/# Source des alias personnalisés/d' "$zshrc"
+    sed -i '/\[ -f.*aliases.*/d' "$zshrc"
 
     # Création du contenu de la section plugins
     local default_plugins="git command-not-found copyfile node npm timer vscode web-search z"
@@ -753,6 +755,9 @@ update_zshrc() {
     if [ "$has_ohmytermux" = "true" ]; then
         echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$zshrc"
     fi
+
+    # Sourcing des alias centralisés
+    echo -e "\n# Source des alias personnalisés\n[ -f \"$HOME/.config/OhMyTermux/aliases\" ] && . \"$HOME/.config/OhMyTermux/aliases\"" >> "$zshrc"
 }
 
 #------------------------------------------------------------------------------
@@ -848,7 +853,6 @@ add_aliases_to_rc() {
     case $package in
         eza)
             cat >> "$aliases_file" << 'EOL'
-
 # Alias eza
 alias l="eza --icons"
 alias ls="eza -1 --icons"
@@ -857,18 +861,18 @@ alias la="eza --icons -lgha --group-directories-first"
 alias lt="eza --icons --tree"
 alias lta="eza --icons --tree -lgha"
 alias dir="eza -lF --icons"
+
 EOL
             ;;
         bat)
             cat >> "$aliases_file" << 'EOL'
-
 # Alias bat
 alias cat="bat"
+
 EOL
             ;;
         nala)
             cat >> "$aliases_file" << 'EOL'
-
 # Alias nala
 alias install="nala install -y"
 alias uninstall="nala remove -y"
@@ -877,6 +881,7 @@ alias upgrade="nala upgrade -y"
 alias search="nala search"
 alias list="nala list --upgradeable"
 alias show="nala show"
+
 EOL
             ;;
     esac
@@ -887,7 +892,9 @@ EOL
 #------------------------------------------------------------------------------
 common_alias() {
     # Création du fichier d'alias centralisé
-    execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Création du dossier de configuration"
+    if [ ! -d "$HOME/.config/OhMyTermux" ]; then
+        execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Création du dossier de configuration"
+    fi
     
     aliases_file="$HOME/.config/OhMyTermux/aliases"
     
@@ -921,11 +928,7 @@ EOL
 
     # Ajout du sourcing dans .bashrc
     echo -e "\n# Source des alias personnalisés\n[ -f \"$aliases_file\" ] && . \"$aliases_file\"" >> "$BASHRC"
-
-    # Ajout du sourcing dans .zshrc si existant
-    if [ -f "$ZSHRC" ]; then
-        echo -e "\n# Source des alias personnalisés\n[ -f \"$aliases_file\" ] && . \"$aliases_file\"" >> "$ZSHRC"
-    fi
+    # Le sourcing dans .zshrc est fait dans update_zshrc()
 }
 
 #------------------------------------------------------------------------------
@@ -1010,19 +1013,19 @@ install_xfce() {
         # Sélection du navigateur
         local browser_choice
         if $USE_GUM; then
-            browser_choice=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "firefox" "chromium" "aucun")
+            browser_choice=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
         else
             echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
-            echo "1) Firefox (par défaut)"
-            echo "2) Chromium"
+            echo "1) Chromium (par défaut)"
+            echo "2) Firefox"
             echo "3) Aucun"
             printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
             read -r choice
             case $choice in
-                1) browser_choice="firefox" ;;
-                2) browser_choice="chromium" ;;
+                1) browser_choice="chromium" ;;
+                2) browser_choice="firefox" ;;
                 3) browser_choice="aucun" ;;
-                *) browser_choice="firefox" ;;
+                *) browser_choice="chromium" ;;
             esac
         fi
 

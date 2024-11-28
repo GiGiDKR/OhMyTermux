@@ -275,7 +275,7 @@ main() {
                     tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
                     mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
                     rm -rf WhiteSur* && \
-                    rm 2024-11-18.zip" "Installation du thème"
+                    rm 2024-11-18.zip*" "Installation du thème"
 
     # Téléchargement et installation du thème d'icônes WhiteSur
     download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes WhiteSur"
@@ -292,12 +292,12 @@ main() {
                     mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && \
                     mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && \
                     rm -rf $HOME/Fluent* && \
-                    rm 2024-02-25.zip" "Installation des curseurs"
+                    rm 2024-02-25.zip*" "Installation des curseurs"
 
     # Téléchargement de la pré-configuration
     download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
     execute_command "unzip -o config.zip && \
-                    rm config.zip" "Installation de la configuration XFCE"
+                    rm config.zip" "Installation de la configuration"
 }
 
 main "$@"
