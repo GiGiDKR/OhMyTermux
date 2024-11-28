@@ -148,6 +148,8 @@ for arg in "$@"; do
             PACKAGES_CHOICE=true
             FONT_CHOICE=true
             XFCE_CHOICE=true
+            PROOT_CHOICE=true
+            X11_CHOICE=true
             SCRIPT_CHOICE=true
             ONLY_GUM=false
             shift
@@ -165,6 +167,8 @@ if $ONLY_GUM; then
     PACKAGES_CHOICE=true
     FONT_CHOICE=true
     XFCE_CHOICE=true
+    PROOT_CHOICE=true
+    X11_CHOICE=true
     SCRIPT_CHOICE=true
 fi
 
@@ -1024,8 +1028,10 @@ install_xfce() {
 
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des dépendances"
 
-        PACKAGES=('wget' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
-    
+        #FIX
+        #PACKAGES=('wget' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
+        PACKAGES=('wget' 'x11-repo' 'tur-repo' 'pulseaudio')
+
         for PACKAGE in "${PACKAGES[@]}"; do
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
@@ -1047,29 +1053,28 @@ install_xfce() {
 # INSTALLATION DE DEBIAN PROOT
 #------------------------------------------------------------------------------
 install_proot() {
-    title_msg "❯ Configuration de Proot"
-    if $USE_GUM; then
-        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-            execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
-            ./proot-FR.sh --gum
-            INSTALL_UTILS=true
-        fi
-    else    
-        printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
-        read -r choice
-        if [[ "$choice" =~ ^[oO]$ ]]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-            execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
-            ./proot-FR.sh
-            INSTALL_UTILS=true
+    if $PROOT_CHOICE; then
+        title_msg "❯ Configuration de Proot"
+        if $USE_GUM; then
+            if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
+                execute_command "pkg install proot-distro -y" "Installation de proot-distro"
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
+                ./proot-FR.sh --gum
+                INSTALL_UTILS=true
+            fi
+        else    
+            printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
+            read -r choice
+            if [[ "$choice" =~ ^[oO]$ ]]; then
+                execute_command "pkg install proot-distro -y" "Installation de proot-distro"
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
+                ./proot-FR.sh
+                INSTALL_UTILS=true
+            fi
         fi
     fi
-    #TODO
-    # Création "user" avec mot de passe "user" si --full est utilisé
-    #if $FULL_INSTALL; then
-    #    execute_command "proot-distro login debian --shared-tmp --user root -- bash -c 'useradd -m -s /bin/bash user && echo user:user | chpasswd'" "Création de l'utilisateur Proot 'user'"
-    #fi
 }
 
 #------------------------------------------------------------------------------
@@ -1172,24 +1177,27 @@ EOL
 # INSTALLATION DE TERMUX-X11
 #------------------------------------------------------------------------------
 install_termux_x11() {
-    title_msg "❯ Configuration de Termux-X11"
-    local file_path="$HOME/.termux/termux.properties"
+    if $X11_CHOICE; then
+        title_msg "❯ Configuration de Termux-X11"
+        local file_path="$HOME/.termux/termux.properties"
 
-    if [ ! -f "$file_path" ]; then
-        mkdir -p "$HOME/.termux"
+        if [ ! -f "$file_path" ]; then
+            mkdir -p "$HOME/.termux"
         cat <<EOL > "$file_path"
 allow-external-apps = true
 EOL
-    else
-        sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
+        else
+            sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' "$file_path"
+        fi
     fi
 
     local install_x11=false
 
-    if $USE_GUM; then
-        if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
-            install_x11=true
-        fi
+    if $X11_CHOICE; then
+        if $USE_GUM; then
+            if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Termux-X11 ?"; then
+                install_x11=true
+            fi
         else
             printf "${COLOR_BLUE}Installer Termux-X11 ? (O/n) : ${COLOR_RESET}"
             read -r choice
@@ -1202,16 +1210,17 @@ EOL
             local apk_url="https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk"
             local apk_file="$HOME/storage/downloads/termux-x11.apk"
 
-        execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11"
+            execute_command "wget \"$apk_url\" -O \"$apk_file\"" "Téléchargement de Termux-X11"
 
-        if [ -f "$apk_file" ]; then
-            termux-open "$apk_file"
-            echo -e "${COLOR_BLUE}Veuillez installer l'APK manuellement.${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}Une fois l'installation terminée, appuyez sur Entrée pour continuer.${COLOR_RESET}"
-            read -r
-            rm "$apk_file"
-        else
-            error_msg "✗ Erreur lors de l'installation de Termux-X11"
+            if [ -f "$apk_file" ]; then
+                termux-open "$apk_file"
+                echo -e "${COLOR_BLUE}Veuillez installer l'APK manuellement.${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}Une fois l'installation terminée, appuyez sur Entrée pour continuer.${COLOR_RESET}"
+                read -r
+                rm "$apk_file"
+            else
+                error_msg "✗ Erreur lors de l'installation de Termux-X11"
+            fi
         fi
     fi
 }
