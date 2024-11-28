@@ -615,9 +615,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && \
-                mkdir -p $HOME/.config/OhMyTermux && \
-                curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && 
+                    mkdir -p $HOME/.config/OhMyTermux && \
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -709,7 +709,7 @@ install_plugin() {
     if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$plugin_name" ]; then
         execute_command "git clone '$plugin_url' '$HOME/.oh-my-zsh/custom/plugins/$plugin_name' --quiet" "Installation de $plugin_name"
     else
-        info_msg "- $plugin_name est déjà installé"
+        info_msg "$plugin_name est déjà installé"
     fi
 }
 
