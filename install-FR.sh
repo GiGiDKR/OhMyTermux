@@ -492,10 +492,10 @@ EOL" "Configuration des propriétés Termux"
     fi
     # Suppression de la bannière de connexion
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
-    # Téléchargement de la police
-    execute_command "curl -fLo \"$HOME/.termux/font.ttf\" 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf'" "Installation de la police par défaut"
-    termux-reload-settings
+    
     #FIXME:
+    # Téléchargement de la police
+    #execute_command "curl -fLo \"$HOME/.termux/font.ttf\" 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf'" "Installation de la police par défaut"
     #execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/font.ttf" "Téléchargement de la police par défaut" || error_msg "Impossible de télécharger la police par défaut"
     #termux-reload-settings
 }
@@ -969,7 +969,8 @@ install_font() {
 
         case $FONT in
             "Police par défaut")
-                success_msg "✓ Police par défaut installée"
+                execute_command "curl -fLo \"$HOME/.termux/font.ttf\" 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf'" "Installation de la police par défaut"
+                termux-reload-settings
                 ;;
             *)
                 font_url="https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/${FONT// /}/Regular/complete/${FONT// /}%20Regular%20Nerd%20Font%20Complete%20Mono.ttf"
