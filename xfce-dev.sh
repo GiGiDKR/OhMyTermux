@@ -525,6 +525,13 @@ main() {
         execute_command "pkg install $pkg -y" "Installation de $pkg"
     done
 
+    # Configuration du bureau
+    if [ "$BROWSER" != "aucun" ]; then
+        execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/$browser_desktop $HOME/Desktop && chmod +x $HOME/Desktop/$browser_desktop" "Configuration du bureau"
+    else
+        execute_command "mkdir -p $HOME/Desktop" "Configuration du bureau"
+    fi
+
     # Installation des éléments graphiques selon les choix
     if [ "$install_wallpapers" = true ] || [ "$install_theme" = true ] || [ "$install_icons" = true ] || [ "$install_cursors" = true ]; then
         subtitle_msg "❯ Configuration UI"
