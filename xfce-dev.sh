@@ -5,7 +5,7 @@ VERBOSE=false
 BROWSER="chromium"
 
 #------------------------------------------------------------------------------
-# COULEURS
+# COULEURS D'AFFICHAGE
 #------------------------------------------------------------------------------
 COLOR_BLUE='\033[38;5;33m'    # Information
 COLOR_GREEN='\033[38;5;82m'   # Succès
@@ -231,7 +231,7 @@ log_error() {
 }
 
 #------------------------------------------------------------------------------
-# EXECUTION D'UNE COMMANDE ET AFFICHAGE DYNAMIQUE DU RÉSULTAT
+# AFFICHAGE DYNAMIQUE DU RÉSULTAT D'UNE COMMANDE
 #------------------------------------------------------------------------------
 execute_command() {
     local command="$1"

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#------------------------------------------------------------------------------
+# PRUN
+#------------------------------------------------------------------------------
+# Note : Lancer des programmes dans le terminal proot
+# Commande : prun
+#------------------------------------------------------------------------------
 cat <<'EOF' > $PREFIX/bin/prun
 #!/bin/bash
 varname=$(basename $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/*)
@@ -8,6 +14,12 @@ pd login debian --user $varname --shared-tmp -- env DISPLAY=:1.0 $@
 EOF
 chmod +x $PREFIX/bin/prun
 
+#------------------------------------------------------------------------------
+# ZRUN
+#------------------------------------------------------------------------------
+# Note : Lancer des programmes avec le pilote Zink
+# Commande : zrun
+#------------------------------------------------------------------------------
 cat <<'EOF' > $PREFIX/bin/zrun
 #!/bin/bash
 varname=$(basename $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/*)
@@ -16,6 +28,12 @@ pd login debian --user $varname --shared-tmp -- env DISPLAY=:1.0 MESA_LOADER_DRI
 EOF
 chmod +x $PREFIX/bin/zrun
 
+#------------------------------------------------------------------------------
+# ZRUN HUD
+#------------------------------------------------------------------------------
+# Note : Afficher le HUD de Zink
+# Commande : zrunhud
+#------------------------------------------------------------------------------
 cat <<'EOF' > $PREFIX/bin/zrunhud
 #!/bin/bash
 varname=$(basename $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/*)
@@ -24,8 +42,12 @@ pd login debian --user $varname --shared-tmp -- env DISPLAY=:1.0 MESA_LOADER_DRI
 EOF
 chmod +x $PREFIX/bin/zrunhud
 
-#cp2menu utility ... Allows copying of Debian proot desktop menu items into Termux xfce menu to allow for launching programs from Debian proot from within the xfce menu rather than launching from terminal. 
-
+#------------------------------------------------------------------------------
+# CP2MENU
+#------------------------------------------------------------------------------
+# Note : Lancer des programmes à partir du menu xfce au lieu du terminal
+# Commande : cp2menu
+#------------------------------------------------------------------------------
 cat <<'EOF' > $PREFIX/bin/cp2menu
 #!/bin/bash
 
@@ -33,21 +55,21 @@ cd
 
 user_dir="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/"
 
-# Get the username from the user directory
+# Obtenir le nom d'utilisateur
 username=$(basename "$user_dir"/*)
 
-action=$(zenity --list --title="Choose Action" --text="Select an action:" --radiolist --column="" --column="Action" TRUE "Copy .desktop file" FALSE "Remove .desktop file")
+action=$(zenity --list --title="Choisir une action" --text="Sélectionnez une action :" --radiolist --column="" --column="Action" TRUE "Copier le fichier .desktop" FALSE "Supprimer le fichier .desktop")
 
 if [[ -z $action ]]; then
-  zenity --info --text="No action selected. Quitting..." --title="Operation Cancelled"
+  zenity --info --text="Aucune action sélectionnée. Abandon..." --title="Opération annulée"
   exit 0
 fi
 
-if [[ $action == "Copy .desktop file" ]]; then
-  selected_file=$(zenity --file-selection --title="Select .desktop File" --file-filter="*.desktop" --filename="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/applications")
+if [[ $action == "Copier le fichier .desktop" ]]; then
+  selected_file=$(zenity --file-selection --title="Sélectionner le fichier .desktop" --file-filter="*.desktop" --filename="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/applications")
 
   if [[ -z $selected_file ]]; then
-    zenity --info --text="No file selected. Quitting..." --title="Operation Cancelled"
+    zenity --info --text="Aucun fichier sélectionné. Abandon..." --title="Opération annulée"
     exit 0
   fi
 
@@ -56,12 +78,12 @@ if [[ $action == "Copy .desktop file" ]]; then
   cp "$selected_file" "$PREFIX/share/applications/"
   sed -i "s/^Exec=\(.*\)$/Exec=pd login debian --user $username --shared-tmp -- env DISPLAY=:1.0 \1/" "$PREFIX/share/applications/$desktop_filename"
 
-  zenity --info --text="Operation completed successfully!" --title="Success"
-elif [[ $action == "Remove .desktop file" ]]; then
-  selected_file=$(zenity --file-selection --title="Select .desktop File to Remove" --file-filter="*.desktop" --filename="$PREFIX/share/applications")
+  zenity --info --text="Opération terminée avec succès !" --title="Succès"
+elif [[ $action == "Supprimer le fichier .desktop" ]]; then
+  selected_file=$(zenity --file-selection --title="Sélectionner le fichier .desktop à supprimer" --file-filter="*.desktop" --filename="$PREFIX/share/applications")
 
   if [[ -z $selected_file ]]; then
-    zenity --info --text="No file selected for removal. Quitting..." --title="Operation Cancelled"
+    zenity --info --text="Aucun fichier sélectionné pour suppression. Abandon..." --title="Opération annulée"
     exit 0
   fi
 
@@ -69,7 +91,7 @@ elif [[ $action == "Remove .desktop file" ]]; then
 
   rm "$selected_file"
 
-  zenity --info --text="File '$desktop_filename' has been removed successfully!" --title="Success"
+  zenity --info --text="Le fichier '$desktop_filename' a été supprimé avec succès !" --title="Succès"
 fi
 
 EOF
@@ -89,27 +111,32 @@ StartupNotify=false
 " > $PREFIX/share/applications/cp2menu.desktop 
 chmod +x $PREFIX/share/applications/cp2menu.desktop 
 
-#App Installer Utility .. For installing additional applications not available in Termux or Debian proot repositories. 
+#------------------------------------------------------------------------------
+# APP INSTALLER
+#------------------------------------------------------------------------------
+# Note : Installer des apps indisponibles dans les dépôts Termux / Debian proot
+# Commande : app-installer
+#------------------------------------------------------------------------------
 cat <<'EOF' > "$PREFIX/bin/app-installer"
 #!/bin/bash
 
-# Define the directory paths
+# Définition du répertoire de l'installateur
 INSTALLER_DIR="$HOME/.App-Installer"
 REPO_URL="https://github.com/GiGIDKR/OhMyAppInstaller.git"
 DESKTOP_DIR="$HOME/Desktop"
 APP_DESKTOP_FILE="$DESKTOP_DIR/app-installer.desktop"
 
-# Check if the directory already exists
+# Vérification de l'existence du répertoire
 if [ ! -d "$INSTALLER_DIR" ]; then
-    # Directory doesn't exist, clone the repository
+    # Le répertoire n'existe pas, cloner le dépôt
     git clone "$REPO_URL" "$INSTALLER_DIR" > /dev/null 2>&1
 else
     "$INSTALLER_DIR/app-installer"
 fi
 
-# Check if the .desktop file exists
+# Vérification de l'existence du fichier .desktop
 if [ ! -f "$APP_DESKTOP_FILE" ]; then
-    # .desktop file doesn't exist, create it
+    # Le fichier .desktop n'existe pas, le créer
     echo "[Desktop Entry]
     Version=1.0
     Type=Application
@@ -125,36 +152,40 @@ if [ ! -f "$APP_DESKTOP_FILE" ]; then
     chmod +x "$APP_DESKTOP_FILE"
 fi
 
-# Ensure the app-installer script is executable
+# Attribution des droits d'exécution
 chmod +x "$INSTALLER_DIR/app-installer"
 
 EOF
 chmod +x "$PREFIX/bin/app-installer"
 bash $PREFIX/bin/app-installer > /dev/null 2>&1
 
-# Check if the .desktop file exists
+# Création du raccourci
 if [ ! -f "$HOME/Desktop/app-installer.desktop" ]; then
-# .desktop file doesn't exist, create it
-echo "[Desktop Entry]
-Version=1.0
-Type=Application
-Name=App Installer
-Comment=
-Exec=$PREFIX/bin/app-installer
-Icon=package-install
-Categories=System;
-Path=
-Terminal=false
-StartupNotify=false
+    echo "[Desktop Entry]
+    Version=1.0
+    Type=Application
+    Name=App Installer
+    Comment=
+    Exec=$PREFIX/bin/app-installer
+    Icon=package-install
+    Categories=System;
+    Path=
+    Terminal=false
+    StartupNotify=false
 " > "$HOME/Desktop/app-installer.desktop"
-chmod +x "$HOME/Desktop/app-installer.desktop"
-fi
+    chmod +x "$HOME/Desktop/app-installer.desktop"
+fi  
 
-#Start script
+#------------------------------------------------------------------------------
+# SCRIPT DE DÉMARRAGE
+#------------------------------------------------------------------------------
+# Note : Démarrer Termux-X11 et XFCE
+# Commande : start
+#------------------------------------------------------------------------------
 cat <<'EOF' > start
 #!/bin/bash
 
-# Enable PulseAudio over Network
+# Activer PulseAudio sur le réseau
 pulseaudio --start --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" --exit-idle-time=-1 > /dev/null 2>&1
 
 XDG_RUNTIME_DIR=${TMPDIR} termux-x11 :1.0 & > /dev/null 2>&1
@@ -170,7 +201,8 @@ MESA_NO_ERROR=1 MESA_GL_VERSION_OVERRIDE=4.3COMPAT MESA_GLES_VERSION_OVERRIDE=3.
 #MESA_LOADER_DRIVER_OVERRIDE=zink TU_DEBUG=noconform program
 
 env DISPLAY=:1.0 GALLIUM_DRIVER=virpipe dbus-launch --exit-with-session xfce4-session & > /dev/null 2>&1
-# Set audio server
+
+# Définir le serveur audio
 export PULSE_SERVER=127.0.0.1 > /dev/null 2>&1
 
 sleep 5
@@ -183,21 +215,26 @@ EOF
 chmod +x start
 mv start $PREFIX/bin
 
-#Shutdown Utility
+#------------------------------------------------------------------------------
+# SCRIPT D'ARRÊT
+#------------------------------------------------------------------------------
+# Note : Stopper Termux-X11 et XFCE
+# Commande : kill_termux_x11
+#------------------------------------------------------------------------------
 cat <<'EOF' > $PREFIX/bin/kill_termux_x11
 #!/bin/bash
 
-# Check if Apt, dpkg, or Nala is running in Termux or Proot
+# Vérification de l'exécution des processus dans Termux ou Proot
 if pgrep -f 'apt|apt-get|dpkg|nala' > /dev/null; then
-  zenity --info --text="Software is currently installing in Termux or Proot. Please wait for these processes to finish before continuing."
+  zenity --info --text="Un logiciel est en cours d'installation dans Termux ou Proot. Veuillez attendre la fin de ces processus avant de continuer."
   exit 1
 fi
 
-# Get the process IDs of Termux-X11 and XFCE sessions
+# Récupération d'identifiants des processus sessions Termux-X11 et XFCE
 termux_x11_pid=$(pgrep -f /system/bin/app_process.*com.termux.x11.Loader)
 xfce_pid=$(pgrep -f "xfce4-session")
 
-# Kill processes only if they exist
+# Stopper les processus uniquement s'ils existent
 if [ -n "$termux_x11_pid" ]; then
   kill -9 "$termux_x11_pid" 2>/dev/null
 fi
@@ -206,14 +243,14 @@ if [ -n "$xfce_pid" ]; then
   kill -9 "$xfce_pid" 2>/dev/null
 fi
 
-# Show appropriate message
+# Affichage de message dynamique
 if [ -n "$termux_x11_pid" ] || [ -n "$xfce_pid" ]; then
-  zenity --info --text="Termux-X11 and XFCE sessions closed."
+  zenity --info --text="Sessions Termux-X11 et XFCE fermées."
 else
-  zenity --info --text="Termux-X11 or XFCE session not found."
+  zenity --info --text="Session Termux-X11 ou XFCE non trouvée."
 fi
 
-# Kill Termux app only if PID exists
+# Stopper l'application Termux uniquement si le PID existe
 info_output=$(termux-info)
 if pid=$(echo "$info_output" | grep -o 'TERMUX_APP_PID=[0-9]\+' | awk -F= '{print $2}') && [ -n "$pid" ]; then
   kill "$pid" 2>/dev/null
@@ -226,7 +263,7 @@ EOF
 
 chmod +x $PREFIX/bin/kill_termux_x11
 
-#Create kill_termux_x11.desktop
+# Création du raccourci
 echo "[Desktop Entry]
 Version=1.0
 Type=Application

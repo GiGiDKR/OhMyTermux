@@ -3,40 +3,40 @@
 #------------------------------------------------------------------------------
 # VARIABLES DE CONTROLE PRINCIPALE
 #------------------------------------------------------------------------------
-# Note: Interface interactive avec gum
+# Interface interactive avec gum
 USE_GUM=false
 
-# Note: Configuration initiale
+# Configuration initiale
 EXECUTE_INITIAL_CONFIG=true
 
-# Note: Affichage détaillé des opérations
+# Affichage détaillé des opérations
 VERBOSE=false
 
 #------------------------------------------------------------------------------
 # SELECTEURS DE MODULES
 #------------------------------------------------------------------------------
-# Note: Selection du shell
+# Selection du shell
 SHELL_CHOICE=false
 
-# Note: Installation de paquets additionnels
+# Installation de paquets additionnels
 PACKAGES_CHOICE=false
 
-# Note: Installation de polices personnalisées
+# Installation de polices personnalisées
 FONT_CHOICE=false
     
-# Note: Installation de l'environnement XFCE et Debian Proot
+# Installation de l'environnement XFCE
 XFCE_CHOICE=false
 
-# Note: Installation de Debian Proot uniquement
+# Installation de Debian Proot
 PROOT_CHOICE=false
 
-# Note: Installation de Termux-X11 uniquement
+# Installation de Termux-X11
 X11_CHOICE=false
 
-# Note: Installation complète sans interactions
+# Installation complète sans interactions
 FULL_INSTALL=false
 
-# Note: Utilisation de gum pour les interactions
+# Utilisation de gum pour les interactions
 ONLY_GUM=true
 
 #------------------------------------------------------------------------------
@@ -44,14 +44,11 @@ ONLY_GUM=true
 #------------------------------------------------------------------------------
 BASHRC="$HOME/.bashrc"
 ZSHRC="$HOME/.zshrc"
-
-# TODO: Fish
-#FISHRC="$HOME/.config/fish/config.fish"
+FISHRC="$HOME/.config/fish/config.fish"
 
 #------------------------------------------------------------------------------
-# CODES COULEUR POUR L'AFFICHAGE
+# COULEURS D'AFFICHAGE
 #------------------------------------------------------------------------------
-# Note: Définition des codes ANSI pour la colorisation des sorties
 COLOR_BLUE='\033[38;5;33m'    # Information
 COLOR_GREEN='\033[38;5;82m'   # Succès
 COLOR_GOLD='\033[38;5;220m'   # Avertissement
@@ -59,7 +56,7 @@ COLOR_RED='\033[38;5;196m'    # Erreur
 COLOR_RESET='\033[0m'         # Réinitialisation
 
 #------------------------------------------------------------------------------
-# CONFIGURATION DE LA REDIRECTION
+# REDIRECTION
 #------------------------------------------------------------------------------
 if [ "$VERBOSE" = false ]; then
     redirect="> /dev/null 2>&1"
@@ -68,7 +65,7 @@ else
 fi
 
 #------------------------------------------------------------------------------
-# FONCTION D'AIDE
+# AFFICHAGE DE L'AIDE
 #------------------------------------------------------------------------------
 show_help() {
     clear
@@ -236,7 +233,7 @@ log_error() {
 }
 
 #------------------------------------------------------------------------------
-# EXECUTION D'UNE COMMANDE ET AFFICHAGE DYNAMIQUE DU RÉSULTAT
+# AFFICHAGE DYNAMIQUE DU RÉSULTAT D'UNE COMMANDE
 #------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
@@ -592,7 +589,7 @@ install_shell() {
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        if gum_confirm "Installer le prompt personnalisé ?";                            
+                        if gum_confirm "Installer le prompt personnalisé ?"; then                            
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
@@ -935,9 +932,9 @@ alias push="git pull && git add . && git commit -m 'mobile push' && git push"
 
 EOL
 
-    # Ajout du sourcing dans .bashrc
+    # Ajout du sourcing .bashrc
     echo -e "\n# Source des alias personnalisés\n[ -f \"$aliases_file\" ] && . \"$aliases_file\"" >> "$BASHRC"
-    # Le sourcing dans .zshrc est fait dans update_zshrc()
+    # Le sourcing .zshrc est fait dans update_zshrc()
 }
 
 #------------------------------------------------------------------------------
@@ -998,7 +995,7 @@ install_font() {
     fi
 }
 
-# Note: Variable globale pour suivre si XFCE ou Proot a été installé
+# Variable globale pour suivre si XFCE ou Proot a été installé
 INSTALL_UTILS=false
 
 #------------------------------------------------------------------------------
@@ -1077,6 +1074,100 @@ install_xfce() {
 }
 
 #------------------------------------------------------------------------------
+# INSTALLATION DES SCRIPTS XFCE
+#------------------------------------------------------------------------------
+install_xfce_scripts() {
+    title_msg "❯ Configuration des scripts XFCE"
+    
+    # Installation du script de démarrage
+    cat <<'EOF' > start
+#!/bin/bash
+
+# Activer PulseAudio sur le réseau
+pulseaudio --start --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" --exit-idle-time=-1 > /dev/null 2>&1
+
+XDG_RUNTIME_DIR=${TMPDIR} termux-x11 :1.0 & > /dev/null 2>&1
+sleep 1
+
+am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1
+sleep 1
+
+MESA_NO_ERROR=1 MESA_GL_VERSION_OVERRIDE=4.3COMPAT MESA_GLES_VERSION_OVERRIDE=3.2 virgl_test_server_android --angle-gl & > /dev/null 2>&1
+
+env DISPLAY=:1.0 GALLIUM_DRIVER=virpipe dbus-launch --exit-with-session xfce4-session & > /dev/null 2>&1
+
+# Définir le serveur audio
+export PULSE_SERVER=127.0.0.1 > /dev/null 2>&1
+
+sleep 5
+process_id=$(ps -aux | grep '[x]fce4-screensaver' | awk '{print $2}')
+kill "$process_id" > /dev/null 2>&1
+EOF
+
+    execute_command "chmod +x start && mv start $PREFIX/bin" "Installation du script de démarrage"
+
+    # Installation du script d'arrêt
+    cat <<'EOF' > "$PREFIX/bin/kill_termux_x11"
+#!/bin/bash
+
+# Vérification de l'exécution des processus dans Termux ou Proot
+if pgrep -f 'apt|apt-get|dpkg|nala' > /dev/null; then
+    zenity --info --text="Un logiciel est en cours d'installation dans Termux ou Proot. Veuillez attendre la fin de ces processus avant de continuer."
+    exit 1
+fi
+
+# Récupération d'identifiants des processus sessions Termux-X11 et XFCE
+termux_x11_pid=$(pgrep -f /system/bin/app_process.*com.termux.x11.Loader)
+xfce_pid=$(pgrep -f "xfce4-session")
+
+# Stopper les processus uniquement s'ils existent
+if [ -n "$termux_x11_pid" ]; then
+    kill -9 "$termux_x11_pid" 2>/dev/null
+fi
+
+if [ -n "$xfce_pid" ]; then
+    kill -9 "$xfce_pid" 2>/dev/null
+fi
+
+# Affichage de message dynamique
+if [ -n "$termux_x11_pid" ] || [ -n "$xfce_pid" ]; then
+    zenity --info --text="Sessions Termux-X11 et XFCE fermées."
+else
+    zenity --info --text="Session Termux-X11 ou XFCE non trouvée."
+fi
+
+# Stopper l'application Termux uniquement si le PID existe
+info_output=$(termux-info)
+if pid=$(echo "$info_output" | grep -o 'TERMUX_APP_PID=[0-9]\+' | awk -F= '{print $2}') && [ -n "$pid" ]; then
+    kill "$pid" 2>/dev/null
+fi
+
+exit 0
+
+EOF
+
+    execute_command "chmod +x $PREFIX/bin/kill_termux_x11" "Installation du script d'arrêt"
+
+
+    # Création du raccourci
+    mkdir -p "$PREFIX/share/applications"
+    cat <<'EOF' > "$PREFIX/share/applications/kill_termux_x11.desktop"
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Stop
+Comment=
+Exec=kill_termux_x11
+Icon=shutdown
+Categories=System;
+Path=
+StartupNotify=false
+EOF
+
+    execute_command "chmod +x $PREFIX/share/applications/kill_termux_x11.desktop" "Création du raccourci"
+}
+
+#------------------------------------------------------------------------------
 # INSTALLATION DE DEBIAN PROOT
 #------------------------------------------------------------------------------
 install_proot() {
@@ -1104,6 +1195,7 @@ install_proot() {
     fi
 }
 
+
 #------------------------------------------------------------------------------
 # RECUPERATION DU NOM D'UTILISATEUR
 #------------------------------------------------------------------------------
@@ -1122,27 +1214,24 @@ get_username() {
 # INSTALLATION DES UTILITAIRES
 #------------------------------------------------------------------------------
 install_utils() {
-    if [ "$INSTALL_UTILS" = true ] || [ "$XFCE_CHOICE" = true ]; then
-
+    if [ "$INSTALL_UTILS" = true ]; then
         title_msg "❯ Configuration des utilitaires"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+        execute_command "chmod +x utils.sh" "Exécution du script Utils"
+        ./utils.sh
 
-        if [ "$INSTALL_UTILS" = true ]; then
-            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
-            execute_command "chmod +x utils.sh" "Exécution du script Utils"
-            ./utils.sh
+        if ! username=$(get_username); then
+            error_msg "Impossible de récupérer le nom d'utilisateur."
+            return 1
+        fi
 
-            if ! username=$(get_username); then
-                error_msg "Impossible de récupérer le nom d'utilisateur."
-                return 1
-            fi
+        bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
+        if [ ! -f "$bashrc_proot" ]; then
+            error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
+            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration Bash Debian"
+        fi
 
-            bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
-            if [ ! -f "$bashrc_proot" ]; then
-                error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
-                execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration Bash Debian"
-            fi
-
-            cat << "EOL" >> "$bashrc_proot"
+        cat << "EOL" >> "$bashrc_proot"
 
 export DISPLAY=:1.0
 
@@ -1173,62 +1262,34 @@ alias n="nano"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
-            username=$(get_username)
+        username=$(get_username)
 
-            tmp_file="${TMPDIR}/rc_content"
-            touch "$tmp_file"
+        tmp_file="${TMPDIR}/rc_content"
+        touch "$tmp_file"
 
-            cat << EOL >> "$tmp_file"
+        cat << EOL >> "$tmp_file"
 
 # Alias pour se connecter à Debian Proot
 alias debian="proot-distro login debian --shared-tmp --user ${username}"
 EOL
 
-            if [ -f "$BASHRC" ]; then
-                cat "$tmp_file" >> "$BASHRC"
-                success_msg "✓ Configuration Bash Termux"
-            else
-                touch "$BASHRC" 
-                cat "$tmp_file" >> "$BASHRC"
-                success_msg "✓ Création et configuration Bash Termux"
-            fi
-            if [ -f "$ZSHRC" ]; then
-                cat "$tmp_file" >> "$ZSHRC"
-                success_msg "✓ Configuration ZSH Termux"
-            else
-                touch "$ZSHRC"
-                cat "$tmp_file" >> "$ZSHRC"
-                success_msg "✓ Création et configuration ZSH Termux"
-            fi
-            rm "$tmp_file"
+        if [ -f "$BASHRC" ]; then
+            cat "$tmp_file" >> "$BASHRC"
+            success_msg "✓ Configuration Bash Termux"
         else
-            cat <<'EOF' > start
-#!/bin/bash
-
-# Enable PulseAudio over Network
-pulseaudio --start --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" --exit-idle-time=-1 > /dev/null 2>&1
-
-XDG_RUNTIME_DIR=${TMPDIR} termux-x11 :1.0 & > /dev/null 2>&1
-sleep 1
-
-am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1
-sleep 1
-
-MESA_NO_ERROR=1 MESA_GL_VERSION_OVERRIDE=4.3COMPAT MESA_GLES_VERSION_OVERRIDE=3.2 virgl_test_server_android --angle-gl & > /dev/null 2>&1
-
-env DISPLAY=:1.0 GALLIUM_DRIVER=virpipe dbus-launch --exit-with-session xfce4-session & > /dev/null 2>&1
-# Set audio server
-export PULSE_SERVER=127.0.0.1 > /dev/null 2>&1
-
-sleep 5
-process_id=$(ps -aux | grep '[x]fce4-screensaver' | awk '{print $2}')
-kill "$process_id" > /dev/null 2>&1
-
-EOF
-            chmod +x start
-            mv start "$PREFIX/bin"
-            success_msg "✓ Configuration du script de démarrage"
+            touch "$BASHRC" 
+            cat "$tmp_file" >> "$BASHRC"
+            success_msg "✓ Création et configuration Bash Termux"
         fi
+        if [ -f "$ZSHRC" ]; then
+            cat "$tmp_file" >> "$ZSHRC"
+            success_msg "✓ Configuration ZSH Termux"
+        else
+            touch "$ZSHRC"
+            cat "$tmp_file" >> "$ZSHRC"
+            success_msg "✓ Création et configuration ZSH Termux"
+        fi
+        rm "$tmp_file"
     fi
 }
 
@@ -1312,8 +1373,8 @@ if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOIC
     if [ "$FONT_CHOICE" = true ]; then
         install_font
     fi
-    if [ "$XFCE_CHOICE" = true ]; then
-        install_xfce
+    if [ "$XFCE_CHOICE" = true ] && [ "$PROOT_CHOICE" = false ]; then
+        install_xfce_scripts
     fi
     if [ "$PROOT_CHOICE" = true ]; then
         install_proot
@@ -1323,7 +1384,7 @@ if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOIC
         install_termux_x11
     fi
 else
-    # Note: Exécuter l'installation complète si aucun argument spécifique n'est fourni
+    # Exécuter l'installation complète si aucun argument spécifique n'est fourni
     if $EXECUTE_INITIAL_CONFIG; then
         initial_config
     fi
@@ -1337,12 +1398,12 @@ else
     install_termux_x11
 fi
 
-# Note: Nettoyage et message de fin
+# Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
 rm -f xfce-dev.sh proot-dev.sh utils.sh install-dev.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
-# Note: Rechargement du shell
+# Rechargement du shell
 if $USE_GUM; then
     if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
         clear
