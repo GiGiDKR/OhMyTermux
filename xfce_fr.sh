@@ -5,13 +5,13 @@ VERBOSE=false
 BROWSER="chromium"
 
 #------------------------------------------------------------------------------
-# DISPLAY COLORS
+# COULEURS D'AFFICHAGE
 #------------------------------------------------------------------------------
-COLOR_BLUE='\033[38;5;33m' # Information
-COLOR_GREEN='\033[38;5;82m' # Success
-COLOR_GOLD='\033[38;5;220m' # Warning
-COLOR_RED='\033[38;5;196m' # Error
-COLOR_RESET='\033[0m' # Reset
+COLOR_BLUE='\033[38;5;33m'    # Information
+COLOR_GREEN='\033[38;5;82m'   # Succès
+COLOR_GOLD='\033[38;5;220m'   # Avertissement
+COLOR_RED='\033[38;5;196m'    # Erreur
+COLOR_RESET='\033[0m'         # Réinitialisation
 
 #------------------------------------------------------------------------------
 # REDIRECTION
@@ -23,23 +23,23 @@ else
 fi
 
 #------------------------------------------------------------------------------
-# SHOW HELP
+# AFFICHAGE DE L'AIDE
 #------------------------------------------------------------------------------
 show_help() {
     clear
-    echo "OhMyTermux Help"
-    echo
+    echo "Aide OhMyTermux"
+    echo 
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
-    echo " --gum | -g Use gum for user interface"
-    echo " --verbose | -v Show verbose output"
-echo " --browser | -b Choose browser (Chromium or Firefox)"
-    echo " --version | -ver Choose installation type (full, minimal, custom)"
-    echo " --help | -h Show this help message"
+    echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose | -v    Afficher les sorties détaillées"
+    echo "  --browser | -b    Choisir le navigateur (Chromium ou Firefox)"
+    echo "  --version | -ver  Choisir le type d'installation (complète, minimale, personnalisée)"
+    echo "  --help | -h       Afficher ce message d'aide"
 }
 
 #------------------------------------------------------------------------------
-# GLOBAL VARIABLES FOR CUSTOM INSTALLATION
+# VARIABLES GLOBALES POUR L'INSTALLATION PERSONNALISÉE
 #------------------------------------------------------------------------------
 install_theme=false
 install_icons=false
@@ -48,7 +48,7 @@ install_cursors=false
 INSTALL_TYPE=""
 
 #------------------------------------------------------------------------------
-# ARGUMENTS MANAGEMENT
+# GESTION DES ARGUMENTS
 #------------------------------------------------------------------------------
 for arg in "$@"; do
     case $arg in
@@ -80,7 +80,7 @@ for arg in "$@"; do
 done
 
 #------------------------------------------------------------------------------
-# GUM CONFIRMATION
+# CONFIRMATION GUM
 #------------------------------------------------------------------------------
 gum_confirm() {
     local prompt="$1"
@@ -92,7 +92,7 @@ gum_confirm() {
 }
 
 #------------------------------------------------------------------------------
-# GUM CHOICE
+# SÉLECTION GUM
 #------------------------------------------------------------------------------
 gum_choose() {
     local prompt="$1"
@@ -118,7 +118,7 @@ gum_choose() {
 }
 
 #------------------------------------------------------------------------------
-# TEXT BANNER
+# AFFICHAGE DE LA BANNIERE EN MODE TEXTE
 #------------------------------------------------------------------------------
 bash_banner() {
     clear
@@ -133,7 +133,7 @@ bash_banner() {
 }
 
 #------------------------------------------------------------------------------
-# GRAPHIC BANNER
+# AFFICHAGE DE LA BANNIERE EN MODE GRAPHIQUE
 #------------------------------------------------------------------------------
 show_banner() {
     clear
@@ -152,23 +152,23 @@ show_banner() {
 }
 
 #------------------------------------------------------------------------------
-# ERROR MANAGEMENT
+# GESTION DES ERREURS
 #------------------------------------------------------------------------------
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
         echo
         if $USE_GUM; then
-            gum style --foreground 196 "ERROR: Installation of OhMyTermux impossible."
+            gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
         else
-            echo -e "${COLOR_RED}ERROR: Installation of OhMyTermux impossible.${COLOR_RESET}"
+            echo -e "${COLOR_RED}ERREUR: Installation de OhMyTermux impossible.${COLOR_RESET}"
         fi
-        echo -e "${COLOR_BLUE}Please refer to the error message(s) above.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Veuillez vous référer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
     fi
 }
 
 #------------------------------------------------------------------------------
-# INFO MESSAGES
+# MESSAGES D'INFORMATION
 #------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
@@ -179,7 +179,7 @@ info_msg() {
 }
 
 #------------------------------------------------------------------------------
-# SUCCESS MESSAGES
+# MESSAGES DE SUCCÈS
 #------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
@@ -190,7 +190,7 @@ success_msg() {
 }
 
 #------------------------------------------------------------------------------
-# ERROR MESSAGES
+# MESSAGES D'ERREUR
 #------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
@@ -201,7 +201,7 @@ error_msg() {
 }
 
 #------------------------------------------------------------------------------
-# TITLE MESSAGES
+# MESSAGES DE TITRE
 #------------------------------------------------------------------------------
 title_msg() {
     if $USE_GUM; then
@@ -212,7 +212,7 @@ title_msg() {
 }
 
 #------------------------------------------------------------------------------
-# SUBTITLE MESSAGES
+# MESSAGES DE SOUS-TITRE
 #------------------------------------------------------------------------------
 subtitle_msg() {
     if $USE_GUM; then
@@ -223,7 +223,7 @@ subtitle_msg() {
 }
 
 #------------------------------------------------------------------------------
-# ERROR LOG
+# JOURNALISATION DES ERREURS
 #------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
@@ -231,7 +231,7 @@ log_error() {
 }
 
 #------------------------------------------------------------------------------
-# DYNAMIC DISPLAY OF COMMAND RESULTS
+# AFFICHAGE DYNAMIQUE DU RÉSULTAT D'UNE COMMANDE
 #------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
@@ -260,7 +260,7 @@ execute_command() {
 }
 
 #------------------------------------------------------------------------------
-# FILE DOWNLOAD
+# TÉLÉCHARGEMENT DE FICHIER
 #------------------------------------------------------------------------------
 download_file() {
     local url=$1
@@ -270,15 +270,15 @@ download_file() {
 
 trap finish EXIT
 
-# Function to configure XFCE according to the installation type
+# Fonction pour configurer XFCE selon le type d'installation
 configure_xfce() {
     local config_dir="$HOME/.config/xfce4/xfconf/xfce-perchannel-xml"
     local install_type="$1"
 
-    # CREATE CONFIGURATION DIRECTORY IF NECESSARY
+    # Créer le répertoire de configuration si nécessaire
     mkdir -p "$config_dir"
 
-    # Configure xfce4-panel.xml if whiskermenu is not installed
+    # Configurer xfce4-panel.xml si whiskermenu n'est pas installé
     if ! command -v xfce4-popup-whiskermenu &> /dev/null; then
         sed -i 's/<property name="plugin-5" type="string" value="whiskermenu">/<property name="plugin-5" type="string" value="applicationsmenu">/' "$config_dir/xfce4-panel.xml"
         sed -i '/<property name="plugin-5".*whiskermenu/,/<\/property>/c\    <property name="plugin-5" type="string" value="applicationsmenu"/>' "$config_dir/xfce4-panel.xml"
@@ -286,7 +286,7 @@ configure_xfce() {
 
     case "$INSTALL_TYPE" in
         "complète")
-            # Complete configuration with all elements
+            # Configuration complète avec tous les éléments
             cat > "$config_dir/xsettings.xml" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xsettings" version="1.0">
@@ -312,19 +312,19 @@ EOF
             ;;
             
         "minimale"|"personnalisée")
-            # Base configuration
+            # Configuration de base
             local theme_value="Default"
             local icon_value="Adwaita"
             local cursor_value="default"
             local wallpaper="/data/data/com.termux/files/usr/share/backgrounds/xfce/xfce-stripes.png"
 
-            # Adjust according to the custom choices
+            # Ajuster selon les choix personnalisés
             [ "$install_theme" = true ] && theme_value="WhiteSur-Dark"
             [ "$install_icons" = true ] && icon_value="WhiteSur-dark"
             [ "$install_cursors" = true ] && cursor_value="dist-dark"
             [ "$install_wallpapers" = true ] && wallpaper="/data/data/com.termux/files/usr/share/backgrounds/whitesur/Monterey.jpg"
 
-            # Generate xsettings.xml
+            # Générer xsettings.xml
             cat > "$config_dir/xsettings.xml" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xsettings" version="1.0">
@@ -339,7 +339,7 @@ EOF
 </channel>
 EOF
 
-            # Generate xfwm4.xml
+            # Générer xfwm4.xml
             cat > "$config_dir/xfwm4.xml" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xfwm4" version="1.0">
@@ -349,7 +349,7 @@ EOF
 </channel>
 EOF
 
-            # Generate xfce4-desktop.xml
+            # Générer xfce4-desktop.xml
             cat > "$config_dir/xfce4-desktop.xml" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xfce4-desktop" version="1.0">
@@ -374,114 +374,114 @@ EOF
             ;;
     esac
 
-    # Apply permissions
+    # Appliquer les permissions
     chmod 644 "$config_dir"/*.xml
 }
 
 #------------------------------------------------------------------------------
-# MAIN FUNCTION
+# FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 main() {
-    # Install gum if necessary
+    # Installation de gum si nécessaire
     if $USE_GUM && ! command -v gum &> /dev/null; then
-        echo -e "${COLOR_BLUE}Installing gum${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
         pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
     fi
 
-    title_msg "❯ XFCE Installation"
+    title_msg "❯ Installation de XFCE"
 
-    execute_command "pkg update -y && pkg upgrade -y" "Package update"
+    execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
-    # Base packages
+    # Paquets de base
     base_pkgs=(
-        'termux-x11-nightly'         # X11 server for Termux
-        'virglrenderer-android'      # Graphic acceleration
-        'xfce4'                      # Graphic interface
+        'termux-x11-nightly'         # Serveur X11 pour Termux
+        'virglrenderer-android'      # Accélération graphique
+        'xfce4'                      # Interface graphique
         'xfce4-terminal'             # Terminal
     )
 
     # Paquets principaux
     full_pkgs=(
-        'pavucontrol-qt'             # Sound control
-        'wmctrl'                     # Window control
-        'netcat-openbsd'             # Network utility
+        'pavucontrol-qt'             # Contrôle du son
+        'wmctrl'                     # Contrôle des fenêtres
+        'netcat-openbsd'             # Utilitaire réseau
         'thunar-archive-plugin'      # Archives
-        'xfce4-whiskermenu-plugin'   # Whisker menu
+        'xfce4-whiskermenu-plugin'   # Menu Whisker
         'xfce4-notifyd'              # Notifications
-        'xfce4-screenshooter'        # Screenshot
-        'xfce4-taskmanager'          # Task manager
+        'xfce4-screenshooter'        # Capture d'écran
+        'xfce4-taskmanager'          # Gestion des tâches
     )
 
     # Paquets additionnels
     extra_pkgs=(
         'gigolo'                     # Gestion de fichiers
-        'jq'                         # JSON utility
-        'mousepad'                   # Text editor
-        'netcat-openbsd'             # Network utility
-        'parole'                     # Media player
-        'pavucontrol-qt'             # Sound control
-        'ristretto'                  # Image manager
+        'jq'                         # Utilitaire JSON
+        'mousepad'                   # Éditeur de texte
+        'netcat-openbsd'             # Utilitaire réseau
+        'parole'                     # Lecteur multimédia
+        'pavucontrol-qt'             # Contrôle du son
+        'ristretto'                   # Gestion d'images
         'thunar-archive-plugin'      # Archives
-        'thunar-media-tags-plugin'   # Media
-        'wmctrl'                     # Window control
+        'thunar-media-tags-plugin'   # Médias
+        'wmctrl'                     # Contrôle des fenêtres
         'xfce4-artwork'              # Artwork
-        'xfce4-battery-plugin'       # Battery
-        'xfce4-clipman-plugin'       # Clipboard
-        'xfce4-cpugraph-plugin'      # CPU graph
-        'xfce4-datetime-plugin'      # Date and time
-        'xfce4-dict'                 # Dictionary
-        'xfce4-diskperf-plugin'      # Disk performance
-        'xfce4-fsguard-plugin'       # Disk monitoring
-        'xfce4-genmon-plugin'        # Generic widgets
-        'xfce4-mailwatch-plugin'     # Mail monitoring
-        'xfce4-netload-plugin'       # Network load
+        'xfce4-battery-plugin'       # Batterie
+        'xfce4-clipman-plugin'       # Presse-papiers
+        'xfce4-cpugraph-plugin'      # Graphique CPU
+        'xfce4-datetime-plugin'      # Date et temps
+        'xfce4-dict'                 # Dictionnaire
+        'xfce4-diskperf-plugin'      # Performances disque
+        'xfce4-fsguard-plugin'       # Surveillance disque
+        'xfce4-genmon-plugin'        # Widgets génériques
+        'xfce4-mailwatch-plugin'     # Surveillance mails
+        'xfce4-netload-plugin'       # Chargement réseau
         'xfce4-notes-plugin'         # Notes
         'xfce4-notifyd'              # Notifications
-        'xfce4-places-plugin'        # Locations
-        'xfce4-screenshooter'        # Screenshot
-        'xfce4-taskmanager'          # Task manager
-        'xfce4-systemload-plugin'    # System load
+        'xfce4-places-plugin'        # Emplacements
+        'xfce4-screenshooter'        # Capture d'écran
+        'xfce4-taskmanager'          # Gestion des tâches
+        'xfce4-systemload-plugin'    # Chargement système
         'xfce4-timer-plugin'         # Timer
         'xfce4-wavelan-plugin'       # Wi-Fi
-        'xfce4-weather-plugin'       # Weather
-        'xfce4-whiskermenu-plugin'   # Whisker menu
+        'xfce4-weather-plugin'       # Informations météorologiques
+        'xfce4-whiskermenu-plugin'   # Menu Whisker
     )
 
     case "$INSTALL_TYPE" in
-        "minimal")
+        "minimale")
             pkgs=("${base_pkgs[@]}")
             ;;
-        "full")
+        "complète")
             pkgs=("${base_pkgs[@]}" "${full_pkgs[@]}")
             install_theme=true
             install_icons=true
             install_wallpapers=true
             install_cursors=true
             ;;
-        "custom")
+        "personnalisée")
             pkgs=("${base_pkgs[@]}")
             
             if $USE_GUM; then
-                selected_extra=($(gum_choose "Additional packages :" "${extra_pkgs[@]}"))
+                selected_extra=($(gum_choose "Paquets additionnels :" "${extra_pkgs[@]}"))
                 pkgs+=("${selected_extra[@]}")
                 
-                # Selection of UI elements
-                selected_ui=($(gum_choose "UI elements :" \
-                    "WhiteSur theme" \
-                    "WhiteSur icons" \
-                    "WhiteSur wallpapers" \
-                    "Fluent cursors"))
+                # Sélection des éléments graphiques
+                selected_ui=($(gum_choose "Eléments graphiques :" \
+                    "Thème WhiteSur" \
+                    "Icônes WhiteSur" \
+                    "Fonds d'écran WhiteSur" \
+                    "Curseurs Fluent"))
                 
-                [[ " ${selected_ui[*]} " =~ "WhiteSur theme" ]] && install_theme=true
-                [[ " ${selected_ui[*]} " =~ "WhiteSur icons" ]] && install_icons=true
-                [[ " ${selected_ui[*]} " =~ "WhiteSur wallpapers" ]] && install_wallpapers=true
-                [[ " ${selected_ui[*]} " =~ "Fluent cursors" ]] && install_cursors=true
+                [[ " ${selected_ui[*]} " =~ "Thème WhiteSur" ]] && install_theme=true
+                [[ " ${selected_ui[*]} " =~ "Icônes WhiteSur" ]] && install_icons=true
+                [[ " ${selected_ui[*]} " =~ "Fonds d'écran WhiteSur" ]] && install_wallpapers=true
+                [[ " ${selected_ui[*]} " =~ "Curseurs Fluent" ]] && install_cursors=true
             else
-                echo -e "\n${COLOR_BLUE}Additional packages :${COLOR_RESET}"
+                echo -e "\n${COLOR_BLUE}Paquets additionnels :${COLOR_RESET}"
                 for i in "${!extra_pkgs[@]}"; do
                     echo "$((i+1))) ${extra_pkgs[i]}"
                 done
-                printf "${COLOR_GOLD}Enter your choice (separated by spaces) : ${COLOR_RESET}"
+                printf "${COLOR_GOLD}Entrez votre choix (séparés par des espaces) : ${COLOR_RESET}"
                 tput setaf 3
                 read -r choices
                 tput sgr0
@@ -490,12 +490,12 @@ main() {
                     [ $idx -ge 0 ] && [ $idx -lt ${#extra_pkgs[@]} ] && pkgs+=("${extra_pkgs[idx]}")
                 done
                 
-                echo -e "\n${COLOR_BLUE}UI elements :${COLOR_RESET}"
-                echo "1) WhiteSur theme"
-                echo "2) WhiteSur icons"
-                echo "3) WhiteSur wallpapers"
-                echo "4) Fluent cursors"
-                printf "${COLOR_GOLD}Enter your choice (separated by spaces) : ${COLOR_RESET}"
+                echo -e "\n${COLOR_BLUE}Eléments graphiques :${COLOR_RESET}"
+                echo "1) Thème WhiteSur"
+                echo "2) Icônes WhiteSur"
+                echo "3) Fonds d'écran WhiteSur"
+                echo "4) Curseurs Fluent"
+                printf "${COLOR_GOLD}Entrez votre choix (séparés par des espaces) : ${COLOR_RESET}"
                 tput setaf 3
                 read -r ui_choices
                 tput sgr0
@@ -511,7 +511,7 @@ main() {
             ;;
     esac
 
-    # Add the chosen browser
+    # Ajouter le navigateur choisi
     if [ "$BROWSER" = "firefox" ]; then
         pkgs+=('firefox')
         browser_desktop="firefox.desktop"
@@ -520,63 +520,63 @@ main() {
         browser_desktop="chromium.desktop"
     fi
 
-    # Installation of packages
+    # Installation des paquets
     for pkg in "${pkgs[@]}"; do
-        execute_command "pkg install $pkg -y" "Installation of $pkg"
+        execute_command "pkg install $pkg -y" "Installation de $pkg"
     done
 
     # Configuration du bureau
     if [ "$BROWSER" != "aucun" ]; then
-        execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/$browser_desktop $HOME/Desktop && chmod +x $HOME/Desktop/$browser_desktop" "Desktop configuration"
+        execute_command "mkdir -p $HOME/Desktop && cp $PREFIX/share/applications/$browser_desktop $HOME/Desktop && chmod +x $HOME/Desktop/$browser_desktop" "Configuration du bureau"
     else
-        execute_command "mkdir -p $HOME/Desktop" "Desktop configuration"
+        execute_command "mkdir -p $HOME/Desktop" "Configuration du bureau"
     fi
 
-    # Installation of UI elements according to the choices
+    # Installation des éléments graphiques selon les choix
     if [ "$install_wallpapers" = true ] || [ "$install_theme" = true ] || [ "$install_icons" = true ] || [ "$install_cursors" = true ]; then
-        subtitle_msg "❯ UI configuration"
+        subtitle_msg "❯ Configuration UI"
 
         if [ "$install_wallpapers" = true ]; then
-            download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Download wallpapers"
+            download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran"
             execute_command "unzip main.zip && \
                             mkdir -p $PREFIX/share/backgrounds/whitesur && \
                             cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/whitesur/ && \
-                            rm -rf WhiteSur-wallpapers-main main.zip" "Wallpapers installation"
+                            rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran"
         fi
 
         if [ "$install_theme" = true ]; then
-            download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Download theme"
+            download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème"
             execute_command "unzip 2024-11-18.zip && \
                             tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
                             mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
                             rm -rf WhiteSur* && \
-                            rm 2024-11-18.zip*" "Theme installation"
+                            rm 2024-11-18.zip*" "Installation du thème"
         fi
 
         if [ "$install_icons" = true ]; then
-            download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Download icons"
+            download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes"
             execute_command "unzip master.zip && \
                             cd WhiteSur-icon-theme-master && \
                             mkdir -p $PREFIX/share/icons && \
                             ./install.sh --dest $PREFIX/share/icons --name WhiteSur && \
                             cd .. && \
-                            rm -rf WhiteSur-icon-theme-master master.zip" "Icons installation"
+                            rm -rf WhiteSur-icon-theme-master master.zip" "Installation des icônes"
         fi
 
         if [ "$install_cursors" = true ]; then
-            download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Download cursors"
+            download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement des curseurs"
             execute_command "unzip 2024-02-25.zip && \
                             mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && \
                             mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && \
                             rm -rf $HOME/Fluent* && \
-                            rm 2024-02-25.zip*" "Cursors installation"
+                            rm 2024-02-25.zip*" "Installation des curseurs"
         fi
     fi
 
-    # Pre-configuration XFCE
-    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Download XFCE configuration"
+    # Pré-configuration XFCE
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
     execute_command "unzip -o config.zip && \
-                rm config.zip" "Configuration installation"
+                rm config.zip" "Installation de la configuration"
 
     # Post-configuration XFCE
     configure_xfce "$INSTALL_TYPE"

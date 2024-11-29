@@ -6,13 +6,13 @@ USE_GUM=false
 VERBOSE=false
 
 #------------------------------------------------------------------------------
-# DISPLAY COLORS
+# COULEURS D'AFFICHAGE
 #------------------------------------------------------------------------------
 COLOR_BLUE='\033[38;5;33m'    # Information
-COLOR_GREEN='\033[38;5;82m'   # Success
-COLOR_GOLD='\033[38;5;220m'   # Warning
-COLOR_RED='\033[38;5;196m'    # Error
-COLOR_RESET='\033[0m'         # Reset
+COLOR_GREEN='\033[38;5;82m'   # Succès
+COLOR_GOLD='\033[38;5;220m'   # Avertissement
+COLOR_RED='\033[38;5;196m'    # Erreur
+COLOR_RESET='\033[0m'         # Réinitialisation
 
 #------------------------------------------------------------------------------
 # REDIRECTION
@@ -24,21 +24,21 @@ else
 fi
 
 #------------------------------------------------------------------------------
-# SHOW HELP
+# AFFICHAGE DE L'AIDE
 #------------------------------------------------------------------------------
 show_help() {
     clear
-    echo "OhMyTermux help"
-    echo
+    echo "Aide OhMyTermux"
+    echo 
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
-    echo "  --gum | -g     Use gum for the UI"
-    echo "  --verbose | -v Show detailed outputs"
-    echo "  --help | -h    Show this help message"
+    echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose | -v Afficher les sorties détaillées"
+    echo "  --help | -h    Afficher ce message d'aide"
 }
 
 #------------------------------------------------------------------------------
-# ARGUMENTS MANAGEMENT
+# GESTION DES ARGUMENTS
 #------------------------------------------------------------------------------
 for arg in "$@"; do
     case $arg in
@@ -62,7 +62,7 @@ for arg in "$@"; do
 done
 
 #------------------------------------------------------------------------------
-# INFORMATION MESSAGES
+# MESSAGES D'INFORMATION
 #------------------------------------------------------------------------------
 info_msg() {
     if $USE_GUM; then
@@ -73,7 +73,7 @@ info_msg() {
 }
 
 #------------------------------------------------------------------------------
-# SUCCESS MESSAGES
+# MESSAGES DE SUCCÈS
 #------------------------------------------------------------------------------
 success_msg() {
     if $USE_GUM; then
@@ -84,7 +84,7 @@ success_msg() {
 }
 
 #------------------------------------------------------------------------------
-# ERROR MESSAGES
+# MESSAGES D'ERREUR
 #------------------------------------------------------------------------------
 error_msg() {
     if $USE_GUM; then
@@ -95,7 +95,7 @@ error_msg() {
 }
 
 #------------------------------------------------------------------------------
-# TITLE MESSAGES
+# MESSAGES DE TITRE
 #------------------------------------------------------------------------------
 title_msg() {
     if $USE_GUM; then
@@ -106,7 +106,7 @@ title_msg() {
 }
 
 #------------------------------------------------------------------------------
-# SUBTITLE MESSAGES
+# MESSAGES DE SOUS-TITRE
 #------------------------------------------------------------------------------
 subtitle_msg() {
     if $USE_GUM; then
@@ -117,15 +117,15 @@ subtitle_msg() {
 }
 
 #------------------------------------------------------------------------------
-# ERROR LOGGING
+# JOURNALISATION DES ERREURS
 #------------------------------------------------------------------------------
 log_error() {
     local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $error_msg" >> "$HOME/.config/OhMyTermux/install.log"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $error_msg" >> "$HOME/.config/OhMyTermux/install.log"
 }
 
 #------------------------------------------------------------------------------
-# DYNAMIC DISPLAY OF A COMMAND RESULT
+# AFFICHAGE DYNAMIQUE DU RÉSULTAT D'UNE COMMANDE
 #------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
@@ -154,24 +154,24 @@ execute_command() {
 }
 
 #------------------------------------------------------------------------------
-# CHECKING DEPENDENCIES
+# VÉRIFICATION DES DÉPENDANCES
 #------------------------------------------------------------------------------
 check_dependencies() {
     if [ "$USE_GUM" = true ]; then
         if $USE_GUM && ! command -v gum &> /dev/null; then
-            echo -e "${COLOR_BLUE}Installing gum${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
             pkg update -y > /dev/null 2>&1 && pkg install gum -y > /dev/null 2>&1
         fi
     fi
 
     if ! command -v proot-distro &> /dev/null; then
-        error_msg "Please install proot-distro before continuing."
+        error_msg "Veuillez installer proot-distro avant de continuer."
         exit 1
     fi
 }
 
 #------------------------------------------------------------------------------
-# TEXT BANNER
+# AFFICHAGE DE LA BANNIERE EN MODE TEXTE
 #------------------------------------------------------------------------------
 bash_banner() {
     clear
@@ -187,7 +187,7 @@ bash_banner() {
 
 
 #------------------------------------------------------------------------------
-# BANNER DISPLAY
+# AFFICHAGE DE LA BANNIERE
 #------------------------------------------------------------------------------
 show_banner() {
     clear
@@ -206,25 +206,25 @@ show_banner() {
 }
 
 #------------------------------------------------------------------------------
-# ERROR MANAGEMENT
+# GESTION DES ERREURS
 #------------------------------------------------------------------------------
 finish() {
     local ret=$?
     if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
         echo
         if [ "$USE_GUM" = true ]; then
-            gum style --foreground 196 "ERROR : Installation of OhMyTermux impossible."
+            gum style --foreground 196 "ERREUR : Installation de OhMyTermux impossible."
         else
-            echo -e "${COLOR_RED}ERROR : Installation of OhMyTermux impossible.${COLOR_RESET}"
+            echo -e "${COLOR_RED}ERREUR : Installation de OhMyTermux impossible.${COLOR_RESET}"
         fi
-        echo -e "${COLOR_BLUE}Please refer to the error messages above.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Veuillez vous référer aux messages d'erreur ci-dessus.${COLOR_RESET}"
     fi
 }
 
 trap finish EXIT
 
 #------------------------------------------------------------------------------
-# INSTALLATION OF PROOT PACKAGES
+# INSTALLATION DES PAQUETS PROOT
 #------------------------------------------------------------------------------
 install_packages_proot() {
     local pkgs_proot=('sudo' 'wget' 'nala' 'xfconf')
@@ -234,7 +234,7 @@ install_packages_proot() {
 }
 
 #------------------------------------------------------------------------------
-# CREATE A USER IN PROOT WITH PASSWORD
+# CRÉATION D'UN UTILISATEUR DANS PROOT AVEC MOT DE PASSE
 #------------------------------------------------------------------------------
 create_user_proot() {
     execute_command "
@@ -246,46 +246,46 @@ create_user_proot() {
 }
 
 #------------------------------------------------------------------------------
-# CONFIGURATION OF USER RIGHTS
+# CONFIGURATION DES DROITS DE L'UTILISATEUR
 #------------------------------------------------------------------------------
 configure_user_rights() {
     execute_command "
-        # Add the user to the sudo group
+        # Ajout de l'utilisateur au groupe sudo
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 usermod -aG sudo '$username'
         
-        # Create the sudoers.d file for the user
+        # Création du fichier sudoers.d pour l'utilisateur
         echo '$username ALL=(ALL) NOPASSWD: ALL' > '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$username'
         chmod 0440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$username'
         
-        # Configure the main sudoers file
+        # Configuration du fichier sudoers principal
         echo '%sudo ALL=(ALL:ALL) ALL' >> '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
         
-        # Check permissions
+        # Vérification des permissions
         chmod 440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
         chown root:root '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
-    " "Configuration of sudo rights"
+    " "Configuration des droits sudo"
 }
 
 #------------------------------------------------------------------------------
-# INSTALLATION OF MESA-VULKAN
+# INSTALLATION DE MESA-VULKAN
 #------------------------------------------------------------------------------
 install_mesa_vulkan() {
     local mesa_package="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
     local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/$mesa_package"
     
     if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dpkg -s mesa-vulkan-kgsl &> /dev/null; then
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Downloading Mesa-Vulkan"
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installing Mesa-Vulkan"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Téléchargement de Mesa-Vulkan"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installation de Mesa-Vulkan"
     else
-        info_msg "Mesa-Vulkan is already installed."
+        info_msg "Mesa-Vulkan est déjà installé."
     fi
 }
 
 #------------------------------------------------------------------------------
-# MAIN FUNCTION
+# FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 check_dependencies
-title_msg "❯ Installation of Debian Proot"
+title_msg "❯ Installation de Debian Proot"
 
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
@@ -347,51 +347,51 @@ else
     exit 1
 fi
 
-execute_command "proot-distro install debian" "Installation of the distribution"
+execute_command "proot-distro install debian" "Installation de la distribution"
 
 #------------------------------------------------------------------------------
-# CHECKING THE INSTALLATION OF DEBIAN
+# VÉRIFICATION DE L'INSTALLATION DE DEBIAN
 #------------------------------------------------------------------------------
 if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
-    error_msg "The installation of Debian failed."
+    error_msg "L'installation de Debian a échoué."
     exit 1
 fi
 
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Searching for updates"
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Updating packages"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
 
 install_packages_proot
 
-subtitle_msg "❯ Configuration of the distribution"
+subtitle_msg "❯ Configuration de la distribution"
 
 create_user_proot
 configure_user_rights
 
 #------------------------------------------------------------------------------
-# CONFIGURATION OF THE TIMEZONE
+# CONFIGURATION DU FUSEAU HORAIRE
 #------------------------------------------------------------------------------
 timezone=$(getprop persist.sys.timezone)
 execute_command "
     proot-distro login debian -- rm /etc/localtime
     proot-distro login debian -- cp /usr/share/zoneinfo/$timezone /etc/localtime
-" "Configuration of the timezone"
+" "Configuration du fuseau horaire"
 
 #------------------------------------------------------------------------------
-# CONFIGURATION OF ICONS AND THEMES
+# CONFIGURATION DES ICONES ET THÈMES
 #------------------------------------------------------------------------------
 mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
-execute_command "cp -r $PREFIX/share/icons/WhiteSur $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/WhiteSur" "Configuration of icons"
+execute_command "cp -r $PREFIX/share/icons/WhiteSur $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/WhiteSur" "Configuration des icônes"
 
 #------------------------------------------------------------------------------
-# CONFIGURATION OF CURSORS
+# CONFIGURATION DES CURSEURS
 #------------------------------------------------------------------------------
 execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
 Xcursor.theme: WhiteSur
-EOF" "Configuration of cursors"
+EOF" "Configuration des curseurs"
 
 #------------------------------------------------------------------------------
-# CONFIGURATION OF THEMES AND FONTS
+# CONFIGURATION DES THÈMES ET POLICES
 #------------------------------------------------------------------------------
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration of themes and fonts"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration des thèmes et polices"
 
 install_mesa_vulkan
