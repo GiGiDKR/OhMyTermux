@@ -1,4 +1,7 @@
 .vscode
 *.bak
-install copy.shts/
+*dev.sh
+.cursorrules
+fish.sh
+xfce-debian-FR.sh
 assets/pictures

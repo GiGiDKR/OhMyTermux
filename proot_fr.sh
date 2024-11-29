@@ -6,11 +6,13 @@ USE_GUM=false
 VERBOSE=false
 
 #------------------------------------------------------------------------------
-# COULEURS
+# COULEURS D'AFFICHAGE
 #------------------------------------------------------------------------------
-COLOR_BLUE="\e[38;5;33m"
-COLOR_RED="\e[38;5;196m"
-COLOR_RESET="\e[0m"
+COLOR_BLUE='\033[38;5;33m'    # Information
+COLOR_GREEN='\033[38;5;82m'   # Succès
+COLOR_GOLD='\033[38;5;220m'   # Avertissement
+COLOR_RED='\033[38;5;196m'    # Erreur
+COLOR_RESET='\033[0m'         # Réinitialisation
 
 #------------------------------------------------------------------------------
 # REDIRECTION
@@ -99,7 +101,18 @@ title_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 220 --bold
     else
-        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+        echo -e "\n${COLOR_GOLD}\033[1m$1\033[0m${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# MESSAGES DE SOUS-TITRE
+#------------------------------------------------------------------------------
+subtitle_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 33 --bold
+    else
+        echo -e "\n${COLOR_BLUE}\033[1m$1\033[0m${COLOR_RESET}"
     fi
 }
 
@@ -112,7 +125,7 @@ log_error() {
 }
 
 #------------------------------------------------------------------------------
-# EXECUTION D'UNE COMMANDE ET AFFICHAGE DYNAMIQUE DU RÉSULTAT
+# AFFICHAGE DYNAMIQUE DU RÉSULTAT D'UNE COMMANDE
 #------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
@@ -172,6 +185,7 @@ bash_banner() {
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
+
 #------------------------------------------------------------------------------
 # AFFICHAGE DE LA BANNIERE
 #------------------------------------------------------------------------------
@@ -183,7 +197,7 @@ show_banner() {
             --border-foreground 33 \
             --border double \
             --align center \
-            --width 40 \
+            --width 42 \
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else
@@ -213,7 +227,7 @@ trap finish EXIT
 # INSTALLATION DES PAQUETS PROOT
 #------------------------------------------------------------------------------
 install_packages_proot() {
-    local pkgs_proot=('sudo' 'wget' 'nala' 'jq')
+    local pkgs_proot=('sudo' 'wget' 'nala' 'xfconf')
     for pkg in "${pkgs_proot[@]}"; do
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
     done
@@ -275,28 +289,28 @@ title_msg "❯ Installation de Debian Proot"
 
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
-        username=$(gum input --prompt "Nom d'utilisateur : " --placeholder "Entrez votre nom d'utilisateur")
+        username=$(gum input --prompt "Username: " --placeholder "Enter your username")
         while true; do
-            password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
-            password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
+            password=$(gum input --password --prompt "Password: " --placeholder "Enter your password")
+            password_confirm=$(gum input --password --prompt "Confirm password: " --placeholder "Enter your password again")
             if [ "$password" = "$password_confirm" ]; then
                 break
             else
-                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                gum style --foreground "#FF0000" "Passwords do not match. Please try again."
             fi
         done
     else
-        echo -e "${COLOR_BLUE}Entrez votre nom d'utilisateur : ${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Enter your username: ${COLOR_RESET}"
         read -r username
         while true; do
-            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Enter your password: ${COLOR_RESET}"
             read -rs password
-            echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Confirm your password: ${COLOR_RESET}"
             read -rs password_confirm
             if [ "$password" = "$password_confirm" ]; then
                 break
             else
-                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                echo -e "${COLOR_RED}Passwords do not match. Please try again.${COLOR_RESET}"
             fi
         done
     fi
@@ -304,24 +318,24 @@ elif [ $# -eq 1 ]; then
     username="$1"
     if [ "$USE_GUM" = true ]; then
         while true; do
-            password=$(gum input --password --prompt "Mot de passe : " --placeholder "Entrez votre mot de passe")
-            password_confirm=$(gum input --password --prompt "Confirmez le mot de passe : " --placeholder "Entrez à nouveau votre mot de passe")
+            password=$(gum input --password --prompt "Password: " --placeholder "Enter your password")
+            password_confirm=$(gum input --password --prompt "Confirm password: " --placeholder "Enter your password again")
             if [ "$password" = "$password_confirm" ]; then
                 break
             else
-                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                gum style --foreground "#FF0000" "Passwords do not match. Please try again."
             fi
         done
     else
         while true; do
-            echo -e "${COLOR_BLUE}Entrez votre mot de passe : ${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Enter your password: ${COLOR_RESET}"
             read -rs password
-            echo -e "${COLOR_BLUE}Confirmez votre mot de passe : ${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Confirm your password: ${COLOR_RESET}"
             read -rs password_confirm
             if [ "$password" = "$password_confirm" ]; then
                 break
             else
-                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                echo -e "${COLOR_RED}Passwords do not match. Please try again.${COLOR_RESET}"
             fi
         done
     fi
@@ -348,6 +362,8 @@ execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt 
 
 install_packages_proot
 
+subtitle_msg "❯ Configuration de la distribution"
+
 create_user_proot
 configure_user_rights
 
@@ -364,13 +380,13 @@ execute_command "
 # CONFIGURATION DES ICONES ET THÈMES
 #------------------------------------------------------------------------------
 mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
-execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/dist-dark" "Configuration des icônes"
+execute_command "cp -r $PREFIX/share/icons/WhiteSur $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/WhiteSur" "Configuration des icônes"
 
 #------------------------------------------------------------------------------
 # CONFIGURATION DES CURSEURS
 #------------------------------------------------------------------------------
 execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
-Xcursor.theme: dist-dark
+Xcursor.theme: WhiteSur
 EOF" "Configuration des curseurs"
 
 #------------------------------------------------------------------------------
