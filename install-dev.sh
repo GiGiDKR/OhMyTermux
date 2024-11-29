@@ -158,7 +158,7 @@ for arg in "$@"; do
     esac
 done
 
-# Note: Activation de tous les modules si --gum est le seul argument
+# Activation de tous les modules si --gum est le seul argument
 if $ONLY_GUM; then
     SHELL_CHOICE=true
     PACKAGES_CHOICE=true
@@ -616,9 +616,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && 
-                    mkdir -p $HOME/.config/OhMyTermux && \
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && \
+                                mkdir -p $HOME/.config/OhMyTermux && \
+                                curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -1018,7 +1018,6 @@ install_font() {
                 termux-reload-settings
                 ;;
         esac
-
     fi
 }
 
@@ -1215,7 +1214,6 @@ install_proot() {
     fi
 }
 
-
 #------------------------------------------------------------------------------
 # RECUPERATION DU NOM D'UTILISATEUR
 #------------------------------------------------------------------------------
@@ -1368,7 +1366,7 @@ EOL
 #------------------------------------------------------------------------------
 show_banner
 
-# Note: Vérification et installation des dépendances nécessaires
+# Vérification et installation des dépendances nécessaires
 if ! command -v tput &> /dev/null; then
     if $USE_GUM; then
         execute_command "pkg install -y ncurses-utils" "Installation des dépendances"
@@ -1377,7 +1375,7 @@ if ! command -v tput &> /dev/null; then
     fi
 fi
 
-# Note: Vérifier si des arguments spécifiques ont été fournis
+# Vérifier si des arguments spécifiques ont été fournis
 if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOICE" = true ] || [ "$XFCE_CHOICE" = true ] || [ "$PROOT_CHOICE" = true ] || [ "$X11_CHOICE" = true ]; then
     if $EXECUTE_INITIAL_CONFIG; then
         initial_config
