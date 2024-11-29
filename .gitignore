@@ -1,7 +1,7 @@
 .vscode
 *.bak
+*dev.sh
 .cursorrules
-assets/pictures
 fish.sh
-dev.sh
 xfce-debian-FR.sh
+assets/pictures

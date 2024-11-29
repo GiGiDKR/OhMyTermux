@@ -1083,13 +1083,13 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce-dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
-        execute_command "chmod +x xfce-dev.sh" "Exécution du script XFCE"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce_fr.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+        execute_command "chmod +x xfce_fr.sh" "Exécution du script XFCE"
         
         if $USE_GUM; then
-            ./xfce-dev.sh --gum --version="$xfce_version" --browser="$browser_choice"
+            ./xfce_fr.sh --gum --version="$xfce_version" --browser="$browser_choice"
         else
-            ./xfce-dev.sh --version="$xfce_version" --browser="$browser_choice"
+            ./xfce_fr.sh --version="$xfce_version" --browser="$browser_choice"
         fi
     fi
 }
@@ -1197,18 +1197,18 @@ install_proot() {
         if $USE_GUM; then
             if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot-dev.sh" "Exécution du script Proot"
-                ./proot-dev.sh --gum
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
+                ./proot_fr.sh --gum
             fi
         else    
             printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
             read -r choice
             if [[ "$choice" =~ ^[oO]$ ]]; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot-dev.sh" "Exécution du script Proot"
-                ./proot-dev.sh
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
+                ./proot_fr.sh
             fi
         fi
     fi
@@ -1233,9 +1233,9 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     title_msg "❯ Configuration des utilitaires"
-    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
-    execute_command "chmod +x utils.sh" "Exécution du script Utils"
-    ./utils.sh
+    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils_fr.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+    execute_command "chmod +x utils_fr.sh" "Exécution du script Utils"
+    ./utils_fr.sh
 
     if ! username=$(get_username); then
         error_msg "Impossible de récupérer le nom d'utilisateur."
@@ -1419,7 +1419,7 @@ fi
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-rm -f xfce-dev.sh proot-dev.sh utils.sh install-dev.sh >/dev/null 2>&1
+rm -f xfce_fr.sh proot_fr.sh utils_fr.sh install_fr.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Rechargement du shell

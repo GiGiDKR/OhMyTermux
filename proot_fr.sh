@@ -6,7 +6,7 @@ USE_GUM=false
 VERBOSE=false
 
 #------------------------------------------------------------------------------
-# COULEURS
+# COULEURS D'AFFICHAGE
 #------------------------------------------------------------------------------
 COLOR_BLUE='\033[38;5;33m'    # Information
 COLOR_GREEN='\033[38;5;82m'   # Succès
@@ -101,7 +101,18 @@ title_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 220 --bold
     else
-        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+        echo -e "\n${COLOR_GOLD}\033[1m$1\033[0m${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# MESSAGES DE SOUS-TITRE
+#------------------------------------------------------------------------------
+subtitle_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 33 --bold
+    else
+        echo -e "\n${COLOR_BLUE}\033[1m$1\033[0m${COLOR_RESET}"
     fi
 }
 
@@ -114,7 +125,7 @@ log_error() {
 }
 
 #------------------------------------------------------------------------------
-# EXECUTION D'UNE COMMANDE ET AFFICHAGE DYNAMIQUE DU RÉSULTAT
+# AFFICHAGE DYNAMIQUE DU RÉSULTAT D'UNE COMMANDE
 #------------------------------------------------------------------------------
 execute_command() {
     local command="$1"
@@ -174,6 +185,7 @@ bash_banner() {
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
 
+
 #------------------------------------------------------------------------------
 # AFFICHAGE DE LA BANNIERE
 #------------------------------------------------------------------------------
@@ -215,7 +227,7 @@ trap finish EXIT
 # INSTALLATION DES PAQUETS PROOT
 #------------------------------------------------------------------------------
 install_packages_proot() {
-    local pkgs_proot=('sudo' 'wget' 'nala' 'jq' 'xfconf')
+    local pkgs_proot=('sudo' 'wget' 'nala' 'xfconf')
     for pkg in "${pkgs_proot[@]}"; do
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
     done
@@ -350,6 +362,8 @@ execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt 
 
 install_packages_proot
 
+subtitle_msg "❯ Configuration de la distribution"
+
 create_user_proot
 configure_user_rights
 
@@ -379,11 +393,5 @@ EOF" "Configuration des curseurs"
 # CONFIGURATION DES THÈMES ET POLICES
 #------------------------------------------------------------------------------
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration des thèmes et polices"
-
-# Ajout de la configuration du fond d'écran par défaut
-#execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo -u $username xfconf-query \
-#    --channel xfce4-desktop \
-#    --property /backdrop/screen0/monitorVNC-0/workspace0/last-image \
-#    --set $PREFIX/share/backgrounds/whitesur/Monterey.jpg" "Configuration du fond d'écran"
 
 install_mesa_vulkan
