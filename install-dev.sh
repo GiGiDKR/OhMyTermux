@@ -79,15 +79,15 @@ show_help() {
     echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --shell | -sh     Module d'installation du shell"
-    echo "  --package | -pkg  Module d'installation des packagés"
+    echo "  --package | -pkg  Module d'installation des packages"
     echo "  --font | -f       Module d'installation de la police"
-    echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
-    echo "  --proot | -p      Module d'installation de Debian Proot uniquement"
-    echo "  --x11 | -x11      Module d'installation de Termux-X11 uniquement"
+    echo "  --xfce | -x       Module d'installation de XFCE"
+    echo "  --proot | -p      Module d'installation de Debian Proot"
+    echo "  --x11 | -x11      Module d'installation de Termux-X11"
     echo "  --skip | -sk      Ignorer la configuration initiale"
     echo "  --uninstall| -u   Désinstallation de Debian Proot"
-    echo "  --help | -h       Afficher ce message d'aide"
     echo "  --full | -f       Installer tous les modules sans confirmation"
+    echo "  --help | -h       Afficher ce message d'aide"
 }
 
 #------------------------------------------------------------------------------
@@ -313,11 +313,11 @@ gum_choose() {
 bash_banner() {
     clear
     local BANNER="
-╔════════════════════════════════════════╗
-║                                        ║
-║               OHMYTERMUX               ║
-║                                        ║
-╚════════════════════════════════════════╝"
+╔══════════════════════════════════════════╗
+║                                          ║
+║                 OHMYTERMUX               ║
+║                                          ║
+╚══════════════════════════════════════════╝"
 
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
@@ -365,7 +365,7 @@ show_banner() {
             --border-foreground 33 \
             --border double \
             --align center \
-            --width 40 \
+            --width 45 \
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else
@@ -581,7 +581,7 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/zshrc" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/zshrc" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
 
                 if $USE_GUM; then
                     if gum_confirm "Installer PowerLevel10k ?"; then
@@ -589,7 +589,7 @@ install_shell() {
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         if gum_confirm "Installer le prompt personnalisé ?"; then                            
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt personnalisé" || error_msg "Impossible de télécharger le prompt personnalisé"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -606,7 +606,7 @@ install_shell() {
                         printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (O/n) : ${COLOR_RESET}"
                         read -r choice
                         if [[ "$choice" =~ ^[oO]$ ]]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Téléchargement du prompt OhMyTermux" || error_msg "Impossible de télécharger le prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt OhMyTermux" || error_msg "Impossible d'installer le prompt OhMyTermux"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -617,7 +617,7 @@ install_shell() {
 
                 execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && 
                     mkdir -p $HOME/.config/OhMyTermux && \
-                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Téléchargement de la configuration" || error_msg "Impossible de télécharger la configuration"
+                    curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -705,6 +705,8 @@ install_plugin() {
         "you-should-use") plugin_url="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
         "zsh-alias-finder") plugin_url="https://github.com/akash329d/zsh-alias-finder.git" ;;
     esac
+
+    info_msg "❯ Installation des plugins"
 
     if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$plugin_name" ]; then
         execute_command "git clone '$plugin_url' '$HOME/.oh-my-zsh/custom/plugins/$plugin_name' --quiet" "Installation de $plugin_name"
@@ -1036,7 +1038,9 @@ install_xfce() {
                 echo "2) Firefox"
                 echo "3) Aucun"
                 printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                tput setaf 3
                 read -r choice
+                tput sgr0
                 case $choice in
                     1) browser_choice="chromium" ;;
                     2) browser_choice="firefox" ;;
@@ -1048,8 +1052,6 @@ install_xfce() {
 
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des dépendances"
 
-        #FIX
-        #PACKAGES=('wget' 'dbus' 'proot-distro' 'x11-repo' 'tur-repo' 'pulseaudio')
         PACKAGES=('wget' 'x11-repo' 'tur-repo' 'pulseaudio')
 
         for PACKAGE in "${PACKAGES[@]}"; do
@@ -1057,7 +1059,7 @@ install_xfce() {
         done
         
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce-dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
-        execute_command "chmod +x xfce-dev.sh" "Attribution des permissions d'exécution"
+        execute_command "chmod +x xfce-dev.sh" "Exécution du script XFCE"
         
         if $USE_GUM; then
             ./xfce-dev.sh --gum --version="$xfce_version" --browser="$browser_choice"
@@ -1079,7 +1081,7 @@ install_proot() {
             if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
                 execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot-dev.sh" "Attribution des permissions d'exécution"
+                execute_command "chmod +x proot-dev.sh" "Exécution du script Proot"
                 ./proot-dev.sh --gum
                 INSTALL_UTILS=true
             fi
@@ -1089,7 +1091,7 @@ install_proot() {
             if [[ "$choice" =~ ^[oO]$ ]]; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
                 execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot-dev.sh" "Attribution des permissions d'exécution"
+                execute_command "chmod +x proot-dev.sh" "Exécution du script Proot"
                 ./proot-dev.sh
                 INSTALL_UTILS=true
             fi
@@ -1116,8 +1118,9 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     if [ "$INSTALL_UTILS" = true ]; then
+        title_msg "❯ Configuration des utilitaires"
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
-        execute_command "chmod +x utils.sh" "Attribution des permissions d'exécution"
+        execute_command "chmod +x utils.sh" "Exécution du script Utils"
         ./utils.sh
 
         if ! username=$(get_username); then
@@ -1128,7 +1131,7 @@ install_utils() {
         bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
         if [ ! -f "$bashrc_proot" ]; then
             error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
-            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration bash debian"
+            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration Bash Debian"
         fi
 
         cat << "EOL" >> "$bashrc_proot"
@@ -1175,19 +1178,19 @@ EOL
 
         if [ -f "$BASHRC" ]; then
             cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Configuration bash termux"
+            success_msg "✓ Configuration Bash Termux"
         else
             touch "$BASHRC" 
             cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Création et configuration bash termux"
+            success_msg "✓ Création et configuration Bash Termux"
         fi
         if [ -f "$ZSHRC" ]; then
             cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Configuration zsh termux"
+            success_msg "✓ Configuration ZSH Termux"
         else
             touch "$ZSHRC"
             cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Création et configuration zsh termux"
+            success_msg "✓ Création et configuration ZSH Termux"
         fi
         rm "$tmp_file"
     fi

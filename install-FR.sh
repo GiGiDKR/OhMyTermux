@@ -79,15 +79,15 @@ show_help() {
     echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --shell | -sh     Module d'installation du shell"
-    echo "  --package | -pkg  Module d'installation des packagés"
+    echo "  --package | -pkg  Module d'installation des packages"
     echo "  --font | -f       Module d'installation de la police"
-    echo "  --xfce | -x       Module d'installation de XFCE et Debian Proot"
-    echo "  --proot | -p      Module d'installation de Debian Proot uniquement"
-    echo "  --x11 | -x11      Module d'installation de Termux-X11 uniquement"
+    echo "  --xfce | -x       Module d'installation de XFCE"
+    echo "  --proot | -p      Module d'installation de Debian Proot"
+    echo "  --x11 | -x11      Module d'installation de Termux-X11"
     echo "  --skip | -sk      Ignorer la configuration initiale"
     echo "  --uninstall| -u   Désinstallation de Debian Proot"
-    echo "  --help | -h       Afficher ce message d'aide"
     echo "  --full | -f       Installer tous les modules sans confirmation"
+    echo "  --help | -h       Afficher ce message d'aide"
 }
 
 #------------------------------------------------------------------------------

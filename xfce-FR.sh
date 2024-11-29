@@ -2,7 +2,7 @@
 
 USE_GUM=false
 VERBOSE=false
-BROWSER="firefox"
+BROWSER="chromium"
 
 #------------------------------------------------------------------------------
 # COULEURS
@@ -31,10 +31,10 @@ show_help() {
     echo 
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
-    echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
-    echo "  --verbose | -v Afficher les sorties détaillées"
-    echo "  --help | -h    Afficher ce message d'aide"
-    echo "  --browser=    Choisir le navigateur (firefox ou chromium)"
+    echo "  --gum | -g      Utiliser gum pour l'interface utilisateur"
+    echo "  --verbose | -v  Afficher les sorties détaillées"
+    echo "  --browser | -b  Choisir le navigateur (Chromium ou Firefox)"
+    echo "  --help | -h     Afficher ce message d'aide"
 }
 
 #------------------------------------------------------------------------------
@@ -249,8 +249,8 @@ main() {
     elif [ "$BROWSER" = "aucun" ]; then
         info_msg "Aucun navigateur web installé."
     else
-        info_msg "Navigateur inconnu. Installation de Firefox."
-        pkgs+=('firefox')
+        info_msg "Navigateur inconnu. Installation de Chromium."
+        pkgs+=('chromium')
     fi
 
     for pkg in "${pkgs[@]}"; do
