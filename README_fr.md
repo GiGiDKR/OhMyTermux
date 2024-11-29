@@ -1,12 +1,5 @@
 ![Logo OhMyTermux](assets/logo.jpg)
 
-> [!CAUTION]
-> :warning: Ce projet est en cours de développement, utilisez-le à vos propres risques.
-> 
-> :construction: État actuel du projet : **beta v1** <sup>(en développement)</sup>
-> 
-> :information_source: *Je ne suis qu'un programmeur amateur avec quelques compétences en administration système, donc j'apprends de mes erreurs que vous verrez* 👀
-
 
 # OhMyTermux 🧊
 
@@ -249,6 +242,15 @@ Une fois connecté, exécutez la commande de correction :
 ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 
 </details>
+
+&nbsp;
+
+> [!CAUTION]
+> :warning: Ce projet est en cours de développement, utilisez-le à vos propres risques.
+> 
+> :construction: État actuel du projet : **beta v1** <sup>(en développement)</sup>
+> 
+> :information_source: *Je ne suis qu'un programmeur amateur avec quelques compétences en administration système, donc j'apprends de mes erreurs que vous verrez* 👀
 
 &nbsp;
 

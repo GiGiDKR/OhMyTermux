@@ -1,13 +1,5 @@
 ![Logo OhMyTermux](assets/logo.jpg)
 
-> [!CAUTION]
-> :warning: This project is under development, use it at your own risk.
-> 
-> :construction: Current status of project : **beta v1** <sup>(under development)</sup>
-> 
-> :information_source: *I am just a coding hobbyist with some sys admin skills so I learn from my mistakes that you will see* 👀
-
-
 # OhMyTermux 🧊
 
 **Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
@@ -249,6 +241,15 @@ Once it connects run the fix command :
 ```adb shell "/system/bin/device_config put activity_manager max_phantom_processes 2147483647"```
 
 </details>
+
+&nbsp;
+
+> [!CAUTION]
+> :warning: This project is under development, use it at your own risk.
+> 
+> :construction: Current status of project : **beta v1** <sup>(under development)</sup>
+> 
+> :information_source: *I am just a coding hobbyist with some sys admin skills so I learn from my mistakes that you will see* 👀
 
 &nbsp;
 
