@@ -261,7 +261,7 @@ EOF
             [ "$install_theme" = true ] && theme_value="WhiteSur-Dark"
             [ "$install_icons" = true ] && icon_value="WhiteSur-dark"
             [ "$install_cursors" = true ] && cursor_value="dist-dark"
-            [ "$install_wallpapers" = true ] && wallpaper="/data/data/com.termux/files/usr/share/backgrounds/whitesur/dark_waves.png"
+            [ "$install_wallpapers" = true ] && wallpaper="/data/data/com.termux/files/usr/share/backgrounds/whitesur/Monterey.jpg"
 
             # Générer xsettings.xml
             cat > "$config_dir/xsettings.xml" << EOF
@@ -349,9 +349,9 @@ main() {
     elif [ "$BROWSER" = "chromium" ]; then
         pkgs+=('chromium')
     elif [ "$BROWSER" = "aucun" ]; then
-        info_msg "Aucun navigateur web installé."
+        info_msg "  Aucun navigateur web installé."
     else
-        info_msg "Navigateur inconnu. Installation de Firefox."
+        info_msg "  Navigateur inconnu. Installation de Firefox."
         pkgs+=('firefox')
     fi
 

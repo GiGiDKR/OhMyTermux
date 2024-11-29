@@ -188,7 +188,7 @@ cat <<'EOF' > $PREFIX/bin/kill_termux_x11
 #!/bin/bash
 
 # Check if Apt, dpkg, or Nala is running in Termux or Proot
-if pgrep -f 'apt|apt-get|dpkg|nala'; then
+if pgrep -f 'apt|apt-get|dpkg|nala' > /dev/null; then
   zenity --info --text="Software is currently installing in Termux or Proot. Please wait for these processes to finish before continuing."
   exit 1
 fi
@@ -197,22 +197,27 @@ fi
 termux_x11_pid=$(pgrep -f /system/bin/app_process.*com.termux.x11.Loader)
 xfce_pid=$(pgrep -f "xfce4-session")
 
-# Add debug output
-echo "Termux-X11 PID: $termux_x11_pid"
-echo "XFCE PID: $xfce_pid"
+# Kill processes only if they exist
+if [ -n "$termux_x11_pid" ]; then
+  kill -9 "$termux_x11_pid" 2>/dev/null
+fi
 
-# Check if the process IDs exist
-if [ -n "$termux_x11_pid" ] && [ -n "$xfce_pid" ]; then
-  # Kill the processes
-  kill -9 "$termux_x11_pid" "$xfce_pid"
+if [ -n "$xfce_pid" ]; then
+  kill -9 "$xfce_pid" 2>/dev/null
+fi
+
+# Show appropriate message
+if [ -n "$termux_x11_pid" ] || [ -n "$xfce_pid" ]; then
   zenity --info --text="Termux-X11 and XFCE sessions closed."
 else
   zenity --info --text="Termux-X11 or XFCE session not found."
 fi
 
+# Kill Termux app only if PID exists
 info_output=$(termux-info)
-pid=$(echo "$info_output" | grep -o 'TERMUX_APP_PID=[0-9]\+' | awk -F= '{print $2}')
-kill "$pid"
+if pid=$(echo "$info_output" | grep -o 'TERMUX_APP_PID=[0-9]\+' | awk -F= '{print $2}') && [ -n "$pid" ]; then
+  kill "$pid" 2>/dev/null
+fi
 
 exit 0
 

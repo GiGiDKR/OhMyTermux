@@ -1056,13 +1056,13 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce-FR.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
-        execute_command "chmod +x xfce-FR.sh" "Attribution des permissions d'exécution"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce-dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+        execute_command "chmod +x xfce-dev.sh" "Attribution des permissions d'exécution"
         
         if $USE_GUM; then
-            ./xfce-FR.sh --gum --version="$xfce_version" --browser="$browser_choice"
+            ./xfce-dev.sh --gum --version="$xfce_version" --browser="$browser_choice"
         else
-            ./xfce-FR.sh --version="$xfce_version" --browser="$browser_choice"
+            ./xfce-dev.sh --version="$xfce_version" --browser="$browser_choice"
         fi
         
         INSTALL_UTILS=true
@@ -1078,9 +1078,9 @@ install_proot() {
         if $USE_GUM; then
             if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
-                ./proot-FR.sh --gum
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "chmod +x proot-dev.sh" "Attribution des permissions d'exécution"
+                ./proot-dev.sh --gum
                 INSTALL_UTILS=true
             fi
         else    
@@ -1088,9 +1088,9 @@ install_proot() {
             read -r choice
             if [[ "$choice" =~ ^[oO]$ ]]; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-FR.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot-FR.sh" "Attribution des permissions d'exécution"
-                ./proot-FR.sh
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "chmod +x proot-dev.sh" "Attribution des permissions d'exécution"
+                ./proot-dev.sh
                 INSTALL_UTILS=true
             fi
         fi
@@ -1300,7 +1300,7 @@ fi
 
 # Note: Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-rm -f xfce-FR.sh proot-FR.sh utils.sh install-FR.sh >/dev/null 2>&1
+rm -f xfce-dev.sh proot-dev.sh utils.sh install-dev.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Note: Rechargement du shell
