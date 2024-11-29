@@ -279,7 +279,7 @@ gum_choose() {
     shift
     local selected=""
     local options=()
-    local height=10  # Valeur par défaut
+    local height=10
 
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -333,7 +333,6 @@ check_and_install_gum() {
     fi
 }
 
-# FIXME: Déplacer dans la fonction principale
 check_and_install_gum
 
 #------------------------------------------------------------------------------
@@ -365,7 +364,7 @@ show_banner() {
             --border-foreground 33 \
             --border double \
             --align center \
-            --width 40 \
+            --width 42 \
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else

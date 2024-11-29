@@ -91,7 +91,7 @@ show_banner() {
             --border-foreground 33 \
             --border double \
             --align center \
-            --width 40 \
+            --width 42 \
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else

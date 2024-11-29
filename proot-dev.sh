@@ -101,7 +101,18 @@ title_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 220 --bold
     else
-        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+        echo -e "\n${COLOR_GOLD}\033[1m$1\033[0m${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# MESSAGES DE SOUS-TITRE
+#------------------------------------------------------------------------------
+subtitle_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 33 --bold
+    else
+        echo -e "\n${COLOR_BLUE}\033[1m$1\033[0m${COLOR_RESET}"
     fi
 }
 
@@ -165,14 +176,15 @@ check_dependencies() {
 bash_banner() {
     clear
     local BANNER="
-╔══════════════════════════════════════════╗
-║                                          ║
-║                 OHMYTERMUX               ║
-║                                          ║
-╚══════════════════════════════════════════╝"
+╔════════════════════════════════════════╗
+║                                        ║
+║               OHMYTERMUX               ║
+║                                        ║
+╚════════════════════════════════════════╝"
 
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
+
 
 #------------------------------------------------------------------------------
 # AFFICHAGE DE LA BANNIERE
@@ -185,7 +197,7 @@ show_banner() {
             --border-foreground 33 \
             --border double \
             --align center \
-            --width 45 \
+            --width 42 \
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else
@@ -215,7 +227,7 @@ trap finish EXIT
 # INSTALLATION DES PAQUETS PROOT
 #------------------------------------------------------------------------------
 install_packages_proot() {
-    local pkgs_proot=('sudo' 'wget' 'nala' 'jq' 'xfconf')
+    local pkgs_proot=('sudo' 'wget' 'nala' 'xfconf')
     for pkg in "${pkgs_proot[@]}"; do
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
     done
@@ -350,7 +362,7 @@ execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt 
 
 install_packages_proot
 
-info_msg "❯ Configuration de la distribution"
+subtitle_msg "❯ Configuration de la distribution"
 
 create_user_proot
 configure_user_rights

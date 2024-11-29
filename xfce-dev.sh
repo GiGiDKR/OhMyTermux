@@ -123,11 +123,11 @@ gum_choose() {
 bash_banner() {
     clear
     local BANNER="
-╔══════════════════════════════════════════╗
-║                                          ║
-║                 OHMYTERMUX               ║
-║                                          ║
-╚══════════════════════════════════════════╝"
+╔════════════════════════════════════════╗
+║                                        ║
+║               OHMYTERMUX               ║
+║                                        ║
+╚════════════════════════════════════════╝"
 
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
@@ -143,7 +143,7 @@ show_banner() {
             --border-foreground 33 \
             --border double \
             --align center \
-            --width 45 \
+            --width 42 \
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else
@@ -207,7 +207,18 @@ title_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 220 --bold
     else
-        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+        echo -e "\n${COLOR_GOLD}\033[1m$1\033[0m${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# MESSAGES DE SOUS-TITRE
+#------------------------------------------------------------------------------
+subtitle_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 33 --bold
+    else
+        echo -e "\n${COLOR_BLUE}\033[1m$1\033[0m${COLOR_RESET}"
     fi
 }
 
@@ -383,42 +394,52 @@ main() {
 
     # Paquets de base
     base_pkgs=(
-        'xfce4'                      # Interface graphique
-        'xfce4-terminal'             # Terminal
         'termux-x11-nightly'         # Serveur X11 pour Termux
         'virglrenderer-android'      # Accélération graphique
+        'xfce4'                      # Interface graphique
+        'xfce4-terminal'             # Terminal
     )
 
     # Paquets principaux
     full_pkgs=(
         'pavucontrol-qt'             # Contrôle du son
-        'jq'                         # Utilitaire JSON
         'wmctrl'                     # Contrôle des fenêtres
         'netcat-openbsd'             # Utilitaire réseau
-        'xfce4-goodies'              # Utilitaires
+        'thunar-archive-plugin'      # Archives
+        'xfce4-whiskermenu-plugin'   # Menu Whisker
+        'xfce4-notifyd'              # Notifications
+        'xfce4-screenshooter'        # Capture d'écran
+        'xfce4-taskmanager'          # Gestion des tâches
     )
 
     # Paquets additionnels
     extra_pkgs=(
+        'gigolo'                     # Gestion de fichiers
         'jq'                         # Utilitaire JSON
+        'mousepad'                   # Éditeur de texte
         'netcat-openbsd'             # Utilitaire réseau
+        'parole'                     # Lecteur multimédia
         'pavucontrol-qt'             # Contrôle du son
+        'ristretto'                   # Gestion d'images
         'thunar-archive-plugin'      # Archives
         'thunar-media-tags-plugin'   # Médias
         'wmctrl'                     # Contrôle des fenêtres
+        'xfce4-artwork'              # Artwork
         'xfce4-battery-plugin'       # Batterie
         'xfce4-clipman-plugin'       # Presse-papiers
         'xfce4-cpugraph-plugin'      # Graphique CPU
         'xfce4-datetime-plugin'      # Date et temps
+        'xfce4-dict'                 # Dictionnaire
         'xfce4-diskperf-plugin'      # Performances disque
         'xfce4-fsguard-plugin'       # Surveillance disque
         'xfce4-genmon-plugin'        # Widgets génériques
-        'xfce4-goodies'              # Utilitaires
         'xfce4-mailwatch-plugin'     # Surveillance mails
         'xfce4-netload-plugin'       # Chargement réseau
         'xfce4-notes-plugin'         # Notes
+        'xfce4-notifyd'              # Notifications
         'xfce4-places-plugin'        # Emplacements
         'xfce4-screenshooter'        # Capture d'écran
+        'xfce4-taskmanager'          # Gestion des tâches
         'xfce4-systemload-plugin'    # Chargement système
         'xfce4-timer-plugin'         # Timer
         'xfce4-wavelan-plugin'       # Wi-Fi
@@ -506,10 +527,10 @@ main() {
 
     # Installation des éléments graphiques selon les choix
     if [ "$install_wallpapers" = true ] || [ "$install_theme" = true ] || [ "$install_icons" = true ] || [ "$install_cursors" = true ]; then
-        info_msg "❯ Configuration UI"
+        subtitle_msg "❯ Configuration UI"
 
         if [ "$install_wallpapers" = true ]; then
-            download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran WhiteSur"
+            download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran"
             execute_command "unzip main.zip && \
                             mkdir -p $PREFIX/share/backgrounds/whitesur && \
                             cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/whitesur/ && \
@@ -517,7 +538,7 @@ main() {
         fi
 
         if [ "$install_theme" = true ]; then
-            download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème WhiteSur"
+            download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème"
             execute_command "unzip 2024-11-18.zip && \
                             tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
                             mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
@@ -526,7 +547,7 @@ main() {
         fi
 
         if [ "$install_icons" = true ]; then
-            download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes WhiteSur"
+            download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes"
             execute_command "unzip master.zip && \
                             cd WhiteSur-icon-theme-master && \
                             mkdir -p $PREFIX/share/icons && \
@@ -536,7 +557,7 @@ main() {
         fi
 
         if [ "$install_cursors" = true ]; then
-            download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement des curseurs Fluent"
+            download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement des curseurs"
             execute_command "unzip 2024-02-25.zip && \
                             mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && \
                             mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && \

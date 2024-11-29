@@ -212,7 +212,18 @@ title_msg() {
     if $USE_GUM; then
         gum style "${1//$'\n'/ }" --foreground 220 --bold
     else
-        echo -e "\n${COLOR_GOLD}$1${COLOR_RESET}"
+        echo -e "\n${COLOR_GOLD}\033[1m$1\033[0m${COLOR_RESET}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# MESSAGES DE SOUS-TITRE
+#------------------------------------------------------------------------------
+subtitle_msg() {
+    if $USE_GUM; then
+        gum style "${1//$'\n'/ }" --foreground 33 --bold
+    else
+        echo -e "\n${COLOR_BLUE}\033[1m$1\033[0m${COLOR_RESET}"
     fi
 }
 
@@ -279,7 +290,7 @@ gum_choose() {
     shift
     local selected=""
     local options=()
-    local height=10  # Valeur par défaut
+    local height=10
 
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -313,11 +324,11 @@ gum_choose() {
 bash_banner() {
     clear
     local BANNER="
-╔══════════════════════════════════════════╗
-║                                          ║
-║                 OHMYTERMUX               ║
-║                                          ║
-╚══════════════════════════════════════════╝"
+╔════════════════════════════════════════╗
+║                                        ║
+║               OHMYTERMUX               ║
+║                                        ║
+╚════════════════════════════════════════╝"
 
     echo -e "${COLOR_BLUE}${BANNER}${COLOR_RESET}\n"
 }
@@ -333,7 +344,6 @@ check_and_install_gum() {
     fi
 }
 
-# FIXME: Déplacer dans la fonction principale
 check_and_install_gum
 
 #------------------------------------------------------------------------------
@@ -365,7 +375,7 @@ show_banner() {
             --border-foreground 33 \
             --border double \
             --align center \
-            --width 45 \
+            --width 42 \
             --margin "1 1 1 0" \
             "" "OHMYTERMUX" ""
     else
@@ -496,12 +506,6 @@ EOL" "Configuration des propriétés Termux"
     fi
     # Suppression de la bannière de connexion
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
-    
-    #FIXME:
-    # Téléchargement de la police
-    #execute_command "curl -fLo \"$HOME/.termux/font.ttf\" 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf'" "Installation de la police par défaut"
-    #execute_command "curl -fLo \"$HOME/.termux/font.ttf\" https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/font.ttf" "Téléchargement de la police par défaut" || error_msg "Impossible de télécharger la police par défaut"
-    #termux-reload-settings
 }
 
 #------------------------------------------------------------------------------
@@ -588,7 +592,7 @@ install_shell() {
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        if gum_confirm "Installer le prompt personnalisé ?"; then                            
+                        if gum_confirm "Installer le prompt personnalisé ?";                            
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
@@ -640,6 +644,9 @@ install_shell() {
 #------------------------------------------------------------------------------
 install_zsh_plugins() {
     local plugins_to_install=()
+
+    subtitle_msg "❯ Installation des plugins"
+
     if $USE_GUM; then
         mapfile -t plugins_to_install < <(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --height=8 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder" "Tout installer")
         if [[ " ${plugins_to_install[*]} " == *" Tout installer "* ]]; then
@@ -705,8 +712,6 @@ install_plugin() {
         "you-should-use") plugin_url="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
         "zsh-alias-finder") plugin_url="https://github.com/akash329d/zsh-alias-finder.git" ;;
     esac
-
-    info_msg "❯ Installation des plugins"
 
     if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$plugin_name" ]; then
         execute_command "git clone '$plugin_url' '$HOME/.oh-my-zsh/custom/plugins/$plugin_name' --quiet" "Installation de $plugin_name"
@@ -1117,24 +1122,27 @@ get_username() {
 # INSTALLATION DES UTILITAIRES
 #------------------------------------------------------------------------------
 install_utils() {
-    if [ "$INSTALL_UTILS" = true ]; then
+    if [ "$INSTALL_UTILS" = true ] || [ "$XFCE_CHOICE" = true ]; then
+
         title_msg "❯ Configuration des utilitaires"
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
-        execute_command "chmod +x utils.sh" "Exécution du script Utils"
-        ./utils.sh
 
-        if ! username=$(get_username); then
-            error_msg "Impossible de récupérer le nom d'utilisateur."
-            return 1
-        fi
+        if [ "$INSTALL_UTILS" = true ]; then
+            execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+            execute_command "chmod +x utils.sh" "Exécution du script Utils"
+            ./utils.sh
 
-        bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
-        if [ ! -f "$bashrc_proot" ]; then
-            error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
-            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration Bash Debian"
-        fi
+            if ! username=$(get_username); then
+                error_msg "Impossible de récupérer le nom d'utilisateur."
+                return 1
+            fi
 
-        cat << "EOL" >> "$bashrc_proot"
+            bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
+            if [ ! -f "$bashrc_proot" ]; then
+                error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
+                execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration Bash Debian"
+            fi
+
+            cat << "EOL" >> "$bashrc_proot"
 
 export DISPLAY=:1.0
 
@@ -1165,34 +1173,62 @@ alias n="nano"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
-        username=$(get_username)
+            username=$(get_username)
 
-        tmp_file="${TMPDIR}/rc_content"
-        touch "$tmp_file"
+            tmp_file="${TMPDIR}/rc_content"
+            touch "$tmp_file"
 
-        cat << EOL >> "$tmp_file"
+            cat << EOL >> "$tmp_file"
 
 # Alias pour se connecter à Debian Proot
 alias debian="proot-distro login debian --shared-tmp --user ${username}"
 EOL
 
-        if [ -f "$BASHRC" ]; then
-            cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Configuration Bash Termux"
+            if [ -f "$BASHRC" ]; then
+                cat "$tmp_file" >> "$BASHRC"
+                success_msg "✓ Configuration Bash Termux"
+            else
+                touch "$BASHRC" 
+                cat "$tmp_file" >> "$BASHRC"
+                success_msg "✓ Création et configuration Bash Termux"
+            fi
+            if [ -f "$ZSHRC" ]; then
+                cat "$tmp_file" >> "$ZSHRC"
+                success_msg "✓ Configuration ZSH Termux"
+            else
+                touch "$ZSHRC"
+                cat "$tmp_file" >> "$ZSHRC"
+                success_msg "✓ Création et configuration ZSH Termux"
+            fi
+            rm "$tmp_file"
         else
-            touch "$BASHRC" 
-            cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Création et configuration Bash Termux"
+            cat <<'EOF' > start
+#!/bin/bash
+
+# Enable PulseAudio over Network
+pulseaudio --start --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" --exit-idle-time=-1 > /dev/null 2>&1
+
+XDG_RUNTIME_DIR=${TMPDIR} termux-x11 :1.0 & > /dev/null 2>&1
+sleep 1
+
+am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1
+sleep 1
+
+MESA_NO_ERROR=1 MESA_GL_VERSION_OVERRIDE=4.3COMPAT MESA_GLES_VERSION_OVERRIDE=3.2 virgl_test_server_android --angle-gl & > /dev/null 2>&1
+
+env DISPLAY=:1.0 GALLIUM_DRIVER=virpipe dbus-launch --exit-with-session xfce4-session & > /dev/null 2>&1
+# Set audio server
+export PULSE_SERVER=127.0.0.1 > /dev/null 2>&1
+
+sleep 5
+process_id=$(ps -aux | grep '[x]fce4-screensaver' | awk '{print $2}')
+kill "$process_id" > /dev/null 2>&1
+
+EOF
+            chmod +x start
+            mv start "$PREFIX/bin"
+            success_msg "✓ Configuration du script de démarrage"
         fi
-        if [ -f "$ZSHRC" ]; then
-            cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Configuration ZSH Termux"
-        else
-            touch "$ZSHRC"
-            cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Création et configuration ZSH Termux"
-        fi
-        rm "$tmp_file"
     fi
 }
 
