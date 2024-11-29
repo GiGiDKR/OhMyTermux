@@ -331,4 +331,4 @@ Bug fixes and improvements
 &nbsp;
 
 > [!TIP]
-> 🚩 French version is [available](README-FR.md).
+> 🚩 French version is [available](README_fr.md).
