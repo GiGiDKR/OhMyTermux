@@ -927,8 +927,35 @@ alias help="cat $HOME/.config/OhMyTermux/help.md"
 
 # Git
 alias g="git"
-alias gc="git clone"
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit -m"
+alias gp="git push"
+alias gl="git pull"
+alias gd="git diff"
+alias gb="git branch"
+alias gco="git checkout"
+alias gcl="git clone"
 alias push="git pull && git add . && git commit -m 'mobile push' && git push"
+
+# Termux
+alias termux="termux-reload-settings"
+alias storage="termux-setup-storage"
+alias share="termux-share"
+alias open="termux-open"
+alias url="termux-open-url"
+alias clip="termux-clipboard-set"
+alias notification="termux-notification"
+alias vibrate="termux-vibrate"
+alias battery="termux-battery-status"
+alias torch="termux-torch"
+alias volume="termux-volume"
+alias wifi="termux-wifi-connectioninfo"
+alias tts="termux-tts-speak"
+alias call="termux-telephony-call"
+alias contact="termux-contact-list"
+alias sms="termux-sms-send"
+alias location="termux-location"
 
 EOL
 
