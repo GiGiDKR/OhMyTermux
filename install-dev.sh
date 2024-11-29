@@ -995,9 +995,6 @@ install_font() {
     fi
 }
 
-# Variable globale pour suivre si XFCE ou Proot a été installé
-INSTALL_UTILS=false
-
 #------------------------------------------------------------------------------
 # INSTALLATION DE L'ENVIRONNEMENT XFCE
 #------------------------------------------------------------------------------
@@ -1068,8 +1065,6 @@ install_xfce() {
         else
             ./xfce-dev.sh --version="$xfce_version" --browser="$browser_choice"
         fi
-        
-        INSTALL_UTILS=true
     fi
 }
 
@@ -1179,7 +1174,6 @@ install_proot() {
                 execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
                 execute_command "chmod +x proot-dev.sh" "Exécution du script Proot"
                 ./proot-dev.sh --gum
-                INSTALL_UTILS=true
             fi
         else    
             printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
@@ -1189,7 +1183,6 @@ install_proot() {
                 execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot-dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
                 execute_command "chmod +x proot-dev.sh" "Exécution du script Proot"
                 ./proot-dev.sh
-                INSTALL_UTILS=true
             fi
         fi
     fi
@@ -1214,24 +1207,23 @@ get_username() {
 # INSTALLATION DES UTILITAIRES
 #------------------------------------------------------------------------------
 install_utils() {
-    if [ "$INSTALL_UTILS" = true ]; then
-        title_msg "❯ Configuration des utilitaires"
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
-        execute_command "chmod +x utils.sh" "Exécution du script Utils"
-        ./utils.sh
+    title_msg "❯ Configuration des utilitaires"
+    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+    execute_command "chmod +x utils.sh" "Exécution du script Utils"
+    ./utils.sh
 
-        if ! username=$(get_username); then
-            error_msg "Impossible de récupérer le nom d'utilisateur."
-            return 1
-        fi
+    if ! username=$(get_username); then
+        error_msg "Impossible de récupérer le nom d'utilisateur."
+        return 1
+    fi
 
-        bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
-        if [ ! -f "$bashrc_proot" ]; then
-            error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
-            execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration Bash Debian"
-        fi
+    bashrc_proot="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${username}/.bashrc"
+    if [ ! -f "$bashrc_proot" ]; then
+        error_msg "Le fichier .bashrc n'existe pas pour l'utilisateur $username."
+        execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$bashrc_proot\"" "Configuration Bash Debian"
+    fi
 
-        cat << "EOL" >> "$bashrc_proot"
+    cat << "EOL" >> "$bashrc_proot"
 
 export DISPLAY=:1.0
 
@@ -1262,35 +1254,34 @@ alias n="nano"
 alias bashrc="nano \$HOME/.bashrc"
 EOL
 
-        username=$(get_username)
+    username=$(get_username)
 
-        tmp_file="${TMPDIR}/rc_content"
-        touch "$tmp_file"
+    tmp_file="${TMPDIR}/rc_content"
+    touch "$tmp_file"
 
-        cat << EOL >> "$tmp_file"
+    cat << EOL >> "$tmp_file"
 
 # Alias pour se connecter à Debian Proot
 alias debian="proot-distro login debian --shared-tmp --user ${username}"
 EOL
 
-        if [ -f "$BASHRC" ]; then
-            cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Configuration Bash Termux"
-        else
-            touch "$BASHRC" 
-            cat "$tmp_file" >> "$BASHRC"
-            success_msg "✓ Création et configuration Bash Termux"
-        fi
-        if [ -f "$ZSHRC" ]; then
-            cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Configuration ZSH Termux"
-        else
-            touch "$ZSHRC"
-            cat "$tmp_file" >> "$ZSHRC"
-            success_msg "✓ Création et configuration ZSH Termux"
-        fi
-        rm "$tmp_file"
+    if [ -f "$BASHRC" ]; then
+        cat "$tmp_file" >> "$BASHRC"
+        success_msg "✓ Configuration Bash Termux"
+    else
+        touch "$BASHRC" 
+        cat "$tmp_file" >> "$BASHRC"
+        success_msg "✓ Création et configuration Bash Termux"
     fi
+    if [ -f "$ZSHRC" ]; then
+        cat "$tmp_file" >> "$ZSHRC"
+        success_msg "✓ Configuration ZSH Termux"
+    else
+        touch "$ZSHRC"
+        cat "$tmp_file" >> "$ZSHRC"
+        success_msg "✓ Création et configuration ZSH Termux"
+    fi
+    rm "$tmp_file"
 }
 
 #------------------------------------------------------------------------------
@@ -1372,6 +1363,9 @@ if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOIC
     fi
     if [ "$FONT_CHOICE" = true ]; then
         install_font
+    fi
+    if [ "$XFCE_CHOICE" = true ]; then
+        install_xfce
     fi
     if [ "$XFCE_CHOICE" = true ] && [ "$PROOT_CHOICE" = false ]; then
         install_xfce_scripts
