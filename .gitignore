@@ -1,6 +1,6 @@
 .vscode
 *.bak
-*dev.sh
+dev.sh
 .cursorrules
 fish.sh
 xfce-debian-FR.sh
