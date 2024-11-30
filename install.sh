@@ -598,13 +598,13 @@ install_shell() {
                         fi
                     fi
                 else
-                    printf "${COLOR_BLUE}Install PowerLevel10k ? (O/n) : ${COLOR_RESET}"
+                    printf "${COLOR_BLUE}Install PowerLevel10k ? (Y/n) : ${COLOR_RESET}"
                     read -r choice
                     if [[ "$choice" =~ ^[oO]$ ]]; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        printf "${COLOR_BLUE}Install OhMyTermux prompt? (O/n) : ${COLOR_RESET}"
+                        printf "${COLOR_BLUE}Install OhMyTermux prompt? (Y/n) : ${COLOR_RESET}"
                         read -r choice
                         if [[ "$choice" =~ ^[oO]$ ]]; then
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installing OhMyTermux prompt" || error_msg "Unable to install OhMyTermux prompt"
