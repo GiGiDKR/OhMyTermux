@@ -97,7 +97,7 @@ gum_confirm() {
 }
 
 #------------------------------------------------------------------------------
-# SÉLECTION GUM
+# SÉLECTION GUM UNIQUE
 #------------------------------------------------------------------------------
 gum_choose() {
     local PROMPT="$1"
@@ -121,10 +121,15 @@ gum_choose() {
         shift
     done
 
-    if [ -n "$SELECTED" ]; then
-        echo "${OPTIONS[@]}" | tr ' ' '\n' | gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --selected="$SELECTED" --prompt="$PROMPT"
+    if $FULL_INSTALL; then
+        if [ -n "$SELECTED" ]; then
+            echo "$SELECTED"
+        else
+            # Retourner la première option par défaut
+            echo "${OPTIONS[0]}"
+        fi
     else
-        echo "${OPTIONS[@]}" | tr ' ' '\n' | gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --prompt="$PROMPT"
+        gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
     fi
 }
 
