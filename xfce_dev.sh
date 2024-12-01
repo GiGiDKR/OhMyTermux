@@ -121,16 +121,7 @@ gum_choose() {
         shift
     done
 
-    if $FULL_INSTALL; then
-        if [ -n "$SELECTED" ]; then
-            echo "$SELECTED"
-        else
-            # Retourner la première option par défaut
-            echo "${OPTIONS[0]}"
-        fi
-    else
-        gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
-    fi
+    gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
 }
 
 #------------------------------------------------------------------------------
@@ -158,15 +149,7 @@ gum_choose_multi() {
         shift
     done
 
-    if $FULL_INSTALL; then
-        if [ -n "$SELECTED" ]; then
-            echo "$SELECTED"
-        else
-            echo "${OPTIONS[@]}"
-        fi
-    else
-        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
-    fi
+    gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
 }
 
 #------------------------------------------------------------------------------
@@ -176,7 +159,7 @@ bash_banner() {
     clear
     local BANNER="
 ╔════════════════════════════════════════╗
-║                                        ║
+║                                        ���
 ║               OHMYTERMUX               ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
