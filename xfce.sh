@@ -34,7 +34,7 @@ show_help() {
     echo " --gum | -g Use gum for user interface"
     echo " --verbose | -v Show verbose output"
     echo " --browser | -b Choose browser (Chromium or Firefox)"
-    echo " --version | -ver Choose installation type (full, minimal, custom)"
+    echo " --version | -ver Choose installation type (minimal, recommended, custom)"
     echo " --help | -h Show this help message"
 }
 
@@ -311,7 +311,7 @@ EOF
 EOF
             ;;
             
-        "minimale"|"personnalisée")
+        "minimal"|"custom")
             # Base configuration
             local THEME_VALUE="Default"
             local ICON_VALUE="Adwaita"
@@ -401,7 +401,7 @@ main() {
     )
 
     # Main packages
-    FULL_PKGS=(
+    RECOMMENDED_PKGS=(
         'pavucontrol-qt'             # Sound control
         'wmctrl'                     # Window control
         'netcat-openbsd'             # Network utility
@@ -451,8 +451,8 @@ main() {
         "minimal")
             PKGS=("${BASE_PKGS[@]}")
             ;;
-        "full")
-            PKGS=("${BASE_PKGS[@]}" "${FULL_PKGS[@]}")
+        "recommended")
+            PKGS=("${BASE_PKGS[@]}" "${RECOMMENDED_PKGS[@]}")
             INSTALL_THEME=true
             INSTALL_ICONS=true
             INSTALL_WALLPAPERS=true

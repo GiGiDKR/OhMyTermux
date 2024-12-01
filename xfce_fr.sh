@@ -34,7 +34,7 @@ show_help() {
     echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --browser | -b    Choisir le navigateur (Chromium ou Firefox)"
-    echo "  --version | -ver  Choisir le type d'installation (complète, minimale, personnalisée)"
+    echo "  --version | -ver  Choisir le type d'installation (minimale, recommandée, personnalisée)"
     echo "  --help | -h       Afficher ce message d'aide"
 }
 
@@ -332,7 +332,7 @@ configure_xfce() {
     fi
 
     case "$INSTALL_TYPE" in
-        "complète")
+        "recommandée")
             # Configuration complète avec tous les éléments
             cat > "$CONFIG_DIR/xsettings.xml" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -448,7 +448,7 @@ main() {
     )
 
     # Paquets principaux
-    FULL_PKGS=(
+    RECOMMENDED_PKGS=(
         'pavucontrol-qt'             # Contrôle du son
         'wmctrl'                     # Contrôle des fenêtres
         'netcat-openbsd'             # Utilitaire réseau
@@ -498,8 +498,8 @@ main() {
         "minimale")
             PKGS=("${BASE_PKGS[@]}")
             ;;
-        "complète")
-            PKGS=("${BASE_PKGS[@]}" "${FULL_PKGS[@]}")
+        "recommandée")
+            PKGS=("${BASE_PKGS[@]}" "${RECOMMENDED_PKGS[@]}")
             INSTALL_THEME=true
             INSTALL_ICONS=true
             INSTALL_WALLPAPERS=true

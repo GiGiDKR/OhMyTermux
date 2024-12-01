@@ -1034,24 +1034,24 @@ install_xfce() {
         # Choice of version
         local XFCE_VERSION
         if $USE_GUM; then
-            XFCE_VERSION=$(gum_choose "Select the version of XFCE to install:" --height=5 --selected="full" \
-            "minimal" \
-            "full" \
-            "custom")
+            XFCE_VERSION=$(gum_choose "Select the version of XFCE to install:" --height=5 --selected="recommended" \
+                "minimal" \
+                "recommended" \
+                "custom")
         else
             echo -e "${COLOR_BLUE} Select the version of XFCE to install:${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}1) Minimal (essential packages)${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) Full (all packages)${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) Custom (selection of components)${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}1) Minimal${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) Recommended${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3) Custom${COLOR_RESET}"
             printf "${COLOR_GOLD}Enter your choice (1/2/3): ${COLOR_RESET}"
             tput setaf 3
             read -r CHOICE
             tput sgr0
             case $CHOICE in
                 1) XFCE_VERSION="minimal" ;;
-                2) XFCE_VERSION="full" ;;
+                2) XFCE_VERSION="recommended" ;;
                 3) XFCE_VERSION="custom" ;;
-                *) XFCE_VERSION="full" ;;
+                *) XFCE_VERSION="recommended" ;;
             esac
         fi
 

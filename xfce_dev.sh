@@ -34,7 +34,7 @@ show_help() {
     echo "  --gum | -g        Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --browser | -b    Choisir le navigateur (Chromium ou Firefox)"
-    echo "  --version | -ver  Choisir le type d'installation (complète, minimale, personnalisée)"
+    echo "  --version | -ver  Choisir le type d'installation (minimale, recommandée, personnalisée)"
     echo "  --help | -h       Afficher ce message d'aide"
 }
 
@@ -337,7 +337,7 @@ configure_xfce() {
     fi
 
     case "$INSTALL_TYPE" in
-        "complète")
+        "recommandée")
             # Configuration complète avec tous les éléments
             cat > "$CONFIG_DIR/xsettings.xml" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -469,7 +469,7 @@ main() {
     )
 
     # Paquets principaux
-    FULL_PKGS=(
+    RECOMMENDED_PKGS=(
         'pavucontrol-qt'             # Contrôle du son
         'wmctrl'                     # Contrôle des fenêtres
         'netcat-openbsd'             # Utilitaire réseau
@@ -519,8 +519,8 @@ main() {
         "minimale")
             PKGS=("${BASE_PKGS[@]}")
             ;;
-        "complète")
-            PKGS=("${BASE_PKGS[@]}" "${FULL_PKGS[@]}")
+        "recommandée")
+            PKGS=("${BASE_PKGS[@]}" "${RECOMMENDED_PKGS[@]}")
             INSTALL_THEME=true
             INSTALL_ICONS=true
             INSTALL_WALLPAPERS=true
@@ -530,7 +530,13 @@ main() {
             PKGS=("${BASE_PKGS[@]}")
 
             if $USE_GUM; then
-                # Sélection des thèmes
+                subtitle_msg "❯ Sélection des paquets additionnels"
+                SELECTED_EXTRA=($(gum_choose_multi "Sélectionner les paquets à installer :" "${EXTRA_PKGS[@]}"))
+                if [ ${#SELECTED_EXTRA[@]} -gt 0 ]; then
+                    PKGS+=("${SELECTED_EXTRA[@]}")
+                fi
+
+                subtitle_msg "❯ Personnalisation de l'interface"
                 SELECTED_THEMES=($(gum_choose_multi "Sélectionner les thèmes à installer :" \
                     "WhiteSur" \
                     "Fluent" \
@@ -538,7 +544,6 @@ main() {
 
                 if [ ${#SELECTED_THEMES[@]} -gt 0 ]; then
                     INSTALL_THEME=true
-                    # Sélection du thème à appliquer
                     if [ ${#SELECTED_THEMES[@]} -gt 1 ]; then
                         SELECTED_THEME=$(gum_choose "Choisir le thème à appliquer :" "${SELECTED_THEMES[@]}")
                     else
@@ -549,7 +554,6 @@ main() {
                 SELECTED_EXTRA=($(gum_choose_multi "Paquets additionnels :" "${EXTRA_PKGS[@]}"))
                 PKGS+=("${SELECTED_EXTRA[@]}")
                 
-                # Sélection des thèmes d'icônes
                 SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner les thèmes d'icônes à installer :" \
                     "WhiteSur" \
                     "McMojave-circle" \
@@ -559,7 +563,6 @@ main() {
 
                 if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                     INSTALL_ICONS=true
-                    # Sélection du thème d'icônes à appliquer
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
                         SELECTED_ICON_THEME=$(gum_choose "Choisir le thème d'icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
                     else
@@ -567,14 +570,12 @@ main() {
                     fi
                 fi
 
-                # Sélection des éléments graphiques
                 SELECTED_UI=($(gum_choose_multi "Eléments graphiques :" \
                     "Fonds d'écran WhiteSur" \
                     "Curseurs Fluent"))
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Fonds d'écran WhiteSur" ]]; then
                     INSTALL_WALLPAPERS=true
-                    # Sélection du fond d'écran à appliquer
                     SELECTED_WALLPAPER=$(gum_choose "Choisir le fond d'écran à appliquer :" \
                         "Monterey" \
                         "Monterey-dark" \
@@ -592,7 +593,6 @@ main() {
 
                 [[ " ${SELECTED_UI[*]} " =~ "Curseurs Fluent" ]] && INSTALL_CURSORS=true
             else
-                # Sélection des thèmes en mode texte
                 echo -e "\n${COLOR_BLUE}Thèmes disponibles :${COLOR_RESET}"
                 echo "1) WhiteSur"
                 echo "2) Fluent"
@@ -612,7 +612,6 @@ main() {
 
                 if [ ${#SELECTED_THEMES[@]} -gt 0 ]; then
                     INSTALL_THEME=true
-                    # Sélection du thème à appliquer
                     if [ ${#SELECTED_THEMES[@]} -gt 1 ]; then
                         echo -e "\n${COLOR_BLUE}Thèmes sélectionnés :${COLOR_RESET}"
                         for i in "${!SELECTED_THEMES[@]}"; do
@@ -687,7 +686,6 @@ main() {
 
                 [[ $UI_CHOICES =~ 2 ]] && INSTALL_CURSORS=true
 
-                # Sélection des thèmes d'icônes
                 echo -e "\n${COLOR_BLUE}Thèmes d'icônes disponibles :${COLOR_RESET}"
                 echo "1) WhiteSur"
                 echo "2) McMojave-circle"
@@ -711,7 +709,6 @@ main() {
 
                 if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                     INSTALL_ICONS=true
-                    # Sélection du thème d'icônes à appliquer
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
                         echo -e "\n${COLOR_BLUE}Thèmes d'icônes sélectionnés :${COLOR_RESET}"
                         for i in "${!SELECTED_ICON_THEMES[@]}"; do

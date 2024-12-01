@@ -1071,24 +1071,24 @@ install_xfce() {
         # Choix de la version
         local XFCE_VERSION
         if $USE_GUM; then
-            XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="complète" \
+            XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
                 "minimale" \
-                "complète" \
+                "recommandée" \
                 "personnalisée")
         else
             echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
-            echo "1) Minimale (paquets essentiels)"
-            echo "2) Complète (tous les paquets)"
-            echo "3) Personnalisée (sélection des composants)"
+            echo "1) Minimale"
+            echo "2) Recommandée"
+            echo "3) Personnalisée"
             printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
             tput setaf 3
             read -r CHOICE
             tput sgr0
             case $CHOICE in
                 1) XFCE_VERSION="minimale" ;;
-                2) XFCE_VERSION="complète" ;;
+                2) XFCE_VERSION="recommandée" ;;
                 3) XFCE_VERSION="personnalisée" ;;
-                *) XFCE_VERSION="complète" ;;
+                *) XFCE_VERSION="recommandée" ;;
             esac
         fi
 
