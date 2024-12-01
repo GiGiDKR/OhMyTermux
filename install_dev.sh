@@ -283,9 +283,46 @@ gum_confirm() {
 }
 
 #------------------------------------------------------------------------------
-# SÉLECTION GUM
+# SÉLECTION GUM UNIQUE
 #------------------------------------------------------------------------------
 gum_choose() {
+    local PROMPT="$1"
+    shift
+    local SELECTED=""
+    local OPTIONS=()
+    local HEIGHT=10
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --selected=*)
+                SELECTED="${1#*=}"
+                ;;
+            --height=*)
+                HEIGHT="${1#*=}"
+                ;;
+            *)
+                OPTIONS+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    if $FULL_INSTALL; then
+        if [ -n "$SELECTED" ]; then
+            echo "$SELECTED"
+        else
+            # Retourner la première option par défaut
+            echo "${OPTIONS[0]}"
+        fi
+    else
+        gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# SÉLECTION GUM MULTIPLE
+#------------------------------------------------------------------------------
+gum_choose_multi() {
     local PROMPT="$1"
     shift
     local SELECTED=""
@@ -592,7 +629,7 @@ install_shell() {
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-                        if gum_confirm "Installer le prompt personnalisé ?"; then                            
+                        if gum_confirm "Installer le prompt personnalisé ?";                            
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
@@ -648,7 +685,7 @@ install_zsh_plugins() {
     subtitle_msg "❯ Installation des plugins"
 
     if $USE_GUM; then
-        mapfile -t PLUGINS_TO_INSTALL < <(gum_choose "Sélectionner avec ESPACE les plugins à installer :" --height=8 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder" "Tout installer")
+        mapfile -t PLUGINS_TO_INSTALL < <(gum_choose_multi "Sélectionner avec ESPACE les plugins à installer :" --height=8 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder" "Tout installer")
         if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" Tout installer "* ]]; then
             PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
         fi
@@ -727,7 +764,7 @@ update_zshrc() {
     local ZSHRC="$1"
     local SELECTED_PLUGINS="$2"
     local HAS_COMPLETIONS="$3"
-    local HAS_OHMYTERMIX="$4"
+    local HAS_OHMYTERMUX="$4"
 
     # Suppression de la configuration existante
     sed -i '/fpath.*zsh-completions\/src/d' "$ZSHRC"
@@ -759,7 +796,7 @@ update_zshrc() {
 
     echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
 
-    if [ "$HAS_OHMYTERMIX" = "true" ]; then
+    if [ "$HAS_OHMYTERMUX" = "true" ]; then
         echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
     fi
 
@@ -774,7 +811,7 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         title_msg "❯ Configuration des packages"
         if $USE_GUM; then
-            PACKAGES=$(gum_choose "Sélectionner avec espace les packages à installer :" --no-limit --height=18 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            PACKAGES=$(gum_choose_multi "Sélectionner avec espace les packages à installer :" --no-limit --height=18 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
         else
             echo "Sélectionner les packages à installer (séparés par des espaces) :"
             echo

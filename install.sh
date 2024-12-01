@@ -727,7 +727,7 @@ update_zshrc() {
     local ZSHRC="$1"
     local SELECTED_PLUGINS="$2"
     local HAS_COMPLETIONS="$3"
-    local HAS_OHMYTERMIX="$4"
+    local HAS_OHMYTERMUX="$4"
 
     # Remove existing configuration
     sed -i '/fpath.*zsh-completions\/src/d' "$ZSHRC"
@@ -759,7 +759,7 @@ update_zshrc() {
 
     echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
 
-    if [ "$HAS_OHMYTERMIX" = "true" ]; then
+    if [ "$HAS_OHMYTERMUX" = "true" ]; then
         echo -e "\n# To customize the prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
     fi
 

@@ -122,9 +122,45 @@ gum_choose() {
     done
 
     if [ -n "$SELECTED" ]; then
-        echo "${OPTIONS[@]}" | tr ' ' '\n' | gum choose --height="$HEIGHT" --selected="$SELECTED" --prompt="$PROMPT"
+        echo "${OPTIONS[@]}" | tr ' ' '\n' | gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --selected="$SELECTED" --prompt="$PROMPT"
     else
-        echo "${OPTIONS[@]}" | tr ' ' '\n' | gum choose --height="$HEIGHT" --prompt="$PROMPT"
+        echo "${OPTIONS[@]}" | tr ' ' '\n' | gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --prompt="$PROMPT"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# SÉLECTION GUM MULTIPLE
+#------------------------------------------------------------------------------
+gum_choose_multi() {
+    local PROMPT="$1"
+    shift
+    local SELECTED=""
+    local OPTIONS=()
+    local HEIGHT=10
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --selected=*)
+                SELECTED="${1#*=}"
+                ;;
+            --height=*)
+                HEIGHT="${1#*=}"
+                ;;
+            *)
+                OPTIONS+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    if $FULL_INSTALL; then
+        if [ -n "$SELECTED" ]; then
+            echo "$SELECTED"
+        else
+            echo "${OPTIONS[@]}"
+        fi
+    else
+        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
     fi
 }
 
@@ -490,7 +526,7 @@ main() {
 
             if $USE_GUM; then
                 # Sélection des thèmes
-                SELECTED_THEMES=($(gum_choose --no-limit "Sélectionner les thèmes à installer :" \
+                SELECTED_THEMES=($(gum_choose_multi "Sélectionner les thèmes à installer :" \
                     "WhiteSur" \
                     "Fluent" \
                     "Lavanda"))
@@ -505,11 +541,11 @@ main() {
                     fi
                 fi
 
-                SELECTED_EXTRA=($(gum_choose "Paquets additionnels :" "${EXTRA_PKGS[@]}"))
+                SELECTED_EXTRA=($(gum_choose_multi "Paquets additionnels :" "${EXTRA_PKGS[@]}"))
                 PKGS+=("${SELECTED_EXTRA[@]}")
                 
                 # Sélection des thèmes d'icônes
-                SELECTED_ICON_THEMES=($(gum_choose --no-limit "Sélectionner les thèmes d'icônes à installer :" \
+                SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner les thèmes d'icônes à installer :" \
                     "WhiteSur" \
                     "McMojave-circle" \
                     "Tela" \
@@ -527,7 +563,7 @@ main() {
                 fi
 
                 # Sélection des éléments graphiques
-                SELECTED_UI=($(gum_choose --no-limit "Eléments graphiques :" \
+                SELECTED_UI=($(gum_choose_multi "Eléments graphiques :" \
                     "Fonds d'écran WhiteSur" \
                     "Curseurs Fluent"))
 

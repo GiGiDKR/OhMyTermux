@@ -92,14 +92,14 @@ gum_confirm() {
 }
 
 #------------------------------------------------------------------------------
-# SÉLECTION GUM
+# SÉLECTION GUM UNIQUE
 #------------------------------------------------------------------------------
 gum_choose() {
     local PROMPT="$1"
     shift
     local SELECTED=""
     local OPTIONS=()
-    local HEIGHT=10  # Valeur par défaut
+    local HEIGHT=10
 
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -115,6 +115,53 @@ gum_choose() {
         esac
         shift
     done
+
+    if $FULL_INSTALL; then
+        if [ -n "$SELECTED" ]; then
+            echo "$SELECTED"
+        else
+            # Retourner la première option par défaut
+            echo "${OPTIONS[0]}"
+        fi
+    else
+        gum choose --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# SÉLECTION GUM MULTIPLE
+#------------------------------------------------------------------------------
+gum_choose_multi() {
+    local PROMPT="$1"
+    shift
+    local SELECTED=""
+    local OPTIONS=()
+    local HEIGHT=10
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --selected=*)
+                SELECTED="${1#*=}"
+                ;;
+            --height=*)
+                HEIGHT="${1#*=}"
+                ;;
+            *)
+                OPTIONS+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    if $FULL_INSTALL; then
+        if [ -n "$SELECTED" ]; then
+            echo "$SELECTED"
+        else
+            echo "${OPTIONS[@]}"
+        fi
+    else
+        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
+    fi
 }
 
 #------------------------------------------------------------------------------
@@ -462,11 +509,11 @@ main() {
             PKGS=("${BASE_PKGS[@]}")
             
             if $USE_GUM; then
-                SELECTED_EXTRA=($(gum_choose "Paquets additionnels :" "${EXTRA_PKGS[@]}"))
+                SELECTED_EXTRA=($(gum_choose_multi "Paquets additionnels :" "${EXTRA_PKGS[@]}"))
                 PKGS+=("${SELECTED_EXTRA[@]}")
                 
                 # Sélection des éléments graphiques
-                SELECTED_UI=($(gum_choose "Eléments graphiques :" \
+                SELECTED_UI=($(gum_choose_multi "Eléments graphiques :" \
                     "Thème WhiteSur" \
                     "Icônes WhiteSur" \
                     "Fonds d'écran WhiteSur" \
