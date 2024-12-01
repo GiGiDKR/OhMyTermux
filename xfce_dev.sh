@@ -305,7 +305,9 @@ download_file() {
 
 trap finish EXIT
 
-# Fonction pour configurer XFCE selon le type d'installation
+#------------------------------------------------------------------------------
+# CONFIGURATION DE XFCE
+#------------------------------------------------------------------------------
 configure_xfce() {
     local CONFIG_DIR="$HOME/.config/xfce4/xfconf/xfce-perchannel-xml"
     local INSTALL_TYPE="$1"
@@ -493,7 +495,7 @@ main() {
 
     execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
 
-    # Paquets de base
+    # Paquets nécessaires
     BASE_PKGS=(
         'termux-x11-nightly'         # Serveur X11 pour Termux
         'virglrenderer-android'      # Accélération graphique
@@ -501,7 +503,7 @@ main() {
         'xfce4-terminal'             # Terminal
     )
 
-    # Paquets principaux
+    # Paquets recommandés
     RECOMMENDED_PKGS=(
         'pavucontrol-qt'             # Contrôle du son
         'wmctrl'                     # Contrôle des fenêtres
@@ -513,7 +515,7 @@ main() {
         'xfce4-taskmanager'          # Gestion des tâches
     )
 
-    # Paquets additionnels
+    # Paquets optionnels
     EXTRA_PKGS=(
         'gigolo'                     # Gestion de fichiers
         'jq'                         # Utilitaire JSON
@@ -591,17 +593,41 @@ main() {
                 fi
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Icônes" ]]; then
-                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner les packs d'icônes à installer :" \
+                    # Tableau associatif pour mapper les noms d'affichage aux valeurs réelles
+                    declare -A ICON_DISPLAY_NAMES=(
+                        ["WhiteSur"]="WhiteSur"
+                        ["McMojave"]="McMojave-circle"
+                        ["Tela"]="Tela"
+                        ["Fluent"]="Fluent"
+                        ["Qogir"]="Qogir"
+                    )
+                    
+                    # Utiliser les noms d'affichage pour la sélection
+                    SELECTED_DISPLAY_NAMES=($(gum_choose_multi "Sélectionner les packs d'icônes à installer :" \
                         "WhiteSur" \
-                        "McMojave-circle" \
+                        "McMojave" \
                         "Tela" \
                         "Fluent" \
                         "Qogir"))
 
+                    # Convertir les noms d'affichage en valeurs réelles
+                    SELECTED_ICON_THEMES=()
+                    for display_name in "${SELECTED_DISPLAY_NAMES[@]}"; do
+                        SELECTED_ICON_THEMES+=("${ICON_DISPLAY_NAMES[$display_name]}")
+                    done
+
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                         INSTALL_ICONS=true
                         if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
-                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner le pack d'icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
+                            echo -e "\n${COLOR_BLUE}Packs d'icônes sélectionnés :${COLOR_RESET}"
+                            for i in "${!SELECTED_ICON_THEMES[@]}"; do
+                                echo "$((i+1))) ${SELECTED_ICON_THEMES[i]}"
+                            done
+                            printf "${COLOR_GOLD}Sélectionner le pack d'icônes à appliquer (1-${#SELECTED_ICON_THEMES[@]}) : ${COLOR_RESET}"
+                            tput setaf 3
+                            read -r APPLY_CHOICE
+                            tput sgr0
+                            SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[$((APPLY_CHOICE-1))]}"
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
@@ -676,7 +702,7 @@ main() {
                 if [[ $UI_CHOICES =~ 2 ]]; then
                     echo -e "\n${COLOR_BLUE}Packs d'icônes disponibles :${COLOR_RESET}"
                     echo "1) WhiteSur"
-                    echo "2) McMojave-circle"
+                    echo "2) McMojave"
                     echo "3) Tela"
                     echo "4) Fluent"
                     echo "5) Qogir"
