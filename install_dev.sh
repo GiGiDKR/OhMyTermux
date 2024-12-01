@@ -1466,10 +1466,10 @@ success_msg "✓ Suppression des scripts d'installation"
 if $USE_GUM; then
     if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Exécuter OhMyTermux ?"; then
         clear
-        if [ "$shell_choice" = "zsh" ]; then
+        if [ "$SHELL_CHOICE" = "zsh" ]; then
             exec zsh -l
         else
-            exec $shell_choice
+            exec $SHELL_CHOICE
         fi
     else
         echo -e "${COLOR_BLUE}Pour utiliser toutes les fonctionnalités :${COLOR_RESET}"
@@ -1481,10 +1481,10 @@ else
     read -r choice
     if [[ "$choice" =~ ^[oO]$ ]]; then
         clear
-        if [ "$shell_choice" = "zsh" ]; then
+        if [ "$SHELL_CHOICE" = true ]; then
             exec zsh -l
         else
-            exec $shell_choice
+            exec $SHELL_CHOICE
         fi
     else
         echo -e "${COLOR_BLUE}Pour utiliser toutes les fonctionnalités :${COLOR_RESET}"

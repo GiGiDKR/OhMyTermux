@@ -406,13 +406,7 @@ EOF
 <channel name="xfce4-desktop" version="1.0">
   <property name="backdrop" type="empty">
     <property name="screen0" type="empty">
-      <property name="monitorVNC-0" type="empty">
-        <property name="workspace0" type="empty">
-          <property name="image-style" type="int" value="5"/>
-          <property name="last-image" type="string" value="$WALLPAPER"/>
-        </property>
-      </property>
-      <property name="monitorscreen" type="empty">
+      <property name="monitorBuiltinDisplay" type="empty">
         <property name="workspace0" type="empty">
           <property name="image-style" type="int" value="5"/>
           <property name="last-image" type="string" value="$WALLPAPER"/>
@@ -761,7 +755,7 @@ main() {
                         ;;
                     "Fluent")
                         ARCHIVE="fluent-theme.zip"
-                        download_file "https://github.com/vinceliuice/Fluent-gtk-theme/archive/refs/heads/master.zip" "Téléchargement du thème Fluent"
+                        download_file "https://github.com/vinceliuice/Fluent-gtk-theme/archive/refs/heads/master.zip" "Téléchargement du th��me Fluent"
                         execute_command "mv master.zip $ARCHIVE && \
                                     unzip $ARCHIVE && \
                                     cd Fluent-gtk-theme-master && \
