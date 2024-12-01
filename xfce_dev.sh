@@ -420,6 +420,13 @@ EOF
       </property>
     </property>
   </property>
+  <property name="desktop-icons" type="empty">
+    <property name="file-icons" type="empty">
+      <property name="show-home" type="bool" value="false"/>
+      <property name="show-filesystem" type="bool" value="false"/>
+      <property name="show-trash" type="bool" value="false"/>
+    </property>
+  </property>
 </channel>
 EOF
             ;;
@@ -745,13 +752,12 @@ main() {
                 case $THEME in
                     "WhiteSur")
                         ARCHIVE="whitesur-theme.zip"
-                        download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/heads/master.zip" "Téléchargement du thème WhiteSur"
-                        execute_command "mv master.zip $ARCHIVE && \
-                                    unzip $ARCHIVE && \
-                                    cd WhiteSur-gtk-theme-master && \
-                                    ./install.sh -d $PREFIX/share/themes -c dark -s standard && \
-                                    cd .. && \
-                                    rm -rf WhiteSur-gtk-theme-master $ARCHIVE" "Installation du thème WhiteSur"
+                        download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème WhiteSur"
+                        execute_command "mv 2024-11-18.zip $ARCHIVE && \
+                                        unzip $ARCHIVE && \
+                                        tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
+                                        mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
+                                        rm -rf WhiteSur-gtk-theme-2024-11-18 $ARCHIVE" "Installation du thème WhiteSur"
                         ;;
                     "Fluent")
                         ARCHIVE="fluent-theme.zip"
