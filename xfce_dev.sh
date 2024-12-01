@@ -619,15 +619,19 @@ main() {
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                         INSTALL_ICONS=true
                         if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
-                            echo -e "\n${COLOR_BLUE}Packs d'icônes sélectionnés :${COLOR_RESET}"
-                            for i in "${!SELECTED_ICON_THEMES[@]}"; do
-                                echo "$((i+1))) ${SELECTED_ICON_THEMES[i]}"
-                            done
-                            printf "${COLOR_GOLD}Sélectionner le pack d'icônes à appliquer (1-${#SELECTED_ICON_THEMES[@]}) : ${COLOR_RESET}"
-                            tput setaf 3
-                            read -r APPLY_CHOICE
-                            tput sgr0
-                            SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[$((APPLY_CHOICE-1))]}"
+                            if $USE_GUM; then
+                                SELECTED_ICON_THEME=$(gum_choose "Sélectionner le pack d'icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
+                            else
+                                echo -e "\n${COLOR_BLUE}Packs d'icônes sélectionnés :${COLOR_RESET}"
+                                for i in "${!SELECTED_ICON_THEMES[@]}"; do
+                                    echo "$((i+1))) ${SELECTED_ICON_THEMES[i]}"
+                                done
+                                printf "${COLOR_GOLD}Sélectionner le pack d'icônes à appliquer (1-${#SELECTED_ICON_THEMES[@]}) : ${COLOR_RESET}"
+                                tput setaf 3
+                                read -r APPLY_CHOICE
+                                tput sgr0
+                                SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[$((APPLY_CHOICE-1))]}"
+                            fi
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
@@ -724,15 +728,19 @@ main() {
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                         INSTALL_ICONS=true
                         if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
-                            echo -e "\n${COLOR_BLUE}Packs d'icônes sélectionnés :${COLOR_RESET}"
-                            for i in "${!SELECTED_ICON_THEMES[@]}"; do
-                                echo "$((i+1))) ${SELECTED_ICON_THEMES[i]}"
-                            done
-                            printf "${COLOR_GOLD}Sélectionner le pack d'icônes à appliquer (1-${#SELECTED_ICON_THEMES[@]}) : ${COLOR_RESET}"
-                            tput setaf 3
-                            read -r APPLY_CHOICE
-                            tput sgr0
-                            SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[$((APPLY_CHOICE-1))]}"
+                            if $USE_GUM; then
+                                SELECTED_ICON_THEME=$(gum_choose "Sélectionner le pack d'icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
+                            else
+                                echo -e "\n${COLOR_BLUE}Packs d'icônes sélectionnés :${COLOR_RESET}"
+                                for i in "${!SELECTED_ICON_THEMES[@]}"; do
+                                    echo "$((i+1))) ${SELECTED_ICON_THEMES[i]}"
+                                done
+                                printf "${COLOR_GOLD}Sélectionner le pack d'icônes à appliquer (1-${#SELECTED_ICON_THEMES[@]}) : ${COLOR_RESET}"
+                                tput setaf 3
+                                read -r APPLY_CHOICE
+                                tput sgr0
+                                SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[$((APPLY_CHOICE-1))]}"
+                            fi
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
