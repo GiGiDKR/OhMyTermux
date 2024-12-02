@@ -394,7 +394,7 @@ EOF" "Configuration des curseurs"
 #------------------------------------------------------------------------------
 if [ -f "$HOME/.termux/font.ttf" ]; then
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c 'mkdir -p /usr/share/fonts/truetype/custom/ && \
-    cp /data/data/com.termux/files/home/.termux/font.ttf /usr/share/fonts/truetype/custom/MesloLGL NF.ttf && \
+    cp /data/data/com.termux/files/home/.termux/font.ttf /usr/share/fonts/truetype/custom/MesloLGLNF.ttf && \
     fc-cache -f -v'" "Configuration de la police"
     
     # Création du répertoire de configuration si nécessaire
@@ -402,7 +402,7 @@ if [ -f "$HOME/.termux/font.ttf" ]; then
     
     # Création du fichier de configuration avec les bons droits
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c 'echo \"[Configuration]
-FontName=MesloLGL NF 11\" > /home/$USERNAME/.config/xfce4/terminal/terminalrc && \
+FontName=MesloLGLNF 11\" > /home/$USERNAME/.config/xfce4/terminal/terminalrc && \
 chown -R $USERNAME:users /home/$USERNAME/.config'" "Configuration du terminal XFCE"
 fi
 
