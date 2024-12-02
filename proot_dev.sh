@@ -403,8 +403,8 @@ execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash
     chmod 644 /home/$USERNAME/.fonts/MesloLGS-NF-Regular.ttf'" "Téléchargement de la police"
 
 # Mise à jour du cache des polices
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 -u $USERNAME bash -c '\
-    fc-cache -f -v'" "Mise à jour du cache des polices"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
+    su - $USERNAME -c \"fc-cache -f -v\"'" "Mise à jour du cache des polices"
 
 # Configuration du terminal XFCE
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
