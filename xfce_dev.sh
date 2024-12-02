@@ -315,18 +315,11 @@ configure_xfce() {
     # Créer le répertoire de configuration si nécessaire
     mkdir -p "$CONFIG_DIR"
 
-    # Copier la police depuis Termux vers Debian proot
-    if [ -f "$HOME/.termux/font.ttf" ]; then
-        execute_command "mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/fonts/ && \
-        cp $HOME/.termux/font.ttf $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/fonts/MesloLGL.ttf && \
-        fc-cache -f -v $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/fonts/" "Configuration de la police"
-    fi
-
-    # Configurer la police pour xfce4-terminal
+    # Configurer xfce4-terminal
     mkdir -p "$HOME/.config/xfce4/terminal"
     cat > "$HOME/.config/xfce4/terminal/terminalrc" << EOF
 [Configuration]
-FontName=MesloLGL 11
+FontName=Monospace 11
 MiscAlwaysShowTabs=FALSE
 MiscBell=FALSE
 MiscBellUrgent=FALSE

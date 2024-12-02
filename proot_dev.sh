@@ -390,8 +390,18 @@ Xcursor.theme: WhiteSur
 EOF" "Configuration des curseurs"
 
 #------------------------------------------------------------------------------
-# CONFIGURATION DES THÈMES ET POLICES
+# CONFIGURATION DE LA POLICE
 #------------------------------------------------------------------------------
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$USERNAME/.fonts/ /home/$USERNAME/.themes/\"" "Configuration des thèmes et polices"
+#execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$USERNAME/.fonts/ /home/$USERNAME/.themes/\"" "Configuration des thèmes et polices"
+
+if [ -f "$HOME/.termux/font.ttf" ]; then
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c 'mkdir -p /usr/share/fonts/ && \
+    cp /data/data/com.termux/files/home/.termux/font.ttf /usr/share/fonts/MesloLGL.ttf && \
+    fc-cache -f -v /usr/share/fonts/'" "Configuration de la police"
+    # Modification de la police pour xfce4-terminal
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c 'sed -i \"s/FontName=.*/FontName=MesloLGL 11/\" /home/$USERNAME/.config/xfce4/terminal/terminalrc'" "Modification de la police du terminal XFCE"
+    # Ajustement des permissions
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chown -R $USERNAME:users /home/$USERNAME/.config" "Configuration des permissions"
+fi
 
 install_mesa_vulkan
