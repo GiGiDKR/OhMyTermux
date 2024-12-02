@@ -658,6 +658,16 @@ install_shell() {
             "fish")
                 title_msg "❯ Configuration de Fish"
                 execute_command "pkg install -y fish" "Installation de Fish"
+                
+                # Création du répertoire de configuration fish
+                #execute_command "mkdir -p $HOME/.config/fish/functions" "Création du répertoire fish"
+                
+                # Installation de Fisher sans lancer de session interactive
+                #execute_command "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish -o $HOME/.config/fish/functions/fisher.fish" "Téléchargement de Fisher"
+                
+                # Installation de Tide via Fisher en mode non-interactif
+                #execute_command "fish -c 'source $HOME/.config/fish/functions/fisher.fish && fisher install IlanCosman/tide@v5'" "Installation de Tide"
+                
                 chsh -s fish
                 ;;
         esac

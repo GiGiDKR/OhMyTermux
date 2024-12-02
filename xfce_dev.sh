@@ -311,6 +311,16 @@ trap finish EXIT
 configure_xfce() {
     local CONFIG_DIR="$HOME/.config/xfce4/xfconf/xfce-perchannel-xml"
     local INSTALL_TYPE="$1"
+    local BROWSER_DESKTOP
+
+    # Définir le fichier .desktop du navigateur
+    if [ "$BROWSER" = "firefox" ]; then
+        BROWSER_DESKTOP="firefox"
+    elif [ "$BROWSER" = "chromium" ]; then
+        BROWSER_DESKTOP="chromium"
+    else
+        BROWSER_DESKTOP="$BROWSER"
+    fi
 
     # Créer le répertoire de configuration si nécessaire
     mkdir -p "$CONFIG_DIR"
@@ -327,10 +337,26 @@ configure_xfce() {
     <property name="default-width" type="int" value="150"/>
   </property>
   <property name="default" type="empty">
-    <property name="x-scheme-handler/http" type="string" value="$BROWSER.desktop"/>
-    <property name="x-scheme-handler/https" type="string" value="$BROWSER.desktop"/>
+    <property name="x-scheme-handler/http" type="string" value="$BROWSER_DESKTOP.desktop"/>
+    <property name="x-scheme-handler/https" type="string" value="$BROWSER_DESKTOP.desktop"/>
   </property>
 </channel>
+EOF
+
+    # Créer le fichier mimeapps.list
+    mkdir -p "$HOME/.config"
+    cat > "$HOME/.config/mimeapps.list" << EOF
+[Default Applications]
+x-scheme-handler/http=$BROWSER_DESKTOP.desktop
+x-scheme-handler/https=$BROWSER_DESKTOP.desktop
+text/html=$BROWSER_DESKTOP.desktop
+application/xhtml+xml=$BROWSER_DESKTOP.desktop
+
+[Added Associations]
+x-scheme-handler/http=$BROWSER_DESKTOP.desktop
+x-scheme-handler/https=$BROWSER_DESKTOP.desktop
+text/html=$BROWSER_DESKTOP.desktop
+application/xhtml+xml=$BROWSER_DESKTOP.desktop
 EOF
 
     # Configurer xfce4-terminal
