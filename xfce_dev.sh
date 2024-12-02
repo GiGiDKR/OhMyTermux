@@ -912,12 +912,12 @@ main() {
 
         if [ "$INSTALL_CURSORS" = true ]; then
             # Installation des curseurs
+            ARCHIVE="2024-02-25.zip"
             download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement des curseurs"
-            execute_command "unzip 2024-02-25.zip && \
+            execute_command "unzip $ARCHIVE && \
                             mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && \
                             mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && \
-                            rm -rf $HOME/Fluent* && \
-                            rm 2024-02-25.zip*" "Installation des curseurs"
+                            rm -rf Fluent-icon-theme-2024-02-25 $ARCHIVE" "Installation des curseurs"
         fi
     fi
 
