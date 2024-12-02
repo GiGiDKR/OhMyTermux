@@ -393,16 +393,19 @@ EOF" "Configuration des curseurs"
 # CONFIGURATION DE LA POLICE
 #------------------------------------------------------------------------------
 if [ -f "$HOME/.termux/font.ttf" ]; then
+    # Installation de fontconfig si nécessaire
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install -y fontconfig" "Installation de fontconfig"
+
     # Créer le répertoire .fonts et copier la police
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
         mkdir -p /home/$USERNAME/.fonts && \
         cp /data/data/com.termux/files/home/.termux/font.ttf /home/$USERNAME/.fonts/MesloLGLNF.ttf && \
         chown -R $USERNAME:users /home/$USERNAME/.fonts && \
-        chmod 644 /home/$USERNAME/.fonts/MesloLGLNF.ttf'" "Copie de la police"
+        chmod 644 /home/$USERNAME/.fonts/MesloLGLNF.ttf'" "Copie de la police Nerd"
 
     # Mise à jour du cache des polices
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
-        sudo -u $USERNAME fc-cache -f'" "Mise à jour du cache des polices"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 -u $USERNAME bash -c '\
+        fc-cache -f -v'" "Mise à jour du cache des polices"
 
     # Configuration du terminal XFCE
     execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
