@@ -392,25 +392,24 @@ EOF" "Configuration des curseurs"
 #------------------------------------------------------------------------------
 # CONFIGURATION DE LA POLICE
 #------------------------------------------------------------------------------
-if [ -f "$HOME/.termux/font.ttf" ]; then
-    # Installation de fontconfig si nécessaire
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install -y fontconfig" "Installation de fontconfig"
+# Installation et configuration de la police
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install -y fontconfig-utils" "Installation des dépendances"
 
-    # Créer le répertoire .fonts et copier la police
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
-        mkdir -p /home/$USERNAME/.fonts && \
-        cp /data/data/com.termux/files/home/.termux/font.ttf /home/$USERNAME/.fonts/MesloLGLNF.ttf && \
-        chown -R $USERNAME:users /home/$USERNAME/.fonts && \
-        chmod 644 /home/$USERNAME/.fonts/MesloLGLNF.ttf'" "Copie de la police Nerd"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
+    mkdir -p /home/$USERNAME/.fonts && \
+    cd /home/$USERNAME/.fonts && \
+    wget \"https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf\" -O MesloLGS-NF-Regular.ttf && \
+    chown -R $USERNAME:users /home/$USERNAME/.fonts && \
+    chmod 644 /home/$USERNAME/.fonts/MesloLGS-NF-Regular.ttf'" "Téléchargement de la police"
 
-    # Mise à jour du cache des polices
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 -u $USERNAME bash -c '\
-        fc-cache -f -v'" "Mise à jour du cache des polices"
+# Mise à jour du cache des polices
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 -u $USERNAME bash -c '\
+    fc-cache -f'" "Mise à jour du cache des polices"
 
-    # Configuration du terminal XFCE
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
-        mkdir -p /home/$USERNAME/.config/xfce4/terminal && \
-        cat > /home/$USERNAME/.config/xfce4/terminal/terminalrc << EOF
+# Configuration du terminal XFCE
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
+    mkdir -p /home/$USERNAME/.config/xfce4/terminal && \
+    cat > /home/$USERNAME/.config/xfce4/terminal/terminalrc << EOF
 [Configuration]
 MiscAlwaysShowTabs=FALSE
 MiscBell=FALSE
@@ -431,13 +430,12 @@ MiscTabCloseMiddleClick=TRUE
 MiscTabPosition=GTK_POS_TOP
 MiscHighlightUrls=TRUE
 ScrollingBar=TERMINAL_SCROLLBAR_NONE
-FontName=MesloLGLNF 11
+FontName=MesloLGS NF 11
 EOF'" "Configuration du terminal XFCE"
 
-    # Correction des permissions
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
-        chown -R $USERNAME:users /home/$USERNAME/.config && \
-        chmod -R 755 /home/$USERNAME/.config'" "Configuration des permissions"
-fi
+# Correction des permissions
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
+    chown -R $USERNAME:users /home/$USERNAME/.config && \
+    chmod -R 755 /home/$USERNAME/.config'" "Configuration des permissions"
 
 install_mesa_vulkan
