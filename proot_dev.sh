@@ -390,52 +390,6 @@ Xcursor.theme: WhiteSur
 EOF" "Configuration des curseurs"
 
 #------------------------------------------------------------------------------
-# CONFIGURATION DE LA POLICE
+# INSTALLATION DE MESA-VULKAN
 #------------------------------------------------------------------------------
-# Installation et configuration de la police
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install -y fontconfig" "Installation des dépendances"
-
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
-    mkdir -p /home/$USERNAME/.fonts && \
-    cd /home/$USERNAME/.fonts && \
-    wget \"https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf\" -O MesloLGS-NF-Regular.ttf && \
-    chown -R $USERNAME:users /home/$USERNAME/.fonts && \
-    chmod 644 /home/$USERNAME/.fonts/MesloLGS-NF-Regular.ttf'" "Téléchargement de la police"
-
-# Mise à jour du cache des polices
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
-    su - $USERNAME -c \"fc-cache -f -v\"'" "Mise à jour du cache des polices"
-
-# Configuration du terminal XFCE
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
-    mkdir -p /home/$USERNAME/.config/xfce4/terminal && \
-    cat > /home/$USERNAME/.config/xfce4/terminal/terminalrc << EOF
-[Configuration]
-MiscAlwaysShowTabs=FALSE
-MiscBell=FALSE
-MiscBellUrgent=FALSE
-MiscBordersDefault=TRUE
-MiscCursorBlinks=FALSE
-MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
-MiscDefaultGeometry=80x24
-MiscInheritGeometry=FALSE
-MiscMenubarDefault=FALSE
-MiscMouseAutohide=FALSE
-MiscMouseWheelZoom=TRUE
-MiscToolbarDefault=FALSE
-MiscConfirmClose=TRUE
-MiscCycleTabs=TRUE
-MiscTabCloseButtons=TRUE
-MiscTabCloseMiddleClick=TRUE
-MiscTabPosition=GTK_POS_TOP
-MiscHighlightUrls=TRUE
-ScrollingBar=TERMINAL_SCROLLBAR_NONE
-FontName=MesloLGS NF 11
-EOF'" "Configuration du terminal XFCE"
-
-# Correction des permissions
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
-    chown -R $USERNAME:users /home/$USERNAME/.config && \
-    chmod -R 755 /home/$USERNAME/.config'" "Configuration des permissions"
-
 install_mesa_vulkan

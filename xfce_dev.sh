@@ -315,6 +315,24 @@ configure_xfce() {
     # Créer le répertoire de configuration si nécessaire
     mkdir -p "$CONFIG_DIR"
 
+    # Configurer le navigateur par défaut
+    cat > "$CONFIG_DIR/xfce4-mime-settings.xml" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfce4-mime-settings" version="1.0">
+  <property name="last" type="empty">
+    <property name="window-width" type="int" value="550"/>
+    <property name="window-height" type="int" value="400"/>
+    <property name="mime-width" type="int" value="300"/>
+    <property name="status-width" type="int" value="75"/>
+    <property name="default-width" type="int" value="150"/>
+  </property>
+  <property name="default" type="empty">
+    <property name="x-scheme-handler/http" type="string" value="$BROWSER.desktop"/>
+    <property name="x-scheme-handler/https" type="string" value="$BROWSER.desktop"/>
+  </property>
+</channel>
+EOF
+
     # Configurer xfce4-terminal
     mkdir -p "$HOME/.config/xfce4/terminal"
     cat > "$HOME/.config/xfce4/terminal/terminalrc" << EOF
