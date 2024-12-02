@@ -393,17 +393,44 @@ EOF" "Configuration des curseurs"
 # CONFIGURATION DE LA POLICE
 #------------------------------------------------------------------------------
 if [ -f "$HOME/.termux/font.ttf" ]; then
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c 'mkdir -p /usr/share/fonts/truetype/custom/ && \
-    cp /data/data/com.termux/files/home/.termux/font.ttf /usr/share/fonts/truetype/custom/MesloLGLNF.ttf && \
-    chmod 644 /usr/share/fonts/truetype/custom/MesloLGLNF.ttf" "Configuration de la police"
-    
-    # Création du répertoire de configuration si nécessaire
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c 'mkdir -p /home/$USERNAME/.config/xfce4/terminal/'" "Création du répertoire de configuration"
-    
-    # Création du fichier de configuration avec les bons droits
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c 'echo \"[Configuration]
-FontName=MesloLGLNF 11\" > /home/$USERNAME/.config/xfce4/terminal/terminalrc && \
-chown -R $USERNAME:users /home/$USERNAME/.config'" "Configuration du terminal XFCE"
+    # Créer le répertoire .fonts
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
+        mkdir -p /home/$USERNAME/.fonts && \
+        cp /data/data/com.termux/files/home/.termux/font.ttf /home/$USERNAME/.fonts/MesloLGLNF.ttf && \
+        chmod 644 /home/$USERNAME/.fonts/MesloLGLNF.ttf && \
+        fc-cache -f -v'" "Installation de la police"
+
+    # Configuration du terminal XFCE
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
+        mkdir -p /home/$USERNAME/.config/xfce4/terminal && \
+        cat > /home/$USERNAME/.config/xfce4/terminal/terminalrc << EOF
+[Configuration]
+MiscAlwaysShowTabs=FALSE
+MiscBell=FALSE
+MiscBellUrgent=FALSE
+MiscBordersDefault=TRUE
+MiscCursorBlinks=FALSE
+MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
+MiscDefaultGeometry=80x24
+MiscInheritGeometry=FALSE
+MiscMenubarDefault=FALSE
+MiscMouseAutohide=FALSE
+MiscMouseWheelZoom=TRUE
+MiscToolbarDefault=FALSE
+MiscConfirmClose=TRUE
+MiscCycleTabs=TRUE
+MiscTabCloseButtons=TRUE
+MiscTabCloseMiddleClick=TRUE
+MiscTabPosition=GTK_POS_TOP
+MiscHighlightUrls=TRUE
+ScrollingBar=TERMINAL_SCROLLBAR_NONE
+FontName=MesloLGLNF 11
+EOF'" "Configuration du terminal XFCE"
+
+    # Correction des permissions
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
+        chown -R $USERNAME:users /home/$USERNAME/.config && \
+        chmod -R 755 /home/$USERNAME/.config'" "Configuration des permissions"
 fi
 
 install_mesa_vulkan
