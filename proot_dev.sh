@@ -393,7 +393,7 @@ EOF" "Configuration des curseurs"
 # CONFIGURATION DE LA POLICE
 #------------------------------------------------------------------------------
 # Installation et configuration de la police
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install -y fontconfig-utils" "Installation des dépendances"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install -y fontconfig" "Installation des dépendances"
 
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
     mkdir -p /home/$USERNAME/.fonts && \
@@ -404,7 +404,7 @@ execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash
 
 # Mise à jour du cache des polices
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 -u $USERNAME bash -c '\
-    fc-cache -f'" "Mise à jour du cache des polices"
+    fc-cache -f -v'" "Mise à jour du cache des polices"
 
 # Configuration du terminal XFCE
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c '\
