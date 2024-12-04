@@ -415,8 +415,8 @@ EOF
 
     # Configurer xfce4-panel.xml si whiskermenu n'est pas installé
     if ! command -v xfce4-popup-whiskermenu &> /dev/null; then
-        sed -i 's/<property name="plugin-5" type="string" value="whiskermenu">/<property name="plugin-5" type="string" value="applicationsmenu">/' "$config_dir/xfce4-panel.xml"
-        sed -i '/<property name="plugin-5".*whiskermenu/,/<\/property>/c\    <property name="plugin-5" type="string" value="applicationsmenu"/>' "$config_dir/xfce4-panel.xml"
+        sed -i 's/<property name="plugin-5" type="string" value="whiskermenu">/<property name="plugin-5" type="string" value="applicationsmenu">/' "$CONFIG_DIR/xfce4-panel.xml"
+        sed -i '/<property name="plugin-5".*whiskermenu/,/<\/property>/c\    <property name="plugin-5" type="string" value="applicationsmenu"/>' "$CONFIG_DIR/xfce4-panel.xml"
     fi
 
     case "$INSTALL_TYPE" in
@@ -707,24 +707,32 @@ main() {
                 [[ " ${SELECTED_UI[*]} " =~ "Curseurs" ]] && INSTALL_CURSORS=true
             else
                 echo -e "\n${COLOR_BLUE}Interface graphique :${COLOR_RESET}"
+                echo
                 echo "1) Thèmes"
                 echo "2) Icônes"
                 echo "3) Fonds d'écran"
                 echo "4) Curseurs"
+                echo
                 printf "${COLOR_GOLD}Sélectionner les éléments (séparés par des espaces) : ${COLOR_RESET}"
                 tput setaf 3
                 read -r UI_CHOICES
                 tput sgr0
+                tput cuu 8
+                tput el
 
                 if [[ $UI_CHOICES =~ 1 ]]; then
                     echo -e "\n${COLOR_BLUE}Thèmes disponibles :${COLOR_RESET}"
+                    echo
                     echo "1) WhiteSur"
                     echo "2) Fluent"
                     echo "3) Lavanda"
+                    echo
                     printf "${COLOR_GOLD}Sélectionner les thèmes (séparés par des espaces) : ${COLOR_RESET}"
                     tput setaf 3
                     read -r THEME_CHOICES
                     tput sgr0
+                    tput cuu 7
+                    tput el
 
                     for choice in $THEME_CHOICES; do
                         case $choice in
@@ -738,13 +746,19 @@ main() {
                         INSTALL_THEME=true
                         if [ ${#SELECTED_THEMES[@]} -gt 1 ]; then
                             echo -e "\n${COLOR_BLUE}Thèmes sélectionnés :${COLOR_RESET}"
+                            echo
                             for i in "${!SELECTED_THEMES[@]}"; do
                                 echo "$((i+1))) ${SELECTED_THEMES[i]}"
                             done
+                            echo
                             printf "${COLOR_GOLD}Sélectionner le thème à appliquer (1-${#SELECTED_THEMES[@]}) : ${COLOR_RESET}"
                             tput setaf 3
                             read -r APPLY_CHOICE
                             tput sgr0
+                            # Calcul dynamique du nombre de lignes à effacer
+                            LINES_TO_CLEAR=$((4 + ${#SELECTED_THEMES[@]}))
+                            tput cuu $LINES_TO_CLEAR
+                            tput ed
                             SELECTED_THEME="${SELECTED_THEMES[$((APPLY_CHOICE-1))]}"
                         else
                             SELECTED_THEME="${SELECTED_THEMES[0]}"
@@ -754,15 +768,19 @@ main() {
 
                 if [[ $UI_CHOICES =~ 2 ]]; then
                     echo -e "\n${COLOR_BLUE}Packs d'icônes disponibles :${COLOR_RESET}"
+                    echo
                     echo "1) WhiteSur"
                     echo "2) McMojave"
                     echo "3) Tela"
                     echo "4) Fluent"
                     echo "5) Qogir"
+                    echo
                     printf "${COLOR_GOLD}Sélectionner les packs d'icônes à installer (séparés par des espaces) : ${COLOR_RESET}"
                     tput setaf 3
                     read -r ICON_CHOICES
                     tput sgr0
+                    tput cuu 9
+                    tput el
 
                     for ICON_CHOICE in $ICON_CHOICES; do
                         case $ICON_CHOICE in
@@ -781,13 +799,18 @@ main() {
                                 SELECTED_ICON_THEME=$(gum_choose "Sélectionner le pack d'icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
                             else
                                 echo -e "\n${COLOR_BLUE}Packs d'icônes sélectionnés :${COLOR_RESET}"
+                                echo
                                 for i in "${!SELECTED_ICON_THEMES[@]}"; do
                                     echo "$((i+1))) ${SELECTED_ICON_THEMES[i]}"
                                 done
+                                echo
                                 printf "${COLOR_GOLD}Sélectionner le pack d'icônes à appliquer (1-${#SELECTED_ICON_THEMES[@]}) : ${COLOR_RESET}"
                                 tput setaf 3
                                 read -r APPLY_CHOICE
                                 tput sgr0
+                                LINES_TO_CLEAR=$((4 + ${#SELECTED_ICON_THEMES[@]}))
+                                tput cuu $LINES_TO_CLEAR
+                                tput ed
                                 SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[$((APPLY_CHOICE-1))]}"
                             fi
                         else
@@ -799,6 +822,7 @@ main() {
                 if [[ $UI_CHOICES =~ 3 ]]; then
                     INSTALL_WALLPAPERS=true
                     echo -e "\n${COLOR_BLUE}Fonds d'écran disponibles :${COLOR_RESET}"
+                    echo
                     echo "1) Monterey"
                     echo "2) Monterey-dark"
                     echo "3) Monterey-light"
@@ -811,10 +835,13 @@ main() {
                     echo "10) WhiteSur-dark"
                     echo "11) WhiteSur-light"
                     echo "12) WhiteSur-morning"
+                    echo
                     printf "${COLOR_GOLD}Sélectionner le fond d'écran à appliquer (1-12) : ${COLOR_RESET}"
                     tput setaf 3
                     read -r WALLPAPER_CHOICE
                     tput sgr0
+                    tput cuu 16
+                    tput el
 
                     case $WALLPAPER_CHOICE in
                         1) SELECTED_WALLPAPER="Monterey" ;;

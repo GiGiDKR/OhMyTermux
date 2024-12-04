@@ -301,28 +301,36 @@ title_msg "❯ Installation de Debian Proot"
 
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
-        USERNAME=$(gum input --prompt "Username: " --placeholder "Enter your username")
+        USERNAME=$(gum input --prompt "Username: " --placeholder "Entrer un nom d'utilisateur")
         while true; do
-            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Enter your password")
-            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Enter your password again")
+            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
             if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                gum style --foreground "#FF0000" "Passwords do not match. Please try again."
+                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
             fi
         done
     else
-        echo -e "${COLOR_BLUE}Enter your username: ${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Entrer un nom d'utilisateur: ${COLOR_RESET}"
         read -r USERNAME
+        tput cuu1
+        tput el
         while true; do
-            echo -e "${COLOR_BLUE}Enter your password: ${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
             read -rs PASSWORD
-            echo -e "${COLOR_BLUE}Confirm your password: ${COLOR_RESET}"
+            tput cuu1
+            tput el
+            echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
             read -rs PASSWORD_CONFIRM
+            tput cuu1
+            tput el 
             if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                echo -e "${COLOR_RED}Passwords do not match. Please try again.${COLOR_RESET}"
+                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                tput cuu1
+                tput el
             fi
         done
     fi
@@ -330,24 +338,30 @@ elif [ $# -eq 1 ]; then
     USERNAME="$1"
     if [ "$USE_GUM" = true ]; then
         while true; do
-            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Enter your password")
-            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Enter your password again")
+            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
             if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                gum style --foreground "#FF0000" "Passwords do not match. Please try again."
+                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
             fi
         done
     else
         while true; do
-            echo -e "${COLOR_BLUE}Enter your password: ${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
             read -rs PASSWORD
-            echo -e "${COLOR_BLUE}Confirm your password: ${COLOR_RESET}"
+            tput cuu1
+            tput el
+            echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
             read -rs PASSWORD_CONFIRM
+            tput cuu1
+            tput el
             if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                echo -e "${COLOR_RED}Passwords do not match. Please try again.${COLOR_RESET}"
+                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                tput cuu1
+                tput el
             fi
         done
     fi
