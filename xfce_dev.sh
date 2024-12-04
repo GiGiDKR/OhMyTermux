@@ -262,7 +262,10 @@ subtitle_msg() {
 #------------------------------------------------------------------------------
 log_error() {
     local ERROR_MSG="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $ERROR_MSG" >>  "$HOME/.config/OhMyTermux/install.log"
+    local USERNAME=$(whoami)
+    local HOSTNAME=$(hostname)
+    local CWD=$(pwd)
+    echo "[$(date +'%d/%m/%Y %H:%M:%S')] ERREUR: $ERROR_MSG | Utilisateur: $USERNAME | Machine: $HOSTNAME | Répertoire: $CWD" >> "$HOME/.config/OhMyTermux/install.log"
 }
 
 #------------------------------------------------------------------------------
@@ -273,22 +276,31 @@ execute_command() {
     local INFO_MSG="$2"
     local SUCCESS_MSG="✓ $INFO_MSG"
     local ERROR_MSG="✗ $INFO_MSG"
+    local ERROR_DETAILS
 
     if $USE_GUM; then
-        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$INFO_MSG" -- bash -c "$COMMAND $redirect"; then
-            success_msg "$SUCCESS_MSG"
+        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$INFO_MSG" -- bash -c "$COMMAND $REDIRECT"; then
+            gum style "$SUCCESS_MSG" --foreground 82
         else
-            error_msg "$ERROR_MSG"
-            log_error "$COMMAND"
+            ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
+            gum style "$ERROR_MSG - $ERROR_DETAILS" --foreground 196
+            log_error "$ERROR_DETAILS"
             return 1
         fi
     else
+        tput sc
         info_msg "$INFO_MSG"
-        if eval "$COMMAND $redirect"; then
+        
+        if eval "$COMMAND $REDIRECT"; then
+            tput rc
+            tput el
             success_msg "$SUCCESS_MSG"
         else
-            error_msg "$ERROR_MSG"
-            log_error "$COMMAND"
+            tput rc
+            tput el
+            ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
+            error_msg "$ERROR_MSG - $ERROR_DETAILS"
+            log_error "$ERROR_DETAILS"
             return 1
         fi
     fi

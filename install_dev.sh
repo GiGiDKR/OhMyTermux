@@ -546,6 +546,7 @@ initial_config() {
     change_repo
 
     # Mise à jour et mise à niveau des paquets en préservant les configurations existantes
+    clear
     execute_command "pkg update -y -o Dpkg::Options::=\"--force-confold\"" "Mise à jour des dépôts"
     execute_command "pkg upgrade -y -o Dpkg::Options::=\"--force-confold\"" "Mise à niveau des paquets"
 
@@ -560,9 +561,7 @@ initial_config() {
         show_banner
         printf "${COLOR_BLUE}Activer la configuration recommandée ? (O/n) : ${COLOR_RESET}"
         read -r CHOICE
-        if [ "$CHOICE" = "oO" ]; then
-            configure_termux
-        fi
+        [[ "$CHOICE" =~ ^[oO]$ ]] && configure_termux
     fi
 }
 
@@ -585,6 +584,11 @@ install_shell() {
             tput setaf 3
             read -r CHOICE
             tput sgr0
+
+            # Effacer le menu de sélection
+            tput cuu 7  # Remonte le curseur de 7 lignes
+            tput ed     # Efface du curseur à la fin de l'écran
+
             case $CHOICE in
                 1) SHELL_CHOICE="bash" ;;
                 2) SHELL_CHOICE="zsh" ;;
@@ -613,7 +617,8 @@ install_shell() {
                     fi
                 else
                     printf "${COLOR_BLUE}Installer Oh-My-Zsh ? (O/n) : ${COLOR_RESET}"
-                    read -r CHOICE
+                    # Définition de la valeur par défaut de la variable CHOICE
+                    read -r -e -p "" -i "o" CHOICE
                     if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                         execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
                         execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
@@ -638,13 +643,13 @@ install_shell() {
                     fi
                 else
                     printf "${COLOR_BLUE}Installer PowerLevel10k ? (O/n) : ${COLOR_RESET}"
-                    read -r CHOICE
+                    read -r -e -p "" -i "o" CHOICE
                     if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                         execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" > /dev/null 2>&1 || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (O/n) : ${COLOR_RESET}"
-                        read -r CHOICE
+                        read -r -e -p "" -i "o" CHOICE
                         if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                             execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt OhMyTermux" || error_msg "Impossible d'installer le prompt OhMyTermux"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
@@ -710,7 +715,7 @@ install_zsh_plugins() {
         echo
         printf "${COLOR_GOLD}Entrez les numéros des plugins : ${COLOR_RESET}"
         tput setaf 3
-        read -r PLUGIN_CHOICES
+        read -r -e -p "" -i "6" PLUGIN_CHOICES
         tput sgr0
         for CHOICE in $PLUGIN_CHOICES; do
             case $CHOICE in
@@ -846,7 +851,7 @@ install_packages() {
             echo            
             printf "${COLOR_GOLD}Entrez les numéros des packages : ${COLOR_RESET}"
             tput setaf 3
-            read -r PACKAGE_CHOICES
+            read -r -e -p "" -i "1 2 5 6 7" PACKAGE_CHOICES
             tput sgr0
             PACKAGES=""
             for CHOICE in $PACKAGE_CHOICES; do
@@ -1038,7 +1043,7 @@ install_font() {
             echo
             printf "${COLOR_GOLD}Entrez le numéro de votre choix : ${COLOR_RESET}"
             tput setaf 3
-            read -r CHOICE
+            read -r -e -p "" -i "1" CHOICE
             tput sgr0
             case $CHOICE in
                 1) FONT="Police par défaut" ;;
@@ -1076,51 +1081,56 @@ install_font() {
 install_xfce() {
     if $XFCE_CHOICE; then
         title_msg "❯ Configuration de XFCE"
-        
-        # Choix de la version
-        local XFCE_VERSION
         if $USE_GUM; then
-            XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
+            if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
+                # Choix de la version
+                local XFCE_VERSION
+                XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
                 "minimale" \
                 "recommandée" \
                 "personnalisée")
-        else
-            echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
-            echo "1) Minimale"
-            echo "2) Recommandée"
-            echo "3) Personnalisée"
-            printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
-            tput setaf 3
-            read -r CHOICE
-            tput sgr0
-            case $CHOICE in
-                1) XFCE_VERSION="minimale" ;;
-                2) XFCE_VERSION="recommandée" ;;
-                3) XFCE_VERSION="personnalisée" ;;
-                *) XFCE_VERSION="recommandée" ;;
-            esac
-        fi
-
-        # Sélection du navigateur (sauf pour la version légère)
-        local BROWSER_CHOICE="aucun"
-        if [ "$XFCE_VERSION" != "minimale" ]; then
-            if $USE_GUM; then
-                BROWSER_CHOICE=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
             else
-                echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
-                echo "1) Chromium (par défaut)"
-                echo "2) Firefox"
-                echo "3) Aucun"
-                printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
-                tput setaf 3
-                read -r CHOICE
-                tput sgr0
-                case $CHOICE in
-                    1) BROWSER_CHOICE="chromium" ;;
-                    2) BROWSER_CHOICE="firefox" ;;
-                    3) BROWSER_CHOICE="aucun" ;;
-                    *) BROWSER_CHOICE="chromium" ;;
-                esac
+                printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
+                    echo "1) Minimale"
+                    echo "2) Recommandée"
+                    echo "3) Personnalisée"
+                    printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                    tput setaf 3
+                    read -r -e -p "" -i "2" CHOICE
+                    tput sgr0
+                    case $CHOICE in
+                        1) XFCE_VERSION="minimale" ;;
+                        2) XFCE_VERSION="recommandée" ;;
+                        3) XFCE_VERSION="personnalisée" ;;
+                        *) XFCE_VERSION="recommandée" ;;
+                    esac
+                fi
+            fi
+
+            # Sélection du navigateur (sauf pour la version légère)
+            local BROWSER_CHOICE="aucun"
+            if [ "$XFCE_VERSION" != "minimale" ]; then
+                if $USE_GUM; then
+                    BROWSER_CHOICE=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
+                else
+                    echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
+                    echo "1) Chromium (par défaut)"
+                    echo "2) Firefox"
+                    echo "3) Aucun"
+                    printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                    tput setaf 3
+                    read -r -e -p "" -i "1" CHOICE
+                    tput sgr0
+                    case $CHOICE in
+                        1) BROWSER_CHOICE="chromium" ;;
+                        2) BROWSER_CHOICE="firefox" ;;
+                        3) BROWSER_CHOICE="aucun" ;;
+                        *) BROWSER_CHOICE="chromium" ;;
+                    esac
+                fi
             fi
         fi
 
@@ -1252,7 +1262,7 @@ install_proot() {
             fi
         else    
             printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
-            read -r CHOICE
+            read -r -e -p "" -i "o" CHOICE
             if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
                 execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
@@ -1385,7 +1395,7 @@ EOL
             fi
         else
             printf "${COLOR_BLUE}Installer Termux-X11 ? (O/n) : ${COLOR_RESET}"
-            read -r choice
+            read -r -e -p "" -i "n" choice
             if [[ "$choice" =~ ^[oO]$ ]]; then
                 INSTALL_X11=true
             fi
@@ -1488,7 +1498,7 @@ if $USE_GUM; then
     fi
 else
     printf "${COLOR_BLUE}Exécuter OhMyTermux ? (O/n) : ${COLOR_RESET}"
-    read -r choice
+    read -r -e -p "" -i "o" choice
     if [[ "$choice" =~ ^[oO]$ ]]; then
         clear
         if [ "$SHELL_CHOICE" = true ]; then
