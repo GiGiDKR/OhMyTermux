@@ -1420,7 +1420,8 @@ if ! command -v tput &> /dev/null; then
     if $USE_GUM; then
         execute_command "pkg install -y ncurses-utils" "Installation des dépendances"
     else
-        execute_command "pkg install -y ncurses-utils >/dev/null 2>&1" "Installation des dépendances"
+        info_msg "Installation des dépendances"
+        pkg install -y ncurses-utils >/dev/null 2>&1
     fi
 fi
 
