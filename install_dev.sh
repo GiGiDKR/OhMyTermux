@@ -1095,65 +1095,65 @@ install_font() {
 #------------------------------------------------------------------------------
 install_xfce() {
     if $XFCE_CHOICE; then
+        local XFCE_VERSION
         title_msg "❯ Configuration de XFCE"
         if $USE_GUM; then
             if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
                 # Choix de la version
-                local XFCE_VERSION
                 XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
                 "minimale" \
                 "recommandée" \
                 "personnalisée")
-            else
-                printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
-                read -r -e -p "" -i "o" CHOICE
-                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                    echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
-                    echo
-                    echo "1) Minimale"
-                    echo "2) Recommandée"
-                    echo "3) Personnalisée"
-                    echo
-                    printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
-                    tput setaf 3
-                    read -r -e -p "" -i "2" CHOICE
-                    tput sgr0
-                    tput cuu 7
-                    tput ed
-                    case $CHOICE in
-                        1) XFCE_VERSION="minimale" ;;
-                        2) XFCE_VERSION="recommandée" ;;
-                        3) XFCE_VERSION="personnalisée" ;;
-                        *) XFCE_VERSION="recommandée" ;;
-                    esac
-                fi
             fi
+        else
+            printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
+            read -r -e -p "" -i "o" CHOICE
+            if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
+                echo
+                echo "1) Minimale"
+                echo "2) Recommandée"
+                echo "3) Personnalisée"
+                echo
+                printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                tput setaf 3
+                read -r -e -p "" -i "2" CHOICE
+                tput sgr0
+                tput cuu 7
+                tput ed
+                case $CHOICE in
+                    1) XFCE_VERSION="minimale" ;;
+                    2) XFCE_VERSION="recommandée" ;;
+                    3) XFCE_VERSION="personnalisée" ;;
+                    *) XFCE_VERSION="recommandée" ;;
+                esac
+            fi
+        fi
 
-            # Sélection du navigateur (sauf pour la version légère)
-            local BROWSER_CHOICE="aucun"
-            if [ "$XFCE_VERSION" != "minimale" ]; then
-                if $USE_GUM; then
-                    BROWSER_CHOICE=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
-                else
-                    echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
-                    echo
-                    echo "1) Chromium (par défaut)"
-                    echo "2) Firefox"
-                    echo "3) Aucun"
-                    echo
-                    printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
-                    tput setaf 3
-                    read -r -e -p "" -i "1" CHOICE
-                    tput sgr0
-                    tput cuu 7
-                    tput ed
-                    case $CHOICE in
-                        1) BROWSER_CHOICE="chromium" ;;
-                        2) BROWSER_CHOICE="firefox" ;;
-                        3) BROWSER_CHOICE="aucun" ;;
-                        *) BROWSER_CHOICE="chromium" ;;
-                    esac
-                fi
+        # Sélection du navigateur (sauf pour la version minimale)
+        local BROWSER_CHOICE="aucun"
+        if [ "$XFCE_VERSION" != "minimale" ]; then
+            if $USE_GUM; then
+                BROWSER_CHOICE=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
+            else
+                echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
+                echo
+                echo "1) Chromium (par défaut)"
+                echo "2) Firefox"
+                echo "3) Aucun"
+                echo
+                printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                tput setaf 3
+                read -r -e -p "" -i "1" CHOICE
+                tput sgr0
+                tput cuu 7
+                tput ed
+                case $CHOICE in
+                    1) BROWSER_CHOICE="chromium" ;;
+                    2) BROWSER_CHOICE="firefox" ;;
+                    3) BROWSER_CHOICE="aucun" ;;
+                    *) BROWSER_CHOICE="chromium" ;;
+                esac
             fi
         fi
 

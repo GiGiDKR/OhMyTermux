@@ -335,7 +335,7 @@ configure_xfce() {
     fi
 
     # Créer le répertoire de configuration si nécessaire
-    mkdir -p "$CONFIG_DIR"
+    mkdir -p "$CONFIG_DIR" >/dev/null 2>&1
 
     # Configurer le navigateur par défaut
     cat > "$CONFIG_DIR/xfce4-mime-settings.xml" << EOF
@@ -356,7 +356,7 @@ configure_xfce() {
 EOF
 
     # Créer le fichier mimeapps.list
-    mkdir -p "$HOME/.config"
+    mkdir -p "$HOME/.config" >/dev/null 2>&1
     cat > "$HOME/.config/mimeapps.list" << EOF
 [Default Applications]
 x-scheme-handler/http=$BROWSER_DESKTOP.desktop
@@ -372,7 +372,7 @@ application/xhtml+xml=$BROWSER_DESKTOP.desktop
 EOF
 
     # Configurer xfce4-terminal
-    mkdir -p "$HOME/.config/xfce4/terminal"
+    mkdir -p "$HOME/.config/xfce4/terminal" >/dev/null 2>&1
     cat > "$HOME/.config/xfce4/terminal/terminalrc" << EOF
 [Configuration]
 FontName=Monospace 11
@@ -415,8 +415,8 @@ EOF
 
     # Configurer xfce4-panel.xml si whiskermenu n'est pas installé
     if ! command -v xfce4-popup-whiskermenu &> /dev/null; then
-        sed -i 's/<property name="plugin-5" type="string" value="whiskermenu">/<property name="plugin-5" type="string" value="applicationsmenu">/' "$CONFIG_DIR/xfce4-panel.xml"
-        sed -i '/<property name="plugin-5".*whiskermenu/,/<\/property>/c\    <property name="plugin-5" type="string" value="applicationsmenu"/>' "$CONFIG_DIR/xfce4-panel.xml"
+        sed -i 's/<property name="plugin-5" type="string" value="whiskermenu">/<property name="plugin-5" type="string" value="applicationsmenu">/' "$CONFIG_DIR/xfce4-panel.xml" >/dev/null 2>&1
+        sed -i '/<property name="plugin-5".*whiskermenu/,/<\/property>/c\    <property name="plugin-5" type="string" value="applicationsmenu"/>' "$CONFIG_DIR/xfce4-panel.xml" >/dev/null 2>&1
     fi
 
     case "$INSTALL_TYPE" in
@@ -527,7 +527,7 @@ EOF
     esac
 
     # Appliquer les permissions
-    chmod 644 "$CONFIG_DIR"/*.xml
+    chmod 644 "$CONFIG_DIR"/*.xml >/dev/null 2>&1
 }
 
 #------------------------------------------------------------------------------
