@@ -232,7 +232,10 @@ subtitle_msg() {
 #------------------------------------------------------------------------------
 log_error() {
     local ERROR_MSG="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERREUR: $ERROR_MSG" >> "$HOME/.config/OhMyTermux/install.log"
+    local USERNAME=$(whoami)
+    local HOSTNAME=$(hostname)
+    local CWD=$(pwd)
+    echo "[$(date +'%d/%m/%Y %H:%M:%S')] ERREUR: $ERROR_MSG | Utilisateur: $USERNAME | Machine: $HOSTNAME | Répertoire: $CWD" >> "$HOME/.config/OhMyTermux/install.log"
 }
 
 #------------------------------------------------------------------------------
@@ -243,13 +246,15 @@ execute_command() {
     local INFO_MSG="$2"
     local SUCCESS_MSG="✓ $INFO_MSG"
     local ERROR_MSG="✗ $INFO_MSG"
+    local ERROR_DETAILS
 
     if $USE_GUM; then
         if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$INFO_MSG" -- bash -c "$COMMAND $REDIRECT"; then
             gum style "$SUCCESS_MSG" --foreground 82
         else
-            gum style "$ERROR_MSG" --foreground 196
-            log_error "$COMMAND"
+            ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
+            gum style "$ERROR_MSG - $ERROR_DETAILS" --foreground 196
+            log_error "$ERROR_DETAILS"
             return 1
         fi
     else
@@ -263,8 +268,9 @@ execute_command() {
         else
             tput rc
             tput el
-            error_msg "$ERROR_MSG"
-            log_error "$COMMAND"
+            ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
+            error_msg "$ERROR_MSG - $ERROR_DETAILS"
+            log_error "$ERROR_DETAILS"
             return 1
         fi
     fi
@@ -538,6 +544,11 @@ EOL" "Configuration des propriétés Termux"
 #------------------------------------------------------------------------------
 initial_config() {
     change_repo
+
+    # Mise à jour et mise à niveau des paquets en préservant les configurations existantes
+    execute_command "pkg update -y -o Dpkg::Options::=\"--force-confold\"" "Mise à jour des dépôts"
+    execute_command "pkg upgrade -y -o Dpkg::Options::=\"--force-confold\"" "Mise à niveau des paquets"
+
     setup_storage
 
     if $USE_GUM; then
@@ -629,7 +640,7 @@ install_shell() {
                     printf "${COLOR_BLUE}Installer PowerLevel10k ? (O/n) : ${COLOR_RESET}"
                     read -r CHOICE
                     if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
+                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" > /dev/null 2>&1 || true" "Installation de PowerLevel10k"
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (O/n) : ${COLOR_RESET}"
