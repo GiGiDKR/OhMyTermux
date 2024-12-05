@@ -263,6 +263,11 @@ WhiteSur-Wallpapers      # https://github.com/vinceliuice/WhiteSur-wallpapers
 
 </details>
 
+## Screenshots
+
+![Termux List](assets/termux_ls.png)
+![Debian PRoot](assets/debian_proot.png)
+
 &nbsp;
 
 > [!WARNING]
