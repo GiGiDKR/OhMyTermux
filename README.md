@@ -268,8 +268,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 ![Termux List](assets/termux_ls.png)
 ![Debian PRoot](assets/debian_proot.png)
 
-https://github.com/user-attachments/assets/ec49fc8d-bc69-4b95-ade4-5ca2ae57a105
-
 &nbsp;
 
 > [!WARNING]
@@ -340,3 +338,8 @@ Version 1.0.0 :
 
 > [!TIP]
 > 🚩 French version is [available](README_fr.md).
+
+## A short overview :
+
+https://github.com/user-attachments/assets/ec49fc8d-bc69-4b95-ade4-5ca2ae57a105
+
