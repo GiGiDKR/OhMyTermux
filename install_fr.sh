@@ -634,7 +634,7 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/zshrc" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/zshrc" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
 
                 if $USE_GUM; then
                     if gum_confirm "Installer PowerLevel10k ?"; then
@@ -642,7 +642,7 @@ install_shell() {
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         if gum_confirm "Installer le prompt personnalisé ?"; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -663,7 +663,7 @@ install_shell() {
                         tput cuu1
                         tput el
                         if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt OhMyTermux" || error_msg "Impossible d'installer le prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation du prompt OhMyTermux" || error_msg "Impossible d'installer le prompt OhMyTermux"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -672,9 +672,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && \
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/aliases.zsh && \
                                 mkdir -p $HOME/.config/OhMyTermux && \
-                                curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
+                                curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/help.md)" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -1168,7 +1168,7 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce_dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce_dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
         execute_command "chmod +x xfce_dev.sh" "Exécution du script XFCE"
         
         if $USE_GUM; then
@@ -1282,7 +1282,7 @@ install_proot() {
         if $USE_GUM; then
             if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
                 execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
                 ./proot_dev.sh --gum
             fi
@@ -1293,7 +1293,7 @@ install_proot() {
             tput el
             if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
                 execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
                 ./proot_dev.sh
             fi
@@ -1320,9 +1320,9 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     title_msg "❯ Configuration des utilitaires"
-    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
-    execute_command "chmod +x utils.sh" "Exécution du script Utils"
-    ./utils.sh
+    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils_fr.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+    execute_command "chmod +x utils_fr.sh" "Exécution du script Utils"
+    ./utils_fr.sh
 
     if ! USERNAME=$(get_username); then
         error_msg "Impossible de récupérer le nom d'utilisateur."
@@ -1509,7 +1509,7 @@ fi
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-rm -f xfce_dev.sh proot_dev.sh utils.sh install_dev.sh >/dev/null 2>&1
+rm -f xfce_fr.sh proot_fr.sh utils_fr.sh install_fr.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Rechargement du shell

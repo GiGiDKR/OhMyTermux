@@ -2,8 +2,18 @@
 
 set -euo pipefail
 
+#------------------------------------------------------------------------------
+# GLOBAL VARIABLES
+#------------------------------------------------------------------------------
 USE_GUM=false
 VERBOSE=false
+INSTALL_THEME=false
+INSTALL_ICONS=false
+INSTALL_WALLPAPERS=false
+INSTALL_CURSORS=false
+SELECTED_THEME=""
+SELECTED_ICON_THEME=""
+SELECTED_WALLPAPER=""
 
 #------------------------------------------------------------------------------
 # DISPLAY COLORS
@@ -18,37 +28,37 @@ COLOR_RESET='\033[0m'         # Reset
 # REDIRECTION
 #------------------------------------------------------------------------------
 if [ "$VERBOSE" = false ]; then
-    redirect=">/dev/null 2>&1"
+    REDIRECT=">/dev/null 2>&1"
 else
-    redirect=""
+    REDIRECT=""
 fi
 
 #------------------------------------------------------------------------------
-# SHOW HELP
+# DISPLAY HELP
 #------------------------------------------------------------------------------
 show_help() {
     clear
-    echo "OhMyTermux help"
-    echo
+    echo "OhMyTermux Help"
+    echo 
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
-    echo "  --gum | -g     Use gum for the UI"
-    echo "  --verbose | -v Show detailed outputs"
-    echo "  --help | -h    Show this help message"
+    echo "  --gum | -g     Use gum for the user interface"
+    echo "  --verbose | -v Display detailed outputs"
+    echo "  --help | -h    Display this help message"
 }
 
 #------------------------------------------------------------------------------
 # ARGUMENTS MANAGEMENT
 #------------------------------------------------------------------------------
-for arg in "$@"; do
-    case $arg in
+for ARG in "$@"; do
+    case $ARG in
         --gum|-g)
             USE_GUM=true
             shift
             ;;
         --verbose|-v)
             VERBOSE=true
-            redirect=""
+            REDIRECT=""
             shift
             ;;
         --help|-h)
@@ -120,34 +130,46 @@ subtitle_msg() {
 # ERROR LOGGING
 #------------------------------------------------------------------------------
 log_error() {
-    local error_msg="$1"
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $error_msg" >> "$HOME/.config/OhMyTermux/install.log"
+    local ERROR_MSG="$1"
+    local USERNAME=$(whoami)
+    local HOSTNAME=$(hostname)
+    local CWD=$(pwd)
+    echo "[$(date +'%d/%m/%Y %H:%M:%S')] ERREUR: $ERROR_MSG | Utilisateur: $USERNAME | Machine: $HOSTNAME | Répertoire: $CWD" >> "$HOME/.config/OhMyTermux/install.log"
 }
 
 #------------------------------------------------------------------------------
-# DYNAMIC DISPLAY OF A COMMAND RESULT
+# DYNAMIC DISPLAY OF THE RESULT OF A COMMAND
 #------------------------------------------------------------------------------
 execute_command() {
-    local command="$1"
-    local info_msg="$2"
-    local success_msg="✓ $info_msg"
-    local error_msg="✗ $info_msg"
+    local COMMAND="$1"
+    local INFO_MSG="$2"
+    local SUCCESS_MSG="✓ $INFO_MSG"
+    local ERROR_MSG="✗ $INFO_MSG"
+    local ERROR_DETAILS
 
     if $USE_GUM; then
-        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$info_msg" -- bash -c "$command $redirect"; then
-            gum style "$success_msg" --foreground 82
+        if gum spin --spinner.foreground="33" --title.foreground="33" --spinner dot --title "$INFO_MSG" -- bash -c "$COMMAND $REDIRECT"; then
+            gum style "$SUCCESS_MSG" --foreground 82
         else
-            gum style "$error_msg" --foreground 196
-            log_error "$command"
+            ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
+            gum style "$ERROR_MSG - $ERROR_DETAILS" --foreground 196
+            log_error "$ERROR_DETAILS"
             return 1
         fi
     else
-        info_msg "$info_msg"
-        if eval "$command $redirect"; then
-            success_msg "$success_msg"
+        tput sc
+        info_msg "$INFO_MSG"
+        
+        if eval "$COMMAND $REDIRECT"; then
+            tput rc
+            tput el
+            success_msg "$SUCCESS_MSG"
         else
-            error_msg "$error_msg"
-            log_error "$command"
+            tput rc
+            tput el
+            ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
+            error_msg "$ERROR_MSG - $ERROR_DETAILS"
+            log_error "$ERROR_DETAILS"
             return 1
         fi
     fi
@@ -171,7 +193,7 @@ check_dependencies() {
 }
 
 #------------------------------------------------------------------------------
-# TEXT BANNER
+# DISPLAY THE BANNER IN TEXT MODE
 #------------------------------------------------------------------------------
 bash_banner() {
     clear
@@ -187,7 +209,7 @@ bash_banner() {
 
 
 #------------------------------------------------------------------------------
-# BANNER DISPLAY
+# DISPLAY THE BANNER
 #------------------------------------------------------------------------------
 show_banner() {
     clear
@@ -209,8 +231,8 @@ show_banner() {
 # ERROR MANAGEMENT
 #------------------------------------------------------------------------------
 finish() {
-    local ret=$?
-    if [ ${ret} -ne 0 ] && [ ${ret} -ne 130 ]; then
+    local RET=$?
+    if [ ${RET} -ne 0 ] && [ ${RET} -ne 130 ]; then
         echo
         if [ "$USE_GUM" = true ]; then
             gum style --foreground 196 "ERROR : Installation of OhMyTermux impossible."
@@ -227,9 +249,9 @@ trap finish EXIT
 # INSTALLATION OF PROOT PACKAGES
 #------------------------------------------------------------------------------
 install_packages_proot() {
-    local pkgs_proot=('sudo' 'wget' 'nala' 'xfconf')
-    for pkg in "${pkgs_proot[@]}"; do
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $pkg -y" "Installation de $pkg"
+    local PKGS_PROOT=('sudo' 'wget' 'nala' 'xfconf')
+    for PKG in "${PKGS_PROOT[@]}"; do
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $PKG -y" "Installation de $PKG"
     done
 }
 
@@ -240,26 +262,26 @@ create_user_proot() {
     execute_command "
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd storage
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 groupadd wheel
-        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash '$username'
-        echo '$username:$password' | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chpasswd
+        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 useradd -m -g users -G wheel,audio,video,storage -s /bin/bash '$USERNAME'
+        echo '$USERNAME:$PASSWORD' | proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 chpasswd
     " "Création de l'utilisateur"
 }
 
 #------------------------------------------------------------------------------
-# CONFIGURATION OF USER RIGHTS
+# CONFIGURATION OF THE USER RIGHTS
 #------------------------------------------------------------------------------
 configure_user_rights() {
     execute_command "
         # Add the user to the sudo group
-        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 usermod -aG sudo '$username'
-        
+        proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 usermod -aG sudo '$USERNAME'
+
         # Create the sudoers.d file for the user
-        echo '$username ALL=(ALL) NOPASSWD: ALL' > '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$username'
-        chmod 0440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$username'
-        
+        echo '$USERNAME ALL=(ALL) NOPASSWD: ALL' > '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$USERNAME'
+        chmod 0440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$USERNAME'
+
         # Configure the main sudoers file
         echo '%sudo ALL=(ALL:ALL) ALL' >> '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
-        
+
         # Check permissions
         chmod 440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
         chown root:root '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
@@ -270,15 +292,80 @@ configure_user_rights() {
 # INSTALLATION OF MESA-VULKAN
 #------------------------------------------------------------------------------
 install_mesa_vulkan() {
-    local mesa_package="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
-    local mesa_url="https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/$mesa_package"
-    
+    local MESA_PACKAGE="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
+    local MESA_URL="https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/$MESA_PACKAGE"
+
     if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dpkg -s mesa-vulkan-kgsl &> /dev/null; then
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $mesa_url" "Downloading Mesa-Vulkan"
-        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$mesa_package" "Installing Mesa-Vulkan"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $MESA_URL" "Downloading Mesa-Vulkan"
+        execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$MESA_PACKAGE" "Installing Mesa-Vulkan"
     else
         info_msg "Mesa-Vulkan is already installed."
     fi
+}
+
+#------------------------------------------------------------------------------
+# CONFIGURATION OF THEMES AND ICONS
+#------------------------------------------------------------------------------
+configure_themes_and_icons() {
+    # Load the configuration from the temporary file
+    if [ -f "$HOME/.config/OhMyTermux/theme_config.tmp" ]; then
+        source "$HOME/.config/OhMyTermux/theme_config.tmp"
+    fi
+
+    # Create the necessary directories
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes"
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons"
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur"
+
+    # Copy the themes if installed
+    if [ "$INSTALL_THEME" = true ] && [ -n "$SELECTED_THEME" ]; then
+        case $SELECTED_THEME in
+            "WhiteSur")
+                execute_command "cp -r $PREFIX/share/themes/WhiteSur-Dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration of the WhiteSur theme"
+                ;;
+            "Fluent")
+                execute_command "cp -r $PREFIX/share/themes/Fluent-dark-compact $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration of the Fluent theme"
+                ;;
+            "Lavanda")
+                execute_command "cp -r $PREFIX/share/themes/Lavanda-dark-compact $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration of the Lavanda theme"
+                ;;
+        esac
+    fi
+
+    # Copy the icons if installed
+    if [ "$INSTALL_ICONS" = true ] && [ -n "$SELECTED_ICON_THEME" ]; then
+        case $SELECTED_ICON_THEME in
+            "WhiteSur")
+                execute_command "cp -r $PREFIX/share/icons/WhiteSur-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration of the WhiteSur icons"
+                ;;
+            "McMojave-circle")
+                execute_command "cp -r $PREFIX/share/icons/McMojave-circle-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration of the McMojave icons"
+                ;;
+            "Tela")
+                execute_command "cp -r $PREFIX/share/icons/Tela-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration of the Tela icons"
+                ;;
+            "Fluent")
+                execute_command "cp -r $PREFIX/share/icons/Fluent-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration of the Fluent icons"
+                ;;
+            "Qogir")
+                execute_command "cp -r $PREFIX/share/icons/Qogir-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration of the Qogir icons"
+                ;;
+        esac
+    fi
+
+    # Copy the wallpapers if installed
+    if [ "$INSTALL_WALLPAPERS" = true ]; then
+        execute_command "cp -r $PREFIX/share/backgrounds/whitesur/* $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur/" "Configuration of the wallpapers"
+    fi
+
+    # Copy the cursors if installed
+    if [ "$INSTALL_CURSORS" = true ]; then
+        execute_command "cp -r $PREFIX/share/icons/dist $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration of the cursors"
+        execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration of the dark cursors"
+    fi
+
+    # Delete the temporary configuration file
+    rm -f "$HOME/.config/OhMyTermux/theme_config.tmp"
 }
 
 #------------------------------------------------------------------------------
@@ -289,59 +376,73 @@ title_msg "❯ Installation of Debian Proot"
 
 if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
-        username=$(gum input --prompt "Username: " --placeholder "Enter your username")
+        USERNAME=$(gum input --prompt "Username: " --placeholder "Enter a username")
         while true; do
-            password=$(gum input --password --prompt "Password: " --placeholder "Enter your password")
-            password_confirm=$(gum input --password --prompt "Confirm password: " --placeholder "Enter your password again")
-            if [ "$password" = "$password_confirm" ]; then
+            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Enter a password")
+            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirm the password")
+            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                gum style --foreground "#FF0000" "Passwords do not match. Please try again."
+                gum style --foreground "#FF0000" "The passwords do not match. Please try again."
             fi
         done
     else
-        echo -e "${COLOR_BLUE}Enter your username: ${COLOR_RESET}"
-        read -r username
+        echo -e "${COLOR_BLUE}Enter a username: ${COLOR_RESET}"
+        read -r USERNAME
+        tput cuu1
+        tput el
         while true; do
-            echo -e "${COLOR_BLUE}Enter your password: ${COLOR_RESET}"
-            read -rs password
-            echo -e "${COLOR_BLUE}Confirm your password: ${COLOR_RESET}"
-            read -rs password_confirm
-            if [ "$password" = "$password_confirm" ]; then
+            echo -e "${COLOR_BLUE}Enter a password: ${COLOR_RESET}"
+            read -rs PASSWORD
+            tput cuu1
+            tput el
+            echo -e "${COLOR_BLUE}Confirm the password: ${COLOR_RESET}"
+            read -rs PASSWORD_CONFIRM
+            tput cuu1
+            tput el 
+            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                echo -e "${COLOR_RED}Passwords do not match. Please try again.${COLOR_RESET}"
+                echo -e "${COLOR_RED}The passwords do not match. Please try again.${COLOR_RESET}"
+                tput cuu1
+                tput el
             fi
         done
     fi
 elif [ $# -eq 1 ]; then
-    username="$1"
+    USERNAME="$1"
     if [ "$USE_GUM" = true ]; then
         while true; do
-            password=$(gum input --password --prompt "Password: " --placeholder "Enter your password")
-            password_confirm=$(gum input --password --prompt "Confirm password: " --placeholder "Enter your password again")
-            if [ "$password" = "$password_confirm" ]; then
+            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Enter a password")
+            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirm the password")
+            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                gum style --foreground "#FF0000" "Passwords do not match. Please try again."
+                gum style --foreground "#FF0000" "The passwords do not match. Please try again."
             fi
         done
     else
         while true; do
-            echo -e "${COLOR_BLUE}Enter your password: ${COLOR_RESET}"
-            read -rs password
-            echo -e "${COLOR_BLUE}Confirm your password: ${COLOR_RESET}"
-            read -rs password_confirm
-            if [ "$password" = "$password_confirm" ]; then
+            echo -e "${COLOR_BLUE}Enter a password: ${COLOR_RESET}"
+            read -rs PASSWORD
+            tput cuu1
+            tput el
+            echo -e "${COLOR_BLUE}Confirm the password: ${COLOR_RESET}"
+            read -rs PASSWORD_CONFIRM
+            tput cuu1
+            tput el
+            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                echo -e "${COLOR_RED}Passwords do not match. Please try again.${COLOR_RESET}"
+                echo -e "${COLOR_RED}The passwords do not match. Please try again.${COLOR_RESET}"
+                tput cuu1
+                tput el
             fi
         done
     fi
 elif [ $# -eq 2 ]; then
-    username="$1"
-    password="$2"
+    USERNAME="$1"
+    PASSWORD="$2"
 else
     show_help
     exit 1
@@ -370,28 +471,18 @@ configure_user_rights
 #------------------------------------------------------------------------------
 # CONFIGURATION OF THE TIMEZONE
 #------------------------------------------------------------------------------
-timezone=$(getprop persist.sys.timezone)
+TIMEZONE=$(getprop persist.sys.timezone)
 execute_command "
     proot-distro login debian -- rm /etc/localtime
-    proot-distro login debian -- cp /usr/share/zoneinfo/$timezone /etc/localtime
+    proot-distro login debian -- cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 " "Configuration of the timezone"
 
 #------------------------------------------------------------------------------
-# CONFIGURATION OF ICONS AND THEMES
+# GRAPHICAL CONFIGURATION
 #------------------------------------------------------------------------------
-mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
-execute_command "cp -r $PREFIX/share/icons/WhiteSur $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/WhiteSur" "Configuration of icons"
+configure_themes_and_icons
 
 #------------------------------------------------------------------------------
-# CONFIGURATION OF CURSORS
+# INSTALLATION OF MESA-VULKAN
 #------------------------------------------------------------------------------
-execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$username/.Xresources
-Xcursor.theme: WhiteSur
-EOF" "Configuration of cursors"
-
-#------------------------------------------------------------------------------
-# CONFIGURATION OF THEMES AND FONTS
-#------------------------------------------------------------------------------
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 bash -c \"mkdir -p /home/$username/.fonts/ /home/$username/.themes/\"" "Configuration of themes and fonts"
-
 install_mesa_vulkan

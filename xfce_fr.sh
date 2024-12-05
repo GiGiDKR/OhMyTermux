@@ -1031,7 +1031,7 @@ main() {
     fi
 
     # Pré-configuration XFCE
-    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/config.zip" "Téléchargement de la configuration XFCE"
+    download_file "https://github.com/GiGiDKR/OhMyTermux/raw/1.0.0/src/config.zip" "Téléchargement de la configuration XFCE"
     execute_command "unzip -o config.zip && \
                 rm config.zip" "Installation de la configuration"
 
