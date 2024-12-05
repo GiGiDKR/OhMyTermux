@@ -1,4 +1,4 @@
-![Logo OhMyTermux](assets/logo.jpg)
+ ![Logo OhMyTermux](assets/logo.jpg)
 
 # OhMyTermux 🧊
 
@@ -19,7 +19,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
-### About this program 
+## About this program 
+
+### Termux
 
 <details>
 
@@ -131,73 +133,131 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 [^2]: Optionally integrated into the main script
 [^3]: In development (no release date yet)
 
-## **XFCE and Debian**
+### **XFCE**
 
-Setup an [XFCE](https://wiki.termux.com/wiki/Graphical_Environment#XFCE) desktop for native Termux or a [Debian PRoot](https://wiki.termux.com/wiki/PRoot) installation.
+- Setup an [XFCE](https://wiki.termux.com/wiki/Graphical_Environment#XFCE) desktop for native Termux.
 
-Using [Termux-X11](https://github.com/termux/termux-x11) is preferred over VNC. The Termux-x11 server will be installed as well as the Android APK.
+  - Using [Termux-X11](https://github.com/termux/termux-x11) is preferred over VNC. The Termux-x11 server will be installed as well as the Android APK.
 
-Three XFCE configurations are available:
-- Minimal: only the necessary packages (`termux-x11-nightly` ` virglrenderer-android` ` xfce4` ` xfce4-terminal` )
-- Recommended: with a selection of packages ( 'pavucontrol-qt'
-'wmctrl'
-'netcat-openbsd'
-'thunar-archive-plugin'
-'xfce4-whiskermenu-plugin'
-'xfce4-notifyd'
-'xfce4-screenshooter'
-'xfce4-taskmanager' ) and the following interface elements:
-WhiteSur-gtk-theme
-WhiteSur-icon-theme
-Fluent-cursors
-WhiteSur-wallpapers
-- Custom: the contents of the Minimal installation + the choice among :
-'pavucontrol-qt' # Sound Control
-'wmctrl' # Window Control
-'netcat-openbsd' # Network Utility
-'thunar-archive-plugin' # Archives
-'xfce4-whiskermenu-plugin' # Whisker Menu
-'xfce4-notifyd' # Notifications
-'xfce4-screenshooter' # Screenshot
-'xfce4-taskmanager' # Task Manager
-'gigolo' # File Manager
-'jq' # JSON Utility
-'mousepad' # Text Editor
-'netcat-openbsd' # Network Utility
-'parole' # Media Player
-'pavucontrol-qt' # Sound Control
-'ristretto' # Image Manager
-'thunar-archive-plugin' # Archives
-'thunar-media-tags-plugin' # Media
-'wmctrl' # Window Control
-'xfce4-artwork' # Artwork
-'xfce4-battery-plugin' # Battery
-'xfce4-clipman-plugin' # Clipboard
-'xfce4-cpugraph-plugin' # CPU Graph
-'xfce4-datetime-plugin' # Date and Time
-'xfce4-dict' # Dictionary
-'xfce4-diskperf-plugin' # Disk Performance
-'xfce4-fsguard-plugin' # Disk Monitoring
-'xfce4-genmon-plugin' # Generic Widgets
-'xfce4-mailwatch-plugin' # Mail Monitoring
-'xfce4-netload-plugin' # Network Loading
-'xfce4-notes-plugin' # Notes
-'xfce4-notifyd' # Notifications
-'xfce4-places-plugin' # Places
-'xfce4-screenshooter' # Screenshot
-'xfce4-taskmanager' # Task Manager
-'xfce4-systemload-plugin' # System Load
-'xfce4-timer-plugin' # Timer
-'xfce4-wavelan-plugin' # Wi-Fi
-'xfce4-weather-plugin' # Weather Information
-'xfce4-whiskermenu-plugin' # Whisker Menu
+  - 3 XFCE configurations are available :
+    <details>
 
-Set up a termux XFCE desktop and a Debian proot install.
-This setup uses Termux-X11, the termux-x11 server will be installed and you will be prompted to allow termux to install the Android APK.
-You only need to pick your username and follow the prompts.
+    <summary>Minimal</summary>
+    
+    Only the necessary packages :
+    ```
+    termux-x11-nightly
+    virglrenderer-android
+    xfce4
+    xfce4-terminal
+    ```
+    </details>
+
+    <details>
+
+    <summary>Recommended</summary>
+ 
+    Minimal installation + following packages :
+    ```
+    netcat-openbsd            # Network Utility
+    pavucontrol-qt            # Sound Control
+    thunar-archive-plugin     # Archives
+    wmctrl                    # Window Control 
+    xfce4-notifyd             # Notifications
+    xfce4-screenshooter       # Screenshot
+    xfce4-taskmanagerb        # Task Manager
+    xfce4-whiskermenu-plugin  # Whisker Menu
+    ```
+    And the following interface elements :
+    ```
+    WhiteSur-gtk-theme
+    WhiteSur-icon-theme
+    Fluent-cursors
+    WhiteSur-wallpapers
+    ```
+    </details>
+
+    <details>
+ 
+    <summary>Custom</summary>
+    
+    The contents of the Minimal installation + the choice among :
+    ```
+    pavucontrol-qt            # Sound Control
+    wmctrl                    # Window Control 
+    netcat-openbsd            # Network Utility
+    thunar-archive-plugin     # Archives
+    xfce4-whiskermenu-plugin  # Whisker Menu
+    xfce4-notifyd             # Notifications
+    xfce4-screenshooter       # Screenshot
+    xfce4-taskmanagerb        # Task Manager
+    gigolo'                   # File Manager
+    jq'                       # JSON Utility
+    mousepad'                 # Text Editor
+    netcat-openbsd'           # Network Utility
+    parole'                   # Media Player
+    pavucontrol-qt'           # Sound Control
+    ristretto'                # Image Manager
+    thunar-archive-plugin'    # Archives
+    thunar-media-tags-plugin' # Media
+    wmctrl                    # Window Control
+    xfce4-artwork             # Artwork
+    xfce4-battery-plugin      # Battery
+    xfce4-clipman-plugin      # Clipboard
+    xfce4-cpugraph-plugin'    # CPU Graph
+    xfce4-datetime-plugin'    # Date and Time
+    xfce4-dict'               # Dictionary
+    xfce4-diskperf-plugin'    # Disk Performance
+    xfce4-fsguard-plugin'     # Disk Monitoring
+    xfce4-genmon-plugin'      # Generic Widgets
+    xfce4-mailwatch-plugin'   # Mail Monitoring
+    xfce4-netload-plugin'     # Network Loading
+    xfce4-notes-plugin'       # Notes
+    xfce4-notifyd'            # Notifications
+    xfce4-places-plugin'      # Places
+    xfce4-screenshooter'      # Screenshot
+    xfce4-taskmanager'        # Task Manager
+    xfce4-systemload-plugin'  # System Load
+    xfce4-timer-plugin'       # Timer
+    xfce4-wavelan-plugin'     # Wi-Fi
+    xfce4-weather-plugin'     # Weather Information
+    xfce4-whiskermenu-plugin' # Whisker Menu
+    ```
+    The choice among following interface elements :
+    
+    Theme :
+    ```
+    WhiteSur
+    Fluent
+    Lavanda
+     ```
+    Icons :
+     ```
+     WhiteSur
+     McMojave-circle
+     Tela
+     Fluent
+     Qogir
+     ```
+     Cursors :
+     ```
+     Fluent
+     ```
+     Wallpapers :
+     ```
+     WhiteSur-wallpapers
+     ```
+    </details>
+
+- The ability to install a web browser, either [Chromium](https://www.chromium.org/) or Firefox.
 
 > [!IMPORTANT]
-> This will take roughly 4GB of storage space
+> The recommended installation uses approximately **4 GB** of disk space
+
+### Debian
+[Debian PRoot](https://wiki.termux.com/wiki/PRoot) installation
+
+## Usage
 
 <details>
   
