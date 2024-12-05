@@ -247,7 +247,7 @@ trap finish EXIT
 # INSTALLATION DES PAQUETS PROOT
 #------------------------------------------------------------------------------
 install_packages_proot() {
-    local PKGS_PROOT=('sudo' 'wget' 'nala' 'xfconf')
+    local PKGS_PROOT=('sudo' 'wget' 'nala' 'xfconf' 'gnome-themes-extra')
     for PKG in "${PKGS_PROOT[@]}"; do
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $PKG -y" "Installation de $PKG"
     done
@@ -311,9 +311,13 @@ configure_themes_and_icons() {
     fi
 
     # Créer les répertoires nécessaires
-    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes"
-    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons"
-    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur"
+    execute_command "
+        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes\"
+        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons\"
+        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur\"
+        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$USERNAME/.fonts/\"
+        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$USERNAME/.themes/\"
+    " "Création des répertoires"
 
     # Copier les thèmes si installés
     if [ "$INSTALL_THEME" = true ] && [ -n "$SELECTED_THEME" ]; then
@@ -356,10 +360,15 @@ configure_themes_and_icons() {
         execute_command "cp -r $PREFIX/share/backgrounds/whitesur/* $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur/" "Configuration des fonds d'écran"
     fi
 
-    # Copier les curseurs si installés
+    # Configuration des curseurs
     if [ "$INSTALL_CURSORS" = true ]; then
-        execute_command "cp -r $PREFIX/share/icons/dist $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des curseurs"
-        execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des curseurs sombres"
+        cd "$PREFIX/share/icons"
+        execute_command "find dist-dark | cpio -pdm \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons\"" "Configuration des curseurs"
+        
+        # Configuration du fichier .Xresources
+        cat << EOF > "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$USERNAME/.Xresources"
+Xcursor.theme: dist-dark
+EOF
     fi
 
     # Supprimer le fichier de configuration temporaire
