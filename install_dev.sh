@@ -547,6 +547,7 @@ initial_config() {
 
     # Mise à jour et mise à niveau des paquets en préservant les configurations existantes
     clear
+    show_banner
     execute_command "pkg update -y -o Dpkg::Options::=\"--force-confold\"" "Mise à jour des dépôts"
     execute_command "pkg upgrade -y -o Dpkg::Options::=\"--force-confold\"" "Mise à niveau des paquets"
 
