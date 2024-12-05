@@ -6,6 +6,8 @@
 
 ## Installation
 
+First install [Termux](https://github.com/termux) from [F-Droid](https://f-droid.org/en/packages/com.termux) or [GitHub](https://github.com/termux/termux-app). The Play-Store version was no longer maintained until recently, so it is [available](https://play.google.com/store/apps/details?id=com.termux&pcampaignid=web_share).
+
 >[!IMPORTANT]
 > [Gum](https://github.com/charmbracelet/gum) allows simplified use of CLI scripts, **_it is recommended_** to use it by adding the `--gum` or `-g` argument.
 
@@ -18,6 +20,18 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
+
+>[!NOTE]
+> It is possible to execute functions independently (and combine them) :
+> - Shell installation    : `--shell | sh`
+> - Packages installation : `--package | pkg`
+> - Fonts installation    : `--font | f`
+> - XFCE                  : `--xfce | -x`
+> - Debian PRoot          : `--proot | -p`
+> - Skip initial conf     : `--skip` or `-sk`
+> - Detailed outputs      : `--verbose | -v`
+> - Help section          : `--help | -h`
+&nbsp;
 
 ## About this program 
 
@@ -137,7 +151,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
 - Setup an [XFCE](https://wiki.termux.com/wiki/Graphical_Environment#XFCE) desktop for native Termux.
 
-  - Using [Termux-X11](https://github.com/termux/termux-x11) is preferred over VNC. The Termux-x11 server will be installed as well as the Android APK.
+  - Using [Termux-X11](https://github.com/termux/termux-x11) is preferred over VNC. The Termux-x11 server will be installed as well as the Android APK. You will receive a pop-up window allowing you to allow installations from Termux. If you do not wish to allow this, install the APK by searching for it in your Download directory.
 
   - 3 XFCE configurations are available :
     <details>
@@ -170,10 +184,10 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
     ```
     And the following interface elements :
     ```
-    WhiteSur-gtk-theme
-    WhiteSur-icon-theme
-    Fluent-cursors
-    WhiteSur-wallpapers
+    [WhiteSur-Theme](https://github.com/vinceliuice/WhiteSur-gtk-theme)
+    [WhiteSur-Icon](https://github.com/vinceliuice/WhiteSur-icon-theme)
+    [Fluent-Cursors](https://github.com/vinceliuice/Fluent-cursors)
+    [WhiteSur-Wallpapers](https://github.com/vinceliuice/WhiteSur-wallpapers)
     ```
     </details>
 
@@ -183,70 +197,62 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
     
     The contents of the Minimal installation + the choice among :
     ```
-    pavucontrol-qt            # Sound Control
-    wmctrl                    # Window Control 
+    jq                        # JSON Utility
+    gigolo                    # File Manager
+    mousepad                  # Text Editor
     netcat-openbsd            # Network Utility
+    parole                    # Media Player
+    pavucontrol-qt            # Sound Control
+    ristretto                 # Image Manager
     thunar-archive-plugin     # Archives
-    xfce4-whiskermenu-plugin  # Whisker Menu
-    xfce4-notifyd             # Notifications
-    xfce4-screenshooter       # Screenshot
-    xfce4-taskmanagerb        # Task Manager
-    gigolo'                   # File Manager
-    jq'                       # JSON Utility
-    mousepad'                 # Text Editor
-    netcat-openbsd'           # Network Utility
-    parole'                   # Media Player
-    pavucontrol-qt'           # Sound Control
-    ristretto'                # Image Manager
-    thunar-archive-plugin'    # Archives
-    thunar-media-tags-plugin' # Media
+    thunar-media-tags-plugin  # Media
     wmctrl                    # Window Control
     xfce4-artwork             # Artwork
     xfce4-battery-plugin      # Battery
     xfce4-clipman-plugin      # Clipboard
-    xfce4-cpugraph-plugin'    # CPU Graph
-    xfce4-datetime-plugin'    # Date and Time
-    xfce4-dict'               # Dictionary
-    xfce4-diskperf-plugin'    # Disk Performance
-    xfce4-fsguard-plugin'     # Disk Monitoring
-    xfce4-genmon-plugin'      # Generic Widgets
-    xfce4-mailwatch-plugin'   # Mail Monitoring
-    xfce4-netload-plugin'     # Network Loading
-    xfce4-notes-plugin'       # Notes
-    xfce4-notifyd'            # Notifications
-    xfce4-places-plugin'      # Places
-    xfce4-screenshooter'      # Screenshot
-    xfce4-taskmanager'        # Task Manager
-    xfce4-systemload-plugin'  # System Load
-    xfce4-timer-plugin'       # Timer
-    xfce4-wavelan-plugin'     # Wi-Fi
-    xfce4-weather-plugin'     # Weather Information
-    xfce4-whiskermenu-plugin' # Whisker Menu
+    xfce4-cpugraph-plugin     # CPU Graph
+    xfce4-datetime-plugin     # Date and Time
+    xfce4-dict                # Dictionary
+    xfce4-diskperf-plugin     # Disk Performance
+    xfce4-fsguard-plugin      # Disk Monitoring
+    xfce4-genmon-plugin       # Generic Widgets
+    xfce4-mailwatch-plugin    # Mail Monitoring
+    xfce4-netload-plugin      # Network Loading
+    xfce4-notes-plugin        # Notes
+    xfce4-notifyd             # Notifications
+    xfce4-places-plugin       # Places
+    xfce4-screenshooter       # Screenshot
+    xfce4-taskmanager         # Task Manager
+    xfce4-systemload-plugin   # System Load
+    xfce4-timer-plugin        # Timer
+    xfce4-wavelan-plugin      # Wi-Fi
+    xfce4-weather-plugin      # Weather Information
+    xfce4-whiskermenu-plugin  # Whisker Menu
     ```
     The choice among following interface elements :
     
     Theme :
     ```
-    WhiteSur
-    Fluent
-    Lavanda
-     ```
+    [WhiteSur-Theme](https://github.com/vinceliuice/WhiteSur-gtk-theme)
+    [Fluent-Theme](https://github.com/vinceliuice/Fluent-gtk-theme)
+    [Lavanda-Theme](https://github.com/vinceliuice/Lavanda-gtk-theme) 
+    ```
     Icons :
-     ```
-     WhiteSur
-     McMojave-circle
-     Tela
-     Fluent
-     Qogir
-     ```
-     Cursors :
-     ```
-     Fluent
-     ```
-     Wallpapers :
-     ```
-     WhiteSur-wallpapers
-     ```
+    ```
+    [WhiteSur-Icon](https://github.com/vinceliuice/WhiteSur-icon-theme)
+    [McMojave-Circle](https://github.com/vinceliuice/McMojave-circle-icon-theme)
+    [Tela-Icon](https://github.com/vinceliuice/Tela-icon-theme)
+    [Fluent-Icon](https://github.com/vinceliuice/Fluent-icon-theme)
+    [Qogir-Icon](https://github.com/vinceliuice/Qogir-icon-theme)
+    ```
+    Cursors :
+    ```
+    [Fluent-Cursors](https://github.com/vinceliuice/Fluent-cursors)
+    ```
+    Wallpapers :
+    ```
+    [WhiteSur-Wallpapers](https://github.com/vinceliuice/WhiteSur-wallpapers)
+    ```
     </details>
 
 - The ability to install a web browser, either [Chromium](https://www.chromium.org/) or Firefox.
@@ -255,7 +261,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 > The recommended installation uses approximately **4 GB** of disk space
 
 ### Debian
-[Debian PRoot](https://wiki.termux.com/wiki/PRoot) installation
+[Debian PRoot](https://wiki.termux.com/wiki/PRoot) installation with an [application installer](https://github.com/GiGiDKR/App-Installer) that are unavailable with Termux or Debian package managers.
 
 ## Usage
 
@@ -263,15 +269,11 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
   
 <summary>🧊 Starting the desktop</summary>
 
-You will recieve a popup to allow installs from termux, this will open the APK for the Termux-X11 android app. While you do not have to allow installs from termux, you will still need to install manually by using a file browser and finding the APK in your downloads folder.
+Pour lancer une session Termux-X11, utilisez la commande ```start```
 
-Use the command ```start``` to initiate a Termux-X11 session.
+Cela démarrera le serveur Termux-x11, le bureau XFCE4 et ouvrira l'application Termux-X11.
 
-This will start the termux-x11 server, XFCE4 desktop and open the Termux-X11 app right into the desktop.
-
-To enter the Debian proot install from terminal use the command ```debian```
-
-Also note, you do not need to set display in Debian proot as it is already set. This means you can use the terminal to start any GUI application and it will startup.
+Pour accéder à l'installation de Debian PRoot à partir du terminal, utilisez la commande ```debian```
 
 </details>
 
@@ -340,107 +342,24 @@ Once it connects run the fix command :
 ## 💻 Version history
 
 <details>
-<summary>Version 0.0.1</summary>
-Initial upload
-</details> 
-
-<details>
-<summary>Version 0.0.2</summary>
-Command line interface changes
-</details> 
-
-<details>
-<summary>Version 0.0.3</summary>
-~~Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)~~ (Rollback)
-</details>
-
-<details>
-<summary>Version 0.0.4</summary>
-Optimization of the alias system according to package and shell selection
-</details> 
-
-<details>
-<summary>Version 0.0.5</summary>
-Adding packages to the selectable list
-</details> 
-  
-<details>
-<summary>Version 0.0.6</summary>
-Dynamic management of .zshrc configuration
-</details> 
-  
-<details>
-<summary>Version 0.0.7</summary>
-Global modification of the main script by splitting each step into a function that can be executed alone (or combined with others) with the addition of an argument to the execution command
-</details>
-
-<details>
-<summary>Version 0.0.8</summary>
-  
-  - Addition of the argument `--shell` to install a shell
-  - Addition of the argument `--package` to install packages
-  - Addition of the argument `--xfce` to install XFCE and Debian proot
-  - Addition of the argument `--font` to install fonts
-  - ~~Addition of the argument `--script` to install [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript) [^1]~~ (Rollback)
-  - Addition of the argument `--skip` to skip the initial configuration
-</details> 
-
-<details>
-<summary>Version 0.0.9</summary>
-Bug fixes and improvements
-</details> 
-  
-<details>
 <summary>Version 1.0.0</summary>
-  - Overall improvement of the script
-  - Addition of the creation of a password for the Debian proot user
-  - Implementation of a non-verbose execution when gum is not used
-  - Implementation of a system for displaying the result of the execution of commands (success/failure)
-  - :checkered_flag: The rest is in development
+  - Initial release
 </details>
 
 &nbsp;
 
 ## 📖 To Do
+- [X] Separate XFCE / Debian install to run native Termux XFCE
+- [X] Add selectable graphical interface elements (Themes, Fonts, Cursors, Wallpapers)
+- [X] Add a password for the Debian proot user
+- [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
+- [ ] Add more selectable packages
+- [ ] Add Python modules
+- [ ] Integrate a Termux theme selection
 - [ ] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
 - [ ] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
-- [ ] Integrate Fish configuration (Plugins, Prompts, Alias)
-- [ ] Add more selectable packages and Python modules
-- [ ] Integrate in main script theme selection (Color schemes)
-- [ ] Separate XFCE / Debian install to run native Termux XFCE
-- [ ] Add options for Debian (Themes, Fonts, Wallpapers)
-- [ ] Added an argument to not delete the main script in order to run it again
-- [ ] Create a $PREFIX/bin function for executing the preserved main script
 
 &nbsp;
 
 > [!TIP]
 > 🚩 French version is [available](README_fr.md).
-
-
-**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
-
-<details>
-
-<summary>List of optional installations</summary>
-
-- **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro with a [XFCE](https://www.xfce.org/) desktop and an **[App-Installer](https://github.com/GiGiDKR/App-Installer)** which are not available in package manager.
-
-- **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : A collection of useful scripts, executable from the main script or later. [^1]
-
-- **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Sync Obsidian on Android using Termux and Git. [^1]
-
-</details>
-
-
->[!NOTE]
-> It is possible to select functions independently (and combine them) :
-> - Shell installation : `--shell | sh`
-> - Packages installation : `--package | pkg`
-> - Fonts installation : `--font | f`
-> - XFCE / Debian-Proot : `--xfce | -x`
-> - Skip initial configuration : `--skip` or `-sk`
-> - :fuelpump: Full installation : `--full | -f`
-> - Show detailed outputs : `--verbose | -v`
-> - Help section : `--help | -h`
-&nbsp;
