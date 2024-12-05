@@ -687,6 +687,7 @@ install_shell() {
                 title_msg "❯ Configuration de Fish"
                 execute_command "pkg install -y fish" "Installation de Fish"
                 
+                #TODO
                 # Création du répertoire de configuration fish
                 #execute_command "mkdir -p $HOME/.config/fish/functions" "Création du répertoire fish"
                 

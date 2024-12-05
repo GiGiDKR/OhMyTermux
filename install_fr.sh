@@ -808,7 +808,7 @@ update_zshrc() {
     local ALL_PLUGINS="$DEFAULT_PLUGINS $FILTERED_PLUGINS"
 
     local PLUGINS_SECTION="plugins=(\n"
-    for PLUGIN in $ALL_PLUGINS; doOhMyTermux/install_dev.sh OhMyTermux/proot_dev.sh OhMyTermux/xfce_dev.sh OhMyTermux/utils.sh OhMyTermux/utils_fr.sh
+    for PLUGIN in $ALL_PLUGINS; do
         PLUGINS_SECTION+="    $PLUGIN\n"
     done
     PLUGINS_SECTION+=")\n"
