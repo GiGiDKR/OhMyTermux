@@ -40,7 +40,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install_fr.s
 
 ### Termux
 
-<détails>
+<details>
 
 <summary>Packages installés par défaut</summary>
 
@@ -49,9 +49,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install_fr.s
 - [git](https://github.com/git/git)
 - [unzip](https://en.m.wikipedia.org/wiki/ZIP_(file_format))
 
-</détails>
+</details>
 
-<détails>
+<details>
 
 <summary>Packages sélectionnables individuellement</summary>
 
@@ -72,9 +72,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install_fr.s
 - [lazygit](https://github.com/jesseduffield/lazygit)
 - [open-ssh](https://www.openssh.com/)
 
-</détails>
+</details>
 
-<détails>
+<details>
 
 <summary>Sélection du shell</summary>
 
@@ -82,9 +82,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install_fr.s
 - [ZSH](https://www.zsh.org/)
 - [Fish](https://github.com/fish-shell/fish-shell)
 
-</détails>
+</details>
 
-<détails>
+<details>
 
 <summary>Configuration Zsh</summary>
 
@@ -94,9 +94,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install_fr.s
 - [zsh-you-should-use](https://github.com/MichaelAquilina/zsh-you-should-use)
 - [zsh-alias-finder](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/alias-finder)
 
-</détails>
+</details>
 
-<détails>
+<details>
 
 <summary>Configuration de Fish</summary>
 
@@ -110,9 +110,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install_fr.s
 - [Poisson que vous devriez utiliser](https://github.com/paysonwallach/fish-you-should-use)
 - [Catppuccin pour poisson](https://github.com/catppuccin/fish)
 
-</détails>
+</details>
 
-<détails>
+<details>
 
 <summary>Affichage Termux</summary>
 
@@ -175,7 +175,7 @@ WhiteSur-Wallpapers      # https://github.com/vinceliuice/WhiteSur-wallpapers
 
 <details>
 
-<summary>Custom</summary>
+<summary>Personnalisée</summary>
 
 Le contenu de l'installation minimale + le choix parmi :
 ```
@@ -481,7 +481,7 @@ Il existe deux scripts disponibles pour cette configuration :
 > [!AVERTISSEMENT]
 > **Processus terminé (signal 9) - appuyez sur Entrée**
 
-<détails>
+<details>
 
 <summary>Comment corriger cette erreur Termux</summary>
 
