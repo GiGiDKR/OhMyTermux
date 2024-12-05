@@ -1168,13 +1168,13 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
         
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce_dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
-        execute_command "chmod +x xfce_dev.sh" "Exécution du script XFCE"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce_fr.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+        execute_command "chmod +x xfce_fr.sh" "Exécution du script XFCE"
         
         if $USE_GUM; then
-            ./xfce_dev.sh --gum --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
+            ./xfce_fr.sh --gum --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         else
-            ./xfce_dev.sh --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
+            ./xfce_fr.sh --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         fi
     fi
 }
@@ -1282,9 +1282,9 @@ install_proot() {
         if $USE_GUM; then
             if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
-                ./proot_dev.sh --gum
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
+                ./proot_fr.sh --gum
             fi
         else    
             printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
@@ -1293,9 +1293,9 @@ install_proot() {
             tput el
             if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
-                ./proot_dev.sh
+                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+                execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
+                ./proot_fr.sh
             fi
         fi
     fi
