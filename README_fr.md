@@ -172,7 +172,7 @@ Cette configuration utilise Termux-X11, le serveur termux-x11 sera installé et 
 Vous n'avez qu'à choisir votre nom d'utilisateur et suivre les instructions.
 
 > [!IMPORTANT]
-> Cela prendra environ 4 Go d'espace de stockage
+> Cela prendra environ 3,5 Go d'espace de stockage
 
 <details>
 

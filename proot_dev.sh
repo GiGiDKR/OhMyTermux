@@ -274,14 +274,14 @@ configure_user_rights() {
     execute_command "
         # Ajout de l'utilisateur au groupe sudo
         proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 usermod -aG sudo '$USERNAME'
-        
+
         # Création du fichier sudoers.d pour l'utilisateur
         echo '$USERNAME ALL=(ALL) NOPASSWD: ALL' > '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$USERNAME'
         chmod 0440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers.d/$USERNAME'
-        
+
         # Configuration du fichier sudoers principal
         echo '%sudo ALL=(ALL:ALL) ALL' >> '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
-        
+
         # Vérification des permissions
         chmod 440 '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
         chown root:root '$PREFIX/var/lib/proot-distro/installed-rootfs/debian/etc/sudoers'
@@ -294,7 +294,7 @@ configure_user_rights() {
 install_mesa_vulkan() {
     local MESA_PACKAGE="mesa-vulkan-kgsl_24.1.0-devel-20240120_arm64.deb"
     local MESA_URL="https://github.com/GiGiDKR/OhMyTermux/raw/dev/src/$MESA_PACKAGE"
-    
+
     if ! proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 dpkg -s mesa-vulkan-kgsl &> /dev/null; then
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 wget $MESA_URL" "Téléchargement de Mesa-Vulkan"
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 sudo apt install -y ./$MESA_PACKAGE" "Installation de Mesa-Vulkan"
@@ -478,16 +478,9 @@ execute_command "
 " "Configuration du fuseau horaire"
 
 #------------------------------------------------------------------------------
-# CONFIGURATION DES ICONES ET THÈMES
+# CONFIGURATION GRAPHIQUE
 #------------------------------------------------------------------------------
 configure_themes_and_icons
-
-#------------------------------------------------------------------------------
-# CONFIGURATION DES CURSEURS
-#------------------------------------------------------------------------------
-execute_command "cat <<'EOF' > $PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$USERNAME/.Xresources
-Xcursor.theme: WhiteSur
-EOF" "Configuration des curseurs"
 
 #------------------------------------------------------------------------------
 # INSTALLATION DE MESA-VULKAN
