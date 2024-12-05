@@ -6,3 +6,5 @@ fish.sh
 xfce-debian-FR.sh
 assets/pictures
 src/.config
+src/wallpaper
+*-FR.sh
