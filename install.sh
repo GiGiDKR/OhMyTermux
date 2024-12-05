@@ -73,18 +73,18 @@ show_help() {
     echo
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
-    echo " --gum | -g Use gum for user interface"
-    echo " --verbose | -v Show verbose output"
-    echo " --shell | -sh Shell installation module"
-    echo " --package | -pkg Package installation module"
-    echo " --font | -f Font installation module"
-    echo " --xfce | -x XFCE installation module"
-    echo " --proot | -p Debian Proot installation module"
-    echo " --x11 | -x11 Termux-X11 Proot installation module"
-    echo " --skip | -sk Skip initial configuration"
-    echo " --uninstall| -u Uninstall Debian Proot"
-    echo " --full | -f Install all modules without confirmation"
-    echo " --help | -h Show this help message"
+    echo " --gum | -g        Use gum for user interface"
+    echo " --verbose | -v    Show verbose output"
+    echo " --shell | -sh     Shell installation module"
+    echo " --package | -pk   Package installation module"
+    echo " --font | -f       Font installation module"
+    echo " --xfce | -x       XFCE installation module"
+    echo " --proot | -pr     Debian Proot installation module"
+    echo " --x11             Termux-X11 installation module"
+    echo " --skip | -sk      Skip initial configuration"
+    echo " --uninstall| -u   Uninstall Debian Proot"
+    echo " --full | -f       Install all modules without confirmation"
+    echo " --help | -h       Show this help message"
 }
 
 #------------------------------------------------------------------------------
@@ -101,12 +101,12 @@ for arg in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --package|-pkg)
+        --package|-pk)
             PACKAGES_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
-        --make)
+        --font|-f)
             FONT_CHOICE=true
             ONLY_GUM=false
             shift
@@ -121,7 +121,7 @@ for arg in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --x11|-x11)
+        --x11)
             X11_CHOICE=true
             ONLY_GUM=false
             shift
@@ -139,7 +139,7 @@ for arg in "$@"; do
             redirect=""
             shift
             ;;
-        --full)
+        --full|-f)
             FULL_INSTALL=true
             SHELL_CHOICE=true
             PACKAGES_CHOICE=true

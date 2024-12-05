@@ -25,15 +25,15 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 > It is possible to execute functions independently (and combine them) :
 >
 > ```
-> --shell | -sh       # Shell selection
-> --package | -pk     # Packages installation
-> --xfce | -x         # XFCE installation
-> --proot | -pr       # Debian PRoot installation
-> --font | f          # Font selection
-> --x11 | -x          # Termux-X11 installation
-> --skip | -sk        # Skip initial configuration
-> --verbose | -v      # Detailed outputs
-> --help | -h         # Show help
+> --shell | -sh           # Shell selection
+> --package | -pk         # Packages installation
+> --xfce | -x             # XFCE installation
+> --proot | -pr           # Debian PRoot installation
+> --font | f              # Font selection
+> --x11 | -x              # Termux-X11 installation
+> --skip | -sk            # Skip initial configuration
+> --verbose | -v          # Detailed outputs
+> --help | -h             # Show help
 > ```
 
 ## About this program 
@@ -142,10 +142,10 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
     
     Only the necessary packages :
     ```
-    termux-x11-nightly       # Termux-X11
-    virglrenderer-android    # VirGL
-    xfce4                    # XFCE
-    xfce4-terminal           # Terminal
+    termux-x11-nightly        # Termux-X11
+    virglrenderer-android     # VirGL
+    xfce4                     # XFCE
+    xfce4-terminal            # Terminal
     ```
     </details>
 
@@ -166,10 +166,10 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
     ```
     And the following interface elements :
     ```
-    [WhiteSur-Theme](https://github.com/vinceliuice/WhiteSur-gtk-theme)
-    [WhiteSur-Icon](https://github.com/vinceliuice/WhiteSur-icon-theme)
-    [Fluent-Cursors](https://github.com/vinceliuice/Fluent-cursors)
-    [WhiteSur-Wallpapers](https://github.com/vinceliuice/WhiteSur-wallpapers)
+    WhiteSur-Theme            # https://github.com/vinceliuice/WhiteSur-gtk-theme
+    WhiteSur-Icon             # https://github.com/vinceliuice/WhiteSur-icon-theme
+    Fluent-Cursors            # https://github.com/vinceliuice/Fluent-cursors
+    WhiteSur-Wallpapers       # https://github.com/vinceliuice/WhiteSur-wallpapers
     ```
     </details>
 
@@ -215,25 +215,25 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
     
     Theme :
     ```
-    [WhiteSur-Theme](https://github.com/vinceliuice/WhiteSur-gtk-theme)
-    [Fluent-Theme](https://github.com/vinceliuice/Fluent-gtk-theme)
-    [Lavanda-Theme](https://github.com/vinceliuice/Lavanda-gtk-theme) 
+    WhiteSur-Theme            # https://github.com/vinceliuice/WhiteSur-gtk-theme
+    Fluent-Theme              # https://github.com/vinceliuice/Fluent-gtk-theme
+    Lavanda-Theme             # https://github.com/vinceliuice/Lavanda-gtk-theme 
     ```
     Icons :
     ```
-    [WhiteSur-Icon](https://github.com/vinceliuice/WhiteSur-icon-theme)
-    [McMojave-Circle](https://github.com/vinceliuice/McMojave-circle-icon-theme)
-    [Tela-Icon](https://github.com/vinceliuice/Tela-icon-theme)
-    [Fluent-Icon](https://github.com/vinceliuice/Fluent-icon-theme)
-    [Qogir-Icon](https://github.com/vinceliuice/Qogir-icon-theme)
+    WhiteSur-Icon             # https://github.com/vinceliuice/WhiteSur-icon-theme
+    McMojave-Circle           # https://github.com/vinceliuice/McMojave-circle-icon-theme
+    Tela-Icon                 # https://github.com/vinceliuice/Tela-icon-theme
+    Fluent-Icon               # https://github.com/vinceliuice/Fluent-icon-theme
+    Qogir-Icon                # https://github.com/vinceliuice/Qogir-icon-theme
     ```
     Cursors :
     ```
-    [Fluent-Cursors](https://github.com/vinceliuice/Fluent-cursors)
+    Fluent-Cursors            # https://github.com/vinceliuice/Fluent-cursors
     ```
     Wallpapers :
     ```
-    [WhiteSur-Wallpapers](https://github.com/vinceliuice/WhiteSur-wallpapers)
+    WhiteSur-Wallpapers       # https://github.com/vinceliuice/WhiteSur-wallpapers
     ```
     </details>
 
