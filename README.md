@@ -1,61 +1,29 @@
 ![Logo OhMyTermux](assets/logo.jpg)
 
-> [!CAUTION]
-> :warning: This project is under development, use it at your own risk.
-> 
-> :construction: Current status of project : **beta v1** <sup>(under development)</sup>
-> 
-> :information_source: *I am just a coding hobbyist with some sys admin skills so I learn from my mistakes that you will see* 👀
-
-
 # OhMyTermux 🧊
 
-**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
-
-<details>
-
-<summary>List of optional installations</summary>
-
-- **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro with a [XFCE](https://www.xfce.org/) desktop and an **[App-Installer](https://github.com/GiGiDKR/App-Installer)** which are not available in package manager.
-
-- **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : A collection of useful scripts, executable from the main script or later. [^1]
-
-- **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Sync Obsidian on Android using Termux and Git. [^1]
-
-</details>
+### **From selecting a shell to applying a cursor pack to performing stylish clicks in a complete Debian development environment that fits in your pocket  : dozens of parameters are available in [OhMyTermux](https://github.com/GiGiDKR/OhMyTermux).**
 
 ## Installation
 
-🧊 To install **OhMyTermux**
-```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
-```
-
 >[!IMPORTANT]
-> **[Gum](https://github.com/charmbracelet/gum) allows simplified use of CLI scripts, _it is recommended_ to use it by adding the `--gum` or `-g` argument.**
+> [Gum](https://github.com/charmbracelet/gum) allows simplified use of CLI scripts, **_it is recommended_** to use it by adding the `--gum` or `-g` argument.
 
 🔥 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
->[!NOTE]
-> It is possible to select functions independently (and combine them) :
-> - Shell installation : `--shell | sh`
-> - Packages installation : `--package | pkg`
-> - Fonts installation : `--font | f`
-> - XFCE / Debian-Proot : `--xfce | -x`
-> - Skip initial configuration : `--skip` or `-sk`
-> - :fuelpump: Full installation : `--full | -f`
-> - Show detailed outputs : `--verbose | -v`
-> - Help section : `--help | -h`
-&nbsp;
+🧊 Or to run a version that tries to get closer to simplicity and clarity
+```bash
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+```
 
 ### About this program 
 
 <details>
 
-<summary>🧊 Packages installed by default</summary>
+<summary>Packages installed by default</summary>
 
 - [wget](https://github.com/mirror/wget)
 - [curl](https://github.com/curl/curl)
@@ -66,7 +34,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
 <details>
 
-<summary>🧊 Individually selectable packages</summary>
+<summary>Individually selectable packages</summary>
 
 - [nala](https://github.com/volitank/nala)
 - [eza](https://github.com/eza-community/eza)
@@ -89,7 +57,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
 <details>
 
-<summary> 🧊 Shell selection</summary>
+<summary>Shell selection</summary>
 
 - [Bash](https://git.savannah.gnu.org/cgit/bash.git/)
 - [ZSH](https://www.zsh.org/)
@@ -99,7 +67,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
  
 <details>
 
-<summary>🧊🧊 Zsh configuration</summary>
+<summary>Zsh configuration</summary>
 
 - [Oh-My-Zsh](https://github.com/ohmyzsh/ohmyzsh)
 - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
@@ -111,7 +79,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
     
 <details>
 
-<summary>🧊🧊 Fish configuration</summary>
+<summary>Fish configuration</summary>
 
 - [Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)
 - [Fisher](https://github.com/jorgebucaran/fisher)
@@ -127,7 +95,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
  
 <details>
 
-<summary>🧊 Termux Display</summary>
+<summary>Termux Display</summary>
 
 - [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) 
 - [Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
@@ -137,7 +105,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
  
 <details>
 
-<summary>🧊 Termux configuration</summary>
+<summary>Termux configuration</summary>
 
 - Custom aliases (common aliases + specific aliases depending on the package or plugin installed)
 - Symlink to internal storage user directories
@@ -146,7 +114,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
   
 <details>
 
-<summary>🧊 OhMyTermuxScript</summary>
+<summary>OhMyTermuxScript</summary>
   
 - Theme Selector
 - Nerd Fonts Installer
@@ -163,9 +131,66 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 [^2]: Optionally integrated into the main script
 [^3]: In development (no release date yet)
 
-&nbsp;
-
 ## **XFCE and Debian**
+
+Setup an [XFCE](https://wiki.termux.com/wiki/Graphical_Environment#XFCE) desktop for native Termux or a [Debian PRoot](https://wiki.termux.com/wiki/PRoot) installation.
+
+Using [Termux-X11](https://github.com/termux/termux-x11) is preferred over VNC. The Termux-x11 server will be installed as well as the Android APK.
+
+Three XFCE configurations are available:
+- Minimal: only the necessary packages (`termux-x11-nightly` ` virglrenderer-android` ` xfce4` ` xfce4-terminal` )
+- Recommended: with a selection of packages ( 'pavucontrol-qt'
+'wmctrl'
+'netcat-openbsd'
+'thunar-archive-plugin'
+'xfce4-whiskermenu-plugin'
+'xfce4-notifyd'
+'xfce4-screenshooter'
+'xfce4-taskmanager' ) and the following interface elements:
+WhiteSur-gtk-theme
+WhiteSur-icon-theme
+Fluent-cursors
+WhiteSur-wallpapers
+- Custom: the contents of the Minimal installation + the choice among :
+'pavucontrol-qt' # Sound Control
+'wmctrl' # Window Control
+'netcat-openbsd' # Network Utility
+'thunar-archive-plugin' # Archives
+'xfce4-whiskermenu-plugin' # Whisker Menu
+'xfce4-notifyd' # Notifications
+'xfce4-screenshooter' # Screenshot
+'xfce4-taskmanager' # Task Manager
+'gigolo' # File Manager
+'jq' # JSON Utility
+'mousepad' # Text Editor
+'netcat-openbsd' # Network Utility
+'parole' # Media Player
+'pavucontrol-qt' # Sound Control
+'ristretto' # Image Manager
+'thunar-archive-plugin' # Archives
+'thunar-media-tags-plugin' # Media
+'wmctrl' # Window Control
+'xfce4-artwork' # Artwork
+'xfce4-battery-plugin' # Battery
+'xfce4-clipman-plugin' # Clipboard
+'xfce4-cpugraph-plugin' # CPU Graph
+'xfce4-datetime-plugin' # Date and Time
+'xfce4-dict' # Dictionary
+'xfce4-diskperf-plugin' # Disk Performance
+'xfce4-fsguard-plugin' # Disk Monitoring
+'xfce4-genmon-plugin' # Generic Widgets
+'xfce4-mailwatch-plugin' # Mail Monitoring
+'xfce4-netload-plugin' # Network Loading
+'xfce4-notes-plugin' # Notes
+'xfce4-notifyd' # Notifications
+'xfce4-places-plugin' # Places
+'xfce4-screenshooter' # Screenshot
+'xfce4-taskmanager' # Task Manager
+'xfce4-systemload-plugin' # System Load
+'xfce4-timer-plugin' # Timer
+'xfce4-wavelan-plugin' # Wi-Fi
+'xfce4-weather-plugin' # Weather Information
+'xfce4-whiskermenu-plugin' # Whisker Menu
 
 Set up a termux XFCE desktop and a Debian proot install.
 This setup uses Termux-X11, the termux-x11 server will be installed and you will be prompted to allow termux to install the Android APK.
@@ -331,3 +356,31 @@ Bug fixes and improvements
 
 > [!TIP]
 > 🚩 French version is [available](README_fr.md).
+
+
+**Automated and custom installation of [Termux](https://github.com/termux) : packages, shell, plugins, prompts, fonts and themes selectable.**
+
+<details>
+
+<summary>List of optional installations</summary>
+
+- **[OhMyTermuxXFCE](https://github.com/GiGiDKR/OhMyTermux/edit/main/README.md#-xfce-and-debian-)** : A customized [Debian](https://www.debian.org/) proot-distro with a [XFCE](https://www.xfce.org/) desktop and an **[App-Installer](https://github.com/GiGiDKR/App-Installer)** which are not available in package manager.
+
+- **[OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)** : A collection of useful scripts, executable from the main script or later. [^1]
+
+- **[OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)** : Sync Obsidian on Android using Termux and Git. [^1]
+
+</details>
+
+
+>[!NOTE]
+> It is possible to select functions independently (and combine them) :
+> - Shell installation : `--shell | sh`
+> - Packages installation : `--package | pkg`
+> - Fonts installation : `--font | f`
+> - XFCE / Debian-Proot : `--xfce | -x`
+> - Skip initial configuration : `--skip` or `-sk`
+> - :fuelpump: Full installation : `--full | -f`
+> - Show detailed outputs : `--verbose | -v`
+> - Help section : `--help | -h`
+&nbsp;
