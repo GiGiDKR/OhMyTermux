@@ -265,7 +265,7 @@ WhiteSur-Wallpapers      # https://github.com/vinceliuice/WhiteSur-wallpapers
 
 &nbsp;
 
-> [!AVERTISSEMENT]
+> [!WARNING]
 > **Processus terminé (signal 9) - appuyez sur Entrée**
 
 <details>
