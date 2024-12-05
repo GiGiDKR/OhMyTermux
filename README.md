@@ -36,10 +36,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 > --help | -h             # Show help
 > ```
 
-## Screenshots
-
- ![Debian PRoot](assets/debian.png)
-
 ## About this program 
 
 ### Termux
@@ -266,6 +262,13 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
   - ```cp2menu``` Running this will pop up a window allowing you to copy .desktop files from debian proot into the termux xfce "start" menu so you won't need to launch them from terminal. A launcher is available in the System menu section.
 
 </details>
+
+## Screenshots
+
+![Termux List](assets/termux_ls.png)
+![Debian PRoot](assets/debian_proot.png)
+
+https://github.com/user-attachments/assets/ec49fc8d-bc69-4b95-ade4-5ca2ae57a105
 
 &nbsp;
 
