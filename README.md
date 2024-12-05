@@ -36,6 +36,10 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 > --help | -h             # Show help
 > ```
 
+## Screenshots
+
+ ![Debian PRoot](assets/debian.png)
+
 ## About this program 
 
 ### Termux
