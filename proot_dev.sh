@@ -2,8 +2,18 @@
 
 set -euo pipefail
 
+#------------------------------------------------------------------------------
+# VARIABLES GLOBALES
+#------------------------------------------------------------------------------
 USE_GUM=false
 VERBOSE=false
+INSTALL_THEME=false
+INSTALL_ICONS=false
+INSTALL_WALLPAPERS=false
+INSTALL_CURSORS=false
+SELECTED_THEME=""
+SELECTED_ICON_THEME=""
+SELECTED_WALLPAPER=""
 
 #------------------------------------------------------------------------------
 # COULEURS D'AFFICHAGE
@@ -294,6 +304,71 @@ install_mesa_vulkan() {
 }
 
 #------------------------------------------------------------------------------
+# CONFIGURATION DES THÈMES ET ICÔNES
+#------------------------------------------------------------------------------
+configure_themes_and_icons() {
+    # Charger la configuration depuis le fichier temporaire
+    if [ -f "$HOME/.config/OhMyTermux/theme_config.tmp" ]; then
+        source "$HOME/.config/OhMyTermux/theme_config.tmp"
+    fi
+
+    # Créer les répertoires nécessaires
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes"
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons"
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur"
+
+    # Copier les thèmes si installés
+    if [ "$INSTALL_THEME" = true ] && [ -n "$SELECTED_THEME" ]; then
+        case $SELECTED_THEME in
+            "WhiteSur")
+                execute_command "cp -r $PREFIX/share/themes/WhiteSur-Dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration du thème WhiteSur"
+                ;;
+            "Fluent")
+                execute_command "cp -r $PREFIX/share/themes/Fluent-dark-compact $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration du thème Fluent"
+                ;;
+            "Lavanda")
+                execute_command "cp -r $PREFIX/share/themes/Lavanda-dark-compact $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration du thème Lavanda"
+                ;;
+        esac
+    fi
+
+    # Copier les icônes si installées
+    if [ "$INSTALL_ICONS" = true ] && [ -n "$SELECTED_ICON_THEME" ]; then
+        case $SELECTED_ICON_THEME in
+            "WhiteSur")
+                execute_command "cp -r $PREFIX/share/icons/WhiteSur-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes WhiteSur"
+                ;;
+            "McMojave-circle")
+                execute_command "cp -r $PREFIX/share/icons/McMojave-circle-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes McMojave"
+                ;;
+            "Tela")
+                execute_command "cp -r $PREFIX/share/icons/Tela-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes Tela"
+                ;;
+            "Fluent")
+                execute_command "cp -r $PREFIX/share/icons/Fluent-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes Fluent"
+                ;;
+            "Qogir")
+                execute_command "cp -r $PREFIX/share/icons/Qogir-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes Qogir"
+                ;;
+        esac
+    fi
+
+    # Copier les fonds d'écran si installés
+    if [ "$INSTALL_WALLPAPERS" = true ]; then
+        execute_command "cp -r $PREFIX/share/backgrounds/whitesur/* $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur/" "Configuration des fonds d'écran"
+    fi
+
+    # Copier les curseurs si installés
+    if [ "$INSTALL_CURSORS" = true ]; then
+        execute_command "cp -r $PREFIX/share/icons/dist $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des curseurs"
+        execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des curseurs sombres"
+    fi
+
+    # Supprimer le fichier de configuration temporaire
+    rm -f "$HOME/.config/OhMyTermux/theme_config.tmp"
+}
+
+#------------------------------------------------------------------------------
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 check_dependencies
@@ -405,8 +480,7 @@ execute_command "
 #------------------------------------------------------------------------------
 # CONFIGURATION DES ICONES ET THÈMES
 #------------------------------------------------------------------------------
-mkdir -p $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons
-execute_command "cp -r $PREFIX/share/icons/WhiteSur $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/WhiteSur" "Configuration des icônes"
+configure_themes_and_icons
 
 #------------------------------------------------------------------------------
 # CONFIGURATION DES CURSEURS

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+set -euo pipefail
+
+#------------------------------------------------------------------------------
+# VARIABLES GLOBALES
+#------------------------------------------------------------------------------
 USE_GUM=false
 VERBOSE=false
 BROWSER="chromium"
@@ -198,7 +203,7 @@ finish() {
         else
             echo -e "${COLOR_RED}ERREUR: Installation de OhMyTermux impossible.${COLOR_RESET}"
         fi
-        echo -e "${COLOR_BLUE}Veuillez vous référer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Veuillez vous rférer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
     fi
 }
 
@@ -531,6 +536,22 @@ EOF
 }
 
 #------------------------------------------------------------------------------
+# SAUVEGARDE DE LA CONFIGURATION DES THÈMES
+#------------------------------------------------------------------------------
+save_theme_config() {
+    mkdir -p "$HOME/.config/OhMyTermux"
+    cat > "$HOME/.config/OhMyTermux/theme_config.tmp" << EOF
+INSTALL_THEME=$INSTALL_THEME
+INSTALL_ICONS=$INSTALL_ICONS
+INSTALL_WALLPAPERS=$INSTALL_WALLPAPERS
+INSTALL_CURSORS=$INSTALL_CURSORS
+SELECTED_THEME="$SELECTED_THEME"
+SELECTED_ICON_THEME="$SELECTED_ICON_THEME"
+SELECTED_WALLPAPER="$SELECTED_WALLPAPER"
+EOF
+}
+
+#------------------------------------------------------------------------------
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 main() {
@@ -609,6 +630,11 @@ main() {
             INSTALL_ICONS=true
             INSTALL_WALLPAPERS=true
             INSTALL_CURSORS=true
+            SELECTED_THEMES=("WhiteSur")
+            SELECTED_ICON_THEMES=("WhiteSur")
+            SELECTED_THEME="WhiteSur"
+            SELECTED_ICON_THEME="WhiteSur"
+            SELECTED_WALLPAPER="Monterey"
             ;;
         "personnalisée")
             PKGS=("${BASE_PKGS[@]}")
@@ -1011,6 +1037,9 @@ main() {
 
     # Post-configuration XFCE
     configure_xfce "$INSTALL_TYPE"
+
+    # Sauvegarder la configuration des thèmes
+    save_theme_config
 }
 
 main "$@"

@@ -1,7 +1,9 @@
 #!/bin/bash
 
+set -euo pipefail
+
 #------------------------------------------------------------------------------
-# VARIABLES DE CONTROLE PRINCIPALE
+# VARIABLES GLOBALES
 #------------------------------------------------------------------------------
 # Interface interactive avec gum
 USE_GUM=false
