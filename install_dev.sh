@@ -1320,9 +1320,9 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     title_msg "❯ Configuration des utilitaires"
-    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
-    execute_command "chmod +x utils.sh" "Exécution du script Utils"
-    ./utils.sh
+    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils_fr.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+    execute_command "chmod +x utils_fr.sh" "Exécution du script Utils"
+    ./utils_fr.sh
 
     if ! USERNAME=$(get_username); then
         error_msg "Impossible de récupérer le nom d'utilisateur."
@@ -1509,7 +1509,7 @@ fi
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-rm -f xfce_dev.sh proot_dev.sh utils.sh install_dev.sh >/dev/null 2>&1
+rm -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Rechargement du shell
