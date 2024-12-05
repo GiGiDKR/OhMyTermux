@@ -6,32 +6,35 @@
 
 ## Installation
 
-First install [Termux](https://github.com/termux) from [F-Droid](https://f-droid.org/en/packages/com.termux) or [GitHub](https://github.com/termux/termux-app). The Play-Store version was no longer maintained until recently, so it is [available](https://play.google.com/store/apps/details?id=com.termux&pcampaignid=web_share).
+1. Install Termux from [F-Droid](https://f-droid.org/en/packages/com.termux) or [GitHub](https://github.com/termux/termux-app). Otherwise use the [Play Store](https://play.google.com/store/apps/details?id=com.termux&pcampaignid=web_share) version which was recently updated.
 
->[!IMPORTANT]
-> [Gum](https://github.com/charmbracelet/gum) allows simplified use of CLI scripts, **_it is recommended_** to use it by adding the `--gum` or `-g` argument.
-
-🔥 To install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)**
+2. Install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)** 🔥 :
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
-🧊 Or to run a version that tries to get closer to simplicity and clarity
+>[!IMPORTANT]
+> [Gum](https://github.com/charmbracelet/gum) allows simplified use of CLI scripts, **_it is recommended_** to use it by adding the `--gum` or `-g` argument.
+
+2. [ALT] Install OhMyTermux without Gum 🧊 :
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 >[!NOTE]
 > It is possible to execute functions independently (and combine them) :
-> - Shell installation    : `--shell | sh`
-> - Packages installation : `--package | pkg`
-> - Fonts installation    : `--font | f`
-> - XFCE                  : `--xfce | -x`
-> - Debian PRoot          : `--proot | -p`
-> - Skip initial conf     : `--skip` or `-sk`
-> - Detailed outputs      : `--verbose | -v`
-> - Help section          : `--help | -h`
-&nbsp;
+>
+> ```
+> --shell | -sh       # Shell selection
+> --package | -pk     # Packages installation
+> --xfce | -x         # XFCE installation
+> --proot | -pr       # Debian PRoot installation
+> --font | f          # Font selection
+> --x11 | -x          # Termux-X11 installation
+> --skip | -sk        # Skip initial configuration
+> --verbose | -v      # Detailed outputs
+> --help | -h         # Show help
+> ```
 
 ## About this program 
 
@@ -114,7 +117,6 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 <summary>Termux Display</summary>
 
 - [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) 
-- [Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
   
 </details>
@@ -124,46 +126,26 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 <summary>Termux configuration</summary>
 
 - Custom aliases (common aliases + specific aliases depending on the package or plugin installed)
-- Symlink to internal storage user directories
   
 </details>
-  
-<details>
-
-<summary>OhMyTermuxScript</summary>
-  
-- Theme Selector
-- Nerd Fonts Installer
-- App-Installer (VSCode, PyCharm, Obsidian...)
-- Native Termux XFCE4 desktop on Termux-X11
-- Oh-My-Zsh [^2]
-- Oh-My-Posh [^1]
-- Electron Node.js
-- XDRP (native Termux or proot-distro)
-  
-</details>
- 
-[^1]: In development :coming in version 1.0
-[^2]: Optionally integrated into the main script
-[^3]: In development (no release date yet)
 
 ### **XFCE**
 
 - Setup an [XFCE](https://wiki.termux.com/wiki/Graphical_Environment#XFCE) desktop for native Termux.
 
-  - Using [Termux-X11](https://github.com/termux/termux-x11) is preferred over VNC. The Termux-x11 server will be installed as well as the Android APK. You will receive a pop-up window allowing you to allow installations from Termux. If you do not wish to allow this, install the APK by searching for it in your Download directory.
+- Using [Termux-X11](https://github.com/termux/termux-x11) is preferred over VNC. The Termux-x11 server will be installed as well as the Android APK. You will receive a pop-up window allowing you to allow installations from Termux. If you do not wish to allow this, install the APK by searching for it in your Download directory.
 
-  - 3 XFCE configurations are available :
+- 3 configurations are available :
     <details>
 
     <summary>Minimal</summary>
     
     Only the necessary packages :
     ```
-    termux-x11-nightly
-    virglrenderer-android
-    xfce4
-    xfce4-terminal
+    termux-x11-nightly       # Termux-X11
+    virglrenderer-android    # VirGL
+    xfce4                    # XFCE
+    xfce4-terminal           # Terminal
     ```
     </details>
 
@@ -265,29 +247,19 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
 ## Usage
 
-<details>
-  
-<summary>🧊 Starting the desktop</summary>
+🧊 Starting the desktop
 
-Pour lancer une session Termux-X11, utilisez la commande ```start```
+- To start a Termux-X11 session, use ```start```
 
-Cela démarrera le serveur Termux-x11, le bureau XFCE4 et ouvrira l'application Termux-X11.
+- To access the Debian PRoot installation from the terminal, use ```debian```
 
-Pour accéder à l'installation de Debian PRoot à partir du terminal, utilisez la commande ```debian```
+🧊 Debain Proot
 
-</details>
+- There are two scripts available for this setup :
 
-<details>
-  
-<summary>🧊 Debain Proot</summary>
+  - ```prun```  Running this followed by a command you want to run from the debian proot install will allow you to run stuff from the termux terminal without running ```debian``` to get into the proot itself.
 
-To enter proot use the command ```debian```, from there you can install aditional software with apt and use cp2menu in termux to copy the menu items over to termux xfce menu.
-
-There are two scripts available for this setup as well :
-
-```prun```  Running this followed by a command you want to run from the debian proot install will allow you to run stuff from the termux terminal without running ```debian``` to get into the proot itself.
-
-```cp2menu``` Running this will pop up a window allowing you to copy .desktop files from debian proot into the termux xfce "start" menu so you won't need to launch them from terminal. A launcher is available in the System menu section.
+  - ```cp2menu``` Running this will pop up a window allowing you to copy .desktop files from debian proot into the termux xfce "start" menu so you won't need to launch them from terminal. A launcher is available in the System menu section.
 
 </details>
 
@@ -341,10 +313,8 @@ Once it connects run the fix command :
 
 ## 💻 Version history
 
-<details>
-<summary>Version 1.0.0</summary>
-  - Initial release
-</details>
+Version 1.0.0 :
+ - Initial release
 
 &nbsp;
 
