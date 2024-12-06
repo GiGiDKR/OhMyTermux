@@ -795,7 +795,6 @@ main() {
             PKGS=("${BASE_PKGS[@]}")
             ;;
         "recommandée")
-            PKGS=("${BASE_PKGS[@]}" "${RECOMMENDED_PKGS[@]}")
             INSTALL_THEME=true
             INSTALL_ICONS=true
             INSTALL_WALLPAPERS=true
@@ -805,6 +804,8 @@ main() {
             SELECTED_THEME="WhiteSur"
             SELECTED_ICON_THEME="WhiteSur"
             SELECTED_WALLPAPER="Monterey"
+
+            PKGS=("${BASE_PKGS[@]}" "${RECOMMENDED_PKGS[@]}")
             ;;
         "personnalisée")
             PKGS=("${BASE_PKGS[@]}")
