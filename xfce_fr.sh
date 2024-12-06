@@ -625,84 +625,6 @@ install_cursors() {
 }
 
 #------------------------------------------------------------------------------
-# INSTALLATION DES PAQUETS XFCE
-#------------------------------------------------------------------------------
-install_xfce_packages() {
-    title_msg "❯ Installation des paquets XFCE"
-
-    execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
-
-    # Paquets de base
-    local BASE_PACKAGES=(
-        'xfce4'
-        'xfce4-terminal'
-        'xfce4-goodies'
-        'dbus'
-        'xorg-xhost'
-        'mesa'
-        'mesa-demos'
-        'virglrenderer-android'
-    )
-
-    # Paquets recommandés
-    local RECOMMENDED_PACKAGES=(
-        'thunar-archive-plugin'
-        'thunar-media-tags-plugin'
-        'xfce4-clipman-plugin'
-        'xfce4-datetime-plugin'
-        'xfce4-mount-plugin'
-        'xfce4-netload-plugin'
-        'xfce4-notes-plugin'
-        'xfce4-notifyd'
-        'xfce4-pulseaudio-plugin'
-        'xfce4-screenshooter'
-        'xfce4-taskmanager'
-        'xfce4-wavelan-plugin'
-        'xfce4-weather-plugin'
-        'xfce4-whiskermenu-plugin'
-        'xfce4-xkb-plugin'
-        'pavucontrol'
-        'network-manager-applet'
-        'galculator'
-        'mousepad'
-        'ristretto'
-        'parole'
-        'xarchiver'
-        'xfburn'
-        'evince'
-        'file-roller'
-        'gvfs'
-        'gvfs-mtp'
-        'system-config-printer'
-        'cups'
-        'cups-pdf'
-        'simple-scan'
-        'transmission-gtk'
-        'gimp'
-        'inkscape'
-        'audacious'
-        'vlc'
-    )
-
-    # Installation des paquets selon la version choisie
-    if [ "$XFCE_VERSION" = "minimale" ]; then
-        PACKAGES=("${BASE_PACKAGES[@]}")
-    else
-        PACKAGES=("${BASE_PACKAGES[@]}" "${RECOMMENDED_PACKAGES[@]}")
-    fi
-
-    # Installation des paquets
-    for PACKAGE in "${PACKAGES[@]}"; do
-        execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
-    done
-
-    # Installation du navigateur si spécifié
-    if [ -n "$BROWSER_CHOICE" ] && [ "$BROWSER_CHOICE" != "aucun" ]; then
-        execute_command "pkg install -y $BROWSER_CHOICE" "Installation de $BROWSER_CHOICE"
-    fi
-}
-
-#------------------------------------------------------------------------------
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 main() {
@@ -775,7 +697,7 @@ main() {
         "minimale")
             PKGS=("${BASE_PKGS[@]}")
             ;;
-        "recommand��e")
+        "recommandée")
             PKGS=("${BASE_PKGS[@]}" "${RECOMMENDED_PKGS[@]}")
             INSTALL_THEME=true
             INSTALL_ICONS=true
