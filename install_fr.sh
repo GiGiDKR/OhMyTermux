@@ -1198,7 +1198,7 @@ install_xfce() {
             if $USE_GUM; then
                 if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
                     # Choix de la version
-                    XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
+                    XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE �� installer :" --height=5 --selected="recommandée" \
                     "minimale" \
                     "recommandée" \
                     "personnalisée")
