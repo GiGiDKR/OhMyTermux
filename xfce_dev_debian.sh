@@ -1021,8 +1021,8 @@ main() {
         execute_command "apt-get install firefox -y" "Installation de Firefox"
         execute_command "mkdir -p $HOME/Desktop && cp /usr/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du raccourci Firefox"
     elif [ "$BROWSER" = "chromium" ]; then
-        execute_command "apt-get install chromium-browser -y" "Installation de Chromium"
-        execute_command "mkdir -p $HOME/Desktop && cp /usr/share/applications/chromium-browser.desktop $HOME/Desktop && chmod +x $HOME/Desktop/chromium-browser.desktop" "Configuration du raccourci Chromium"
+        execute_command "apt-get install chromium -y" "Installation de Chromium"
+        execute_command "mkdir -p $HOME/Desktop && cp /usr/share/applications/chromium.desktop $HOME/Desktop && chmod +x $HOME/Desktop/chromium.desktop" "Configuration du raccourci Chromium"
     fi
 
     # Installation des thèmes et éléments d'interface
