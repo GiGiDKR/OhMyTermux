@@ -578,6 +578,23 @@ EOL" "Configuration des propriétés Termux"
 # CONFIGURATION INITIALE
 #------------------------------------------------------------------------------
 initial_config() {
+    # Si on est en mode FULL_INSTALL, demander les identifiants au début
+    if $FULL_INSTALL; then
+        title_msg "❯ Configuration de Debian PRoot"
+        if [ -z "$PROOT_USERNAME" ]; then
+            if $USE_GUM; then
+                PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
+                PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
+            else
+                printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian PRoot : ${COLOR_RESET}"
+                read -r PROOT_USERNAME
+                printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
+                read -r -s PROOT_PASSWORD
+                echo
+            fi
+        fi
+    fi
+
     change_repo
 
     # Mise à jour et mise à niveau des paquets en préservant les configurations existantes
@@ -1157,65 +1174,72 @@ install_font() {
 #------------------------------------------------------------------------------
 install_xfce() {
     if $XFCE_CHOICE; then
-        local XFCE_VERSION
         title_msg "❯ Configuration de XFCE"
-        if $USE_GUM; then
-            if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
-                # Choix de la version
-                XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
-                "minimale" \
-                "recommandée" \
-                "personnalisée")
-            fi
-        else
-            printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
-            read -r -e -p "" -i "o" CHOICE
-            if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
-                echo
-                echo "1) Minimale"
-                echo "2) Recommandée"
-                echo "3) Personnalisée"
-                echo
-                printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
-                tput setaf 3
-                read -r -e -p "" -i "2" CHOICE
-                tput sgr0
-                tput cuu 7
-                tput ed
-                case $CHOICE in
-                    1) XFCE_VERSION="minimale" ;;
-                    2) XFCE_VERSION="recommandée" ;;
-                    3) XFCE_VERSION="personnalisée" ;;
-                    *) XFCE_VERSION="recommandée" ;;
-                esac
-            fi
-        fi
+        local XFCE_VERSION="recommandée"
+        local BROWSER_CHOICE="chromium"
 
-        # Sélection du navigateur (sauf pour la version minimale)
-        local BROWSER_CHOICE="aucun"
-        if [ "$XFCE_VERSION" != "minimale" ]; then
+        if ! $FULL_INSTALL; then
             if $USE_GUM; then
-                BROWSER_CHOICE=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
+                if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
+                    # Choix de la version
+                    XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
+                    "minimale" \
+                    "recommandée" \
+                    "personnalisée")
+
+                    # Sélection du navigateur (sauf pour la version minimale)
+                    if [ "$XFCE_VERSION" != "minimale" ]; then
+                        BROWSER_CHOICE=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
+                    fi
+                else
+                    return
+                fi
             else
-                echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
-                echo
-                echo "1) Chromium (par défaut)"
-                echo "2) Firefox"
-                echo "3) Aucun"
-                echo
-                printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
-                tput setaf 3
-                read -r -e -p "" -i "1" CHOICE
-                tput sgr0
-                tput cuu 7
-                tput ed
-                case $CHOICE in
-                    1) BROWSER_CHOICE="chromium" ;;
-                    2) BROWSER_CHOICE="firefox" ;;
-                    3) BROWSER_CHOICE="aucun" ;;
-                    *) BROWSER_CHOICE="chromium" ;;
-                esac
+                printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
+                    echo
+                    echo "1) Minimale"
+                    echo "2) Recommandée"
+                    echo "3) Personnalisée"
+                    echo
+                    printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                    tput setaf 3
+                    read -r -e -p "" -i "2" CHOICE
+                    tput sgr0
+                    tput cuu 7
+                    tput ed
+                    case $CHOICE in
+                        1) XFCE_VERSION="minimale" ;;
+                        2) XFCE_VERSION="recommandée" ;;
+                        3) XFCE_VERSION="personnalisée" ;;
+                        *) XFCE_VERSION="recommandée" ;;
+                    esac
+
+                    if [ "$XFCE_VERSION" != "minimale" ]; then
+                        echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
+                        echo
+                        echo "1) Chromium (par défaut)"
+                        echo "2) Firefox"
+                        echo "3) Aucun"
+                        echo
+                        printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                        tput setaf 3
+                        read -r -e -p "" -i "1" CHOICE
+                        tput sgr0
+                        tput cuu 7
+                        tput ed
+                        case $CHOICE in
+                            1) BROWSER_CHOICE="chromium" ;;
+                            2) BROWSER_CHOICE="firefox" ;;
+                            3) BROWSER_CHOICE="aucun" ;;
+                            *) BROWSER_CHOICE="chromium" ;;
+                        esac
+                    fi
+                else
+                    return
+                fi
             fi
         fi
 
@@ -1339,47 +1363,28 @@ install_proot() {
     if $PROOT_CHOICE; then
         title_msg "❯ Configuration de Proot"
         
-        # Demander les identifiants si on est en mode FULL_INSTALL et qu'ils ne sont pas déjà définis
-        if $FULL_INSTALL && [ -z "$PROOT_USERNAME" ]; then
-            if $USE_GUM; then
-                PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
-                PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
-            else
-                printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian PRoot : ${COLOR_RESET}"
-                read -r PROOT_USERNAME
-                printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
-                read -r -s PROOT_PASSWORD
-                echo
-            fi
-        fi
+        execute_command "pkg install proot-distro -y" "Installation de proot-distro"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+        execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
         
-        if $USE_GUM; then
-            if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-                execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
-                
-                # Si on est en mode FULL_INSTALL avec nom d'utilisateur et mot de passe
-                if $FULL_INSTALL && [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
-                    ./proot_fr.sh --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
-                else
+        # Si on est en mode FULL_INSTALL avec nom d'utilisateur et mot de passe
+        if $FULL_INSTALL && [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
+            if $USE_GUM; then
+                ./proot_fr.sh --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+            else
+                ./proot_fr.sh --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+            fi
+        else
+            if $USE_GUM; then
+                if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
                     ./proot_fr.sh --gum
                 fi
-            fi
-        else    
-            printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
-            read -r -e -p "" -i "o" CHOICE
-            tput cuu1
-            tput el
-            if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
-                
-                # Si on est en mode FULL_INSTALL avec nom d'utilisateur et mot de passe
-                if $FULL_INSTALL && [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
-                    ./proot_fr.sh --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
-                else
+            else    
+                printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                tput cuu1
+                tput el
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                     ./proot_fr.sh
                 fi
             fi
