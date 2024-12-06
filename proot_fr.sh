@@ -13,10 +13,6 @@ SELECTED_THEME=""
 SELECTED_ICON_THEME=""
 SELECTED_WALLPAPER=""
 
-# Variables pour l'utilisateur PRoot
-PROOT_USERNAME=""
-PROOT_PASSWORD=""
-
 #------------------------------------------------------------------------------
 # COULEURS D'AFFICHAGE
 #------------------------------------------------------------------------------
@@ -66,14 +62,6 @@ for ARG in "$@"; do
         --help|-h)
             show_help
             exit 0
-            ;;
-        --username=*)
-            PROOT_USERNAME="${ARG#*=}"
-            shift
-            ;;
-        --password=*)
-            PROOT_PASSWORD="${ARG#*=}"
-            shift
             ;;
         *)
             break
@@ -260,7 +248,6 @@ trap finish EXIT
 #------------------------------------------------------------------------------
 install_packages_proot() {
     local PKGS_PROOT=('sudo' 'wget' 'nala' 'xfconf')
-    #local PKGS_PROOT=('sudo' 'wget' 'nala' 'xfconf' 'gnome-themes-extra')
     for PKG in "${PKGS_PROOT[@]}"; do
         execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt install $PKG -y" "Installation de $PKG"
     done
@@ -324,13 +311,9 @@ configure_themes_and_icons() {
     fi
 
     # Créer les répertoires nécessaires
-    execute_command "
-        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes\"
-        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons\"
-        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur\"
-        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$USERNAME/.fonts/\"
-        mkdir -p \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$USERNAME/.themes/\"
-    " "Création des répertoires"
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes"
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons"
+    mkdir -p "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur"
 
     # Copier les thèmes si installés
     if [ "$INSTALL_THEME" = true ] && [ -n "$SELECTED_THEME" ]; then
@@ -373,15 +356,10 @@ configure_themes_and_icons() {
         execute_command "cp -r $PREFIX/share/backgrounds/whitesur/* $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/backgrounds/whitesur/" "Configuration des fonds d'écran"
     fi
 
-    # Configuration des curseurs
+    # Copier les curseurs si installés
     if [ "$INSTALL_CURSORS" = true ]; then
-        cd "$PREFIX/share/icons"
-        execute_command "find dist-dark | cpio -pdm \"$PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons\"" "Configuration des curseurs"
-        
-        # Configuration du fichier .Xresources
-        cat << EOF > "$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home/$USERNAME/.Xresources"
-Xcursor.theme: dist-dark
-EOF
+        execute_command "cp -r $PREFIX/share/icons/dist $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des curseurs"
+        execute_command "cp -r $PREFIX/share/icons/dist-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des curseurs sombres"
     fi
 
     # Supprimer le fichier de configuration temporaire
@@ -394,33 +372,33 @@ EOF
 check_dependencies
 title_msg "❯ Installation de Debian Proot"
 
-if [ $# -eq 0 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
+if [ $# -eq 0 ]; then
     if [ "$USE_GUM" = true ]; then
-        PROOT_USERNAME=$(gum input --prompt "Username: " --placeholder "Entrer un nom d'utilisateur")
+        USERNAME=$(gum input --prompt "Username: " --placeholder "Entrer un nom d'utilisateur")
         while true; do
-            PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
             PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
-            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
             fi
         done
     else
         echo -e "${COLOR_BLUE}Entrer un nom d'utilisateur: ${COLOR_RESET}"
-        read -r PROOT_USERNAME
+        read -r USERNAME
         tput cuu1
         tput el
         while true; do
             echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
-            read -rs PROOT_PASSWORD
+            read -rs PASSWORD
             tput cuu1
             tput el
             echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
             read -rs PASSWORD_CONFIRM
             tput cuu1
             tput el 
-            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
                 echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
@@ -429,29 +407,29 @@ if [ $# -eq 0 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
             fi
         done
     fi
-elif [ $# -eq 1 ] && [ -z "$PROOT_PASSWORD" ]; then
-    PROOT_USERNAME="$1"
+elif [ $# -eq 1 ]; then
+    USERNAME="$1"
     if [ "$USE_GUM" = true ]; then
         while true; do
-            PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
             PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
-            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
             fi
         done
     else
         while true; do
             echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
-            read -rs PROOT_PASSWORD
+            read -rs PASSWORD
             tput cuu1
             tput el
             echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
             read -rs PASSWORD_CONFIRM
             tput cuu1
             tput el
-            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
                 echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
@@ -460,9 +438,12 @@ elif [ $# -eq 1 ] && [ -z "$PROOT_PASSWORD" ]; then
             fi
         done
     fi
-elif [ $# -eq 2 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
-    PROOT_USERNAME="$1"
-    PROOT_PASSWORD="$2"
+elif [ $# -eq 2 ]; then
+    USERNAME="$1"
+    PASSWORD="$2"
+else
+    show_help
+    exit 1
 fi
 
 execute_command "proot-distro install debian" "Installation de la distribution"
@@ -482,9 +463,6 @@ install_packages_proot
 
 subtitle_msg "❯ Configuration de la distribution"
 
-# Utiliser les variables PROOT_USERNAME et PROOT_PASSWORD pour create_user_proot
-USERNAME="$PROOT_USERNAME"
-PASSWORD="$PROOT_PASSWORD"
 create_user_proot
 configure_user_rights
 
@@ -506,43 +484,3 @@ configure_themes_and_icons
 # INSTALLATION DE MESA-VULKAN
 #------------------------------------------------------------------------------
 install_mesa_vulkan
-
-#------------------------------------------------------------------------------
-# INSTALLATION DE DEBIAN
-#------------------------------------------------------------------------------
-install_debian() {
-    title_msg "❯ Installation de Debian"
-    
-    # Si les identifiants ne sont pas fournis en argument, les demander
-    if [ -z "$DEBIAN_USERNAME" ]; then
-        if $USE_GUM; then
-            DEBIAN_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian")
-        else
-            printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian : ${COLOR_RESET}"
-            read -r DEBIAN_USERNAME
-        fi
-    fi
-    
-    if [ -z "$DEBIAN_PASSWORD" ]; then
-        if $USE_GUM; then
-            DEBIAN_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian")
-        else
-            printf "${COLOR_BLUE}Entrez le mot de passe pour Debian : ${COLOR_RESET}"
-            read -r -s DEBIAN_PASSWORD
-            echo
-        fi
-    fi
-    
-    # Installation de Debian
-    execute_command "proot-distro install debian" "Installation de Debian"
-    
-    # Configuration de l'utilisateur
-    execute_command "proot-distro login debian -- useradd -m -s /bin/bash \"$DEBIAN_USERNAME\"" "Création de l'utilisateur"
-    execute_command "proot-distro login debian -- bash -c \"echo '$DEBIAN_USERNAME:$DEBIAN_PASSWORD' | chpasswd\"" "Configuration du mot de passe"
-    execute_command "proot-distro login debian -- usermod -aG sudo \"$DEBIAN_USERNAME\"" "Ajout aux sudoers"
-    
-    # Configuration de sudo sans mot de passe
-    execute_command "proot-distro login debian -- bash -c 'echo \"$DEBIAN_USERNAME ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers'" "Configuration de sudo"
-    
-    success_msg "✓ Installation de Debian terminée"
-}
