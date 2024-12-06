@@ -154,11 +154,6 @@ for ARG in "$@"; do
             SCRIPT_CHOICE=true
             ONLY_GUM=false
             shift
-            # Si gum est utilisé, demander le nom d'utilisateur et le mot de passe
-            if $USE_GUM; then
-                PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
-                PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
-            fi
             ;;
         --help|-h)
             show_help
@@ -178,6 +173,28 @@ for ARG in "$@"; do
             ;;
     esac
 done
+
+# Si on est en mode FULL_INSTALL et que les identifiants ne sont pas fournis, les demander
+if $FULL_INSTALL; then
+    if [ -z "$PROOT_USERNAME" ]; then
+        if $USE_GUM; then
+            PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
+        else
+            printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian PRoot : ${COLOR_RESET}"
+            read -r PROOT_USERNAME
+        fi
+    fi
+    
+    if [ -z "$PROOT_PASSWORD" ]; then
+        if $USE_GUM; then
+            PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
+        else
+            printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
+            read -r -s PROOT_PASSWORD
+            echo
+        fi
+    fi
+fi
 
 # Activation de tous les modules si --gum est le seul argument
 if $ONLY_GUM; then
@@ -387,7 +404,7 @@ bash_banner() {
     local BANNER="
 ╔════════════════════════════════════════╗
 ║                                        ║
-║               OHMYTERMUX               ║
+║                OHMYTERMUX              ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
 
@@ -855,7 +872,13 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         title_msg "❯ Configuration des packages"
         if $USE_GUM; then
-            PACKAGES=$(gum_choose_multi "Sélectionner avec espace les packages à installer :" --no-limit --height=18 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            mapfile -t SELECTED_PACKAGES < <(gum_choose_multi "Sélectionner avec espace les packages à installer :" --no-limit --height=18 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            
+            if [[ " ${SELECTED_PACKAGES[*]} " == *" Tout installer "* ]]; then
+                PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+            else
+                PACKAGES=("${SELECTED_PACKAGES[@]}")
+            fi
         else
             echo "Sélectionner les packages à installer (séparés par des espaces) :"
             echo
@@ -885,34 +908,34 @@ install_packages() {
             tput sgr0
             tput cuu 23
             tput ed
-            PACKAGES=""
+            PACKAGES=()
             for CHOICE in $PACKAGE_CHOICES; do
                 case $CHOICE in
-                    1) PACKAGES+="nala " ;;
-                    2) PACKAGES+="eza " ;;
-                    3) PACKAGES+="colorsls " ;;
-                    4) PACKAGES+="lsd " ;;
-                    5) PACKAGES+="bat " ;;
-                    6) PACKAGES+="lf " ;;
-                    7) PACKAGES+="fzf " ;;
-                    8) PACKAGES+="glow " ;;
-                    9) PACKAGES+="tmux " ;;
-                    10) PACKAGES+="python " ;;
-                    11) PACKAGES+="nodejs " ;;
-                    12) PACKAGES+="nodejs-lts " ;;
-                    13) PACKAGES+="micro " ;;
-                    14) PACKAGES+="vim " ;;
-                    15) PACKAGES+="neovim " ;;
-                    16) PACKAGES+="lazygit " ;;
-                    17) PACKAGES+="open-ssh " ;;
-                    18) PACKAGES+="tsu " ;;
-                    19) PACKAGES="nala eza colorsls lsd bat lf fzf glow tmux python nodejs nodejs-lts micro vim neovim lazygit open-ssh tsu" ;;
+                    1) PACKAGES+=("nala") ;;
+                    2) PACKAGES+=("eza") ;;
+                    3) PACKAGES+=("colorls") ;;
+                    4) PACKAGES+=("lsd") ;;
+                    5) PACKAGES+=("bat") ;;
+                    6) PACKAGES+=("lf") ;;
+                    7) PACKAGES+=("fzf") ;;
+                    8) PACKAGES+=("glow") ;;
+                    9) PACKAGES+=("tmux") ;;
+                    10) PACKAGES+=("python") ;;
+                    11) PACKAGES+=("nodejs") ;;
+                    12) PACKAGES+=("nodejs-lts") ;;
+                    13) PACKAGES+=("micro") ;;
+                    14) PACKAGES+=("vim") ;;
+                    15) PACKAGES+=("neovim") ;;
+                    16) PACKAGES+=("lazygit") ;;
+                    17) PACKAGES+=("open-ssh") ;;
+                    18) PACKAGES+=("tsu") ;;
+                    19) PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu") ;;
                 esac
             done
         fi
 
-        if [ -n "$PACKAGES" ]; then
-            for PACKAGE in $PACKAGES; do
+        if [ ${#PACKAGES[@]} -gt 0 ]; then
+            for PACKAGE in "${PACKAGES[@]}"; do
                 execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
 
                 # Ajout des alias spécifiques après l'installation
