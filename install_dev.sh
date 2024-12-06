@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail
-
 #------------------------------------------------------------------------------
 # VARIABLES GLOBALES
 #------------------------------------------------------------------------------
@@ -13,6 +11,10 @@ EXECUTE_INITIAL_CONFIG=true
 
 # Affichage détaillé des opérations
 VERBOSE=false
+
+# Variables pour Debian PRoot
+PROOT_USERNAME=""
+PROOT_PASSWORD=""
 
 #------------------------------------------------------------------------------
 # SELECTEURS DE MODULES
@@ -158,10 +160,57 @@ for ARG in "$@"; do
             exit 0
             ;;
         *)
-            break
+            # Récupérer le nom d'utilisateur et le mot de passe s'ils sont fournis
+            if [ -z "$PROOT_USERNAME" ]; then
+                PROOT_USERNAME="$ARG"
+                shift
+            elif [ -z "$PROOT_PASSWORD" ]; then
+                PROOT_PASSWORD="$ARG"
+                shift
+            else
+                break
+            fi
             ;;
     esac
 done
+
+# Si on est en mode FULL_INSTALL et que les identifiants ne sont pas fournis, les demander
+if $FULL_INSTALL; then
+    if [ -z "$PROOT_USERNAME" ]; then
+        if $USE_GUM; then
+            PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
+        else
+            printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian PRoot : ${COLOR_RESET}"
+            read -r PROOT_USERNAME
+        fi
+    fi
+    
+    if [ -z "$PROOT_PASSWORD" ]; then
+        while true; do
+            if $USE_GUM; then
+                PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+                PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
+            else
+                printf "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
+                read -r -s PROOT_PASSWORD
+                echo
+                printf "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
+                read -r -s PASSWORD_CONFIRM
+                echo
+            fi
+
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+                break
+            else
+                if $USE_GUM; then
+                    gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                else
+                    echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                fi
+            fi
+        done
+    fi
+fi
 
 # Activation de tous les modules si --gum est le seul argument
 if $ONLY_GUM; then
@@ -359,7 +408,7 @@ gum_choose_multi() {
             echo "${OPTIONS[@]}"
         fi
     else
-        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
+        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" "${OPTIONS[@]}"
     fi
 }
 
@@ -371,7 +420,7 @@ bash_banner() {
     local BANNER="
 ╔════════════════════════════════════════╗
 ║                                        ║
-║               OHMYTERMUX               ║
+║                OHMYTERMUX              ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
 
@@ -545,6 +594,23 @@ EOL" "Configuration des propriétés Termux"
 # CONFIGURATION INITIALE
 #------------------------------------------------------------------------------
 initial_config() {
+    # Si on est en mode FULL_INSTALL, demander les identifiants au début
+    if $FULL_INSTALL; then
+        title_msg "❯ Configuration de Debian PRoot"
+        if [ -z "$PROOT_USERNAME" ]; then
+            if $USE_GUM; then
+                PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
+                PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
+            else
+                printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian PRoot : ${COLOR_RESET}"
+                read -r PROOT_USERNAME
+                printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
+                read -r -s PROOT_PASSWORD
+                echo
+            fi
+        fi
+    fi
+
     change_repo
 
     # Mise à jour et mise à niveau des paquets en préservant les configurations existantes
@@ -634,7 +700,7 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/zshrc" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/zshrc" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
 
                 if $USE_GUM; then
                     if gum_confirm "Installer PowerLevel10k ?"; then
@@ -642,7 +708,7 @@ install_shell() {
                         sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
                         if gum_confirm "Installer le prompt personnalisé ?"; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -663,7 +729,7 @@ install_shell() {
                         tput cuu1
                         tput el
                         if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/p10k.zsh" "Installation du prompt OhMyTermux" || error_msg "Impossible d'installer le prompt OhMyTermux"
+                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation du prompt OhMyTermux" || error_msg "Impossible d'installer le prompt OhMyTermux"
                             echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
                             echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
                         else
@@ -672,9 +738,9 @@ install_shell() {
                     fi
                 fi
 
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/aliases.zsh && \
+                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/aliases.zsh && \
                                 mkdir -p $HOME/.config/OhMyTermux && \
-                                curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/help.md)" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
+                                curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/help.md)" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
 
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
@@ -687,7 +753,6 @@ install_shell() {
                 title_msg "❯ Configuration de Fish"
                 execute_command "pkg install -y fish" "Installation de Fish"
                 
-                #TODO
                 # Création du répertoire de configuration fish
                 #execute_command "mkdir -p $HOME/.config/fish/functions" "Création du répertoire fish"
                 
@@ -839,8 +904,29 @@ update_zshrc() {
 install_packages() {
     if $PACKAGES_CHOICE; then
         title_msg "❯ Configuration des packages"
+        local DEFAULT_PACKAGES=("nala" "eza" "bat" "lf" "fzf")
+        
         if $USE_GUM; then
-            PACKAGES=$(gum_choose_multi "Sélectionner avec espace les packages à installer :" --no-limit --height=18 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
+            if $FULL_INSTALL; then
+                PACKAGES=("${DEFAULT_PACKAGES[@]}")
+            else
+                # Convertir la sortie de gum en tableau
+                IFS=$'\n' read -r -d '' -a PACKAGES < <(gum choose --no-limit \
+                    --selected.foreground="33" \
+                    --header.foreground="33" \
+                    --cursor.foreground="33" \
+                    --height=18 \
+                    --header="Sélectionner avec espace les packages à installer :" \
+                    --selected="nala" --selected="eza" --selected="bat" --selected="lf" --selected="fzf" \
+                    "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                    "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" \
+                    "Tout installer")
+
+                if [[ " ${PACKAGES[*]} " == *" Tout installer "* ]]; then
+                    PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                            "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+                fi
+            fi
         else
             echo "Sélectionner les packages à installer (séparés par des espaces) :"
             echo
@@ -870,34 +956,39 @@ install_packages() {
             tput sgr0
             tput cuu 23
             tput ed
-            PACKAGES=""
-            for CHOICE in $PACKAGE_CHOICES; do
-                case $CHOICE in
-                    1) PACKAGES+="nala " ;;
-                    2) PACKAGES+="eza " ;;
-                    3) PACKAGES+="colorsls " ;;
-                    4) PACKAGES+="lsd " ;;
-                    5) PACKAGES+="bat " ;;
-                    6) PACKAGES+="lf " ;;
-                    7) PACKAGES+="fzf " ;;
-                    8) PACKAGES+="glow " ;;
-                    9) PACKAGES+="tmux " ;;
-                    10) PACKAGES+="python " ;;
-                    11) PACKAGES+="nodejs " ;;
-                    12) PACKAGES+="nodejs-lts " ;;
-                    13) PACKAGES+="micro " ;;
-                    14) PACKAGES+="vim " ;;
-                    15) PACKAGES+="neovim " ;;
-                    16) PACKAGES+="lazygit " ;;
-                    17) PACKAGES+="open-ssh " ;;
-                    18) PACKAGES+="tsu " ;;
-                    19) PACKAGES="nala eza colorsls lsd bat lf fzf glow tmux python nodejs nodejs-lts micro vim neovim lazygit open-ssh tsu" ;;
-                esac
-            done
+            
+            if [[ "$PACKAGE_CHOICES" == *"19"* ]]; then
+                PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                         "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+            else
+                PACKAGES=()
+                for CHOICE in $PACKAGE_CHOICES; do
+                    case $CHOICE in
+                        1) PACKAGES+=("nala") ;;
+                        2) PACKAGES+=("eza") ;;
+                        3) PACKAGES+=("colorls") ;;
+                        4) PACKAGES+=("lsd") ;;
+                        5) PACKAGES+=("bat") ;;
+                        6) PACKAGES+=("lf") ;;
+                        7) PACKAGES+=("fzf") ;;
+                        8) PACKAGES+=("glow") ;;
+                        9) PACKAGES+=("tmux") ;;
+                        10) PACKAGES+=("python") ;;
+                        11) PACKAGES+=("nodejs") ;;
+                        12) PACKAGES+=("nodejs-lts") ;;
+                        13) PACKAGES+=("micro") ;;
+                        14) PACKAGES+=("vim") ;;
+                        15) PACKAGES+=("neovim") ;;
+                        16) PACKAGES+=("lazygit") ;;
+                        17) PACKAGES+=("open-ssh") ;;
+                        18) PACKAGES+=("tsu") ;;
+                    esac
+                done
+            fi
         fi
 
-        if [ -n "$PACKAGES" ]; then
-            for PACKAGE in $PACKAGES; do
+        if [ ${#PACKAGES[@]} -gt 0 ]; then
+            for PACKAGE in "${PACKAGES[@]}"; do
                 execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
 
                 # Ajout des alias spécifiques après l'installation
@@ -1099,65 +1190,72 @@ install_font() {
 #------------------------------------------------------------------------------
 install_xfce() {
     if $XFCE_CHOICE; then
-        local XFCE_VERSION
         title_msg "❯ Configuration de XFCE"
-        if $USE_GUM; then
-            if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
-                # Choix de la version
-                XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
-                "minimale" \
-                "recommandée" \
-                "personnalisée")
-            fi
-        else
-            printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
-            read -r -e -p "" -i "o" CHOICE
-            if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
-                echo
-                echo "1) Minimale"
-                echo "2) Recommandée"
-                echo "3) Personnalisée"
-                echo
-                printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
-                tput setaf 3
-                read -r -e -p "" -i "2" CHOICE
-                tput sgr0
-                tput cuu 7
-                tput ed
-                case $CHOICE in
-                    1) XFCE_VERSION="minimale" ;;
-                    2) XFCE_VERSION="recommandée" ;;
-                    3) XFCE_VERSION="personnalisée" ;;
-                    *) XFCE_VERSION="recommandée" ;;
-                esac
-            fi
-        fi
+        local XFCE_VERSION="recommandée"
+        local BROWSER_CHOICE="chromium"
 
-        # Sélection du navigateur (sauf pour la version minimale)
-        local BROWSER_CHOICE="aucun"
-        if [ "$XFCE_VERSION" != "minimale" ]; then
+        if ! $FULL_INSTALL; then
             if $USE_GUM; then
-                BROWSER_CHOICE=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
+                if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
+                    # Choix de la version
+                    XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE �� installer :" --height=5 --selected="recommandée" \
+                    "minimale" \
+                    "recommandée" \
+                    "personnalisée")
+
+                    # Sélection du navigateur (sauf pour la version minimale)
+                    if [ "$XFCE_VERSION" != "minimale" ]; then
+                        BROWSER_CHOICE=$(gum_choose "Séléctionner un navigateur web :" --height=5 --selected="chromium" "chromium" "firefox" "aucun")
+                    fi
+                else
+                    return
+                fi
             else
-                echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
-                echo
-                echo "1) Chromium (par défaut)"
-                echo "2) Firefox"
-                echo "3) Aucun"
-                echo
-                printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
-                tput setaf 3
-                read -r -e -p "" -i "1" CHOICE
-                tput sgr0
-                tput cuu 7
-                tput ed
-                case $CHOICE in
-                    1) BROWSER_CHOICE="chromium" ;;
-                    2) BROWSER_CHOICE="firefox" ;;
-                    3) BROWSER_CHOICE="aucun" ;;
-                    *) BROWSER_CHOICE="chromium" ;;
-                esac
+                printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    echo -e "${COLOR_BLUE}Sélectionner la version de XFCE à installer :${COLOR_RESET}"
+                    echo
+                    echo "1) Minimale"
+                    echo "2) Recommandée"
+                    echo "3) Personnalisée"
+                    echo
+                    printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                    tput setaf 3
+                    read -r -e -p "" -i "2" CHOICE
+                    tput sgr0
+                    tput cuu 7
+                    tput ed
+                    case $CHOICE in
+                        1) XFCE_VERSION="minimale" ;;
+                        2) XFCE_VERSION="recommandée" ;;
+                        3) XFCE_VERSION="personnalisée" ;;
+                        *) XFCE_VERSION="recommandée" ;;
+                    esac
+
+                    if [ "$XFCE_VERSION" != "minimale" ]; then
+                        echo -e "${COLOR_BLUE}Séléctionner un navigateur web :${COLOR_RESET}"
+                        echo
+                        echo "1) Chromium (par défaut)"
+                        echo "2) Firefox"
+                        echo "3) Aucun"
+                        echo
+                        printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+                        tput setaf 3
+                        read -r -e -p "" -i "1" CHOICE
+                        tput sgr0
+                        tput cuu 7
+                        tput ed
+                        case $CHOICE in
+                            1) BROWSER_CHOICE="chromium" ;;
+                            2) BROWSER_CHOICE="firefox" ;;
+                            3) BROWSER_CHOICE="aucun" ;;
+                            *) BROWSER_CHOICE="chromium" ;;
+                        esac
+                    fi
+                else
+                    return
+                fi
             fi
         fi
 
@@ -1168,8 +1266,8 @@ install_xfce() {
         for PACKAGE in "${PACKAGES[@]}"; do
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
-        
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce_dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+    
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce_dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
         execute_command "chmod +x xfce_dev.sh" "Exécution du script XFCE"
         
         if $USE_GUM; then
@@ -1280,23 +1378,31 @@ EOF
 install_proot() {
     if $PROOT_CHOICE; then
         title_msg "❯ Configuration de Proot"
-        if $USE_GUM; then
-            if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
-                execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
-                ./proot_dev.sh --gum
+        
+        execute_command "pkg install proot-distro -y" "Installation de proot-distro"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+        execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
+        
+        # Si les identifiants sont déjà fournis
+        if [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
+            if $USE_GUM; then
+                ./proot_dev.sh --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+            else
+                ./proot_dev.sh --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
             fi
-        else    
-            printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
-            read -r -e -p "" -i "o" CHOICE
-            tput cuu1
-            tput el
-            if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
-                execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
-                ./proot_dev.sh
+        else
+            if $USE_GUM; then
+                if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
+                    ./proot_dev.sh --gum
+                fi
+            else    
+                printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                tput cuu1
+                tput el
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    ./proot_dev.sh
+                fi
             fi
         fi
     fi
@@ -1321,7 +1427,7 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     title_msg "❯ Configuration des utilitaires"
-    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/utils_fr.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
+    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils_fr.sh" "Téléchargement du script Utils" || error_msg "Impossible de télécharger le script Utils"
     execute_command "chmod +x utils_fr.sh" "Exécution du script Utils"
     ./utils_fr.sh
 
@@ -1510,7 +1616,7 @@ fi
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-rm -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh >/dev/null 2>&1
+rm -f xfce_dev.sh proot_dev.sh utils_dev.sh install_dev.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Rechargement du shell
