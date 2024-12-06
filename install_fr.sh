@@ -392,7 +392,7 @@ gum_choose_multi() {
             echo "${OPTIONS[@]}"
         fi
     else
-        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
+        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" "${OPTIONS[@]}"
     fi
 }
 
@@ -871,13 +871,28 @@ update_zshrc() {
 install_packages() {
     if $PACKAGES_CHOICE; then
         title_msg "❯ Configuration des packages"
+        local DEFAULT_PACKAGES=("nala" "eza" "bat" "lf" "fzf")
+        
         if $USE_GUM; then
-            mapfile -t SELECTED_PACKAGES < <(gum_choose_multi "Sélectionner avec espace les packages à installer :" --no-limit --height=18 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Tout installer")
-            
-            if [[ " ${SELECTED_PACKAGES[*]} " == *" Tout installer "* ]]; then
-                PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+            if $FULL_INSTALL; then
+                PACKAGES=("${DEFAULT_PACKAGES[@]}")
             else
-                PACKAGES=("${SELECTED_PACKAGES[@]}")
+                # Convertir la sortie de gum en tableau
+                IFS=$'\n' read -r -d '' -a PACKAGES < <(gum choose --no-limit \
+                    --selected.foreground="33" \
+                    --header.foreground="33" \
+                    --cursor.foreground="33" \
+                    --height=18 \
+                    --header="Sélectionner avec espace les packages à installer :" \
+                    --selected="nala" --selected="eza" --selected="bat" --selected="lf" --selected="fzf" \
+                    "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                    "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" \
+                    "Tout installer")
+
+                if [[ " ${PACKAGES[*]} " == *" Tout installer "* ]]; then
+                    PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                            "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+                fi
             fi
         else
             echo "Sélectionner les packages à installer (séparés par des espaces) :"
@@ -908,30 +923,35 @@ install_packages() {
             tput sgr0
             tput cuu 23
             tput ed
-            PACKAGES=()
-            for CHOICE in $PACKAGE_CHOICES; do
-                case $CHOICE in
-                    1) PACKAGES+=("nala") ;;
-                    2) PACKAGES+=("eza") ;;
-                    3) PACKAGES+=("colorls") ;;
-                    4) PACKAGES+=("lsd") ;;
-                    5) PACKAGES+=("bat") ;;
-                    6) PACKAGES+=("lf") ;;
-                    7) PACKAGES+=("fzf") ;;
-                    8) PACKAGES+=("glow") ;;
-                    9) PACKAGES+=("tmux") ;;
-                    10) PACKAGES+=("python") ;;
-                    11) PACKAGES+=("nodejs") ;;
-                    12) PACKAGES+=("nodejs-lts") ;;
-                    13) PACKAGES+=("micro") ;;
-                    14) PACKAGES+=("vim") ;;
-                    15) PACKAGES+=("neovim") ;;
-                    16) PACKAGES+=("lazygit") ;;
-                    17) PACKAGES+=("open-ssh") ;;
-                    18) PACKAGES+=("tsu") ;;
-                    19) PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu") ;;
-                esac
-            done
+            
+            if [[ "$PACKAGE_CHOICES" == *"19"* ]]; then
+                PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                         "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+            else
+                PACKAGES=()
+                for CHOICE in $PACKAGE_CHOICES; do
+                    case $CHOICE in
+                        1) PACKAGES+=("nala") ;;
+                        2) PACKAGES+=("eza") ;;
+                        3) PACKAGES+=("colorls") ;;
+                        4) PACKAGES+=("lsd") ;;
+                        5) PACKAGES+=("bat") ;;
+                        6) PACKAGES+=("lf") ;;
+                        7) PACKAGES+=("fzf") ;;
+                        8) PACKAGES+=("glow") ;;
+                        9) PACKAGES+=("tmux") ;;
+                        10) PACKAGES+=("python") ;;
+                        11) PACKAGES+=("nodejs") ;;
+                        12) PACKAGES+=("nodejs-lts") ;;
+                        13) PACKAGES+=("micro") ;;
+                        14) PACKAGES+=("vim") ;;
+                        15) PACKAGES+=("neovim") ;;
+                        16) PACKAGES+=("lazygit") ;;
+                        17) PACKAGES+=("open-ssh") ;;
+                        18) PACKAGES+=("tsu") ;;
+                    esac
+                done
+            fi
         fi
 
         if [ ${#PACKAGES[@]} -gt 0 ]; then
@@ -1318,6 +1338,21 @@ EOF
 install_proot() {
     if $PROOT_CHOICE; then
         title_msg "❯ Configuration de Proot"
+        
+        # Demander les identifiants si on est en mode FULL_INSTALL et qu'ils ne sont pas déjà définis
+        if $FULL_INSTALL && [ -z "$PROOT_USERNAME" ]; then
+            if $USE_GUM; then
+                PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
+                PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
+            else
+                printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian PRoot : ${COLOR_RESET}"
+                read -r PROOT_USERNAME
+                printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
+                read -r -s PROOT_PASSWORD
+                echo
+            fi
+        fi
+        
         if $USE_GUM; then
             if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
