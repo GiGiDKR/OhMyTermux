@@ -959,7 +959,7 @@ install_packages() {
             
             if [[ "$PACKAGE_CHOICES" == *"19"* ]]; then
                 PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
-                         "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+                        "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
             else
                 PACKAGES=()
                 for CHOICE in $PACKAGE_CHOICES; do
@@ -1267,7 +1267,7 @@ install_xfce() {
             execute_command "pkg install -y $PACKAGE" "Installation de $PACKAGE"
         done
     
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce_dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce_dev.sh" "Téléchargement du script XFCE" || error_msg "Impossible de télécharger le script XFCE"
         execute_command "chmod +x xfce_dev.sh" "Exécution du script XFCE"
         
         if $USE_GUM; then
@@ -1380,7 +1380,7 @@ install_proot() {
         title_msg "❯ Configuration de Proot"
         
         execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
         execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
         
         # Si les identifiants sont déjà fournis
