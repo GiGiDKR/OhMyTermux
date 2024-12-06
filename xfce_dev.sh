@@ -38,6 +38,7 @@ show_help() {
     echo "  --verbose | -v    Afficher les sorties détaillées"
     echo "  --browser | -b    Choisir le navigateur (Chromium ou Firefox)"
     echo "  --version | -ver  Choisir le type d'installation (minimale, recommandée, personnalisée)"
+    echo "  --full            Installer tous les modules sans confirmation"
     echo "  --help | -h       Afficher ce message d'aide"
 }
 

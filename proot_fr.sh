@@ -42,6 +42,7 @@ show_help() {
     echo "Options:"
     echo "  --gum | -g     Utiliser gum pour l'interface utilisateur"
     echo "  --verbose | -v Afficher les sorties détaillées"
+    echo "  --full          Installer tous les modules sans confirmation"
     echo "  --help | -h    Afficher ce message d'aide"
 }
 

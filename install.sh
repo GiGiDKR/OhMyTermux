@@ -76,14 +76,14 @@ show_help() {
     echo "  --gum | -g        Use gum for the user interface"
     echo "  --verbose | -v    Display detailed outputs"
     echo "  --shell | -sh     Installation module for the shell"
-    echo "  --package | -pkg  Installation module for packages"
+    echo "  --package | -pk   Installation module for packages"
     echo "  --font | -f       Installation module for the font"
     echo "  --xfce | -x       Installation module for XFCE"
-    echo "  --proot | -p      Installation module for Debian Proot"
-    echo "  --x11 | -x11      Installation module for Termux-X11"
-    echo "  --skip | -sk      Ignore initial configuration"
-    echo "  --uninstall| -u   Uninstallation of Debian Proot"
-    echo "  --full | -f       Install all modules without confirmation"
+    echo "  --proot | -pr     Installation module for Debian Proot"
+    echo "  --x11             Installation module for Termux-X11"
+    echo "  --skip            Ignore initial configuration"
+    echo "  --uninstall       Uninstallation of Debian Proot"
+    echo "  --full            Install all modules without confirmation"
     echo "  --help | -h       Display this help message"
 }
 
@@ -101,12 +101,12 @@ for ARG in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --package|-pkg)
+        --package|-pk)
             PACKAGES_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
-        --font)
+        --font|-f)
             FONT_CHOICE=true
             ONLY_GUM=false
             shift
@@ -116,21 +116,21 @@ for ARG in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --proot|-p)
+        --proot|-pr)
             PROOT_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
-        --x11|-x11)
+        --x11)
             X11_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
-        --skip|-sk)
+        --skip)
             EXECUTE_INITIAL_CONFIG=false
             shift
             ;;
-        --uninstall|-u)
+        --uninstall)
             uninstall_proot
             exit 0
             ;;
