@@ -6,7 +6,6 @@
 USE_GUM=false
 VERBOSE=false
 BROWSER="chromium"
-PREFIX="/usr"
 
 #------------------------------------------------------------------------------
 # COULEURS D'AFFICHAGE
@@ -598,7 +597,7 @@ install_themes() {
                     execute_command "mv 2024-11-18.zip $ARCHIVE && \
                                     unzip $ARCHIVE && \
                                     tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
-                                    mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
+                                    mv WhiteSur-Dark/ /usr/share/themes/ && \
                                     rm -rf WhiteSur-gtk-theme-2024-11-18 $ARCHIVE" "Installation du thème WhiteSur"
                     ;;
                 "Fluent")
@@ -607,7 +606,7 @@ install_themes() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Fluent-gtk-theme-master && \
-                                ./install.sh -d $PREFIX/share/themes -t dark -s compact && \
+                                ./install.sh -d /usr/share/themes -t dark -s compact && \
                                 cd .. && \
                                 rm -rf Fluent-gtk-theme-master $ARCHIVE" "Installation du thème Fluent"
                     ;;
@@ -617,7 +616,7 @@ install_themes() {
                     execute_command "mv main.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Lavanda-gtk-theme-main && \
-                                ./install.sh -d $PREFIX/share/themes -c dark -s compact && \
+                                ./install.sh -d /usr/share/themes -c dark -s compact && \
                                 cd .. && \
                                 rm -rf Lavanda-gtk-theme-main $ARCHIVE" "Installation du thème Lavanda"
                     ;;
@@ -646,7 +645,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd WhiteSur-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh --dest /usr/share/icons && \
                                 cd .. && \
                                 rm -rf WhiteSur-icon-theme-master $ARCHIVE" "Installation des icônes WhiteSur"
                     ;;
@@ -656,7 +655,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd McMojave-circle-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh --dest /usr/share/icons && \
                                 cd .. && \
                                 rm -rf McMojave-circle-master $ARCHIVE" "Installation des icônes McMojave-circle"
                     ;;
@@ -666,7 +665,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Tela-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh --dest /usr/share/icons && \
                                 cd .. && \
                                 rm -rf Tela-icon-theme-master $ARCHIVE" "Installation des icônes Tela"
                     ;;
@@ -676,7 +675,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Fluent-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh --dest /usr/share/icons && \
                                 cd .. && \
                                 rm -rf Fluent-icon-theme-master $ARCHIVE" "Installation des icônes Fluent"
                     ;;
@@ -686,7 +685,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Qogir-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh --dest /usr/share/icons && \
                                 cd .. && \
                                 rm -rf Qogir-icon-theme-master $ARCHIVE" "Installation des icônes Qogir"
                     ;;
@@ -702,8 +701,8 @@ install_wallpapers() {
     if $INSTALL_WALLPAPERS; then
         download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran"
         execute_command "unzip main.zip && \
-                        mkdir -p $PREFIX/share/backgrounds/whitesur && \
-                        cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/whitesur/ && \
+                        mkdir -p /usr/share/backgrounds/whitesur && \
+                        cp -r WhiteSur-wallpapers-main/4k/* /usr/share/backgrounds/whitesur/ && \
                         rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran"
     fi
 }
@@ -716,57 +715,35 @@ install_cursors() {
         ARCHIVE="2024-02-25.zip"
         download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/tags/2024-02-25.zip" "Téléchargement des curseurs"
         execute_command "unzip $ARCHIVE && \
-                        mv Fluent-icon-theme-2024-02-25/cursors/dist $PREFIX/share/icons/ && \
-                        mv Fluent-icon-theme-2024-02-25/cursors/dist-dark $PREFIX/share/icons/ && \
+                        mv Fluent-icon-theme-2024-02-25/cursors/dist /usr/share/icons/ && \
+                        mv Fluent-icon-theme-2024-02-25/cursors/dist-dark /usr/share/icons/ && \
                         rm -rf Fluent-icon-theme-2024-02-25 $ARCHIVE" "Installation des curseurs"
     fi
-}
-
-#------------------------------------------------------------------------------
-# INSTALLATION DES PAQUETS
-#------------------------------------------------------------------------------
-install_packages() {
-    local PKGS=("$@")
-    # Remplacer pkg par apt-get pour Debian
-    execute_command "apt-get update && apt-get upgrade -y" "Mise à jour des paquets"
-    
-    for PKG in "${PKGS[@]}"; do
-        execute_command "apt-get install $PKG -y" "Installation de $PKG"
-    done
 }
 
 #------------------------------------------------------------------------------
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 main() {
-    # Vérifier les privilèges root
-    if [ "$EUID" -ne 0 ]; then 
-        error_msg "Ce script doit être exécuté en tant que root"
-        exit 1
-    fi
-
     # Installation de gum si nécessaire
     if $USE_GUM && ! command -v gum &> /dev/null; then
         echo -e "${COLOR_BLUE}Installation de gum${COLOR_RESET}"
-        # Ajout du dépôt Charm pour gum
-        execute_command "mkdir -p /etc/apt/keyrings && \
-            curl -fsSL https://repo.charm.sh/apt/gpg.key | gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
-            echo 'deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *' | tee /etc/apt/sources.list.d/charm.list && \
-            apt-get update && apt-get install gum -y" "Installation de gum"
+        apt-get update -y > /dev/null 2>&1 && apt-get install gum -y > /dev/null 2>&1
     fi
 
     title_msg "❯ Installation de XFCE"
 
-    # Paquets de base pour Debian
+    execute_command "apt-get update -y && apt-get upgrade -y" "Mise à jour des paquets"
+
+    # Paquets de base
     BASE_PKGS=(
         'xfce4'                      # Interface graphique
         'xfce4-terminal'             # Terminal
-        'xfce4-goodies'              # Plugins additionnels
     )
 
-    # Paquets recommandés pour Debian
+    # Paquets recommandés
     RECOMMENDED_PKGS=(
-        'pavucontrol'                # Contrôle du son
+        'pavucontrol-qt'             # Contrôle du son
         'wmctrl'                     # Contrôle des fenêtres
         'netcat-openbsd'             # Utilitaire réseau
         'thunar-archive-plugin'      # Archives
@@ -776,226 +753,276 @@ main() {
         'xfce4-taskmanager'          # Gestion des tâches
     )
 
-    # Adapter les chemins de configuration pour Debian
-    configure_xfce() {
-        local CONFIG_DIR="$HOME/.config/xfce4/xfconf/xfce-perchannel-xml"
-        local INSTALL_TYPE="$1"
-        local BROWSER_DESKTOP
+    # Paquets optionnels
+    EXTRA_PKGS=(
+        'gigolo'                     # Gestion de fichiers
+        'jq'                         # Utilitaire JSON
+        'mousepad'                   # Éditeur de texte
+        'netcat-openbsd'             # Utilitaire réseau
+        'parole'                     # Lecteur multimédia
+        'pavucontrol-qt'             # Contrôle du son
+        'ristretto'                  # Gestion d'images
+        'thunar-archive-plugin'      # Archives
+        'thunar-media-tags-plugin'   # Médias
+        'wmctrl'                     # Contrôle des fenêtres
+        'xfce4-artwork'              # Artwork
+        'xfce4-battery-plugin'       # Batterie
+        'xfce4-clipman-plugin'       # Presse-papiers
+        'xfce4-cpugraph-plugin'      # Graphique CPU
+        'xfce4-datetime-plugin'      # Date et temps
+        'xfce4-dict'                 # Dictionnaire
+        'xfce4-diskperf-plugin'      # Performances disque
+        'xfce4-fsguard-plugin'       # Surveillance disque
+        'xfce4-genmon-plugin'        # Widgets génériques
+        'xfce4-mailwatch-plugin'     # Surveillance mails
+        'xfce4-netload-plugin'       # Chargement réseau
+        'xfce4-notes-plugin'         # Notes
+        'xfce4-notifyd'              # Notifications
+        'xfce4-places-plugin'        # Emplacements
+        'xfce4-screenshooter'        # Capture d'écran
+        'xfce4-taskmanager'          # Gestion des tâches
+        'xfce4-systemload-plugin'    # Chargement système
+        'xfce4-timer-plugin'         # Timer
+        'xfce4-wavelan-plugin'       # Wi-Fi
+        'xfce4-weather-plugin'       # Informations météorologiques
+        'xfce4-whiskermenu-plugin'   # Menu Whisker
+    )
 
-        # Définir le fichier .desktop du navigateur
-        if [ "$BROWSER" = "firefox" ]; then
-            BROWSER_DESKTOP="firefox"
-        elif [ "$BROWSER" = "chromium" ]; then
-            BROWSER_DESKTOP="chromium"
-        else
-            BROWSER_DESKTOP="$BROWSER"
-        fi
+    case "$INSTALL_TYPE" in
+        "minimale")
+            PKGS=("${BASE_PKGS[@]}")
+            ;;
+        "recommandée")
+            PKGS=("${BASE_PKGS[@]}" "${RECOMMENDED_PKGS[@]}")
+            INSTALL_THEME=true
+            INSTALL_ICONS=true
+            INSTALL_WALLPAPERS=true
+            INSTALL_CURSORS=true
+            # Sélection des thèmes
+            SELECTED_THEMES=("WhiteSur")
+            SELECTED_ICON_THEMES=("WhiteSur")
+            # Configuration des thèmes par défaut
+            SELECTED_THEME="WhiteSur"
+            SELECTED_ICON_THEME="WhiteSur"
+            SELECTED_WALLPAPER="WhiteSur"
+            ;;
+        "personnalisée")
+            PKGS=("${BASE_PKGS[@]}")
 
-        # Créer le répertoire de configuration si nécessaire
-        mkdir -p "$CONFIG_DIR" >/dev/null 2>&1
+            if $USE_GUM; then
+                SELECTED_EXTRA=($(gum_choose_multi "Sélectionner les paquets à installer :" "${EXTRA_PKGS[@]}"))
+                if [ ${#SELECTED_EXTRA[@]} -gt 0 ]; then
+                    PKGS+=("${SELECTED_EXTRA[@]}")
+                fi
 
-        # Configurer le navigateur par défaut
-        cat > "$CONFIG_DIR/xfce4-mime-settings.xml" << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xfce4-mime-settings" version="1.0">
-  <property name="last" type="empty">
-    <property name="window-width" type="int" value="550"/>
-    <property name="window-height" type="int" value="400"/>
-    <property name="mime-width" type="int" value="300"/>
-    <property name="status-width" type="int" value="75"/>
-    <property name="default-width" type="int" value="150"/>
-  </property>
-  <property name="default" type="empty">
-    <property name="x-scheme-handler/http" type="string" value="$BROWSER_DESKTOP.desktop"/>
-    <property name="x-scheme-handler/https" type="string" value="$BROWSER_DESKTOP.desktop"/>
-  </property>
-</channel>
-EOF
+                SELECTED_UI=($(gum_choose_multi "Sélectionner les éléments à installer :" \
+                    "Thèmes" \
+                    "Icônes" \
+                    "Fonds d'écran" \
+                    "Curseurs"))
 
-        # Créer le fichier mimeapps.list
-        mkdir -p "$HOME/.config" >/dev/null 2>&1
-        cat > "$HOME/.config/mimeapps.list" << EOF
-[Default Applications]
-x-scheme-handler/http=$BROWSER_DESKTOP.desktop
-x-scheme-handler/https=$BROWSER_DESKTOP.desktop
-text/html=$BROWSER_DESKTOP.desktop
-application/xhtml+xml=$BROWSER_DESKTOP.desktop
+                if [[ " ${SELECTED_UI[*]} " =~ "Thèmes" ]]; then
+                    SELECTED_THEMES=($(gum_choose_multi "Sélectionner les thèmes à installer :" \
+                        "WhiteSur" \
+                        "Fluent" \
+                        "Lavanda"))
 
-[Added Associations]
-x-scheme-handler/http=$BROWSER_DESKTOP.desktop
-x-scheme-handler/https=$BROWSER_DESKTOP.desktop
-text/html=$BROWSER_DESKTOP.desktop
-application/xhtml+xml=$BROWSER_DESKTOP.desktop
-EOF
+                    if [ ${#SELECTED_THEMES[@]} -gt 0 ]; then
+                        INSTALL_THEME=true
+                        if [ ${#SELECTED_THEMES[@]} -gt 1 ]; then
+                            SELECTED_THEME=$(gum_choose "Sélectionner le thème à appliquer :" "${SELECTED_THEMES[@]}")
+                        else
+                            SELECTED_THEME="${SELECTED_THEMES[0]}"
+                        fi
+                    fi
+                fi
 
-        # Configurer xfce4-terminal
-        mkdir -p "$HOME/.config/xfce4/terminal" >/dev/null 2>&1
-        cat > "$HOME/.config/xfce4/terminal/terminalrc" << EOF
-[Configuration]
-FontName=Monospace 11
-MiscAlwaysShowTabs=FALSE
-MiscBell=FALSE
-MiscBellUrgent=FALSE
-MiscBordersDefault=TRUE
-MiscCursorBlinks=FALSE
-MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
-MiscDefaultGeometry=120x30
-MiscInheritGeometry=FALSE
-MiscMenubarDefault=FALSE
-MiscMouseAutohide=FALSE
-MiscMouseWheelZoom=TRUE
-MiscToolbarDefault=FALSE
-MiscConfirmClose=TRUE
-MiscCycleTabs=TRUE
-MiscTabCloseButtons=TRUE
-MiscTabCloseMiddleClick=TRUE
-MiscTabPosition=GTK_POS_TOP
-MiscHighlightUrls=TRUE
-MiscMiddleClickOpensUri=FALSE
-MiscRightClickAction=TERMINAL_RIGHT_CLICK_ACTION_CONTEXT_MENU
-MiscCopyOnSelect=FALSE
-MiscShowRelaunchDialog=TRUE
-MiscRewrapOnResize=TRUE
-MiscUseShiftArrowsToScroll=FALSE
-MiscSlimTabs=FALSE
-MiscNewTabAdjacent=FALSE
-ScrollingBar=TERMINAL_SCROLLBAR_NONE
-BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
-BackgroundDarkness=0.800000
-TitleMode=TERMINAL_TITLE_HIDE
-ScrollingLines=10000
-ColorForeground=#c0caf5
-ColorBackground=#1a1b26
-ColorCursor=#c0caf5
-ColorPalette=#15161e;#f7768e;#9ece6a;#e0af68;#7aa2f7;#bb9af7;#7dcfff;#a9b1d6;#414868;#f7768e;#9ece6a;#e0af68;#7aa2f7;#bb9af7;#7dcfff;#c0caf5
-EOF
+                if [[ " ${SELECTED_UI[*]} " =~ "Icônes" ]]; then
+                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner les packs d'icônes à installer :" \
+                        "WhiteSur" \
+                        "McMojave-circle" \
+                        "Tela" \
+                        "Fluent" \
+                        "Qogir"))
 
-        # Configurer xfce4-panel.xml si whiskermenu n'est pas installé
-        if ! command -v xfce4-popup-whiskermenu &> /dev/null; then
-            sed -i 's/<property name="plugin-5" type="string" value="whiskermenu">/<property name="plugin-5" type="string" value="applicationsmenu">/' "$CONFIG_DIR/xfce4-panel.xml" >/dev/null 2>&1
-            sed -i '/<property name="plugin-5".*whiskermenu/,/<\/property>/c\    <property name="plugin-5" type="string" value="applicationsmenu"/>' "$CONFIG_DIR/xfce4-panel.xml" >/dev/null 2>&1
-        fi
+                    if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
+                        INSTALL_ICONS=true
+                        if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
+                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner le pack d'icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
+                        else
+                            SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
+                        fi
+                    fi
+                fi
 
-        case "$INSTALL_TYPE" in
-            "recommandée")
-                # Configuration complète avec tous les éléments
-                cat > "$CONFIG_DIR/xsettings.xml" << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xsettings" version="1.0">
-  <property name="Net" type="empty">
-    <property name="ThemeName" type="string" value="WhiteSur-Dark"/>
-    <property name="IconThemeName" type="string" value="WhiteSur-dark"/>
-  </property>
-  <property name="Gtk" type="empty">
-    <property name="CursorThemeName" type="string" value="dist-dark"/>
-    <property name="CursorThemeSize" type="int" value="32"/>
-  </property>
-</channel>
-EOF
+                if [[ " ${SELECTED_UI[*]} " =~ "Fonds d'écran" ]]; then
+                    INSTALL_WALLPAPERS=true
+                    SELECTED_WALLPAPER=$(gum_choose "Sélectionner le fond d'écran à appliquer :" \
+                        "Monterey" \
+                        "Monterey-dark" \
+                        "Monterey-light" \
+                        "Monterey-morning" \
+                        "Sonoma-dark" \
+                        "Sonoma-light" \
+                        "Ventura-dark" \
+                        "Ventura-light" \
+                        "WhiteSur" \
+                        "WhiteSur-dark" \
+                        "WhiteSur-light")
+                fi
 
-                cat > "$CONFIG_DIR/xfwm4.xml" << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xfwm4" version="1.0">
-  <property name="general" type="empty">
-    <property name="theme" type="string" value="WhiteSur-Dark"/>
-  </property>
-</channel>
-EOF
-                ;;
+                [[ " ${SELECTED_UI[*]} " =~ "Curseurs" ]] && INSTALL_CURSORS=true
+            else
+                echo -e "\n${COLOR_BLUE}Paquets supplémentaires disponibles :${COLOR_RESET}"
+                for i in "${!EXTRA_PKGS[@]}"; do
+                    echo "$((i+1))) ${EXTRA_PKGS[i]}"
+                done
+                echo
+                printf "${COLOR_GOLD}Sélectionner les paquets à installer (séparés par des espaces, ou 'a' pour tous) : ${COLOR_RESET}"
+                read -r CHOICES
 
-            "minimale"|"personnalisée")
-                # Configuration de base
-                local THEME_VALUE="Default"
-                local ICON_VALUE="Adwaita"
-                local CURSOR_VALUE="default"
-                local WALLPAPER="/usr/share/backgrounds/xfce/xfce-stripes.png"
+                if [ "$CHOICES" = "a" ]; then
+                    PKGS+=("${EXTRA_PKGS[@]}")
+                else
+                    for choice in $CHOICES; do
+                        if [ "$choice" -ge 1 ] && [ "$choice" -le "${#EXTRA_PKGS[@]}" ]; then
+                            PKGS+=("${EXTRA_PKGS[$((choice-1))]}")
+                        fi
+                    done
+                fi
 
-                # Ajuster selon les choix personnalisés
-                if [ "$INSTALL_THEME" = true ]; then
-                    case $SELECTED_THEME in
-                        "WhiteSur") THEME_VALUE="WhiteSur-Dark" ;;
-                        "Fluent") THEME_VALUE="Fluent-dark-compact" ;;
-                        "Lavanda") THEME_VALUE="Lavanda-dark-compact" ;;
+                echo -e "\n${COLOR_BLUE}Éléments d'interface disponibles :${COLOR_RESET}"
+                echo "1) Thèmes"
+                echo "2) Icônes"
+                echo "3) Fonds d'écran"
+                echo "4) Curseurs"
+                echo
+                printf "${COLOR_GOLD}Sélectionner les éléments à installer (séparés par des espaces) : ${COLOR_RESET}"
+                read -r UI_CHOICES
+
+                if [[ $UI_CHOICES =~ 1 ]]; then
+                    echo -e "\n${COLOR_BLUE}Thèmes disponibles :${COLOR_RESET}"
+                    echo "1) WhiteSur"
+                    echo "2) Fluent"
+                    echo "3) Lavanda"
+                    echo
+                    printf "${COLOR_GOLD}Sélectionner les thèmes à installer (séparés par des espaces) : ${COLOR_RESET}"
+                    read -r THEME_CHOICES
+
+                    for choice in $THEME_CHOICES; do
+                        case $choice in
+                            1) SELECTED_THEMES+=("WhiteSur") ;;
+                            2) SELECTED_THEMES+=("Fluent") ;;
+                            3) SELECTED_THEMES+=("Lavanda") ;;
+                        esac
+                    done
+
+                    if [ ${#SELECTED_THEMES[@]} -gt 0 ]; then
+                        INSTALL_THEME=true
+                        if [ ${#SELECTED_THEMES[@]} -gt 1 ]; then
+                            echo -e "\n${COLOR_BLUE}Thèmes sélectionnés :${COLOR_RESET}"
+                            for i in "${!SELECTED_THEMES[@]}"; do
+                                echo "$((i+1))) ${SELECTED_THEMES[i]}"
+                            done
+                            echo
+                            printf "${COLOR_GOLD}Sélectionner le thème à appliquer (1-${#SELECTED_THEMES[@]}) : ${COLOR_RESET}"
+                            read -r THEME_CHOICE
+                            SELECTED_THEME="${SELECTED_THEMES[$((THEME_CHOICE-1))]}"
+                        else
+                            SELECTED_THEME="${SELECTED_THEMES[0]}"
+                        fi
+                    fi
+                fi
+
+                if [[ $UI_CHOICES =~ 2 ]]; then
+                    echo -e "\n${COLOR_BLUE}Packs d'icônes disponibles :${COLOR_RESET}"
+                    echo "1) WhiteSur"
+                    echo "2) McMojave-circle"
+                    echo "3) Tela"
+                    echo "4) Fluent"
+                    echo "5) Qogir"
+                    echo
+                    printf "${COLOR_GOLD}Sélectionner les packs d'icônes à installer (séparés par des espaces) : ${COLOR_RESET}"
+                    read -r ICON_CHOICES
+
+                    for choice in $ICON_CHOICES; do
+                        case $choice in
+                            1) SELECTED_ICON_THEMES+=("WhiteSur") ;;
+                            2) SELECTED_ICON_THEMES+=("McMojave-circle") ;;
+                            3) SELECTED_ICON_THEMES+=("Tela") ;;
+                            4) SELECTED_ICON_THEMES+=("Fluent") ;;
+                            5) SELECTED_ICON_THEMES+=("Qogir") ;;
+                        esac
+                    done
+
+                    if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
+                        INSTALL_ICONS=true
+                        if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
+                            echo -e "\n${COLOR_BLUE}Packs d'icônes sélectionnés :${COLOR_RESET}"
+                            for i in "${!SELECTED_ICON_THEMES[@]}"; do
+                                echo "$((i+1))) ${SELECTED_ICON_THEMES[i]}"
+                            done
+                            echo
+                            printf "${COLOR_GOLD}Sélectionner le pack d'icônes à appliquer (1-${#SELECTED_ICON_THEMES[@]}) : ${COLOR_RESET}"
+                            read -r ICON_CHOICE
+                            SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[$((ICON_CHOICE-1))]}"
+                        else
+                            SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
+                        fi
+                    fi
+                fi
+
+                if [[ $UI_CHOICES =~ 3 ]]; then
+                    INSTALL_WALLPAPERS=true
+                    echo -e "\n${COLOR_BLUE}Fonds d'écran disponibles :${COLOR_RESET}"
+                    echo "1) Monterey"
+                    echo "2) Monterey-dark"
+                    echo "3) Monterey-light"
+                    echo "4) Monterey-morning"
+                    echo "5) Sonoma-dark"
+                    echo "6) Sonoma-light"
+                    echo "7) Ventura-dark"
+                    echo "8) Ventura-light"
+                    echo "9) WhiteSur"
+                    echo "10) WhiteSur-dark"
+                    echo "11) WhiteSur-light"
+                    echo
+                    printf "${COLOR_GOLD}Sélectionner le fond d'écran à appliquer (1-11) : ${COLOR_RESET}"
+                    read -r WALLPAPER_CHOICE
+
+                    case $WALLPAPER_CHOICE in
+                        1) SELECTED_WALLPAPER="Monterey" ;;
+                        2) SELECTED_WALLPAPER="Monterey-dark" ;;
+                        3) SELECTED_WALLPAPER="Monterey-light" ;;
+                        4) SELECTED_WALLPAPER="Monterey-morning" ;;
+                        5) SELECTED_WALLPAPER="Sonoma-dark" ;;
+                        6) SELECTED_WALLPAPER="Sonoma-light" ;;
+                        7) SELECTED_WALLPAPER="Ventura-dark" ;;
+                        8) SELECTED_WALLPAPER="Ventura-light" ;;
+                        9) SELECTED_WALLPAPER="WhiteSur" ;;
+                        10) SELECTED_WALLPAPER="WhiteSur-dark" ;;
+                        11) SELECTED_WALLPAPER="WhiteSur-light" ;;
                     esac
                 fi
 
-                if [ "$INSTALL_ICONS" = true ]; then
-                    case $SELECTED_ICON_THEME in
-                        "WhiteSur") ICON_VALUE="WhiteSur-dark" ;;
-                        "McMojave-circle") ICON_VALUE="McMojave-circle-dark" ;;
-                        "Tela") ICON_VALUE="Tela-dark" ;;
-                        "Fluent") ICON_VALUE="Fluent-dark" ;;
-                        "Qogir") ICON_VALUE="Qogir-dark" ;;
-                    esac
-                fi
-
-                [ "$INSTALL_CURSORS" = true ] && CURSOR_VALUE="dist-dark"
-                [ "$INSTALL_WALLPAPERS" = true ] && WALLPAPER="/usr/share/backgrounds/whitesur/${SELECTED_WALLPAPER}.jpg"
-
-                # Générer xsettings.xml
-                cat > "$CONFIG_DIR/xsettings.xml" << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xsettings" version="1.0">
-  <property name="Net" type="empty">
-    <property name="ThemeName" type="string" value="$THEME_VALUE"/>
-    <property name="IconThemeName" type="string" value="$ICON_VALUE"/>
-  </property>
-  <property name="Gtk" type="empty">
-    <property name="CursorThemeName" type="string" value="$CURSOR_VALUE"/>
-    <property name="CursorThemeSize" type="int" value="32"/>
-  </property>
-</channel>
-EOF
-
-                # Générer xfwm4.xml
-                cat > "$CONFIG_DIR/xfwm4.xml" << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xfwm4" version="1.0">
-  <property name="general" type="empty">
-    <property name="theme" type="string" value="$THEME_VALUE"/>
-  </property>
-</channel>
-EOF
-
-                # Générer xfce4-desktop.xml
-                cat > "$CONFIG_DIR/xfce4-desktop.xml" << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<channel name="xfce4-desktop" version="1.0">
-  <property name="backdrop" type="empty">
-    <property name="screen0" type="empty">
-      <property name="monitorBuiltinDisplay" type="empty">
-        <property name="workspace0" type="empty">
-          <property name="image-style" type="int" value="5"/>
-          <property name="last-image" type="string" value="$WALLPAPER"/>
-        </property>
-      </property>
-    </property>
-  </property>
-  <property name="desktop-icons" type="empty">
-    <property name="file-icons" type="empty">
-      <property name="show-home" type="bool" value="false"/>
-      <property name="show-filesystem" type="bool" value="false"/>
-      <property name="show-trash" type="bool" value="false"/>
-    </property>
-  </property>
-</channel>
-EOF
-                ;;
-        esac
-
-        # Appliquer les permissions
-        chmod 644 "$CONFIG_DIR"/*.xml >/dev/null 2>&1
-    }
+                [[ $UI_CHOICES =~ 4 ]] && INSTALL_CURSORS=true
+            fi
+            ;;
+    esac
 
     # Installation des paquets
     subtitle_msg "❯ Installation des paquets"
-    install_packages "${PKGS[@]}"
+    for PKG in "${PKGS[@]}"; do
+        execute_command "apt-get install $PKG -y" "Installation de $PKG"
+    done
 
     # Installation du navigateur
     if [ "$BROWSER" = "firefox" ]; then
-        install_packages "firefox-esr"
+        execute_command "apt-get install firefox -y" "Installation de Firefox"
+        execute_command "mkdir -p $HOME/Desktop && cp /usr/share/applications/firefox.desktop $HOME/Desktop && chmod +x $HOME/Desktop/firefox.desktop" "Configuration du raccourci Firefox"
     elif [ "$BROWSER" = "chromium" ]; then
-        install_packages "chromium"
+        execute_command "apt-get install chromium-browser -y" "Installation de Chromium"
+        execute_command "mkdir -p $HOME/Desktop && cp /usr/share/applications/chromium-browser.desktop $HOME/Desktop && chmod +x $HOME/Desktop/chromium-browser.desktop" "Configuration du raccourci Chromium"
     fi
 
     # Installation des thèmes et éléments d'interface
