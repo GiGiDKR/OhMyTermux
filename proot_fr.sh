@@ -13,6 +13,10 @@ SELECTED_THEME=""
 SELECTED_ICON_THEME=""
 SELECTED_WALLPAPER=""
 
+# Variables pour l'utilisateur Debian
+DEBIAN_USERNAME=""
+DEBIAN_PASSWORD=""
+
 #------------------------------------------------------------------------------
 # COULEURS D'AFFICHAGE
 #------------------------------------------------------------------------------
@@ -62,6 +66,14 @@ for ARG in "$@"; do
         --help|-h)
             show_help
             exit 0
+            ;;
+        --username=*)
+            DEBIAN_USERNAME="${ARG#*=}"
+            shift
+            ;;
+        --password=*)
+            DEBIAN_PASSWORD="${ARG#*=}"
+            shift
             ;;
         *)
             break
@@ -494,3 +506,43 @@ configure_themes_and_icons
 # INSTALLATION DE MESA-VULKAN
 #------------------------------------------------------------------------------
 install_mesa_vulkan
+
+#------------------------------------------------------------------------------
+# INSTALLATION DE DEBIAN
+#------------------------------------------------------------------------------
+install_debian() {
+    title_msg "❯ Installation de Debian"
+    
+    # Si les identifiants ne sont pas fournis en argument, les demander
+    if [ -z "$DEBIAN_USERNAME" ]; then
+        if $USE_GUM; then
+            DEBIAN_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian")
+        else
+            printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian : ${COLOR_RESET}"
+            read -r DEBIAN_USERNAME
+        fi
+    fi
+    
+    if [ -z "$DEBIAN_PASSWORD" ]; then
+        if $USE_GUM; then
+            DEBIAN_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian")
+        else
+            printf "${COLOR_BLUE}Entrez le mot de passe pour Debian : ${COLOR_RESET}"
+            read -r -s DEBIAN_PASSWORD
+            echo
+        fi
+    fi
+    
+    # Installation de Debian
+    execute_command "proot-distro install debian" "Installation de Debian"
+    
+    # Configuration de l'utilisateur
+    execute_command "proot-distro login debian -- useradd -m -s /bin/bash \"$DEBIAN_USERNAME\"" "Création de l'utilisateur"
+    execute_command "proot-distro login debian -- bash -c \"echo '$DEBIAN_USERNAME:$DEBIAN_PASSWORD' | chpasswd\"" "Configuration du mot de passe"
+    execute_command "proot-distro login debian -- usermod -aG sudo \"$DEBIAN_USERNAME\"" "Ajout aux sudoers"
+    
+    # Configuration de sudo sans mot de passe
+    execute_command "proot-distro login debian -- bash -c 'echo \"$DEBIAN_USERNAME ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers'" "Configuration de sudo"
+    
+    success_msg "✓ Installation de Debian terminée"
+}

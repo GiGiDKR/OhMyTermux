@@ -12,6 +12,10 @@ EXECUTE_INITIAL_CONFIG=true
 # Affichage détaillé des opérations
 VERBOSE=false
 
+# Variables pour Debian PRoot
+PROOT_USERNAME=""
+PROOT_PASSWORD=""
+
 #------------------------------------------------------------------------------
 # SELECTEURS DE MODULES
 #------------------------------------------------------------------------------
@@ -150,13 +154,27 @@ for ARG in "$@"; do
             SCRIPT_CHOICE=true
             ONLY_GUM=false
             shift
+            # Si gum est utilisé, demander le nom d'utilisateur et le mot de passe
+            if $USE_GUM; then
+                PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
+                PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
+            fi
             ;;
         --help|-h)
             show_help
             exit 0
             ;;
         *)
-            break
+            # Récupérer le nom d'utilisateur et le mot de passe s'ils sont fournis
+            if [ -z "$PROOT_USERNAME" ]; then
+                PROOT_USERNAME="$ARG"
+                shift
+            elif [ -z "$PROOT_PASSWORD" ]; then
+                PROOT_PASSWORD="$ARG"
+                shift
+            else
+                break
+            fi
             ;;
     esac
 done
@@ -1282,7 +1300,13 @@ install_proot() {
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
                 execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
                 execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
-                ./proot_fr.sh --gum
+                
+                # Si on est en mode FULL_INSTALL avec nom d'utilisateur et mot de passe
+                if $FULL_INSTALL && [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
+                    ./proot_fr.sh --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                else
+                    ./proot_fr.sh --gum
+                fi
             fi
         else    
             printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
@@ -1293,7 +1317,13 @@ install_proot() {
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
                 execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
                 execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
-                ./proot_fr.sh
+                
+                # Si on est en mode FULL_INSTALL avec nom d'utilisateur et mot de passe
+                if $FULL_INSTALL && [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
+                    ./proot_fr.sh --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                else
+                    ./proot_fr.sh
+                fi
             fi
         fi
     fi
