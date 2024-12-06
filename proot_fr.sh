@@ -13,9 +13,9 @@ SELECTED_THEME=""
 SELECTED_ICON_THEME=""
 SELECTED_WALLPAPER=""
 
-# Variables pour l'utilisateur Debian
-DEBIAN_USERNAME=""
-DEBIAN_PASSWORD=""
+# Variables pour l'utilisateur PRoot
+PROOT_USERNAME=""
+PROOT_PASSWORD=""
 
 #------------------------------------------------------------------------------
 # COULEURS D'AFFICHAGE
@@ -68,11 +68,11 @@ for ARG in "$@"; do
             exit 0
             ;;
         --username=*)
-            DEBIAN_USERNAME="${ARG#*=}"
+            PROOT_USERNAME="${ARG#*=}"
             shift
             ;;
         --password=*)
-            DEBIAN_PASSWORD="${ARG#*=}"
+            PROOT_PASSWORD="${ARG#*=}"
             shift
             ;;
         *)
@@ -394,13 +394,13 @@ EOF
 check_dependencies
 title_msg "❯ Installation de Debian Proot"
 
-if [ $# -eq 0 ]; then
+if [ $# -eq 0 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
     if [ "$USE_GUM" = true ]; then
-        USERNAME=$(gum input --prompt "Username: " --placeholder "Entrer un nom d'utilisateur")
+        PROOT_USERNAME=$(gum input --prompt "Username: " --placeholder "Entrer un nom d'utilisateur")
         while true; do
-            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+            PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
             PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
-            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
                 gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
@@ -408,19 +408,19 @@ if [ $# -eq 0 ]; then
         done
     else
         echo -e "${COLOR_BLUE}Entrer un nom d'utilisateur: ${COLOR_RESET}"
-        read -r USERNAME
+        read -r PROOT_USERNAME
         tput cuu1
         tput el
         while true; do
             echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
-            read -rs PASSWORD
+            read -rs PROOT_PASSWORD
             tput cuu1
             tput el
             echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
             read -rs PASSWORD_CONFIRM
             tput cuu1
             tput el 
-            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
                 echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
@@ -429,13 +429,13 @@ if [ $# -eq 0 ]; then
             fi
         done
     fi
-elif [ $# -eq 1 ]; then
-    USERNAME="$1"
+elif [ $# -eq 1 ] && [ -z "$PROOT_PASSWORD" ]; then
+    PROOT_USERNAME="$1"
     if [ "$USE_GUM" = true ]; then
         while true; do
-            PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+            PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
             PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
-            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
                 gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
@@ -444,14 +444,14 @@ elif [ $# -eq 1 ]; then
     else
         while true; do
             echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
-            read -rs PASSWORD
+            read -rs PROOT_PASSWORD
             tput cuu1
             tput el
             echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
             read -rs PASSWORD_CONFIRM
             tput cuu1
             tput el
-            if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
                 echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
@@ -460,12 +460,9 @@ elif [ $# -eq 1 ]; then
             fi
         done
     fi
-elif [ $# -eq 2 ]; then
-    USERNAME="$1"
-    PASSWORD="$2"
-else
-    show_help
-    exit 1
+elif [ $# -eq 2 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
+    PROOT_USERNAME="$1"
+    PROOT_PASSWORD="$2"
 fi
 
 execute_command "proot-distro install debian" "Installation de la distribution"
@@ -485,6 +482,9 @@ install_packages_proot
 
 subtitle_msg "❯ Configuration de la distribution"
 
+# Utiliser les variables PROOT_USERNAME et PROOT_PASSWORD pour create_user_proot
+USERNAME="$PROOT_USERNAME"
+PASSWORD="$PROOT_PASSWORD"
 create_user_proot
 configure_user_rights
 

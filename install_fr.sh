@@ -186,13 +186,29 @@ if $FULL_INSTALL; then
     fi
     
     if [ -z "$PROOT_PASSWORD" ]; then
-        if $USE_GUM; then
-            PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
-        else
-            printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
-            read -r -s PROOT_PASSWORD
-            echo
-        fi
+        while true; do
+            if $USE_GUM; then
+                PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
+                PROOT_PASSWORD_CONFIRM=$(gum input --password --placeholder "Confirmez le mot de passe")
+            else
+                printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
+                read -r -s PROOT_PASSWORD
+                echo
+                printf "${COLOR_BLUE}Confirmez le mot de passe : ${COLOR_RESET}"
+                read -r -s PROOT_PASSWORD_CONFIRM
+                echo
+            fi
+
+            if [ "$PROOT_PASSWORD" = "$PROOT_PASSWORD_CONFIRM" ]; then
+                break
+            else
+                if $USE_GUM; then
+                    gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                else
+                    echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                fi
+            fi
+        done
     fi
 fi
 
@@ -1367,8 +1383,8 @@ install_proot() {
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
         execute_command "chmod +x proot_fr.sh" "Exécution du script Proot"
         
-        # Si on est en mode FULL_INSTALL avec nom d'utilisateur et mot de passe
-        if $FULL_INSTALL && [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
+        # Si les identifiants sont déjà fournis
+        if [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
             if $USE_GUM; then
                 ./proot_fr.sh --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
             else
