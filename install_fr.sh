@@ -188,18 +188,18 @@ if $FULL_INSTALL; then
     if [ -z "$PROOT_PASSWORD" ]; then
         while true; do
             if $USE_GUM; then
-                PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
-                PROOT_PASSWORD_CONFIRM=$(gum input --password --placeholder "Confirmez le mot de passe")
+                PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+                PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
             else
-                printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
+                printf "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
                 read -r -s PROOT_PASSWORD
                 echo
-                printf "${COLOR_BLUE}Confirmez le mot de passe : ${COLOR_RESET}"
-                read -r -s PROOT_PASSWORD_CONFIRM
+                printf "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
+                read -r -s PASSWORD_CONFIRM
                 echo
             fi
 
-            if [ "$PROOT_PASSWORD" = "$PROOT_PASSWORD_CONFIRM" ]; then
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
                 if $USE_GUM; then

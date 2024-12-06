@@ -403,7 +403,7 @@ if [ $# -eq 0 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
             if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
             fi
         done
     else
@@ -438,7 +438,7 @@ elif [ $# -eq 1 ] && [ -z "$PROOT_PASSWORD" ]; then
             if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
                 break
             else
-                gum style --foreground "#FF0000" "Les mots de passe ne correspondent pas. Veuillez réessayer."
+                gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
             fi
         done
     else
