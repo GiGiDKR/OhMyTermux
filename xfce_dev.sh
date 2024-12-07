@@ -811,19 +811,19 @@ main() {
             PKGS=("${BASE_PKGS[@]}")
 
             if $USE_GUM; then
-                SELECTED_EXTRA=($(gum_choose_multi "Sélectionner les paquets à installer :" "${EXTRA_PKGS[@]}"))
+                SELECTED_EXTRA=($(gum_choose_multi "Sélectionner avec ESPACE les paquets à installer :" --height=10 "${EXTRA_PKGS[@]}"))
                 if [ ${#SELECTED_EXTRA[@]} -gt 0 ]; then
                     PKGS+=("${SELECTED_EXTRA[@]}")
                 fi
 
-                SELECTED_UI=($(gum_choose_multi "Sélectionner les éléments à installer :" \
+                SELECTED_UI=($(gum_choose_multi "Sélectionner avec ESPACE les éléments à installer :" --height=5 \
                     "Thèmes" \
                     "Icônes" \
                     "Fonds d'écran" \
                     "Curseurs"))
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Thèmes" ]]; then
-                    SELECTED_THEMES=($(gum_choose_multi "Sélectionner les thèmes à installer :" \
+                    SELECTED_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les thèmes à installer :" --height=4 \
                         "WhiteSur" \
                         "Fluent" \
                         "Lavanda"))
@@ -839,7 +839,7 @@ main() {
                 fi
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Icônes" ]]; then
-                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner les packs d'icônes à installer :" \
+                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les packs d'icônes à installer :" --height=6 \
                         "WhiteSur" \
                         "McMojave-circle" \
                         "Tela" \
@@ -858,7 +858,7 @@ main() {
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Fonds d'écran" ]]; then
                     INSTALL_WALLPAPERS=true
-                    SELECTED_WALLPAPER=$(gum_choose "Sélectionner le fond d'écran à appliquer :" \
+                    SELECTED_WALLPAPER=$(gum_choose "Sélectionner le fond d'écran à appliquer :" --height=12 \
                         "Monterey" \
                         "Monterey-dark" \
                         "Monterey-light" \
