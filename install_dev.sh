@@ -828,15 +828,21 @@ install_prompt() {
             fi
             
             # Configuration de Oh-My-Posh pour ZSH
-            local LINE_TO_ADD='eval "$(oh-my-posh init zsh --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/jandedobbeleer.omp.json)"'
-            if ! grep -qF "$LINE_TO_ADD" "$ZSHRC"; then
-                echo "$LINE_TO_ADD" >> "$ZSHRC"
+            local INIT_LINE='eval "$(oh-my-posh init zsh --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/jandedobbeleer.omp.json)"'
+            if [ ! -f "$HOME/.zshhrc" ]; then
+                touch "$HOME/.zshrc"
+            fi
+            if ! grep -qF "$INIT_LINE" "$ZSHRC"; then
+                echo "$INIT_LINE" >> "$ZSHRC"
             fi
 
             # Configuration de Oh-My-Posh pour Bash
-            LINE_TO_ADD='eval "$(oh-my-posh init bash --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/jandedobbeleer.omp.json)"'
-            if ! grep -qF "$LINE_TO_ADD" "$HOME/.bashrc"; then
-                echo "$LINE_TO_ADD" >> "$HOME/.bashrc"
+            INIT_LINE='eval "$(oh-my-posh init bash --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/jandedobbeleer.omp.json)"'
+            if [ ! -f "$HOME/.bashrc" ]; then
+                touch "$HOME/.bashrc"
+            fi
+            if ! grep -qF "$INIT_LINE" "$HOME/.bashrc"; then
+                echo "$INIT_LINE" >> "$HOME/.bashrc"
             fi
             ;;
             
@@ -848,11 +854,17 @@ install_prompt() {
             fi
             
             local INIT_LINE='eval "$(starship init zsh)"'
+            if [ ! -f "$HOME/.zshhrc" ]; then
+                touch "$HOME/.zshrc"
+            fi
             if ! grep -qF "$INIT_LINE" "$ZSHRC"; then
                 echo "$INIT_LINE" >> "$ZSHRC"
             fi
 
             INIT_LINE='eval "$(starship init bash)"'
+            if [ ! -f "$HOME/.bashrc" ]; then
+                touch "$HOME/.bashrc"
+            fi
             if ! grep -qF "$INIT_LINE" "$HOME/.bashrc"; then
                 echo "$INIT_LINE" >> "$HOME/.bashrc"
             fi
