@@ -1028,6 +1028,7 @@ main() {
 
     # Installation des thèmes et éléments d'interface
     if [ "$INSTALL_TYPE" != "minimale" ]; then
+        subtitle_msg "❯ Installation des éléments d'interface"
         [ "$INSTALL_THEME" = true ] && install_themes
         [ "$INSTALL_ICONS" = true ] && install_icons
         [ "$INSTALL_WALLPAPERS" = true ] && install_wallpapers
