@@ -827,25 +827,79 @@ install_prompt() {
                 execute_command "curl -fLo \"$HOME/.termux/font.ttf\" --create-dirs https://raw.githubusercontent.com/termux/termux-styling/master/app/src/main/assets/fonts/DejaVu-Sans-Mono.ttf" "Installation de la police Nerd"
             fi
             
-            # Configuration de Oh-My-Posh pour ZSH
-            local INIT_LINE='eval "$(oh-my-posh init zsh --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/jandedobbeleer.omp.json)"'
-            if [ ! -f "$HOME/.zshhrc" ]; then
-                touch "$HOME/.zshrc"
-            fi
-            if ! grep -qF "$INIT_LINE" "$ZSHRC"; then
-                echo "$INIT_LINE" >> "$ZSHRC"
+            # Configuration de Oh-My-Posh
+            LINE_TO_ADD_BASE='eval "$(oh-my-posh init %s --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/%s.omp.json)"'
+
+            # Récupération de la liste complète des thèmes
+            THEMES_DIR="/data/data/com.termux/files/usr/share/oh-my-posh/themes"
+            if [ -d "$THEMES_DIR" ]; then
+                # Création d'un tableau avec tous les thèmes disponibles
+                mapfile -t AVAILABLE_THEMES < <(find "$THEMES_DIR" -name "*.omp.json" -exec basename {} .omp.json \; | sort)
+            else
+                error_msg "Répertoire des thèmes Oh-My-Posh non trouvé"
+                return 1
             fi
 
-            # Configuration de Oh-My-Posh pour Bash
-            INIT_LINE='eval "$(oh-my-posh init bash --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/jandedobbeleer.omp.json)"'
+            # Sélection du thème
+            if $USE_GUM; then
+                # Utilisation de gum pour la sélection avec défilement
+                THEME=$(printf '%s\n' "${AVAILABLE_THEMES[@]}" | gum choose \
+                    --header="Choisissez un thème Oh-My-Posh :" \
+                    --height=20 \
+                    --selected="jandedobbeleer")
+            else
+                # Affichage de la liste numérotée des thèmes
+                echo -e "${COLOR_BLUE}Choisissez un thème Oh-My-Posh :${COLOR_RESET}"
+                echo
+                for i in "${!AVAILABLE_THEMES[@]}"; do
+                    # Formatage du numéro pour l'alignement (3 caractères)
+                    NUM=$(printf "%3d" $((i+1)))
+                    if [ "${AVAILABLE_THEMES[$i]}" = "jandedobbeleer" ]; then
+                        echo -e "${COLOR_BLUE}${NUM}) ${AVAILABLE_THEMES[$i]} (par défaut)${COLOR_RESET}"
+                    else
+                        echo -e "${COLOR_BLUE}${NUM}) ${AVAILABLE_THEMES[$i]}${COLOR_RESET}"
+                    fi
+                done
+                echo
+                
+                # Calcul du nombre de lignes à effacer (nombre de thèmes + 3 lignes pour les textes supplémentaires)
+                LINES_TO_CLEAR=$((${#AVAILABLE_THEMES[@]}+3))
+                
+                printf "${COLOR_GOLD}Entrez le numéro de votre choix : ${COLOR_RESET}"
+                tput setaf 3
+                read -r -e -p "" -i "1" CHOICE
+                tput sgr0
+                
+                # Effacement du menu
+                tput cuu $LINES_TO_CLEAR
+                tput ed
+                
+                # Validation du choix
+                if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [ "$CHOICE" -ge 1 ] && [ "$CHOICE" -le "${#AVAILABLE_THEMES[@]}" ]; then
+                    THEME="${AVAILABLE_THEMES[$((CHOICE-1))]}"
+                else
+                    THEME="jandedobbeleer"
+                fi
+            fi
+
+            # Configuration pour ZSH
+            if [ ! -f "$ZSHRC" ]; then
+                touch "$ZSHRC"
+            fi
+            LINE_TO_ADD=$(printf "$LINE_TO_ADD_BASE" "zsh" "$THEME")
+            if ! grep -qF "$LINE_TO_ADD" "$ZSHRC"; then
+                echo "$LINE_TO_ADD" >> "$ZSHRC"
+            fi
+
+            # Configuration pour Bash
             if [ ! -f "$HOME/.bashrc" ]; then
                 touch "$HOME/.bashrc"
             fi
-            if ! grep -qF "$INIT_LINE" "$HOME/.bashrc"; then
-                echo "$INIT_LINE" >> "$HOME/.bashrc"
+            LINE_TO_ADD=$(printf "$LINE_TO_ADD_BASE" "bash" "$THEME")
+            if ! grep -qF "$LINE_TO_ADD" "$HOME/.bashrc"; then
+                echo "$LINE_TO_ADD" >> "$HOME/.bashrc"
             fi
             ;;
-            
         "Starship")
             execute_command "pkg install -y starship" "Installation de Starship"
             
@@ -1144,7 +1198,7 @@ install_packages() {
             echo -e "${COLOR_BLUE}18) tsu${COLOR_RESET}"
             echo "19) Tout installer"
             echo            
-            printf "${COLOR_GOLD}Entrez les numéros des packages : ${COLOR_RESET}"
+            printf "${COLOR_GOLD}Entrez les num��ros des packages : ${COLOR_RESET}"
             tput setaf 3
             read -r -e -p "" -i "1 2 5 6 7" PACKAGE_CHOICES
             tput sgr0
