@@ -843,10 +843,11 @@ install_prompt() {
             # Sélection du thème
             if $USE_GUM; then
                 # Utilisation de gum pour la sélection avec défilement
-                THEME=$(printf '%s\n' "${AVAILABLE_THEMES[@]}" | gum choose \
-                    --header="Choisissez un thème Oh-My-Posh :" \
-                    --height=20 \
-                    --selected="jandedobbeleer")
+                THEME=$(printf '%s\n' "${AVAILABLE_THEMES[@]}" | gum_choose \
+                    "Choisissez un thème Oh-My-Posh :" \
+                    --selected="jandedobbeleer"
+                    --height=25 \
+                    )
             else
                 # Affichage de la liste numérotée des thèmes
                 echo -e "${COLOR_BLUE}Choisissez un thème Oh-My-Posh :${COLOR_RESET}"
