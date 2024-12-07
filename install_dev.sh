@@ -958,6 +958,89 @@ install_prompt() {
 }
 
 #------------------------------------------------------------------------------
+# SÉLECTION DE PLUGINS ZSH 
+#------------------------------------------------------------------------------
+install_zsh_plugins() {
+    local PLUGINS_TO_INSTALL=()
+
+    subtitle_msg "❯ Installation des plugins"
+
+    if $USE_GUM; then
+        mapfile -t PLUGINS_TO_INSTALL < <(gum_choose_multi "Sélectionner avec ESPACE les plugins à installer :" --height=8 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder" "Tout installer")
+        if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" Tout installer "* ]]; then
+            PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
+        fi
+    else
+        echo "Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :"
+        echo
+        info_msg "1) zsh-autosuggestions"
+        info_msg "2) zsh-syntax-highlighting"
+        info_msg "3) zsh-completions"
+        info_msg "4) you-should-use"
+        info_msg "5) zsh-alias-finder"
+        info_msg "6) Tout installer"
+        echo
+        printf "${COLOR_GOLD}Entrez les numéros des plugins : ${COLOR_RESET}"
+        tput setaf 3
+        read -r -e -p "" -i "6" PLUGIN_CHOICES
+        tput sgr0
+        tput cuu 10
+        tput ed
+        for CHOICE in $PLUGIN_CHOICES; do
+            case $CHOICE in
+                1) PLUGINS_TO_INSTALL+=("zsh-autosuggestions") ;;
+                2) PLUGINS_TO_INSTALL+=("zsh-syntax-highlighting") ;;
+                3) PLUGINS_TO_INSTALL+=("zsh-completions") ;;
+                4) PLUGINS_TO_INSTALL+=("you-should-use") ;;
+                5) PLUGINS_TO_INSTALL+=("zsh-alias-finder") ;;
+                6) PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
+                break
+                ;;
+            esac
+        done
+    fi
+
+    for PLUGIN in "${PLUGINS_TO_INSTALL[@]}"; do
+        install_plugin "$PLUGIN"
+    done
+
+    # Définir les variables nécessaires
+    local ZSHRC="$HOME/.zshrc"
+    local SELECTED_PLUGINS="${PLUGINS_TO_INSTALL[*]}"
+    local HAS_COMPLETIONS=false
+    local HAS_OHMYTERMIX=true
+
+    # Vérifier si zsh-completions est installé
+    if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" zsh-completions "* ]]; then
+        HAS_COMPLETIONS=true
+    fi
+
+    update_zshrc "$ZSHRC" "$SELECTED_PLUGINS" "$HAS_COMPLETIONS" "$HAS_OHMYTERMIX"
+}
+
+#------------------------------------------------------------------------------
+# INSTALLATION DES PLUGINS ZSH
+#------------------------------------------------------------------------------
+install_plugin() {
+    local PLUGIN_NAME=$1
+    local PLUGIN_URL=""
+
+    case $PLUGIN_NAME in
+        "zsh-autosuggestions") PLUGIN_URL="https://github.com/zsh-users/zsh-autosuggestions.git" ;;
+        "zsh-syntax-highlighting") PLUGIN_URL="https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
+        "zsh-completions") PLUGIN_URL="https://github.com/zsh-users/zsh-completions.git" ;;
+        "you-should-use") PLUGIN_URL="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
+        "zsh-alias-finder") PLUGIN_URL="https://github.com/akash329d/zsh-alias-finder.git" ;;
+    esac
+
+    if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$PLUGIN_NAME" ]; then
+        execute_command "git clone '$PLUGIN_URL' '$HOME/.oh-my-zsh/custom/plugins/$PLUGIN_NAME' --quiet" "Installation de $PLUGIN_NAME"
+    else
+        info_msg "  $PLUGIN_NAME est déjà installé"
+    fi
+}
+
+#------------------------------------------------------------------------------
 # MISE À JOUR DE LA CONFIGURATION DE ZSH
 #------------------------------------------------------------------------------
 update_zshrc() {
