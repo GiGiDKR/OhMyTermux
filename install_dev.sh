@@ -611,38 +611,6 @@ initial_config() {
         fi
     fi
 
-    #DEBUG                                                       
-    # Force la configuration du thème Argonaut
-    TERMUX_DIR="$HOME/.termux"
-    FILE_PATH="$TERMUX_DIR/colors.properties"
-    if [ ! -f "$FILE_PATH" ]; then
-        mkdir -p "$TERMUX_DIR"
-        cat > "$FILE_PATH" << 'EOL'
-# https://github.com/Mayccoll/Gogh/blob/master/themes/argonaut.sh
-background=#0e1019
-foreground=#fffaf4
-cursor=#fffaf4
-color0=#232323
-color1=#ff000f
-color2=#8ce10b
-color3=#ffb900
-color4=#008df8
-color5=#6d43a6
-color6=#00d8eb
-color7=#ffffff
-color8=#444444
-color9=#ff2740
-color10=#abe15b
-color11=#ffd242
-color12=#0092ff
-color13=#9a5feb
-color14=#67fff0
-color15=#ffffff
-EOL
-        termux-reload-settings
-    fi
-    #DEBUG                                                       
-
     change_repo
 
     # Mise à jour et mise à niveau des paquets en préservant les configurations existantes
