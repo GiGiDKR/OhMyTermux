@@ -408,7 +408,7 @@ gum_choose_multi() {
             echo "${OPTIONS[@]}"
         fi
     else
-        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" "${OPTIONS[@]}"
+        gum choose --no-limit --selected.foreground="33" --header.foreground="33" --cursor.foreground="33" --height="$HEIGHT" --header="$PROMPT" --selected="$SELECTED" "${OPTIONS[@]}"
     fi
 }
 
@@ -644,7 +644,7 @@ install_shell() {
     if $SHELL_CHOICE; then
         title_msg "❯ Configuration du shell"
         if $USE_GUM; then
-            SHELL_CHOICE=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" --height=5 "bash" "zsh" "fish")
+            SHELL_CHOICE=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" --height=4 "bash" "zsh" "fish")
         else
             echo -e "${COLOR_BLUE}Choisissez le shell à installer :${COLOR_RESET}"
             echo
