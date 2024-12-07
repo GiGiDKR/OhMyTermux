@@ -83,7 +83,7 @@ show_help() {
     echo "  --package | -pk  Module d'installation des packages"
     echo "  --font | -f       Module d'installation de la police"
     echo "  --xfce | -x       Module d'installation de XFCE"
-    echo "  --proot | -pr     Module d'installation de Debian Proot"
+    echo "  --proot | -pr     Module d'installation de Debian PRoot"
     echo "  --x11             Module d'installation de Termux-X11"
     echo "  --skip            Ignorer la configuration initiale"
     echo "  --uninstall       Désinstallation de Debian Proot"
@@ -671,7 +671,8 @@ install_shell() {
 
         case $SHELL_CHOICE in
             "bash")
-                echo -e "${COLOR_BLUE}Bash sélectionné${COLOR_RESET}"
+                success_msg "✓ Séléction de Bash"
+                install_prompt
                 ;;
             "zsh")
                 if ! command -v zsh &> /dev/null; then
@@ -702,48 +703,9 @@ install_shell() {
 
                 execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/zshrc" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
 
-                if $USE_GUM; then
-                    if gum_confirm "Installer PowerLevel10k ?"; then
-                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
-                        sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
-
-                        if gum_confirm "Installer le prompt personnalisé ?"; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
-                            echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
-                            echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
-                        else
-                            echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt en exécutant 'p10k configure'.${COLOR_RESET}"
-                        fi
-                    fi
-                else
-                    printf "${COLOR_BLUE}Installer PowerLevel10k ? (O/n) : ${COLOR_RESET}"
-                    read -r -e -p "" -i "o" CHOICE
-                    tput cuu1
-                    tput el
-                    if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" > /dev/null 2>&1 || true" "Installation de PowerLevel10k"
-                        sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
-
-                        printf "${COLOR_BLUE}Installer le prompt OhMyTermux ? (O/n) : ${COLOR_RESET}"
-                        read -r -e -p "" -i "o" CHOICE
-                        tput cuu1
-                        tput el
-                        if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation du prompt OhMyTermux" || error_msg "Impossible d'installer le prompt OhMyTermux"
-                            echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
-                            echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
-                        else
-                            echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt en exécutant 'p10k configure'.${COLOR_RESET}"
-                        fi
-                    fi
-                fi
-
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/aliases.zsh && \
-                                mkdir -p $HOME/.config/OhMyTermux && \
-                                curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/help.md)" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
-
                 if command -v zsh &> /dev/null; then
                     install_zsh_plugins
+                    install_prompt
                 else
                     echo -e "${COLOR_RED}ZSH n'est pas installé. Impossible d'installer les plugins.${COLOR_RESET}"
                 fi
@@ -769,86 +731,235 @@ install_shell() {
 }
 
 #------------------------------------------------------------------------------
-# SÉLECTION DES PLUGINS ZSH 
+# INSTALLATION DU PROMPT
 #------------------------------------------------------------------------------
-install_zsh_plugins() {
-    local PLUGINS_TO_INSTALL=()
-
-    subtitle_msg "❯ Installation des plugins"
-
-    if $USE_GUM; then
-        mapfile -t PLUGINS_TO_INSTALL < <(gum_choose_multi "Sélectionner avec ESPACE les plugins à installer :" --height=8 --selected="Tout installer" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder" "Tout installer")
-        if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" Tout installer "* ]]; then
-            PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
+install_prompt() {
+    local PROMPT_CHOICE
+    local CURRENT_SHELL="${SHELL_CHOICE:-zsh}"
+    
+    if [ "$CURRENT_SHELL" = "bash" ]; then
+        if $USE_GUM; then
+            PROMPT_CHOICE=$(gum_choose "Choisissez le prompt à installer :" --height=4 --selected="Oh-My-Posh" "Oh-My-Posh" "Starship")
+        else
+            echo -e "${COLOR_BLUE}Choisissez le prompt à installer :${COLOR_RESET}"
+            echo
+            echo -e "${COLOR_BLUE}1) Oh-My-Posh${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) Starship${COLOR_RESET}"
+            echo
+            printf "${COLOR_GOLD}Entrez votre choix (1/2) : ${COLOR_RESET}"
+            tput setaf 3
+            read -r -e -p "" -i "1" CHOICE
+            tput sgr0
+            tput cuu 5
+            tput ed
+            
+            case $CHOICE in
+                1) PROMPT_CHOICE="Oh-My-Posh" ;;
+                2) PROMPT_CHOICE="Starship" ;;
+                *) PROMPT_CHOICE="Oh-My-Posh" ;;
+            esac
         fi
     else
-        echo "Sélectionner les plugins à installer (SÉPARÉS PAR DES ESPACES) :"
-        echo
-        info_msg "1) zsh-autosuggestions"
-        info_msg "2) zsh-syntax-highlighting"
-        info_msg "3) zsh-completions"
-        info_msg "4) you-should-use"
-        info_msg "5) zsh-alias-finder"
-        info_msg "6) Tout installer"
-        echo
-        printf "${COLOR_GOLD}Entrez les numéros des plugins : ${COLOR_RESET}"
-        tput setaf 3
-        read -r -e -p "" -i "6" PLUGIN_CHOICES
-        tput sgr0
-        tput cuu 10
-        tput ed
-        for CHOICE in $PLUGIN_CHOICES; do
+        if $USE_GUM; then
+            PROMPT_CHOICE=$(gum_choose "Choisissez le prompt à installer :" --height=5 --selected="PowerLevel10k" "PowerLevel10k" "Oh-My-Posh" "Starship")
+        else
+            echo -e "${COLOR_BLUE}Choisissez le prompt à installer :${COLOR_RESET}"
+            echo
+            echo -e "${COLOR_BLUE}1) PowerLevel10k${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) Oh-My-Posh${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3) Starship${COLOR_RESET}"
+            echo
+            printf "${COLOR_GOLD}Entrez votre choix (1/2/3) : ${COLOR_RESET}"
+            tput setaf 3
+            read -r -e -p "" -i "1" CHOICE
+            tput sgr0
+            tput cuu 7
+            tput ed
+            
             case $CHOICE in
-                1) PLUGINS_TO_INSTALL+=("zsh-autosuggestions") ;;
-                2) PLUGINS_TO_INSTALL+=("zsh-syntax-highlighting") ;;
-                3) PLUGINS_TO_INSTALL+=("zsh-completions") ;;
-                4) PLUGINS_TO_INSTALL+=("you-should-use") ;;
-                5) PLUGINS_TO_INSTALL+=("zsh-alias-finder") ;;
-                6) PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
-                break
-                ;;
+                1) PROMPT_CHOICE="PowerLevel10k" ;;
+                2) PROMPT_CHOICE="Oh-My-Posh" ;;
+                3) PROMPT_CHOICE="Starship" ;;
+                *) PROMPT_CHOICE="PowerLevel10k" ;;
             esac
-        done
+        fi
     fi
 
-    for PLUGIN in "${PLUGINS_TO_INSTALL[@]}"; do
-        install_plugin "$PLUGIN"
-    done
+    case $PROMPT_CHOICE in
+        "PowerLevel10k")
+            if $USE_GUM; then
+                if gum_confirm "Installer PowerLevel10k ?"; then
+                    execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
+                    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-    # Définir les variables nécessaires
-    local ZSHRC="$HOME/.zshrc"
-    local SELECTED_PLUGINS="${PLUGINS_TO_INSTALL[*]}"
-    local HAS_COMPLETIONS=false
-    local HAS_OHMYTERMIX=true
+                    if gum_confirm "Installer le prompt personnalisé ?"; then
+                        execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
+                        echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
+                        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
+                    else
+                        echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt en exécutant 'p10k configure'.${COLOR_RESET}"
+                    fi
+                fi
+            else
+                printf "${COLOR_BLUE}Installer PowerLevel10k ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                tput cuu1
+                tput el
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" > /dev/null 2>&1 || true" "Installation de PowerLevel10k"
+                    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
 
-    # Vérifier si zsh-completions est installé
-    if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" zsh-completions "* ]]; then
-        HAS_COMPLETIONS=true
-    fi
+                    printf "${COLOR_BLUE}Installer le prompt personnalisé ? (O/n) : ${COLOR_RESET}"
+                    read -r -e -p "" -i "o" CHOICE
+                    tput cuu1
+                    tput el
+                    if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                        execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation du prompt personnalisé" || error_msg "Impossible d'installer le prompt personnalisé"
+                        echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh." >> "$ZSHRC"
+                        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
+                    else
+                        echo -e "${COLOR_BLUE}Vous pouvez configurer le prompt en exécutant 'p10k configure'.${COLOR_RESET}"
+                    fi
+                fi
+            fi
+            ;;
+            
+        "Oh-My-Posh")
+            execute_command "pkg install -y oh-my-posh" "Installation de Oh-My-Posh"
+            
+            # Installation optionnelle d'une police Nerd
+            if [ ! -f "$HOME/.termux/font.ttf" ]; then
+                execute_command "curl -fLo \"$HOME/.termux/font.ttf\" --create-dirs https://raw.githubusercontent.com/termux/termux-styling/master/app/src/main/assets/fonts/DejaVu-Sans-Mono.ttf" "Installation de la police Nerd"
+            fi
+            
+            # Configuration de Oh-My-Posh pour ZSH
+            local LINE_TO_ADD='eval "$(oh-my-posh init zsh --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/jandedobbeleer.omp.json)"'
+            if ! grep -qF "$LINE_TO_ADD" "$ZSHRC"; then
+                echo "$LINE_TO_ADD" >> "$ZSHRC"
+            fi
 
-    update_zshrc "$ZSHRC" "$SELECTED_PLUGINS" "$HAS_COMPLETIONS" "$HAS_OHMYTERMIX"
-}
+            # Configuration de Oh-My-Posh pour Bash
+            LINE_TO_ADD='eval "$(oh-my-posh init bash --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/jandedobbeleer.omp.json)"'
+            if ! grep -qF "$LINE_TO_ADD" "$HOME/.bashrc"; then
+                echo "$LINE_TO_ADD" >> "$HOME/.bashrc"
+            fi
+            ;;
+            
+        "Starship")
+            execute_command "pkg install -y starship" "Installation de Starship"
+            
+            if [ ! -f "$HOME/.termux/font.ttf" ]; then
+                execute_command "curl -fLo \"$HOME/.termux/font.ttf\" --create-dirs https://raw.githubusercontent.com/termux/termux-styling/master/app/src/main/assets/fonts/DejaVu-Sans-Mono.ttf" "Installation de la police Nerd"
+            fi
+            
+            local INIT_LINE='eval "$(starship init zsh)"'
+            if ! grep -qF "$INIT_LINE" "$ZSHRC"; then
+                echo "$INIT_LINE" >> "$ZSHRC"
+            fi
 
-#------------------------------------------------------------------------------
-# INSTALLATION DES PLUGINS ZSH
-#------------------------------------------------------------------------------
-install_plugin() {
-    local PLUGIN_NAME=$1
-    local PLUGIN_URL=""
+            INIT_LINE='eval "$(starship init bash)"'
+            if ! grep -qF "$INIT_LINE" "$HOME/.bashrc"; then
+                echo "$INIT_LINE" >> "$HOME/.bashrc"
+            fi
 
-    case $PLUGIN_NAME in
-        "zsh-autosuggestions") PLUGIN_URL="https://github.com/zsh-users/zsh-autosuggestions.git" ;;
-        "zsh-syntax-highlighting") PLUGIN_URL="https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
-        "zsh-completions") PLUGIN_URL="https://github.com/zsh-users/zsh-completions.git" ;;
-        "you-should-use") PLUGIN_URL="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
-        "zsh-alias-finder") PLUGIN_URL="https://github.com/akash329d/zsh-alias-finder.git" ;;
+            # Sélection du thème
+            local THEME_CHOICE
+            if $USE_GUM; then
+                THEME_CHOICE=$(gum_choose "Choisissez un thème Starship :" --height=12 \
+                    "Default" \
+                    "Nerd Font Symbols" \
+                    "No Nerd Fonts" \
+                    "Bracketed Segments" \
+                    "Plain Text Symbols" \
+                    "No Runtime Versions" \
+                    "No Empty Icons" \
+                    "Pure Prompt" \
+                    "Pastel Powerline" \
+                    "Tokyo Night" \
+                    "Gruvbox Rainbow" \
+                    "Jetpack")
+            else
+                echo -e "${COLOR_BLUE}Choisissez un thème Starship :${COLOR_RESET}"
+                echo
+                echo -e "${COLOR_BLUE}1)  Default${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}2)  Nerd Font Symbols${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}3)  No Nerd Fonts${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}4)  Bracketed Segments${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}5)  Plain Text Symbols${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}6)  No Runtime Versions${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}7)  No Empty Icons${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}8)  Pure Prompt${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}9)  Pastel Powerline${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}10) Tokyo Night${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}11) Gruvbox Rainbow${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}12) Jetpack${COLOR_RESET}"
+                echo
+                printf "${COLOR_GOLD}Entrez votre choix (1-12) : ${COLOR_RESET}"
+                read -r -e -p "" -i "1" CHOICE
+                tput cuu 16  # Remonte de 16 lignes
+                tput ed     # Efface jusqu'à la fin de l'écran
+                
+                case $CHOICE in
+                    1) THEME_CHOICE="Default" ;;
+                    2) THEME_CHOICE="Nerd Font Symbols" ;;
+                    3) THEME_CHOICE="No Nerd Fonts" ;;
+                    4) THEME_CHOICE="Bracketed Segments" ;;
+                    5) THEME_CHOICE="Plain Text Symbols" ;;
+                    6) THEME_CHOICE="No Runtime Versions" ;;
+                    7) THEME_CHOICE="No Empty Icons" ;;
+                    8) THEME_CHOICE="Pure Prompt" ;;
+                    9) THEME_CHOICE="Pastel Powerline" ;;
+                    10) THEME_CHOICE="Tokyo Night" ;;
+                    11) THEME_CHOICE="Gruvbox Rainbow" ;;
+                    12) THEME_CHOICE="Jetpack" ;;
+                    *) THEME_CHOICE="Default" ;;
+                esac
+            fi
+
+            # Création du répertoire de configuration
+            mkdir -p "$HOME/.config"
+
+            # Téléchargement du fichier de configuration selon le thème choisi
+            case $THEME_CHOICE in
+                "Default")
+                    execute_command "touch \"$HOME/.config/starship.toml\"" "Création de la configuration par défaut"
+                    ;;
+                "Nerd Font Symbols")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/nerd-font-symbols.toml" "Téléchargement du thème Nerd Font Symbols"
+                    ;;
+                "No Nerd Fonts")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/no-nerd-font.toml" "Téléchargement du thème No Nerd Fonts"
+                    ;;
+                "Bracketed Segments")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/bracketed-segments.toml" "Téléchargement du thème Bracketed Segments"
+                    ;;
+                "Plain Text Symbols")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/plain-text.toml" "Téléchargement du thème Plain Text"
+                    ;;
+                "No Runtime Versions")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/no-runtime-versions.toml" "Téléchargement du thème No Runtime Versions"
+                    ;;
+                "No Empty Icons")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/no-empty-icons.toml" "Téléchargement du thème No Empty Icons"
+                    ;;
+                "Pure Prompt")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/pure-preset.toml" "Téléchargement du thème Pure"
+                    ;;
+                "Pastel Powerline")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/pastel-powerline.toml" "Téléchargement du thème Pastel Powerline"
+                    ;;
+                "Tokyo Night")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/tokyo-night.toml" "Téléchargement du thème Tokyo Night"
+                    ;;
+                "Gruvbox Rainbow")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/gruvbox-rainbow.toml" "Téléchargement du thème Gruvbox Rainbow"
+                    ;;
+                "Jetpack")
+                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/jetpack.toml" "Téléchargement du thème Jetpack"
+                    ;;
+            esac
+            ;; 
     esac
-
-    if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$PLUGIN_NAME" ]; then
-        execute_command "git clone '$PLUGIN_URL' '$HOME/.oh-my-zsh/custom/plugins/$PLUGIN_NAME' --quiet" "Installation de $PLUGIN_NAME"
-    else
-        info_msg "  $PLUGIN_NAME est déjà installé"
-    fi
 }
 
 #------------------------------------------------------------------------------
@@ -858,13 +969,10 @@ update_zshrc() {
     local ZSHRC="$1"
     local SELECTED_PLUGINS="$2"
     local HAS_COMPLETIONS="$3"
-    local HAS_OHMYTERMUX="$4"
 
     # Suppression de la configuration existante
     sed -i '/fpath.*zsh-completions\/src/d' "$ZSHRC"
     sed -i '/source \$ZSH\/oh-my-zsh.sh/d' "$ZSHRC"
-    sed -i '/# Pour personnaliser le prompt/d' "$ZSHRC"
-    sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\]/d' "$ZSHRC"
     sed -i '/# Source des alias personnalisés/d' "$ZSHRC"
     sed -i '/\[ -f.*aliases.*/d' "$ZSHRC"
 
@@ -889,10 +997,6 @@ update_zshrc() {
     fi
 
     echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
-
-    if [ "$HAS_OHMYTERMUX" = "true" ]; then
-        echo -e "\n# Pour personnaliser le prompt, exécuter \`p10k configure\` ou éditer ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
-    fi
 
     # Sourcing des alias centralisés
     echo -e "\n# Source des alias personnalisés\n[ -f \"$HOME/.config/OhMyTermux/aliases\" ] && . \"$HOME/.config/OhMyTermux/aliases\"" >> "$ZSHRC"
@@ -930,15 +1034,15 @@ install_packages() {
         else
             echo "Sélectionner les packages à installer (séparés par des espaces) :"
             echo
-            echo -e "${COLOR_BLUE}1) nala${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) eza${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) colorls${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}4) lsd${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}5) bat${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}6) lf${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}7) fzf${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}8) glow${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}9) tmux${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}1)  nala${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2)  eza${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3)  colorls${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4)  lsd${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}5)  bat${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}6)  lf${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}7)  fzf${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}8)  glow${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}9)  tmux${COLOR_RESET}"
             echo -e "${COLOR_BLUE}10) python${COLOR_RESET}"
             echo -e "${COLOR_BLUE}11) nodejs${COLOR_RESET}"
             echo -e "${COLOR_BLUE}12) nodejs-lts${COLOR_RESET}"
@@ -1137,15 +1241,15 @@ install_font() {
         else
             echo "Sélectionner la police à installer :"
             echo
-            echo -e "${COLOR_BLUE}1) Police par défaut${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) CaskaydiaCove Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) FiraCode Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}4) Hack Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}5) JetBrainsMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}6) Meslo Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}7) RobotoMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}8) SourceCodePro Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}9) UbuntuMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}1)  Police par défaut${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2)  CaskaydiaCove Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3)  FiraCode Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4)  Hack Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}5)  JetBrainsMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}6)  Meslo Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}7)  RobotoMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}8)  SourceCodePro Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}9)  UbuntuMono Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
             echo
@@ -1198,7 +1302,7 @@ install_xfce() {
             if $USE_GUM; then
                 if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer XFCE ?"; then
                     # Choix de la version
-                    XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE �� installer :" --height=5 --selected="recommandée" \
+                    XFCE_VERSION=$(gum_choose "Sélectionner la version de XFCE à installer :" --height=5 --selected="recommandée" \
                     "minimale" \
                     "recommandée" \
                     "personnalisée")
