@@ -616,7 +616,8 @@ initial_config() {
     TERMUX_DIR="$HOME/.termux"
     FILE_PATH="$TERMUX_DIR/colors.properties"
     if [ ! -f "$FILE_PATH" ]; then
-        mkdir -p \"$TERMUX_DIR\" && cat > \"$FILE_PATH\" << 'EOL'
+        mkdir -p "$TERMUX_DIR"
+        cat > "$FILE_PATH" << 'EOL'
 # https://github.com/Mayccoll/Gogh/blob/master/themes/argonaut.sh
 background=#0e1019
 foreground=#fffaf4
