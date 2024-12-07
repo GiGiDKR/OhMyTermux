@@ -644,7 +644,7 @@ install_shell() {
     if $SHELL_CHOICE; then
         title_msg "❯ Configuration du shell"
         if $USE_GUM; then
-            SHELL_CHOICE=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" --height=4 "bash" "zsh" "fish")
+            SHELL_CHOICE=$(gum_choose "Choisissez le shell à installer :" --selected="zsh" --height=5 "bash" "zsh" "fish")
         else
             echo -e "${COLOR_BLUE}Choisissez le shell à installer :${COLOR_RESET}"
             echo
