@@ -1,6 +1,6 @@
-![Logo OhMyTermux](assets/logo.jpg)
-
 # OhMyTermux 🧊
+
+![Banner](assets/ohmytermux_5.jpg)
 
 ### **De la sélection d'un shell à l'application d'un pack de curseurs afin de cliquer avec style dans les menus d'un environnement de développement Debian complet tenant dans votre poche : des dizaines de paramètres sont disponibles dans [OhMyTermux](https://github.com/GiGiDKR/OhMyTermux).**
 
@@ -37,6 +37,8 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install_fr.s
 > ```
 
 ## À propos de ce programme
+
+ ![SubBanner1](assets/ohmytermux_1.jpg)
 
 ### Termux
 
@@ -316,6 +318,8 @@ Une fois connecté, exécutez la commande fix :
 
 &nbsp;
 
+![SubBanner2](assets/ohmytermux_6.jpg)
+
 ## 💻 Historique des versions
 
 Version 1.0.0 :
@@ -338,3 +342,10 @@ Version 1.0.0 :
 
 > [!TIP]
 > 🚩 La version anglaise est [disponible](README.md).
+
+## A short overview :
+
+https://github.com/user-attachments/assets/ec49fc8d-bc69-4b95-ade4-5ca2ae57a105
+
+![SubBanner3](assets/ohmytermux_2.jpg)
+
