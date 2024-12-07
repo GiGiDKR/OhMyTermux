@@ -1616,7 +1616,7 @@ fi
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-rm -f xfce_dev.sh proot_dev.sh utils_dev.sh install_dev.sh >/dev/null 2>&1
+rm -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
 # Rechargement du shell
