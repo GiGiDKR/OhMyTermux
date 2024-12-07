@@ -1,4 +1,4 @@
- ![Logo OhMyTermux](assets/logo.jpg)
+ ![Logo OhMyTermux](assets/ohmytermux_1.jpg)
 
 # OhMyTermux 🧊
 
