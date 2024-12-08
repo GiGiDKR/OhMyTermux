@@ -607,7 +607,7 @@ install_themes() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Fluent-gtk-theme-master && \
-                                ./install.sh -d $PREFIX/share/themes -t dark -s compact && \
+                                ./install.sh -d $PREFIX/share/themes -c dark -s compact && \
                                 cd .. && \
                                 rm -rf Fluent-gtk-theme-master $ARCHIVE" "Installation du thème Fluent"
                     ;;
