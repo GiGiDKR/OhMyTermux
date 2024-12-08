@@ -357,12 +357,12 @@ download_file() {
 # SAUVEGARDE DES CHOIX XFCE
 #------------------------------------------------------------------------------
 save_xfce_config() {
-    # Si le gestionnaire de configuration n'est pas disponible, on ignore
-    if [ ! -f "$CONFIG_MANAGER" ]; then
-        return
-    fi
-
-    local content="
+    # Si le fichier de configuration n'existe pas, on le crée
+    local CONFIG_FILE="$HOME/.config/OhMyTermux/config.ini"
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    
+    # Créer ou mettre à jour la section xfce
+    local content="[xfce]
 INSTALL_TYPE=\"${INSTALL_TYPE:-minimale}\"
 INSTALL_THEME=${INSTALL_THEME:-false}
 INSTALL_ICONS=${INSTALL_ICONS:-false}
@@ -373,7 +373,16 @@ SELECTED_ICON_THEME=\"${SELECTED_ICON_THEME:-}\"
 SELECTED_WALLPAPER=\"${SELECTED_WALLPAPER:-}\"
 BROWSER=\"${BROWSER:-chromium}\"
 "
-    update_config_section "xfce" "$content"
+    # Si le fichier existe déjà
+    if [ -f "$CONFIG_FILE" ]; then
+        # Supprimer l'ancienne section xfce si elle existe
+        sed -i '/^\[xfce\]/,/^\[/d' "$CONFIG_FILE"
+        # Ajouter la nouvelle section
+        echo -e "\n$content" >> "$CONFIG_FILE"
+    else
+        # Créer le fichier avec la section
+        echo "$content" > "$CONFIG_FILE"
+    fi
 }
 
 trap finish EXIT
