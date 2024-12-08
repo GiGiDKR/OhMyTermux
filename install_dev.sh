@@ -64,6 +64,89 @@ else
 fi
 
 #------------------------------------------------------------------------------
+# CHARGEMENT DE LA CONFIGURATION
+#------------------------------------------------------------------------------
+load_config() {
+    # Charger la configuration générale
+    USE_GUM=$(read_config_value "general" "USE_GUM" "false")
+    VERBOSE=$(read_config_value "general" "VERBOSE" "false")
+    EXECUTE_INITIAL_CONFIG=$(read_config_value "general" "EXECUTE_INITIAL_CONFIG" "true")
+
+    # Charger la configuration XFCE
+    INSTALL_TYPE=$(read_config_value "xfce" "INSTALL_TYPE" "minimale")
+    INSTALL_THEME=$(read_config_value "xfce" "INSTALL_THEME" "false")
+    INSTALL_ICONS=$(read_config_value "xfce" "INSTALL_ICONS" "false")
+    INSTALL_WALLPAPERS=$(read_config_value "xfce" "INSTALL_WALLPAPERS" "false")
+    INSTALL_CURSORS=$(read_config_value "xfce" "INSTALL_CURSORS" "false")
+    SELECTED_THEME=$(read_config_value "xfce" "SELECTED_THEME" "")
+    SELECTED_ICON_THEME=$(read_config_value "xfce" "SELECTED_ICON_THEME" "")
+    SELECTED_WALLPAPER=$(read_config_value "xfce" "SELECTED_WALLPAPER" "")
+    BROWSER=$(read_config_value "xfce" "BROWSER" "")
+
+    # Charger la configuration PRoot
+    PROOT_USERNAME=$(read_config_value "proot" "PROOT_USERNAME" "")
+    TIMEZONE=$(read_config_value "proot" "TIMEZONE" "")
+    DEBIAN_VERSION=$(read_config_value "proot" "DEBIAN_VERSION" "bookworm")
+    DEBIAN_LOCALE=$(read_config_value "proot" "DEBIAN_LOCALE" "fr_FR.UTF-8")
+    MESA_VULKAN_INSTALLED=$(read_config_value "proot" "MESA_VULKAN_INSTALLED" "false")
+}
+
+# Charger la configuration au démarrage
+if [ -f "$CONFIG_FILE" ]; then
+    load_config
+fi
+
+#------------------------------------------------------------------------------
+# SAUVEGARDE DES CHOIX XFCE
+#------------------------------------------------------------------------------
+save_xfce_choices() {
+    local content="
+INSTALL_TYPE=\"${INSTALL_TYPE:-minimale}\"
+INSTALL_THEME=${INSTALL_THEME:-false}
+INSTALL_ICONS=${INSTALL_ICONS:-false}
+INSTALL_WALLPAPERS=${INSTALL_WALLPAPERS:-false}
+INSTALL_CURSORS=${INSTALL_CURSORS:-false}
+SELECTED_THEME=\"${SELECTED_THEME:-}\"
+SELECTED_ICON_THEME=\"${SELECTED_ICON_THEME:-}\"
+SELECTED_WALLPAPER=\"${SELECTED_WALLPAPER:-}\"
+BROWSER=\"${BROWSER:-chromium}\"
+"
+    update_config_section "xfce" "$content"
+}
+
+#------------------------------------------------------------------------------
+# IMPORTATION DE LA CONFIGURATION
+#------------------------------------------------------------------------------
+import_config() {
+    local import_file="$1"
+    
+    if [ ! -f "$import_file" ]; then
+        error_msg "Fichier de configuration introuvable: $import_file"
+        exit 1
+    fi
+
+    # Copier le fichier importé vers le fichier de configuration
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    cp "$import_file" "$CONFIG_FILE"
+
+    # Charger la configuration
+    load_config
+
+    # Activer le mode automatique
+    FULL_INSTALL=true
+    USE_GUM=false
+
+    # Activer tous les choix nécessaires
+    SHELL_CHOICE=true
+    PACKAGES_CHOICE=true
+    FONT_CHOICE=true
+    XFCE_CHOICE=true
+    PROOT_CHOICE=true
+    X11_CHOICE=true
+    SCRIPT_CHOICE=true
+}
+
+#------------------------------------------------------------------------------
 # SELECTEURS DE MODULES
 #------------------------------------------------------------------------------
 # Sélection du shell
@@ -2159,86 +2242,3 @@ else
         echo -e "${COLOR_BLUE}- Ou redémarrer Termux${COLOR_RESET}"
     fi
 fi
-
-#------------------------------------------------------------------------------
-# CHARGEMENT DE LA CONFIGURATION
-#------------------------------------------------------------------------------
-load_config() {
-    # Charger la configuration générale
-    USE_GUM=$(read_config_value "general" "USE_GUM" "false")
-    VERBOSE=$(read_config_value "general" "VERBOSE" "false")
-    EXECUTE_INITIAL_CONFIG=$(read_config_value "general" "EXECUTE_INITIAL_CONFIG" "true")
-
-    # Charger la configuration XFCE
-    INSTALL_TYPE=$(read_config_value "xfce" "INSTALL_TYPE" "minimale")
-    INSTALL_THEME=$(read_config_value "xfce" "INSTALL_THEME" "false")
-    INSTALL_ICONS=$(read_config_value "xfce" "INSTALL_ICONS" "false")
-    INSTALL_WALLPAPERS=$(read_config_value "xfce" "INSTALL_WALLPAPERS" "false")
-    INSTALL_CURSORS=$(read_config_value "xfce" "INSTALL_CURSORS" "false")
-    SELECTED_THEME=$(read_config_value "xfce" "SELECTED_THEME" "")
-    SELECTED_ICON_THEME=$(read_config_value "xfce" "SELECTED_ICON_THEME" "")
-    SELECTED_WALLPAPER=$(read_config_value "xfce" "SELECTED_WALLPAPER" "")
-    BROWSER=$(read_config_value "xfce" "BROWSER" "")
-
-    # Charger la configuration PRoot
-    PROOT_USERNAME=$(read_config_value "proot" "PROOT_USERNAME" "")
-    TIMEZONE=$(read_config_value "proot" "TIMEZONE" "")
-    DEBIAN_VERSION=$(read_config_value "proot" "DEBIAN_VERSION" "bookworm")
-    DEBIAN_LOCALE=$(read_config_value "proot" "DEBIAN_LOCALE" "fr_FR.UTF-8")
-    MESA_VULKAN_INSTALLED=$(read_config_value "proot" "MESA_VULKAN_INSTALLED" "false")
-}
-
-# Charger la configuration au démarrage
-if [ -f "$CONFIG_FILE" ]; then
-    load_config
-fi
-
-#------------------------------------------------------------------------------
-# SAUVEGARDE DES CHOIX XFCE
-#------------------------------------------------------------------------------
-save_xfce_choices() {
-    local content="
-INSTALL_TYPE=\"${INSTALL_TYPE:-minimale}\"
-INSTALL_THEME=${INSTALL_THEME:-false}
-INSTALL_ICONS=${INSTALL_ICONS:-false}
-INSTALL_WALLPAPERS=${INSTALL_WALLPAPERS:-false}
-INSTALL_CURSORS=${INSTALL_CURSORS:-false}
-SELECTED_THEME=\"${SELECTED_THEME:-}\"
-SELECTED_ICON_THEME=\"${SELECTED_ICON_THEME:-}\"
-SELECTED_WALLPAPER=\"${SELECTED_WALLPAPER:-}\"
-BROWSER=\"${BROWSER:-chromium}\"
-"
-    update_config_section "xfce" "$content"
-}
-
-#------------------------------------------------------------------------------
-# IMPORTATION DE LA CONFIGURATION
-#------------------------------------------------------------------------------
-import_config() {
-    local import_file="$1"
-    
-    if [ ! -f "$import_file" ]; then
-        error_msg "Fichier de configuration introuvable: $import_file"
-        exit 1
-    fi
-
-    # Copier le fichier importé vers le fichier de configuration
-    mkdir -p "$(dirname "$CONFIG_FILE")"
-    cp "$import_file" "$CONFIG_FILE"
-
-    # Charger la configuration
-    load_config
-
-    # Activer le mode automatique
-    FULL_INSTALL=true
-    USE_GUM=false
-
-    # Activer tous les choix nécessaires
-    SHELL_CHOICE=true
-    PACKAGES_CHOICE=true
-    FONT_CHOICE=true
-    XFCE_CHOICE=true
-    PROOT_CHOICE=true
-    X11_CHOICE=true
-    SCRIPT_CHOICE=true
-}
