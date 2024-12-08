@@ -1956,9 +1956,8 @@ fi
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-execute_command "mkdir -p $HOME/.config/OhMyTermux && mv -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh $HOME/.config/OhMyTermux/" "Sauvegarde des scripts d'installation"
+execute_command "mkdir -p $HOME/.config/OhMyTermux && mv -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh $HOME/.config/OhMyTermux/ >/dev/null 2>&1" "Sauvegarde des scripts d'installation"
 rm -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh >/dev/null 2>&1
-#success_msg "✓ Suppression des scripts d'installation"
 
 # Rechargement du shell
 if $USE_GUM; then
