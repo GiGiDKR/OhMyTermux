@@ -817,14 +817,14 @@ main() {
                     PKGS+=("${SELECTED_EXTRA[@]}")
                 fi
 
-                SELECTED_UI=($(gum_choose_multi "Sélectionner avec ESPACE les éléments à installer :" --height=5 \
+                SELECTED_UI=($(gum_choose_multi "Sélectionner avec ESPACE les éléments à installer :" --height=6\
                     "Thèmes" \
                     "Icônes" \
                     "Fonds d'écran" \
                     "Curseurs"))
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Thèmes" ]]; then
-                    SELECTED_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les thèmes à installer :" --height=4 \
+                    SELECTED_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les thèmes à installer :" --height=5 \
                         "WhiteSur" \
                         "Fluent" \
                         "Lavanda"))
@@ -840,7 +840,7 @@ main() {
                 fi
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Icônes" ]]; then
-                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les icônes à installer :" --height=6 \
+                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les icônes à installer :" --height=7 \
                         "WhiteSur" \
                         "McMojave-circle" \
                         "Tela" \
@@ -859,7 +859,7 @@ main() {
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Fonds d'écran" ]]; then
                     INSTALL_WALLPAPERS=true
-                    SELECTED_WALLPAPER=$(gum_choose "Sélectionner le fond d'écran à appliquer :" --height=12 \
+                    SELECTED_WALLPAPER=$(gum_choose "Sélectionner le fond d'écran à appliquer :" --height=13 \
                         "Monterey" \
                         "Monterey-dark" \
                         "Monterey-light" \
