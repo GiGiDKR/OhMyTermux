@@ -828,7 +828,8 @@ install_prompt() {
             fi
             
             # Configuration de Oh-My-Posh
-            LINE_TO_ADD_BASE='eval "$(oh-my-posh init %s --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/%s.omp.json)"'
+            LINE_TO_ADD_BASE='\n# Charger oh-my-posh\n'
+            LINE_TO_ADD_BASE+='eval "$(oh-my-posh init %s --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/%s.omp.json)"'
 
             # Récupération de la liste complète des thèmes
             THEMES_DIR="/data/data/com.termux/files/usr/share/oh-my-posh/themes"
@@ -906,7 +907,8 @@ install_prompt() {
                 execute_command "curl -fLo \"$HOME/.termux/font.ttf\" --create-dirs https://raw.githubusercontent.com/termux/termux-styling/master/app/src/main/assets/fonts/DejaVu-Sans-Mono.ttf" "Installation de la police Nerd"
             fi
             
-            local INIT_LINE='eval "$(starship init zsh)"'
+            local INIT_LINE='\n# Charger starship\n'
+            INIT_LINE+='eval "$(starship init zsh)"'
             if [ ! -f "$HOME/.zshhrc" ]; then
                 touch "$HOME/.zshrc"
             fi
@@ -914,7 +916,8 @@ install_prompt() {
                 echo "$INIT_LINE" >> "$ZSHRC"
             fi
 
-            INIT_LINE='eval "$(starship init bash)"'
+            INIT_LINE='\n# Charger starship\n'
+            INIT_LINE+='eval "$(starship init bash)"'
             if [ ! -f "$HOME/.bashrc" ]; then
                 touch "$HOME/.bashrc"
             fi

@@ -100,6 +100,7 @@ for arg in "$@"; do
             INSTALL_ICONS=true
             INSTALL_WALLPAPERS=true
             INSTALL_CURSORS=true
+            SELECTED_THEMES=("WhiteSur")
             SELECTED_THEME="WhiteSur-Dark"
             SELECTED_ICON_THEME="WhiteSur"
             SELECTED_WALLPAPER="WhiteSur"
@@ -189,7 +190,7 @@ gum_choose_multi() {
 bash_banner() {
     clear
     local BANNER="
-╔════════════════════════════════════════╗
+╔═════════════��══════════════════════════╗
 ║                                        ║
 ║               OHMYTERMUX               ║
 ║                                        ║
@@ -839,7 +840,7 @@ main() {
                 fi
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Icônes" ]]; then
-                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les packs d'icônes à installer :" --height=6 \
+                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les icônes à installer :" --height=6 \
                         "WhiteSur" \
                         "McMojave-circle" \
                         "Tela" \
@@ -849,7 +850,7 @@ main() {
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                         INSTALL_ICONS=true
                         if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
-                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner le pack d'icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
+                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner les icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
