@@ -1019,9 +1019,9 @@ install_prompt() {
             if [ ! -f "$ZSHRC" ]; then
                 touch "$ZSHRC"
             fi
-            sed -i '/# Charger oh-my-posh/d' "$ZSHRC"
+            sed -i '/# Initialiser oh-my-posh/d' "$ZSHRC"
             sed -i '/eval "$(oh-my-posh init/d' "$ZSHRC"
-            cat >> "$ZSHRC" << 'EOF'
+            cat >> "$ZSHRC" << EOF
 
 # Initialiser oh-my-posh
 eval "\$(oh-my-posh init zsh --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/${THEME}.omp.json)"
@@ -1031,9 +1031,9 @@ EOF
             if [ ! -f "$HOME/.bashrc" ]; then
                 touch "$HOME/.bashrc"
             fi
-            sed -i '/# Charger oh-my-posh/d' "$HOME/.bashrc"
+            sed -i '/# Initialiser oh-my-posh/d' "$HOME/.bashrc"
             sed -i '/eval "$(oh-my-posh init/d' "$HOME/.bashrc"
-            cat >> "$HOME/.bashrc" << 'EOF'
+            cat >> "$HOME/.bashrc" << EOF
 
 # Initialiser oh-my-posh
 eval "\$(oh-my-posh init bash --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/${THEME}.omp.json)"
@@ -2197,7 +2197,6 @@ else
     install_font
     install_xfce
     install_proot
-    install_utils
     install_termux_x11
 fi
 

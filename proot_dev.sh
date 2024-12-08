@@ -408,38 +408,7 @@ EOF
 }
 
 #------------------------------------------------------------------------------
-# FONCTION PRINCIPALE
-#------------------------------------------------------------------------------
-check_dependencies
-title_msg "❯ Installation de Debian Proot"
-
-# Import du gestionnaire de configuration
-CONFIG_MANAGER="$HOME/.config/OhMyTermux/config_manager.sh"
-if [ -f "$CONFIG_MANAGER" ]; then
-    source "$CONFIG_MANAGER"
-fi
-
-#------------------------------------------------------------------------------
-# SAUVEGARDE DES CHOIX PROOT
-#------------------------------------------------------------------------------
-save_proot_config() {
-    # Si le gestionnaire de configuration n'est pas disponible, on ignore
-    if [ ! -f "$CONFIG_MANAGER" ]; then
-        return
-    fi
-
-    local content="
-PROOT_USERNAME=\"${PROOT_USERNAME:-}\"
-TIMEZONE=\"${TIMEZONE:-}\"
-DEBIAN_VERSION=\"${DEBIAN_VERSION:-bookworm}\"
-DEBIAN_LOCALE=\"${DEBIAN_LOCALE:-fr_FR.UTF-8}\"
-MESA_VULKAN_INSTALLED=${MESA_VULKAN_INSTALLED:-false}
-"
-    update_config_section "proot" "$content"
-}
-
-#------------------------------------------------------------------------------
-# CHARGEMENT DES CHOIX PROOT
+# CHARGEMENT DE LA CONFIGURATION
 #------------------------------------------------------------------------------
 load_proot_config() {
     # Si le gestionnaire de configuration n'est pas disponible, on ignore
@@ -447,6 +416,7 @@ load_proot_config() {
         return
     fi
 
+    # Utiliser read_config_value du gestionnaire de configuration
     PROOT_USERNAME=$(read_config_value "proot" "PROOT_USERNAME" "")
     TIMEZONE=$(read_config_value "proot" "TIMEZONE" "")
     DEBIAN_VERSION=$(read_config_value "proot" "DEBIAN_VERSION" "bookworm")
@@ -454,7 +424,37 @@ load_proot_config() {
     MESA_VULKAN_INSTALLED=$(read_config_value "proot" "MESA_VULKAN_INSTALLED" "false")
 }
 
-# Dans la fonction principale, charger la configuration au début
+#------------------------------------------------------------------------------
+# SAUVEGARDE DES CHOIX PROOT
+#------------------------------------------------------------------------------
+save_proot_config() {
+    # Si le fichier de configuration n'existe pas, on le crée
+    local CONFIG_FILE="$HOME/.config/OhMyTermux/config.ini"
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    
+    # Créer ou mettre à jour la section proot
+    local content="[proot]
+PROOT_USERNAME=\"${PROOT_USERNAME:-}\"
+TIMEZONE=\"${TIMEZONE:-}\"
+DEBIAN_VERSION=\"${DEBIAN_VERSION:-bookworm}\"
+DEBIAN_LOCALE=\"${DEBIAN_LOCALE:-fr_FR.UTF-8}\"
+MESA_VULKAN_INSTALLED=${MESA_VULKAN_INSTALLED:-false}
+"
+    # Si le fichier existe déjà
+    if [ -f "$CONFIG_FILE" ]; then
+        # Supprimer l'ancienne section proot si elle existe
+        sed -i '/^\[proot\]/,/^\[/d' "$CONFIG_FILE"
+        # Ajouter la nouvelle section
+        echo -e "\n$content" >> "$CONFIG_FILE"
+    else
+        # Créer le fichier avec la section
+        echo "$content" > "$CONFIG_FILE"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# FONCTION PRINCIPALE
+#------------------------------------------------------------------------------
 main() {
     # Charger la configuration existante
     load_proot_config
@@ -482,85 +482,39 @@ main() {
     # Sauvegarder la configuration
     save_proot_config
 
-    # ... reste du code ...
+    # Installation de Debian si non présente
+    if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
+        subtitle_msg "❯ Installation de Debian"
+        execute_command "proot-distro install debian" "Installation de Debian"
+    fi
+
+    # Vérification de l'installation de Debian
+    if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
+        error_msg "L'installation de Debian a échoué."
+        exit 1
+    fi
+
+    # Mise à jour du système
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
+    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
+
+    # Installation et configuration
+    subtitle_msg "❯ Configuration de la distribution"
+    install_packages_proot
+    create_user_proot
+    configure_user_rights
+    install_mesa_vulkan
+
+    # Configuration du fuseau horaire
+    TIMEZONE=$(getprop persist.sys.timezone)
+    execute_command "
+        proot-distro login debian -- rm /etc/localtime
+        proot-distro login debian -- cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+    " "Configuration du fuseau horaire"
+
+    # Configuration graphique
+    configure_themes_and_icons
 }
 
-#------------------------------------------------------------------------------
-# VÉRIFICATION DE L'INSTALLATION DE DEBIAN
-#------------------------------------------------------------------------------
-if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
-    error_msg "L'installation de Debian a échoué."
-    exit 1
-fi
-
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
-
-install_packages_proot
-
-subtitle_msg "❯ Configuration de la distribution"
-
-# Utiliser les variables PROOT_USERNAME et PROOT_PASSWORD pour create_user_proot
-USERNAME="$PROOT_USERNAME"
-PASSWORD="$PROOT_PASSWORD"
-create_user_proot
-configure_user_rights
-
-#------------------------------------------------------------------------------
-# CONFIGURATION DU FUSEAU HORAIRE
-#------------------------------------------------------------------------------
-TIMEZONE=$(getprop persist.sys.timezone)
-execute_command "
-    proot-distro login debian -- rm /etc/localtime
-    proot-distro login debian -- cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-" "Configuration du fuseau horaire"
-
-#------------------------------------------------------------------------------
-# CONFIGURATION GRAPHIQUE
-#------------------------------------------------------------------------------
-configure_themes_and_icons
-
-#------------------------------------------------------------------------------
-# INSTALLATION DE MESA-VULKAN
-#------------------------------------------------------------------------------
-install_mesa_vulkan
-
-#------------------------------------------------------------------------------
-# INSTALLATION DE DEBIAN
-#------------------------------------------------------------------------------
-install_debian() {
-    title_msg "❯ Installation de Debian"
-    
-    # Si les identifiants ne sont pas fournis en argument, les demander
-    if [ -z "$DEBIAN_USERNAME" ]; then
-        if $USE_GUM; then
-            DEBIAN_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian")
-        else
-            printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian : ${COLOR_RESET}"
-            read -r DEBIAN_USERNAME
-        fi
-    fi
-    
-    if [ -z "$DEBIAN_PASSWORD" ]; then
-        if $USE_GUM; then
-            DEBIAN_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian")
-        else
-            printf "${COLOR_BLUE}Entrez le mot de passe pour Debian : ${COLOR_RESET}"
-            read -r -s DEBIAN_PASSWORD
-            echo
-        fi
-    fi
-    
-    # Installation de Debian
-    execute_command "proot-distro install debian" "Installation de Debian"
-    
-    # Configuration de l'utilisateur
-    execute_command "proot-distro login debian -- useradd -m -s /bin/bash \"$DEBIAN_USERNAME\"" "Création de l'utilisateur"
-    execute_command "proot-distro login debian -- bash -c \"echo '$DEBIAN_USERNAME:$DEBIAN_PASSWORD' | chpasswd\"" "Configuration du mot de passe"
-    execute_command "proot-distro login debian -- usermod -aG sudo \"$DEBIAN_USERNAME\"" "Ajout aux sudoers"
-    
-    # Configuration de sudo sans mot de passe
-    execute_command "proot-distro login debian -- bash -c 'echo \"$DEBIAN_USERNAME ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers'" "Configuration de sudo"
-    
-    success_msg "✓ Installation de Debian terminée"
-}
+# Exécuter la fonction principale
+main "$@"
