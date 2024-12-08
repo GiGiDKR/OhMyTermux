@@ -318,12 +318,12 @@ Once it connects run the fix command :
 
 &nbsp;
 
-![SubBanner2](assets/ohmytermux_6.jpg)
-
 ## 💻 Version history
 
 Version 1.0.0 :
  - Initial release
+
+![SubBanner2](assets/ohmytermux_6.jpg)
 
 &nbsp;
 
