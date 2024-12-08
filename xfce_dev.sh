@@ -817,7 +817,7 @@ main() {
                     PKGS+=("${SELECTED_EXTRA[@]}")
                 fi
 
-                SELECTED_UI=($(gum_choose_multi "Sélectionner avec ESPACE les éléments à installer :" --height=6\
+                SELECTED_UI=($(gum_choose_multi "Sélectionner avec ESPACE les éléments graphiques :" --height=6\
                     "Thèmes" \
                     "Icônes" \
                     "Fonds d'écran" \
@@ -832,7 +832,7 @@ main() {
                     if [ ${#SELECTED_THEMES[@]} -gt 0 ]; then
                         INSTALL_THEME=true
                         if [ ${#SELECTED_THEMES[@]} -gt 1 ]; then
-                            SELECTED_THEME=$(gum_choose "Sélectionner le thème à appliquer :" "${SELECTED_THEMES[@]}")
+                            SELECTED_THEME=$(gum_choose "Sélectionner le thème à appliquer :" "${SELECTED_THEMES[@]}" --height=5)
                         else
                             SELECTED_THEME="${SELECTED_THEMES[0]}"
                         fi
@@ -850,7 +850,7 @@ main() {
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                         INSTALL_ICONS=true
                         if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
-                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner les icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
+                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner les icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}" --height=7)
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
@@ -880,7 +880,7 @@ main() {
                     echo "$((i+1))) ${EXTRA_PKGS[i]}"
                 done
                 echo
-                printf "${COLOR_GOLD}Sélectionner les paquets à installer (séparés par des espaces, ou 'a' pour tous) : ${COLOR_RESET}"
+                printf "${COLOR_GOLD}Sélectionner les paquets à installer (séparés par des ESPACES, ou 'a' pour tous) : ${COLOR_RESET}"
                 read -r CHOICES
 
                 if [ "$CHOICES" = "a" ]; then
@@ -899,7 +899,7 @@ main() {
                 echo "3) Fonds d'écran"
                 echo "4) Curseurs"
                 echo
-                printf "${COLOR_GOLD}Sélectionner les éléments à installer (séparés par des espaces) : ${COLOR_RESET}"
+                printf "${COLOR_GOLD}Sélectionner les éléments graphiques à installer (séparés par des ESPACES) : ${COLOR_RESET}"
                 read -r UI_CHOICES
 
                 if [[ $UI_CHOICES =~ 1 ]]; then
@@ -908,7 +908,7 @@ main() {
                     echo "2) Fluent"
                     echo "3) Lavanda"
                     echo
-                    printf "${COLOR_GOLD}Sélectionner les thèmes à installer (séparés par des espaces) : ${COLOR_RESET}"
+                    printf "${COLOR_GOLD}Sélectionner les thèmes à installer (séparés par des ESPACES) : ${COLOR_RESET}"
                     read -r THEME_CHOICES
 
                     for choice in $THEME_CHOICES; do
@@ -944,7 +944,7 @@ main() {
                     echo "4) Fluent"
                     echo "5) Qogir"
                     echo
-                    printf "${COLOR_GOLD}Sélectionner les packs d'icônes à installer (séparés par des espaces) : ${COLOR_RESET}"
+                    printf "${COLOR_GOLD}Sélectionner les packs d'icônes à installer (séparés par des ESPACES) : ${COLOR_RESET}"
                     read -r ICON_CHOICES
 
                     for choice in $ICON_CHOICES; do

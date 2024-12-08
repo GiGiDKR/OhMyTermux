@@ -16,136 +16,6 @@ VERBOSE=false
 PROOT_USERNAME=""
 PROOT_PASSWORD=""
 
-# Chemin du fichier de configuration
-CONFIG_FILE="$HOME/.config/OhMyTermux/config.ini"
-
-#------------------------------------------------------------------------------
-# TÉLÉCHARGEMENT DU GESTIONNAIRE DE CONFIGURATION
-#------------------------------------------------------------------------------
-CONFIG_MANAGER="$HOME/.config/OhMyTermux/config_manager.sh"
-CONFIG_MANAGER_URL="https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/config_manager.sh"
-
-download_config_manager() {
-    # Créer le répertoire si nécessaire
-    mkdir -p "$(dirname "$CONFIG_MANAGER")"
-    
-    # Télécharger le fichier
-    if curl -fsSL "$CONFIG_MANAGER_URL" -o "$CONFIG_MANAGER"; then
-        chmod +x "$CONFIG_MANAGER"
-        return 0
-    else
-        echo "Erreur: Impossible de télécharger le gestionnaire de configuration"
-        exit 1
-    fi
-}
-
-# Télécharger ou mettre à jour config_manager.sh
-if [ ! -f "$CONFIG_MANAGER" ]; then
-    download_config_manager
-else
-    # Vérifier si une mise à jour est disponible
-    TMP_FILE="/tmp/config_manager.sh"
-    if curl -fsSL "$CONFIG_MANAGER_URL" -o "$TMP_FILE"; then
-        if ! cmp -s "$CONFIG_MANAGER" "$TMP_FILE"; then
-            mv "$TMP_FILE" "$CONFIG_MANAGER"
-            chmod +x "$CONFIG_MANAGER"
-        else
-            rm "$TMP_FILE"
-        fi
-    fi
-fi
-
-# Importer le gestionnaire de configuration
-if [ -f "$CONFIG_MANAGER" ]; then
-    source "$CONFIG_MANAGER"
-else
-    echo "Erreur: Le gestionnaire de configuration est introuvable"
-    exit 1
-fi
-
-#------------------------------------------------------------------------------
-# CHARGEMENT DE LA CONFIGURATION
-#------------------------------------------------------------------------------
-load_config() {
-    # Charger la configuration générale
-    USE_GUM=$(read_config_value "general" "USE_GUM" "false")
-    VERBOSE=$(read_config_value "general" "VERBOSE" "false")
-    EXECUTE_INITIAL_CONFIG=$(read_config_value "general" "EXECUTE_INITIAL_CONFIG" "true")
-
-    # Charger la configuration XFCE
-    INSTALL_TYPE=$(read_config_value "xfce" "INSTALL_TYPE" "minimale")
-    INSTALL_THEME=$(read_config_value "xfce" "INSTALL_THEME" "false")
-    INSTALL_ICONS=$(read_config_value "xfce" "INSTALL_ICONS" "false")
-    INSTALL_WALLPAPERS=$(read_config_value "xfce" "INSTALL_WALLPAPERS" "false")
-    INSTALL_CURSORS=$(read_config_value "xfce" "INSTALL_CURSORS" "false")
-    SELECTED_THEME=$(read_config_value "xfce" "SELECTED_THEME" "")
-    SELECTED_ICON_THEME=$(read_config_value "xfce" "SELECTED_ICON_THEME" "")
-    SELECTED_WALLPAPER=$(read_config_value "xfce" "SELECTED_WALLPAPER" "")
-    BROWSER=$(read_config_value "xfce" "BROWSER" "")
-
-    # Charger la configuration PRoot
-    PROOT_USERNAME=$(read_config_value "proot" "PROOT_USERNAME" "")
-    TIMEZONE=$(read_config_value "proot" "TIMEZONE" "")
-    DEBIAN_VERSION=$(read_config_value "proot" "DEBIAN_VERSION" "bookworm")
-    DEBIAN_LOCALE=$(read_config_value "proot" "DEBIAN_LOCALE" "fr_FR.UTF-8")
-    MESA_VULKAN_INSTALLED=$(read_config_value "proot" "MESA_VULKAN_INSTALLED" "false")
-}
-
-# Charger la configuration au démarrage
-if [ -f "$CONFIG_FILE" ]; then
-    load_config
-fi
-
-#------------------------------------------------------------------------------
-# SAUVEGARDE DES CHOIX XFCE
-#------------------------------------------------------------------------------
-save_xfce_choices() {
-    local content="
-INSTALL_TYPE=\"${INSTALL_TYPE:-minimale}\"
-INSTALL_THEME=${INSTALL_THEME:-false}
-INSTALL_ICONS=${INSTALL_ICONS:-false}
-INSTALL_WALLPAPERS=${INSTALL_WALLPAPERS:-false}
-INSTALL_CURSORS=${INSTALL_CURSORS:-false}
-SELECTED_THEME=\"${SELECTED_THEME:-}\"
-SELECTED_ICON_THEME=\"${SELECTED_ICON_THEME:-}\"
-SELECTED_WALLPAPER=\"${SELECTED_WALLPAPER:-}\"
-BROWSER=\"${BROWSER:-chromium}\"
-"
-    update_config_section "xfce" "$content"
-}
-
-#------------------------------------------------------------------------------
-# IMPORTATION DE LA CONFIGURATION
-#------------------------------------------------------------------------------
-import_config() {
-    local import_file="$1"
-    
-    if [ ! -f "$import_file" ]; then
-        error_msg "Fichier de configuration introuvable: $import_file"
-        exit 1
-    fi
-
-    # Copier le fichier importé vers le fichier de configuration
-    mkdir -p "$(dirname "$CONFIG_FILE")"
-    cp "$import_file" "$CONFIG_FILE"
-
-    # Charger la configuration
-    load_config
-
-    # Activer le mode automatique
-    FULL_INSTALL=true
-    USE_GUM=false
-
-    # Activer tous les choix nécessaires
-    SHELL_CHOICE=true
-    PACKAGES_CHOICE=true
-    FONT_CHOICE=true
-    XFCE_CHOICE=true
-    PROOT_CHOICE=true
-    X11_CHOICE=true
-    SCRIPT_CHOICE=true
-}
-
 #------------------------------------------------------------------------------
 # SELECTEURS DE MODULES
 #------------------------------------------------------------------------------
@@ -218,13 +88,11 @@ show_help() {
     echo "  --skip            Ignorer la configuration initiale"
     echo "  --uninstall       Désinstallation de Debian Proot"
     echo "  --full            Installer tous les modules sans confirmation"
-    echo "  --import=FILE     Importer une configuration depuis un fichier"
     echo "  --help | -h       Afficher ce message d'aide"
     echo
     echo "Exemples:"
     echo "  $0 --gum                     # Installation interactive avec gum"
     echo "  $0 --full user pass          # Installation complète avec identifiants"
-    echo "  $0 --import=config.ini       # Installation depuis un fichier de configuration"
 }
 
 #------------------------------------------------------------------------------
@@ -232,11 +100,6 @@ show_help() {
 #------------------------------------------------------------------------------
 for ARG in "$@"; do
     case $ARG in
-        --import=*)
-            CONFIG_TO_IMPORT="${ARG#*=}"
-            import_config "$CONFIG_TO_IMPORT"
-            shift
-            ;;
         --gum|-g)
             USE_GUM=true
             shift
@@ -694,6 +557,7 @@ configure_termux() {
 background=#0e1019
 foreground=#fffaf4
 cursor=#fffaf4
+
 color0=#232323
 color1=#ff000f
 color2=#8ce10b
@@ -710,6 +574,7 @@ color12=#0092ff
 color13=#9a5feb
 color14=#67fff0
 color15=#ffffff
+
 EOL" "Installation du thème Argonaut"
     fi
     # Configuration de termux.properties
@@ -1218,7 +1083,7 @@ EOF
             fi
             sed -i '/# Initialiser Starship/d' "$ZSHRC"
             sed -i '/eval "$(starship init/d' "$ZSHRC"
-            cat >> "$ZSHRC" << 'EOF'
+            cat >> "$ZSHRC" << EOF
 
 # Initialiser Starship
 eval "$(starship init zsh)"
@@ -1230,7 +1095,7 @@ EOF
             fi
             sed -i '/# Initialiser Starship/d' "$HOME/.bashrc"
             sed -i '/eval "$(starship init/d' "$HOME/.bashrc"
-            cat >> "$HOME/.bashrc" << 'EOF'
+            cat >> "$HOME/.bashrc" << EOF
 
 # Initialiser Starship
 eval "$(starship init bash)"
@@ -1369,8 +1234,6 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         title_msg "❯ Configuration des packages"
         local DEFAULT_PACKAGES=("nala" "eza" "bat" "lf" "fzf")
-
-        common_alias
         
         if $USE_GUM; then
             if $FULL_INSTALL; then
@@ -1860,8 +1723,10 @@ install_proot() {
         if [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
             if $USE_GUM; then
                 ./proot_dev.sh --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                install_utils
             else
                 ./proot_dev.sh --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                install_utils
             fi
         else
             if $USE_GUM; then
@@ -2035,117 +1900,6 @@ EOL
 }
 
 #------------------------------------------------------------------------------
-# GESTION DE LA CONFIGURATION
-#------------------------------------------------------------------------------
-CONFIG_FILE="$HOME/.config/OhMyTermux/config.ini"
-
-# Initialisation de la configuration
-init_config() {
-    mkdir -p "$(dirname "$CONFIG_FILE")"
-    
-    # Création du fichier s'il n'existe pas
-    if [ ! -f "$CONFIG_FILE" ]; then
-        cat > "$CONFIG_FILE" << EOL
-# Configuration OhMyTermux
-# Créé le $(date '+%Y-%m-%d %H:%M:%S')
-
-[general]
-USE_GUM=${USE_GUM:-false}
-VERBOSE=${VERBOSE:-false}
-EXECUTE_INITIAL_CONFIG=${EXECUTE_INITIAL_CONFIG:-true}
-
-[termux]
-CHANGE_REPO=false
-SETUP_STORAGE=false
-EOL
-    fi
-}
-
-# Mise à jour d'une section de configuration
-update_config_section() {
-    local section=$1
-    local content=$2
-    
-    # Vérifier si le fichier existe
-    if [ ! -f "$CONFIG_FILE" ]; then
-        init_config
-    fi
-    
-    # Supprimer l'ancienne section si elle existe
-    sed -i "/^\[$section\]/,/^\[/d" "$CONFIG_FILE"
-    
-    # Ajouter la nouvelle section
-    echo -e "\n[$section]$content" >> "$CONFIG_FILE"
-}
-
-# Export de la configuration XFCE
-export_xfce_config() {
-    local content="
-INSTALL_TYPE=\"${INSTALL_TYPE:-minimale}\"
-INSTALL_THEME=${INSTALL_THEME:-false}
-INSTALL_ICONS=${INSTALL_ICONS:-false}
-INSTALL_WALLPAPERS=${INSTALL_WALLPAPERS:-false}
-INSTALL_CURSORS=${INSTALL_CURSORS:-false}
-SELECTED_THEME=\"${SELECTED_THEME:-}\"
-SELECTED_ICON_THEME=\"${SELECTED_ICON_THEME:-}\"
-SELECTED_WALLPAPER=\"${SELECTED_WALLPAPER:-}\"
-BROWSER=\"${BROWSER:-}\"
-"
-    update_config_section "xfce" "$content"
-}
-
-# Export de la configuration PRoot
-export_proot_config() {
-    local content="
-PROOT_USERNAME=\"${PROOT_USERNAME:-}\"
-TIMEZONE=\"${TIMEZONE:-}\"
-DEBIAN_VERSION=\"${DEBIAN_VERSION:-bookworm}\"
-DEBIAN_LOCALE=\"${DEBIAN_LOCALE:-fr_FR.UTF-8}\"
-MESA_VULKAN_INSTALLED=${MESA_VULKAN_INSTALLED:-false}
-"
-    update_config_section "proot" "$content"
-}
-
-# Export de la configuration générale
-export_general_config() {
-    local content="
-USE_GUM=${USE_GUM:-false}
-VERBOSE=${VERBOSE:-false}
-EXECUTE_INITIAL_CONFIG=${EXECUTE_INITIAL_CONFIG:-true}
-"
-    update_config_section "general" "$content"
-}
-
-# Export de la configuration Termux
-export_termux_config() {
-    local content="
-CHANGE_REPO=false
-SETUP_STORAGE=false
-"
-    update_config_section "termux" "$content"
-}
-
-# Export de la configuration complète
-export_config() {
-    # Initialiser la configuration si nécessaire
-    if [ ! -f "$CONFIG_FILE" ]; then
-    init_config
-    fi
-
-    # Exporter chaque section
-    export_general_config
-    export_termux_config
-    export_xfce_config
-    export_proot_config
-    
-    if $USE_GUM; then
-        gum style --foreground 82 "Configuration mise à jour dans : $CONFIG_FILE"
-    else
-        success_msg "Configuration mise à jour dans : $CONFIG_FILE"
-    fi
-}
-
-#------------------------------------------------------------------------------
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
 show_banner
@@ -2199,9 +1953,6 @@ else
     install_proot
     install_termux_x11
 fi
-
-# Export de la configuration à la fin de l'installation
-export_config
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
