@@ -827,10 +827,6 @@ install_prompt() {
                 execute_command "curl -fLo \"$HOME/.termux/font.ttf\" --create-dirs https://raw.githubusercontent.com/termux/termux-styling/master/app/src/main/assets/fonts/DejaVu-Sans-Mono.ttf" "Installation de la police Nerd"
             fi
             
-            # Configuration de Oh-My-Posh
-            LINE_TO_ADD_BASE='\n# Charger oh-my-posh\n'
-            LINE_TO_ADD_BASE+='eval "$(oh-my-posh init %s --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/%s.omp.json)"'
-
             # Récupération de la liste complète des thèmes
             THEMES_DIR="/data/data/com.termux/files/usr/share/oh-my-posh/themes"
             if [ -d "$THEMES_DIR" ]; then
@@ -843,7 +839,6 @@ install_prompt() {
 
             # Sélection du thème
             if $USE_GUM; then
-                # Utilisation de gum pour la sélection avec défilement
                 THEME=$(printf '%s\n' "${AVAILABLE_THEMES[@]}" | gum_choose \
                     "Choisissez un thème Oh-My-Posh :" \
                     --height=25)
@@ -861,167 +856,245 @@ install_prompt() {
                     fi
                 done
                 echo
-                
                 # Calcul du nombre de lignes à effacer (nombre de thèmes + 3 lignes pour le texte supplémentaire)
                 LINES_TO_CLEAR=$((${#AVAILABLE_THEMES[@]}+3))
-                
                 printf "${COLOR_GOLD}Entrez le numéro de votre choix : ${COLOR_RESET}"
                 tput setaf 3
                 read -r -e -p "" -i "1" CHOICE
                 tput sgr0
-                
                 # Effacement du menu
                 tput cuu $LINES_TO_CLEAR
                 tput ed
-                
+
                 # Validation du choix
                 if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [ "$CHOICE" -ge 1 ] && [ "$CHOICE" -le "${#AVAILABLE_THEMES[@]}" ]; then
                     THEME="${AVAILABLE_THEMES[$((CHOICE-1))]}"
                 else
                     THEME="jandedobbeleer"
                 fi
-            fi
+                fi
 
             # Configuration pour ZSH
             if [ ! -f "$ZSHRC" ]; then
                 touch "$ZSHRC"
             fi
-            LINE_TO_ADD=$(printf "$LINE_TO_ADD_BASE" "zsh" "$THEME")
-            if ! grep -qF "$LINE_TO_ADD" "$ZSHRC"; then
-                echo "$LINE_TO_ADD" >> "$ZSHRC"
-            fi
+            sed -i '/# Charger oh-my-posh/d' "$ZSHRC"
+            sed -i '/eval "$(oh-my-posh init/d' "$ZSHRC"
+            cat >> "$ZSHRC" << 'EOF'
+
+# Initialiser oh-my-posh
+eval "\$(oh-my-posh init zsh --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/${THEME}.omp.json)"
+EOF
 
             # Configuration pour Bash
             if [ ! -f "$HOME/.bashrc" ]; then
                 touch "$HOME/.bashrc"
             fi
-            LINE_TO_ADD=$(printf "$LINE_TO_ADD_BASE" "bash" "$THEME")
-            if ! grep -qF "$LINE_TO_ADD" "$HOME/.bashrc"; then
-                echo "$LINE_TO_ADD" >> "$HOME/.bashrc"
-            fi
+            sed -i '/# Charger oh-my-posh/d' "$HOME/.bashrc"
+            sed -i '/eval "$(oh-my-posh init/d' "$HOME/.bashrc"
+            cat >> "$HOME/.bashrc" << 'EOF'
+
+# Initialiser oh-my-posh
+eval "\$(oh-my-posh init bash --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/${THEME}.omp.json)"
+EOF
             ;;
         "Starship")
             execute_command "pkg install -y starship" "Installation de Starship"
             
+            # Installation optionnelle d'une police Nerd
             if [ ! -f "$HOME/.termux/font.ttf" ]; then
                 execute_command "curl -fLo \"$HOME/.termux/font.ttf\" --create-dirs https://raw.githubusercontent.com/termux/termux-styling/master/app/src/main/assets/fonts/DejaVu-Sans-Mono.ttf" "Installation de la police Nerd"
             fi
-            
-            local INIT_LINE='\n# Charger starship\n'
-            INIT_LINE+='eval "$(starship init zsh)"'
-            if [ ! -f "$HOME/.zshhrc" ]; then
-                touch "$HOME/.zshrc"
-            fi
-            if ! grep -qF "$INIT_LINE" "$ZSHRC"; then
-                echo "$INIT_LINE" >> "$ZSHRC"
-            fi
 
-            INIT_LINE='\n# Charger starship\n'
-            INIT_LINE+='eval "$(starship init bash)"'
-            if [ ! -f "$HOME/.bashrc" ]; then
-                touch "$HOME/.bashrc"
-            fi
-            if ! grep -qF "$INIT_LINE" "$HOME/.bashrc"; then
-                echo "$INIT_LINE" >> "$HOME/.bashrc"
-            fi
+            # Création du répertoire de configuration si nécessaire
+            mkdir -p "$HOME/.config"
 
-            # Sélection du thème
-            local THEME_CHOICE
+            # Sélection du preset
             if $USE_GUM; then
-                THEME_CHOICE=$(gum_choose "Choisissez un thème Starship :" --height=12 \
-                    "Default" \
+                PRESET=$(gum_choose "Choisissez un preset Starship :" --height=15 --selected="Personnalisé" \
+                    "Personnalisé" \
                     "Nerd Font Symbols" \
-                    "No Nerd Fonts" \
                     "Bracketed Segments" \
-                    "Plain Text Symbols" \
-                    "No Runtime Versions" \
                     "No Empty Icons" \
-                    "Pure Prompt" \
+                    "No Runtime Versions" \
+                    "Plain Text Symbols" \
                     "Pastel Powerline" \
                     "Tokyo Night" \
+                    "Pure Preset" \
                     "Gruvbox Rainbow" \
-                    "Jetpack")
+                    "Jetpack" \
+                    "No Nerd Font" \
+                    "Rice" \
+                    "Solarized")
             else
-                echo -e "${COLOR_BLUE}Choisissez un thème Starship :${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}Choisissez un preset Starship :${COLOR_RESET}"
                 echo
-                echo -e "${COLOR_BLUE}1)  Default${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}1)  Personnalisé${COLOR_RESET}"
                 echo -e "${COLOR_BLUE}2)  Nerd Font Symbols${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}3)  No Nerd Fonts${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}4)  Bracketed Segments${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}5)  Plain Text Symbols${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}6)  No Runtime Versions${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}7)  No Empty Icons${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}8)  Pure Prompt${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}9)  Pastel Powerline${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}10) Tokyo Night${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}11) Gruvbox Rainbow${COLOR_RESET}"
-                echo -e "${COLOR_BLUE}12) Jetpack${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}3)  Bracketed Segments${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}4)  No Empty Icons${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}5)  No Runtime Versions${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}6)  Plain Text Symbols${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}7)  Pastel Powerline${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}8)  Tokyo Night${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}9)  Pure Preset${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}10) Gruvbox Rainbow${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}11) Jetpack${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}12) No Nerd Font${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}13) Rice${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}14) Solarized${COLOR_RESET}"
                 echo
-                printf "${COLOR_GOLD}Entrez votre choix (1-12) : ${COLOR_RESET}"
+                printf "${COLOR_GOLD}Entrez le numéro de votre choix : ${COLOR_RESET}"
+                tput setaf 3
                 read -r -e -p "" -i "1" CHOICE
-                tput cuu 16  # Remonte de 16 lignes
-                tput ed     # Efface jusqu'à la fin de l'écran
+                tput sgr0
+                tput cuu 18
+                tput ed
                 
                 case $CHOICE in
-                    1) THEME_CHOICE="Default" ;;
-                    2) THEME_CHOICE="Nerd Font Symbols" ;;
-                    3) THEME_CHOICE="No Nerd Fonts" ;;
-                    4) THEME_CHOICE="Bracketed Segments" ;;
-                    5) THEME_CHOICE="Plain Text Symbols" ;;
-                    6) THEME_CHOICE="No Runtime Versions" ;;
-                    7) THEME_CHOICE="No Empty Icons" ;;
-                    8) THEME_CHOICE="Pure Prompt" ;;
-                    9) THEME_CHOICE="Pastel Powerline" ;;
-                    10) THEME_CHOICE="Tokyo Night" ;;
-                    11) THEME_CHOICE="Gruvbox Rainbow" ;;
-                    12) THEME_CHOICE="Jetpack" ;;
-                    *) THEME_CHOICE="Default" ;;
+                    1) PRESET="Personnalisé" ;;
+                    2) PRESET="Nerd Font Symbols" ;;
+                    3) PRESET="Bracketed Segments" ;;
+                    4) PRESET="No Empty Icons" ;;
+                    5) PRESET="No Runtime Versions" ;;
+                    6) PRESET="Plain Text Symbols" ;;
+                    7) PRESET="Pastel Powerline" ;;
+                    8) PRESET="Tokyo Night" ;;
+                    9) PRESET="Pure Preset" ;;
+                    10) PRESET="Gruvbox Rainbow" ;;
+                    11) PRESET="Jetpack" ;;
+                    12) PRESET="No Nerd Font" ;;
+                    13) PRESET="Rice" ;;
+                    14) PRESET="Solarized" ;;
+                    *) PRESET="Personnalisé" ;;
                 esac
             fi
 
-            # Création du répertoire de configuration
-            mkdir -p "$HOME/.config"
-
-            # Téléchargement du fichier de configuration selon le thème choisi
-            case $THEME_CHOICE in
-                "Default")
-                    execute_command "touch \"$HOME/.config/starship.toml\"" "Création de la configuration par défaut"
-                    ;;
+            case $PRESET in
                 "Nerd Font Symbols")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/nerd-font-symbols.toml" "Téléchargement du thème Nerd Font Symbols"
-                    ;;
-                "No Nerd Fonts")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/no-nerd-font.toml" "Téléchargement du thème No Nerd Fonts"
+                    starship preset nerd-font-symbols > "$HOME/.config/starship.toml"
                     ;;
                 "Bracketed Segments")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/bracketed-segments.toml" "Téléchargement du thème Bracketed Segments"
-                    ;;
-                "Plain Text Symbols")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/plain-text.toml" "Téléchargement du thème Plain Text"
-                    ;;
-                "No Runtime Versions")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/no-runtime-versions.toml" "Téléchargement du thème No Runtime Versions"
+                    starship preset bracketed-segments > "$HOME/.config/starship.toml"
                     ;;
                 "No Empty Icons")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/no-empty-icons.toml" "Téléchargement du thème No Empty Icons"
+                    starship preset no-empty-icons > "$HOME/.config/starship.toml"
                     ;;
-                "Pure Prompt")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/pure-preset.toml" "Téléchargement du thème Pure"
+                "No Runtime Versions")
+                    starship preset no-runtime-versions > "$HOME/.config/starship.toml"
+                    ;;
+                "Plain Text Symbols")
+                    starship preset plain-text-symbols > "$HOME/.config/starship.toml"
                     ;;
                 "Pastel Powerline")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/pastel-powerline.toml" "Téléchargement du thème Pastel Powerline"
+                    starship preset pastel-powerline > "$HOME/.config/starship.toml"
                     ;;
                 "Tokyo Night")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/tokyo-night.toml" "Téléchargement du thème Tokyo Night"
+                    starship preset tokyo-night > "$HOME/.config/starship.toml"
+                    ;;
+                "Pure Preset")
+                    starship preset pure > "$HOME/.config/starship.toml"
                     ;;
                 "Gruvbox Rainbow")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/gruvbox-rainbow.toml" "Téléchargement du thème Gruvbox Rainbow"
+                    starship preset gruvbox-rainbow > "$HOME/.config/starship.toml"
                     ;;
                 "Jetpack")
-                    execute_command "curl -fLo \"$HOME/.config/starship.toml\" https://starship.rs/presets/jetpack.toml" "Téléchargement du thème Jetpack"
+                    starship preset jetpack > "$HOME/.config/starship.toml"
+                    ;;
+                "No Nerd Font")
+                    starship preset no-nerd-font > "$HOME/.config/starship.toml"
+                    ;;
+                "Rice")
+                    starship preset rice > "$HOME/.config/starship.toml"
+                    ;;
+                "Solarized")
+                    starship preset solarized > "$HOME/.config/starship.toml"
+                    ;;
+                *)
+                    # Configuration personnalisée par défaut
+                    cat > "$HOME/.config/starship.toml" << 'EOF'
+# Obtenir l'aide sur la configuration : https://starship.rs/config/
+format = """$username$hostname$directory$git_branch$git_status$cmd_duration$line_break$character"""
+
+# Désactiver la nouvelle ligne par défaut
+add_newline = false
+
+[directory]
+style = "blue bold"
+truncation_length = 3
+truncate_to_repo = true
+
+[character]
+success_symbol = "[❯](purple bold)"
+error_symbol = "[❯](red bold)"
+vimcmd_symbol = "[❮](green bold)"
+
+[git_branch]
+format = "[$branch]($style)"
+style = "bright-black"
+
+[git_status]
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+style = "cyan"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
+
+[python]
+format = "[$virtualenv]($style) "
+style = "bright-black"
+
+[username]
+style_user = "white bold"
+style_root = "black bold"
+format = "[$user]($style) "
+disabled = false
+show_always = true
+
+[hostname]
+ssh_only = false
+format = "on [$hostname](bold red) "
+disabled = false
+EOF
                     ;;
             esac
-            ;; 
+
+            # Configuration pour ZSH
+            if [ ! -f "$ZSHRC" ]; then
+                touch "$ZSHRC"
+            fi
+            sed -i '/# Initialiser Starship/d' "$ZSHRC"
+            sed -i '/eval "$(starship init/d' "$ZSHRC"
+            cat >> "$ZSHRC" << 'EOF'
+
+# Initialiser Starship
+eval "$(starship init zsh)"
+EOF
+
+            # Configuration pour Bash
+            if [ ! -f "$HOME/.bashrc" ]; then
+                touch "$HOME/.bashrc"
+            fi
+            sed -i '/# Initialiser Starship/d' "$HOME/.bashrc"
+            sed -i '/eval "$(starship init/d' "$HOME/.bashrc"
+            cat >> "$HOME/.bashrc" << 'EOF'
+
+# Initialiser Starship
+eval "$(starship init bash)"
+EOF
+            ;;
     esac
 }
 
@@ -1139,10 +1212,10 @@ update_zshrc() {
 
     # Ajout de la configuration par séction
     if [ "$HAS_COMPLETIONS" = "true" ]; then
-        echo -e "\n# Charger zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$ZSHRC"
+        echo -e "\n# Initialiser zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$ZSHRC"
     fi
 
-    echo -e "\n# Charger oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
+    echo -e "\n# Initialiser oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
 
     # Sourcing des alias centralisés
     echo -e "\n# Source des alias personnalisés\n[ -f \"$HOME/.config/OhMyTermux/aliases\" ] && . \"$HOME/.config/OhMyTermux/aliases\"" >> "$ZSHRC"
@@ -1631,7 +1704,6 @@ install_proot() {
     if $PROOT_CHOICE; then
         title_msg "❯ Configuration de Proot"
         
-        execute_command "pkg install proot-distro -y" "Installation de proot-distro"
         execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "Téléchargement du script Proot" || error_msg "Impossible de télécharger le script Proot"
         execute_command "chmod +x proot_dev.sh" "Exécution du script Proot"
         
@@ -1645,7 +1717,9 @@ install_proot() {
         else
             if $USE_GUM; then
                 if gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" "Installer Debian Proot ?"; then
+                    execute_command "pkg install proot-distro -y" "Installation de proot-distro"
                     ./proot_dev.sh --gum
+                    install_utils
                 fi
             else    
                 printf "${COLOR_BLUE}Installer Debian Proot ? (O/n) : ${COLOR_RESET}"
@@ -1653,7 +1727,9 @@ install_proot() {
                 tput cuu1
                 tput el
                 if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    execute_command "pkg install proot-distro -y" "Installation de proot-distro"
                     ./proot_dev.sh
+                    install_utils
                 fi
             fi
         fi
@@ -1846,7 +1922,6 @@ if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOIC
     fi
     if [ "$PROOT_CHOICE" = true ]; then
         install_proot
-        install_utils
     fi
     if [ "$X11_CHOICE" = true ]; then
         install_termux_x11
@@ -1868,10 +1943,9 @@ fi
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
-#FIXME: Sauvegarder les scripts d'installation dans le dossier OhMyTermux
-execute_command "mv xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh $HOME/.config/OhMyTermux/" "Sauvegarde des scripts d'installation"
+execute_command "mkdir -p $HOME/.config/OhMyTermux && mv -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh $HOME/.config/OhMyTermux/" "Sauvegarde des scripts d'installation"
 rm -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh >/dev/null 2>&1
-success_msg "✓ Suppression des scripts d'installation"
+#success_msg "✓ Suppression des scripts d'installation"
 
 # Rechargement du shell
 if $USE_GUM; then
