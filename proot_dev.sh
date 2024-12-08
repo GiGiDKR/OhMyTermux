@@ -315,13 +315,35 @@ install_mesa_vulkan() {
 }
 
 #------------------------------------------------------------------------------
+# LECTURE DE LA CONFIGURATION
+#------------------------------------------------------------------------------
+read_config_value() {
+    local section=$1
+    local key=$2
+    local default=$3
+    local config_file="$HOME/.config/OhMyTermux/config.ini"
+    
+    if [ -f "$config_file" ]; then
+        local value
+        value=$(sed -n "/^\[$section\]/,/^\[/p" "$config_file" | grep "^$key=" | cut -d'=' -f2-)
+        echo "${value:-$default}" | tr -d '"'
+    else
+        echo "$default"
+    fi
+}
+
+#------------------------------------------------------------------------------
 # CONFIGURATION DES THÈMES ET ICÔNES
 #------------------------------------------------------------------------------
 configure_themes_and_icons() {
-    # Charger la configuration depuis le fichier temporaire
-    if [ -f "$HOME/.config/OhMyTermux/theme_config.tmp" ]; then
-        source "$HOME/.config/OhMyTermux/theme_config.tmp"
-    fi
+    # Lecture des configurations depuis le fichier central
+    INSTALL_THEME=$(read_config_value "xfce" "INSTALL_THEME" "false")
+    INSTALL_ICONS=$(read_config_value "xfce" "INSTALL_ICONS" "false")
+    INSTALL_WALLPAPERS=$(read_config_value "xfce" "INSTALL_WALLPAPERS" "false")
+    INSTALL_CURSORS=$(read_config_value "xfce" "INSTALL_CURSORS" "false")
+    SELECTED_THEME=$(read_config_value "xfce" "SELECTED_THEME" "")
+    SELECTED_ICON_THEME=$(read_config_value "xfce" "SELECTED_ICON_THEME" "")
+    SELECTED_WALLPAPER=$(read_config_value "xfce" "SELECTED_WALLPAPER" "")
 
     # Créer les répertoires nécessaires
     execute_command "
@@ -383,9 +405,6 @@ configure_themes_and_icons() {
 Xcursor.theme: dist-dark
 EOF
     fi
-
-    # Supprimer le fichier de configuration temporaire
-    rm -f "$HOME/.config/OhMyTermux/theme_config.tmp"
 }
 
 #------------------------------------------------------------------------------
@@ -394,78 +413,77 @@ EOF
 check_dependencies
 title_msg "❯ Installation de Debian Proot"
 
-if [ $# -eq 0 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
-    if [ "$USE_GUM" = true ]; then
-        PROOT_USERNAME=$(gum input --prompt "Username: " --placeholder "Entrer un nom d'utilisateur")
-        while true; do
-            PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
-            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
-            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
-                break
-            else
-                gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
-            fi
-        done
-    else
-        echo -e "${COLOR_BLUE}Entrer un nom d'utilisateur: ${COLOR_RESET}"
-        read -r PROOT_USERNAME
-        tput cuu1
-        tput el
-        while true; do
-            echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
-            read -rs PROOT_PASSWORD
-            tput cuu1
-            tput el
-            echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
-            read -rs PASSWORD_CONFIRM
-            tput cuu1
-            tput el 
-            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
-                break
-            else
-                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
-                tput cuu1
-                tput el
-            fi
-        done
-    fi
-elif [ $# -eq 1 ] && [ -z "$PROOT_PASSWORD" ]; then
-    PROOT_USERNAME="$1"
-    if [ "$USE_GUM" = true ]; then
-        while true; do
-            PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
-            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
-            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
-                break
-            else
-                gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
-            fi
-        done
-    else
-        while true; do
-            echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
-            read -rs PROOT_PASSWORD
-            tput cuu1
-            tput el
-            echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
-            read -rs PASSWORD_CONFIRM
-            tput cuu1
-            tput el
-            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
-                break
-            else
-                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
-                tput cuu1
-                tput el
-            fi
-        done
-    fi
-elif [ $# -eq 2 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
-    PROOT_USERNAME="$1"
-    PROOT_PASSWORD="$2"
+# Import du gestionnaire de configuration
+CONFIG_MANAGER="$HOME/.config/OhMyTermux/config_manager.sh"
+if [ -f "$CONFIG_MANAGER" ]; then
+    source "$CONFIG_MANAGER"
 fi
 
-execute_command "proot-distro install debian" "Installation de la distribution"
+#------------------------------------------------------------------------------
+# SAUVEGARDE DES CHOIX PROOT
+#------------------------------------------------------------------------------
+save_proot_config() {
+    # Si le gestionnaire de configuration n'est pas disponible, on ignore
+    if [ ! -f "$CONFIG_MANAGER" ]; then
+        return
+    fi
+
+    local content="
+PROOT_USERNAME=\"${PROOT_USERNAME:-}\"
+TIMEZONE=\"${TIMEZONE:-}\"
+DEBIAN_VERSION=\"${DEBIAN_VERSION:-bookworm}\"
+DEBIAN_LOCALE=\"${DEBIAN_LOCALE:-fr_FR.UTF-8}\"
+MESA_VULKAN_INSTALLED=${MESA_VULKAN_INSTALLED:-false}
+"
+    update_config_section "proot" "$content"
+}
+
+#------------------------------------------------------------------------------
+# CHARGEMENT DES CHOIX PROOT
+#------------------------------------------------------------------------------
+load_proot_config() {
+    # Si le gestionnaire de configuration n'est pas disponible, on ignore
+    if [ ! -f "$CONFIG_MANAGER" ]; then
+        return
+    fi
+
+    PROOT_USERNAME=$(read_config_value "proot" "PROOT_USERNAME" "")
+    TIMEZONE=$(read_config_value "proot" "TIMEZONE" "")
+    DEBIAN_VERSION=$(read_config_value "proot" "DEBIAN_VERSION" "bookworm")
+    DEBIAN_LOCALE=$(read_config_value "proot" "DEBIAN_LOCALE" "fr_FR.UTF-8")
+    MESA_VULKAN_INSTALLED=$(read_config_value "proot" "MESA_VULKAN_INSTALLED" "false")
+}
+
+# Dans la fonction principale, charger la configuration au début
+main() {
+    # Charger la configuration existante
+    load_proot_config
+
+    # Si les paramètres ne sont pas déjà définis, demander à l'utilisateur
+    if [ -z "$PROOT_USERNAME" ]; then
+        if $USE_GUM; then
+            PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
+        else
+            printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian PRoot : ${COLOR_RESET}"
+            read -r PROOT_USERNAME
+        fi
+    fi
+
+    if [ -z "$PROOT_PASSWORD" ]; then
+        if $USE_GUM; then
+            PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
+        else
+            printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
+            read -r -s PROOT_PASSWORD
+            echo
+        fi
+    fi
+
+    # Sauvegarder la configuration
+    save_proot_config
+
+    # ... reste du code ...
+}
 
 #------------------------------------------------------------------------------
 # VÉRIFICATION DE L'INSTALLATION DE DEBIAN
