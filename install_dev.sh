@@ -688,23 +688,26 @@ install_shell() {
                 fi
                 # Installation de Oh My Zsh et autres configurations ZSH
                 title_msg "❯ Configuration de ZSH"
-                if $USE_GUM; then
-                    if gum_confirm "Installer Oh-My-Zsh ?"; then
-                        execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
-                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                if [ ! -d "$HOME/.oh-my-zsh" ]; then
+                    if $USE_GUM; then
+                        if gum_confirm "Installer Oh-My-Zsh ?"; then
+                            execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
+                            execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
+                            cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        fi
+                    else
+                        printf "${COLOR_BLUE}Installer Oh-My-Zsh ? (O/n) : ${COLOR_RESET}"
+                        read -r -e -p "" -i "o" CHOICE
+                        tput cuu1
+                        tput el
+                        if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                            execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
+                            execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
+                            cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        fi
                     fi
                 else
-                    printf "${COLOR_BLUE}Installer Oh-My-Zsh ? (O/n) : ${COLOR_RESET}"
-                    # Définition de la valeur par défaut de la variable CHOICE
-                    read -r -e -p "" -i "o" CHOICE
-                    tput cuu1
-                    tput el
-                    if [[ "$CHOICE" =~ ^[oO]$ ]]; then
-                        execute_command "pkg install -y wget curl git unzip" "Installation des dépendances"
-                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
-                    fi
+                    success_msg "✓ Oh-My-Zsh déjà installé"
                 fi
 
                 execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/zshrc" "Configuration par défaut" || error_msg "Configuration par défaut impossible"
@@ -1588,11 +1591,6 @@ install_xfce() {
             fi
         fi
 
-        # Sauvegarder les choix initiaux
-        INSTALL_TYPE="$XFCE_VERSION"
-        BROWSER="$BROWSER_CHOICE"
-        save_xfce_choices
-
         execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation des dépendances"
 
         PACKAGES=('wget' 'x11-repo' 'tur-repo' 'pulseaudio')
@@ -1609,9 +1607,6 @@ install_xfce() {
         else
             ./xfce_dev.sh --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         fi
-
-        # Sauvegarder les choix après l'installation de XFCE
-        save_xfce_choices
     fi
 }
 
