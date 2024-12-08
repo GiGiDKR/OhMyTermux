@@ -622,7 +622,7 @@ show_banner() {
 # SAUVEGARDE DES FICHIERS
 #------------------------------------------------------------------------------
 create_backups() {
-    local BACKUP_DIR="$HOME/.config/OhMyTermux/backup"
+    local BACKUP_DIR="$HOME/.config/OhMyTermux/backups"
     
     # Création du répertoire de sauvegarde
     execute_command "mkdir -p \"$BACKUP_DIR\"" "Création du répertoire de sauvegarde"
