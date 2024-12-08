@@ -315,35 +315,13 @@ install_mesa_vulkan() {
 }
 
 #------------------------------------------------------------------------------
-# LECTURE DE LA CONFIGURATION
-#------------------------------------------------------------------------------
-read_config_value() {
-    local section=$1
-    local key=$2
-    local default=$3
-    local config_file="$HOME/.config/OhMyTermux/config.ini"
-    
-    if [ -f "$config_file" ]; then
-        local value
-        value=$(sed -n "/^\[$section\]/,/^\[/p" "$config_file" | grep "^$key=" | cut -d'=' -f2-)
-        echo "${value:-$default}" | tr -d '"'
-    else
-        echo "$default"
-    fi
-}
-
-#------------------------------------------------------------------------------
 # CONFIGURATION DES THÈMES ET ICÔNES
 #------------------------------------------------------------------------------
 configure_themes_and_icons() {
-    # Lecture des configurations depuis le fichier central
-    INSTALL_THEME=$(read_config_value "xfce" "INSTALL_THEME" "false")
-    INSTALL_ICONS=$(read_config_value "xfce" "INSTALL_ICONS" "false")
-    INSTALL_WALLPAPERS=$(read_config_value "xfce" "INSTALL_WALLPAPERS" "false")
-    INSTALL_CURSORS=$(read_config_value "xfce" "INSTALL_CURSORS" "false")
-    SELECTED_THEME=$(read_config_value "xfce" "SELECTED_THEME" "")
-    SELECTED_ICON_THEME=$(read_config_value "xfce" "SELECTED_ICON_THEME" "")
-    SELECTED_WALLPAPER=$(read_config_value "xfce" "SELECTED_WALLPAPER" "")
+    # Charger la configuration depuis le fichier temporaire
+    if [ -f "$HOME/.config/OhMyTermux/theme_config.tmp" ]; then
+        source "$HOME/.config/OhMyTermux/theme_config.tmp"
+    fi
 
     # Créer les répertoires nécessaires
     execute_command "
@@ -405,116 +383,166 @@ configure_themes_and_icons() {
 Xcursor.theme: dist-dark
 EOF
     fi
-}
 
-#------------------------------------------------------------------------------
-# CHARGEMENT DE LA CONFIGURATION
-#------------------------------------------------------------------------------
-load_proot_config() {
-    # Si le gestionnaire de configuration n'est pas disponible, on ignore
-    if [ ! -f "$CONFIG_MANAGER" ]; then
-        return
-    fi
-
-    # Utiliser read_config_value du gestionnaire de configuration
-    PROOT_USERNAME=$(read_config_value "proot" "PROOT_USERNAME" "")
-    TIMEZONE=$(read_config_value "proot" "TIMEZONE" "")
-    DEBIAN_VERSION=$(read_config_value "proot" "DEBIAN_VERSION" "bookworm")
-    DEBIAN_LOCALE=$(read_config_value "proot" "DEBIAN_LOCALE" "fr_FR.UTF-8")
-    MESA_VULKAN_INSTALLED=$(read_config_value "proot" "MESA_VULKAN_INSTALLED" "false")
-}
-
-#------------------------------------------------------------------------------
-# SAUVEGARDE DES CHOIX PROOT
-#------------------------------------------------------------------------------
-save_proot_config() {
-    # Si le fichier de configuration n'existe pas, on le crée
-    local CONFIG_FILE="$HOME/.config/OhMyTermux/config.ini"
-    mkdir -p "$(dirname "$CONFIG_FILE")"
-    
-    # Créer ou mettre à jour la section proot
-    local content="[proot]
-PROOT_USERNAME=\"${PROOT_USERNAME:-}\"
-TIMEZONE=\"${TIMEZONE:-}\"
-DEBIAN_VERSION=\"${DEBIAN_VERSION:-bookworm}\"
-DEBIAN_LOCALE=\"${DEBIAN_LOCALE:-fr_FR.UTF-8}\"
-MESA_VULKAN_INSTALLED=${MESA_VULKAN_INSTALLED:-false}
-"
-    # Si le fichier existe déjà
-    if [ -f "$CONFIG_FILE" ]; then
-        # Supprimer l'ancienne section proot si elle existe
-        sed -i '/^\[proot\]/,/^\[/d' "$CONFIG_FILE"
-        # Ajouter la nouvelle section
-        echo -e "\n$content" >> "$CONFIG_FILE"
-    else
-        # Créer le fichier avec la section
-        echo "$content" > "$CONFIG_FILE"
-    fi
+    # Supprimer le fichier de configuration temporaire
+    rm -f "$HOME/.config/OhMyTermux/theme_config.tmp"
 }
 
 #------------------------------------------------------------------------------
 # FONCTION PRINCIPALE
 #------------------------------------------------------------------------------
-main() {
-    # Charger la configuration existante
-    load_proot_config
+check_dependencies
+title_msg "❯ Installation de Debian Proot"
 
-    # Si les paramètres ne sont pas déjà définis, demander à l'utilisateur
-    if [ -z "$PROOT_USERNAME" ]; then
+if [ $# -eq 0 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
+    if [ "$USE_GUM" = true ]; then
+        PROOT_USERNAME=$(gum input --prompt "Username: " --placeholder "Entrer un nom d'utilisateur")
+        while true; do
+            PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+                break
+            else
+                gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
+            fi
+        done
+    else
+        echo -e "${COLOR_BLUE}Entrer un nom d'utilisateur: ${COLOR_RESET}"
+        read -r PROOT_USERNAME
+        tput cuu1
+        tput el
+        while true; do
+            echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
+            read -rs PROOT_PASSWORD
+            tput cuu1
+            tput el
+            echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
+            read -rs PASSWORD_CONFIRM
+            tput cuu1
+            tput el 
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+                break
+            else
+                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                tput cuu1
+                tput el
+            fi
+        done
+    fi
+elif [ $# -eq 1 ] && [ -z "$PROOT_PASSWORD" ]; then
+    PROOT_USERNAME="$1"
+    if [ "$USE_GUM" = true ]; then
+        while true; do
+            PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Entrer un mot de passe")
+            PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirmer le mot de passe")
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+                break
+            else
+                gum style --foreground 196 "Les mots de passe ne correspondent pas. Veuillez réessayer."
+            fi
+        done
+    else
+        while true; do
+            echo -e "${COLOR_BLUE}Entrer un mot de passe: ${COLOR_RESET}"
+            read -rs PROOT_PASSWORD
+            tput cuu1
+            tput el
+            echo -e "${COLOR_BLUE}Confirmer le mot de passe: ${COLOR_RESET}"
+            read -rs PASSWORD_CONFIRM
+            tput cuu1
+            tput el
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+                break
+            else
+                echo -e "${COLOR_RED}Les mots de passe ne correspondent pas. Veuillez réessayer.${COLOR_RESET}"
+                tput cuu1
+                tput el
+            fi
+        done
+    fi
+elif [ $# -eq 2 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
+    PROOT_USERNAME="$1"
+    PROOT_PASSWORD="$2"
+fi
+
+execute_command "proot-distro install debian" "Installation de la distribution"
+
+#------------------------------------------------------------------------------
+# VÉRIFICATION DE L'INSTALLATION DE DEBIAN
+#------------------------------------------------------------------------------
+if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
+    error_msg "L'installation de Debian a échoué."
+    exit 1
+fi
+
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
+
+install_packages_proot
+
+subtitle_msg "❯ Configuration de la distribution"
+
+# Utiliser les variables PROOT_USERNAME et PROOT_PASSWORD pour create_user_proot
+USERNAME="$PROOT_USERNAME"
+PASSWORD="$PROOT_PASSWORD"
+create_user_proot
+configure_user_rights
+
+#------------------------------------------------------------------------------
+# CONFIGURATION DU FUSEAU HORAIRE
+#------------------------------------------------------------------------------
+TIMEZONE=$(getprop persist.sys.timezone)
+execute_command "
+    proot-distro login debian -- rm /etc/localtime
+    proot-distro login debian -- cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+" "Configuration du fuseau horaire"
+
+#------------------------------------------------------------------------------
+# CONFIGURATION GRAPHIQUE
+#------------------------------------------------------------------------------
+configure_themes_and_icons
+
+#------------------------------------------------------------------------------
+# INSTALLATION DE MESA-VULKAN
+#------------------------------------------------------------------------------
+install_mesa_vulkan
+
+#------------------------------------------------------------------------------
+# INSTALLATION DE DEBIAN
+#------------------------------------------------------------------------------
+install_debian() {
+    title_msg "❯ Installation de Debian"
+    
+    # Si les identifiants ne sont pas fournis en argument, les demander
+    if [ -z "$DEBIAN_USERNAME" ]; then
         if $USE_GUM; then
-            PROOT_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian PRoot")
+            DEBIAN_USERNAME=$(gum input --placeholder "Entrez le nom d'utilisateur pour Debian")
         else
-            printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian PRoot : ${COLOR_RESET}"
-            read -r PROOT_USERNAME
+            printf "${COLOR_BLUE}Entrez le nom d'utilisateur pour Debian : ${COLOR_RESET}"
+            read -r DEBIAN_USERNAME
         fi
     fi
-
-    if [ -z "$PROOT_PASSWORD" ]; then
+    
+    if [ -z "$DEBIAN_PASSWORD" ]; then
         if $USE_GUM; then
-            PROOT_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian PRoot")
+            DEBIAN_PASSWORD=$(gum input --password --placeholder "Entrez le mot de passe pour Debian")
         else
-            printf "${COLOR_BLUE}Entrez le mot de passe pour Debian PRoot : ${COLOR_RESET}"
-            read -r -s PROOT_PASSWORD
+            printf "${COLOR_BLUE}Entrez le mot de passe pour Debian : ${COLOR_RESET}"
+            read -r -s DEBIAN_PASSWORD
             echo
         fi
     fi
-
-    # Sauvegarder la configuration
-    save_proot_config
-
-    # Installation de Debian si non présente
-    if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
-        subtitle_msg "❯ Installation de Debian"
-        execute_command "proot-distro install debian" "Installation de Debian"
-    fi
-
-    # Vérification de l'installation de Debian
-    if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
-        error_msg "L'installation de Debian a échoué."
-        exit 1
-    fi
-
-    # Mise à jour du système
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Recherche de mise à jour"
-    execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Mise à jour des paquets"
-
-    # Installation et configuration
-    subtitle_msg "❯ Configuration de la distribution"
-    install_packages_proot
-    create_user_proot
-    configure_user_rights
-    install_mesa_vulkan
-
-    # Configuration du fuseau horaire
-    TIMEZONE=$(getprop persist.sys.timezone)
-    execute_command "
-        proot-distro login debian -- rm /etc/localtime
-        proot-distro login debian -- cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-    " "Configuration du fuseau horaire"
-
-    # Configuration graphique
-    configure_themes_and_icons
+    
+    # Installation de Debian
+    execute_command "proot-distro install debian" "Installation de Debian"
+    
+    # Configuration de l'utilisateur
+    execute_command "proot-distro login debian -- useradd -m -s /bin/bash \"$DEBIAN_USERNAME\"" "Création de l'utilisateur"
+    execute_command "proot-distro login debian -- bash -c \"echo '$DEBIAN_USERNAME:$DEBIAN_PASSWORD' | chpasswd\"" "Configuration du mot de passe"
+    execute_command "proot-distro login debian -- usermod -aG sudo \"$DEBIAN_USERNAME\"" "Ajout aux sudoers"
+    
+    # Configuration de sudo sans mot de passe
+    execute_command "proot-distro login debian -- bash -c 'echo \"$DEBIAN_USERNAME ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers'" "Configuration de sudo"
+    
+    success_msg "✓ Installation de Debian terminée"
 }
-
-# Exécuter la fonction principale
-main "$@"

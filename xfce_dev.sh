@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Import du gestionnaire de configuration
-CONFIG_MANAGER="$HOME/.config/OhMyTermux/config_manager.sh"
-if [ -f "$CONFIG_MANAGER" ]; then
-    source "$CONFIG_MANAGER"
-fi
-
 #------------------------------------------------------------------------------
 # VARIABLES GLOBALES
 #------------------------------------------------------------------------------
@@ -196,7 +190,7 @@ gum_choose_multi() {
 bash_banner() {
     clear
     local BANNER="
-╔════════════════════════════════════════╗
+╔═════════════��══════════════════════════╗
 ║                                        ║
 ║               OHMYTERMUX               ║
 ║                                        ║
@@ -351,38 +345,6 @@ download_file() {
     local URL=$1
     local MESSAGE=$2
     execute_command "wget $URL" "$MESSAGE"
-}
-
-#------------------------------------------------------------------------------
-# SAUVEGARDE DES CHOIX XFCE
-#------------------------------------------------------------------------------
-save_xfce_config() {
-    # Si le fichier de configuration n'existe pas, on le crée
-    local CONFIG_FILE="$HOME/.config/OhMyTermux/config.ini"
-    mkdir -p "$(dirname "$CONFIG_FILE")"
-    
-    # Créer ou mettre à jour la section xfce
-    local content="[xfce]
-INSTALL_TYPE=\"${INSTALL_TYPE:-minimale}\"
-INSTALL_THEME=${INSTALL_THEME:-false}
-INSTALL_ICONS=${INSTALL_ICONS:-false}
-INSTALL_WALLPAPERS=${INSTALL_WALLPAPERS:-false}
-INSTALL_CURSORS=${INSTALL_CURSORS:-false}
-SELECTED_THEME=\"${SELECTED_THEME:-}\"
-SELECTED_ICON_THEME=\"${SELECTED_ICON_THEME:-}\"
-SELECTED_WALLPAPER=\"${SELECTED_WALLPAPER:-}\"
-BROWSER=\"${BROWSER:-chromium}\"
-"
-    # Si le fichier existe déjà
-    if [ -f "$CONFIG_FILE" ]; then
-        # Supprimer l'ancienne section xfce si elle existe
-        sed -i '/^\[xfce\]/,/^\[/d' "$CONFIG_FILE"
-        # Ajouter la nouvelle section
-        echo -e "\n$content" >> "$CONFIG_FILE"
-    else
-        # Créer le fichier avec la section
-        echo "$content" > "$CONFIG_FILE"
-    fi
 }
 
 trap finish EXIT
@@ -601,6 +563,22 @@ EOF
 }
 
 #------------------------------------------------------------------------------
+# SAUVEGARDE DE LA CONFIGURATION DES THÈMES
+#------------------------------------------------------------------------------
+save_theme_config() {
+    mkdir -p "$HOME/.config/OhMyTermux"
+    cat > "$HOME/.config/OhMyTermux/theme_config.tmp" << EOF
+INSTALL_THEME=$INSTALL_THEME
+INSTALL_ICONS=$INSTALL_ICONS
+INSTALL_WALLPAPERS=$INSTALL_WALLPAPERS
+INSTALL_CURSORS=$INSTALL_CURSORS
+SELECTED_THEME="$SELECTED_THEME"
+SELECTED_ICON_THEME="$SELECTED_ICON_THEME"
+SELECTED_WALLPAPER="$SELECTED_WALLPAPER"
+EOF
+}
+
+#------------------------------------------------------------------------------
 # INSTALLATION DES THÈMES
 #------------------------------------------------------------------------------
 install_themes() {
@@ -816,7 +794,6 @@ main() {
     case "$INSTALL_TYPE" in
         "minimale")
             PKGS=("${BASE_PKGS[@]}")
-            save_xfce_config
             ;;
         "recommandée")
             INSTALL_THEME=true
@@ -828,7 +805,6 @@ main() {
             SELECTED_THEME="WhiteSur"
             SELECTED_ICON_THEME="WhiteSur"
             SELECTED_WALLPAPER="Monterey"
-            save_xfce_config
 
             PKGS=("${BASE_PKGS[@]}" "${RECOMMENDED_PKGS[@]}")
             ;;
@@ -860,7 +836,6 @@ main() {
                         else
                             SELECTED_THEME="${SELECTED_THEMES[0]}"
                         fi
-                        save_xfce_config
                     fi
                 fi
 
@@ -879,7 +854,6 @@ main() {
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
-                        save_xfce_config
                     fi
                 fi
 
@@ -897,14 +871,9 @@ main() {
                         "WhiteSur" \
                         "WhiteSur-dark" \
                         "WhiteSur-light")
-                    save_xfce_config
                 fi
 
-                if [[ " ${SELECTED_UI[*]} " =~ "Curseurs" ]]; then
-                    INSTALL_CURSORS=true
-                    save_xfce_config
-                fi
-
+                [[ " ${SELECTED_UI[*]} " =~ "Curseurs" ]] && INSTALL_CURSORS=true
             else
                 echo -e "\n${COLOR_BLUE}Paquets supplémentaires disponibles :${COLOR_RESET}"
                 for i in "${!EXTRA_PKGS[@]}"; do
@@ -964,7 +933,6 @@ main() {
                         else
                             SELECTED_THEME="${SELECTED_THEMES[0]}"
                         fi
-                        save_xfce_config
                     fi
                 fi
 
@@ -1003,7 +971,6 @@ main() {
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
-                        save_xfce_config
                     fi
                 fi
 
@@ -1038,13 +1005,9 @@ main() {
                         10) SELECTED_WALLPAPER="WhiteSur-dark" ;;
                         11) SELECTED_WALLPAPER="WhiteSur-light" ;;
                     esac
-                    save_xfce_config
                 fi
 
-                if [[ $UI_CHOICES =~ 4 ]]; then
-                    INSTALL_CURSORS=true
-                    save_xfce_config
-                fi
+                [[ $UI_CHOICES =~ 4 ]] && INSTALL_CURSORS=true
             fi
             ;;
     esac
@@ -1080,6 +1043,9 @@ main() {
 
     # Configuration de XFCE
     configure_xfce
+
+    # Sauvegarde de la configuration des thèmes
+    save_theme_config
 }
 
 main "$@"
