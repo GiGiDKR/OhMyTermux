@@ -1155,6 +1155,8 @@ install_packages() {
     if $PACKAGES_CHOICE; then
         title_msg "❯ Configuration des packages"
         local DEFAULT_PACKAGES=("nala" "eza" "bat" "lf" "fzf")
+
+        common_alias
         
         if $USE_GUM; then
             if $FULL_INSTALL; then
@@ -1866,6 +1868,8 @@ fi
 
 # Nettoyage et message de fin
 title_msg "❯ Nettoyage des fichiers temporaires"
+#FIXME: Sauvegarder les scripts d'installation dans le dossier OhMyTermux
+execute_command "mv xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh $HOME/.config/OhMyTermux/" "Sauvegarde des scripts d'installation"
 rm -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh >/dev/null 2>&1
 success_msg "✓ Suppression des scripts d'installation"
 
