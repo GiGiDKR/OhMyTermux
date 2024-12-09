@@ -13,7 +13,7 @@
 
 2. Install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)** (**recommended**🔥) :
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
 <details>
@@ -21,7 +21,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 <summary>🧊 Alternative installation method</summary>
 
 ```bash
-curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 </details>
@@ -276,7 +276,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
 <details>
   
-<summary>How to fix this Termux error</summary>
+<summary>How to fix this error</summary>
 
 You need to run this adb command to fix the process 9 error that will force close Termux :
 ```
