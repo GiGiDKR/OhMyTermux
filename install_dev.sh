@@ -626,7 +626,8 @@ configure_termux() {
     # Configuration de colors.properties
     FILE_PATH="$TERMUX_DIR/colors.properties"
     if [ ! -f "$FILE_PATH" ]; then
-        execute_command "mkdir -p \"$TERMUX_DIR\" && cat > \"$FILE_PATH\" << 'EOL'
+        mkdir -p "$TERMUX_DIR"
+        cat > "$FILE_PATH" << 'EOL'
 # https://github.com/Mayccoll/Gogh/blob/master/themes/argonaut.sh
 background=#0e1019
 foreground=#fffaf4
@@ -647,7 +648,8 @@ color12=#0092ff
 color13=#9a5feb
 color14=#67fff0
 color15=#ffffff
-EOL" "Installation du thème Argonaut"
+EOL
+        success_msg "✓ Installation du thème Argonaut"
     fi
 
     # Configuration des alias communs

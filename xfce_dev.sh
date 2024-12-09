@@ -666,7 +666,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Tela-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh -d $PREFIX/share/icons && \
                                 cd .. && \
                                 rm -rf Tela-icon-theme-master $ARCHIVE" "Installation des icônes Tela"
                     ;;
@@ -676,7 +676,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Fluent-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh -d $PREFIX/share/icons && \
                                 cd .. && \
                                 rm -rf Fluent-icon-theme-master $ARCHIVE" "Installation des icônes Fluent"
                     ;;
@@ -686,7 +686,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd Qogir-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh -d $PREFIX/share/icons && \
                                 cd .. && \
                                 rm -rf Qogir-icon-theme-master $ARCHIVE" "Installation des icônes Qogir"
                     ;;
