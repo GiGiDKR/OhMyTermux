@@ -589,9 +589,35 @@ download_and_execute() {
     local DESCRIPTION="${2:-$SCRIPT_NAME}"
     shift 2
     local EXEC_ARGS="$@"
-    execute_command "curl -O \"$URL\"" "Téléchargement du script $DESCRIPTION" || error_msg "Impossible de télécharger le script $DESCRIPTION"
-    execute_command "chmod +x \"$SCRIPT_NAME\"" "Attribution des droits pour $DESCRIPTION"
-    execute_command "./$SCRIPT_NAME $EXEC_ARGS" "Exécution du script $DESCRIPTION"
+
+    # Vérifier si le fichier existe déjà et le supprimer
+    [ -f "$SCRIPT_NAME" ] && rm "$SCRIPT_NAME"
+
+    # Télécharger avec curl en mode silencieux mais avec barre de progression
+    if ! curl -L --progress-bar -o "$SCRIPT_NAME" "$URL"; then
+        error_msg "Impossible de télécharger le script $DESCRIPTION"
+        return 1
+    fi
+
+    # Vérifier que le fichier a bien été téléchargé
+    if [ ! -f "$SCRIPT_NAME" ]; then
+        error_msg "Le fichier $SCRIPT_NAME n'a pas été créé"
+        return 1
+    fi
+
+    # Rendre le script exécutable
+    if ! chmod +x "$SCRIPT_NAME"; then
+        error_msg "Impossible de rendre le script $DESCRIPTION exécutable"
+        return 1
+    fi
+
+    # Exécuter le script avec les arguments
+    if ! ./"$SCRIPT_NAME" $EXEC_ARGS; then
+        error_msg "Erreur lors de l'exécution du script $DESCRIPTION"
+        return 1
+    fi
+
+    return 0
 }
 
 #------------------------------------------------------------------------------
