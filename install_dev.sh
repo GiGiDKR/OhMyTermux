@@ -508,6 +508,79 @@ create_backups() {
 }
 
 #------------------------------------------------------------------------------
+# CONFIGURATION DES ALIAS COMMUNS
+#------------------------------------------------------------------------------
+common_alias() {
+    # Création du fichier d'alias centralisé
+    if [ ! -d "$HOME/.config/OhMyTermux" ]; then
+        execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Création du dossier de configuration"
+    fi
+
+    ALIASES_FILE="$HOME/.config/OhMyTermux/aliases"
+
+    cat > "$ALIASES_FILE" << 'EOL'
+# Navigation
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+
+# Commandes de base
+alias h="history"
+alias q="exit"
+alias c="clear"
+alias md="mkdir"
+alias rm="rm -rf"
+alias s="source"
+alias n="nano"
+alias cm="chmod +x"
+
+# Configuration
+alias bashrc="nano $HOME/.bashrc"
+alias zshrc="nano $HOME/.zshrc"
+alias aliases="nano $HOME/.config/OhMyTermux/aliases"
+alias help="cat $HOME/.config/OhMyTermux/help.md"
+
+# Git
+alias g="git"
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit -m"
+alias gp="git push"
+alias gl="git pull"
+alias gd="git diff"
+alias gb="git branch"
+alias gco="git checkout"
+alias gcl="git clone"
+alias push="git pull && git add . && git commit -m 'mobile push' && git push"
+
+# Termux
+alias termux="termux-reload-settings"
+alias storage="termux-setup-storage"
+alias share="termux-share"
+alias open="termux-open"
+alias url="termux-open-url"
+alias clip="termux-clipboard-set"
+alias notification="termux-notification"
+alias vibrate="termux-vibrate"
+alias battery="termux-battery-status"
+alias torch="termux-torch"
+alias volume="termux-volume"
+alias wifi="termux-wifi-connectioninfo"
+alias tts="termux-tts-speak"
+alias call="termux-telephony-call"
+alias contact="termux-contact-list"
+alias sms="termux-sms-send"
+alias location="termux-location"
+
+EOL
+
+    # Ajout du sourcing .bashrc
+    echo -e "\n# Source des alias personnalisés\n[ -f \"$ALIASES_FILE\" ] && . \"$ALIASES_FILE\"" >> "$BASHRC"
+    # Le sourcing .zshrc est fait dans update_zshrc()
+}
+
+#------------------------------------------------------------------------------
 # CHANGEMENT DE DEPOT
 #------------------------------------------------------------------------------
 change_repo() {
@@ -549,6 +622,7 @@ configure_termux() {
     # Sauvegarde des fichiers existants
     create_backups
     TERMUX_DIR="$HOME/.termux"
+    
     # Configuration de colors.properties
     FILE_PATH="$TERMUX_DIR/colors.properties"
     if [ ! -f "$FILE_PATH" ]; then
@@ -557,6 +631,7 @@ configure_termux() {
 background=#0e1019
 foreground=#fffaf4
 cursor=#fffaf4
+
 color0=#232323
 color1=#ff000f
 color2=#8ce10b
@@ -575,6 +650,10 @@ color14=#67fff0
 color15=#ffffff
 EOL" "Installation du thème Argonaut"
     fi
+
+    # Configuration des alias communs
+    common_alias
+    
     # Configuration de termux.properties
     FILE_PATH="$TERMUX_DIR/termux.properties"
     if [ ! -f "$FILE_PATH" ]; then
@@ -1381,79 +1460,6 @@ alias show="nala show"
 EOL
             ;;
     esac
-}
-
-#------------------------------------------------------------------------------
-# CONFIGURATION DES ALIAS COMMUNS
-#------------------------------------------------------------------------------
-common_alias() {
-    # Création du fichier d'alias centralisé
-    if [ ! -d "$HOME/.config/OhMyTermux" ]; then
-        execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Création du dossier de configuration"
-    fi
-
-    ALIASES_FILE="$HOME/.config/OhMyTermux/aliases"
-
-    cat > "$ALIASES_FILE" << 'EOL'
-# Navigation
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-
-# Commandes de base
-alias h="history"
-alias q="exit"
-alias c="clear"
-alias md="mkdir"
-alias rm="rm -rf"
-alias s="source"
-alias n="nano"
-alias cm="chmod +x"
-
-# Configuration
-alias bashrc="nano $HOME/.bashrc"
-alias zshrc="nano $HOME/.zshrc"
-alias aliases="nano $HOME/.config/OhMyTermux/aliases"
-alias help="cat $HOME/.config/OhMyTermux/help.md"
-
-# Git
-alias g="git"
-alias gs="git status"
-alias ga="git add"
-alias gc="git commit -m"
-alias gp="git push"
-alias gl="git pull"
-alias gd="git diff"
-alias gb="git branch"
-alias gco="git checkout"
-alias gcl="git clone"
-alias push="git pull && git add . && git commit -m 'mobile push' && git push"
-
-# Termux
-alias termux="termux-reload-settings"
-alias storage="termux-setup-storage"
-alias share="termux-share"
-alias open="termux-open"
-alias url="termux-open-url"
-alias clip="termux-clipboard-set"
-alias notification="termux-notification"
-alias vibrate="termux-vibrate"
-alias battery="termux-battery-status"
-alias torch="termux-torch"
-alias volume="termux-volume"
-alias wifi="termux-wifi-connectioninfo"
-alias tts="termux-tts-speak"
-alias call="termux-telephony-call"
-alias contact="termux-contact-list"
-alias sms="termux-sms-send"
-alias location="termux-location"
-
-EOL
-
-    # Ajout du sourcing .bashrc
-    echo -e "\n# Source des alias personnalisés\n[ -f \"$ALIASES_FILE\" ] && . \"$ALIASES_FILE\"" >> "$BASHRC"
-    # Le sourcing .zshrc est fait dans update_zshrc()
 }
 
 #------------------------------------------------------------------------------
