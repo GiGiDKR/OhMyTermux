@@ -557,7 +557,6 @@ configure_termux() {
 background=#0e1019
 foreground=#fffaf4
 cursor=#fffaf4
-
 color0=#232323
 color1=#ff000f
 color2=#8ce10b
@@ -574,7 +573,6 @@ color12=#0092ff
 color13=#9a5feb
 color14=#67fff0
 color15=#ffffff
-
 EOL" "Installation du thème Argonaut"
     fi
     # Configuration de termux.properties
