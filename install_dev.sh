@@ -1058,43 +1058,43 @@ EOF
 
             case $PRESET in
                 "Nerd Font Symbols")
-                    starship preset nerd-font-symbols > "$HOME/.config/starship.toml"
+                    starship preset nerd-font-symbols -o "$HOME/.config/starship.toml"
                     ;;
-                "Bracketed Segments")
-                    starship preset bracketed-segments > "$HOME/.config/starship.toml"
+                "Bracketed Segments") 
+                    starship preset bracketed-segments -o "$HOME/.config/starship.toml"
                     ;;
                 "No Empty Icons")
-                    starship preset no-empty-icons > "$HOME/.config/starship.toml"
+                    starship preset no-empty-icons -o "$HOME/.config/starship.toml"
                     ;;
                 "No Runtime Versions")
-                    starship preset no-runtime-versions > "$HOME/.config/starship.toml"
+                    starship preset no-runtime-versions -o "$HOME/.config/starship.toml"
                     ;;
                 "Plain Text Symbols")
-                    starship preset plain-text-symbols > "$HOME/.config/starship.toml"
+                    starship preset plain-text-symbols -o "$HOME/.config/starship.toml"
                     ;;
                 "Pastel Powerline")
-                    starship preset pastel-powerline > "$HOME/.config/starship.toml"
+                    starship preset pastel-powerline -o "$HOME/.config/starship.toml"
                     ;;
                 "Tokyo Night")
-                    starship preset tokyo-night > "$HOME/.config/starship.toml"
+                    starship preset tokyo-night -o "$HOME/.config/starship.toml"
                     ;;
                 "Pure Preset")
-                    starship preset pure > "$HOME/.config/starship.toml"
+                    starship preset pure -o "$HOME/.config/starship.toml"
                     ;;
                 "Gruvbox Rainbow")
-                    starship preset gruvbox-rainbow > "$HOME/.config/starship.toml"
+                    starship preset gruvbox-rainbow -o "$HOME/.config/starship.toml"
                     ;;
                 "Jetpack")
-                    starship preset jetpack > "$HOME/.config/starship.toml"
+                    starship preset jetpack -o "$HOME/.config/starship.toml"
                     ;;
                 "No Nerd Font")
-                    starship preset no-nerd-font > "$HOME/.config/starship.toml"
+                    starship preset no-nerd-font -o "$HOME/.config/starship.toml"
                     ;;
                 "Rice")
-                    starship preset rice > "$HOME/.config/starship.toml"
+                    starship preset rice -o "$HOME/.config/starship.toml"
                     ;;
                 "Solarized")
-                    starship preset solarized > "$HOME/.config/starship.toml"
+                    starship preset solarized -o "$HOME/.config/starship.toml"
                     ;;
                 *)
                     # Configuration personnalisée par défaut
@@ -1163,11 +1163,7 @@ EOF
             fi
             sed -i '/# Initialiser Starship/d' "$ZSHRC"
             sed -i '/eval "$(starship init/d' "$ZSHRC"
-            cat >> "$ZSHRC" << EOF
-
-# Initialiser Starship
-eval "$(starship init zsh)"
-EOF
+            echo -e "\n# Initialiser Starship\neval \"\$(starship init zsh)\"" >> "$ZSHRC"
 
             # Configuration pour Bash
             if [ ! -f "$HOME/.bashrc" ]; then
@@ -1175,11 +1171,7 @@ EOF
             fi
             sed -i '/# Initialiser Starship/d' "$HOME/.bashrc"
             sed -i '/eval "$(starship init/d' "$HOME/.bashrc"
-            cat >> "$HOME/.bashrc" << EOF
-
-# Initialiser Starship
-eval "$(starship init bash)"
-EOF
+            echo -e "\n# Initialiser Starship\neval \"\$(starship init bash)\"" >> "$HOME/.bashrc"
             ;;
     esac
 }
