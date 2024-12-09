@@ -1,55 +1,53 @@
 # OhMyTermux 🧊
 
-![Banner](assets/ohmytermux_5.jpg)
+![Banner1](assets/ohmytermux_1.jpg)
 
 ### **From selecting a shell to applying a cursor pack to performing stylish clicks in a complete Debian development environment that fits in your pocket  : dozens of parameters are available in [OhMyTermux](https://github.com/GiGiDKR/OhMyTermux).**
 
-## ![Version](https://img.shields.io/badge/version-1.0.1-blue) What's new :
- - Added new prompt selection menu :
-   - [PowerLevel10k](https://github.com/romkatv/powerlevel10k)
-   - [Oh-My-Posh](https://github.com/JanDeDobbeleer/oh-my-posh)
-   - [Starship](https://github.com/starship/starship)
- - Adding Fish configuration items :
-   - [Fisher](https://github.com/jorgebucaran/fisher)
-   - [Tide](https://github.com/IlanCosman/tide)
+![Version](https://img.shields.io/badge/version-dev-magenta) ![GitHub last commit](https://img.shields.io/github/last-commit/GiGiDKR/OhMyTermux?style=flat&color=green&link=https%3A%2F%2Fgithub.com%2FGiGiDKR%2FOhMyTermux) ![GitHub repo file or directory count](https://img.shields.io/github/directory-file-count/GiGiDKR/OhMyTermux)  ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/GiGiDKR/OhMyTermux) ![GitHub repo size](https://img.shields.io/github/repo-size/GiGiDKR/OhMyTermux)
+![GitHub Repo stars](https://img.shields.io/github/stars/GiGiDKR/OhMyTermux?style=flat&color=gold) ![GitHub forks](https://img.shields.io/github/forks/GiGIDKR/OhMyTermux?style=flat&color=gold)
 
 ## Installation
 
-1. Install Termux from [F-Droid](https://f-droid.org/en/packages/com.termux) or [GitHub](https://github.com/termux/termux-app). Otherwise use the [Play Store](https://play.google.com/store/apps/details?id=com.termux&pcampaignid=web_share) version which was recently updated.
+1. Install Termux from [F-Droid](https://f-droid.org/en/packages/com.termux), [GitHub](https://github.com/termux/termux-app) or [Play Store](https://play.google.com/store/apps/details?id=com.termux&pcampaignid=web_share).
 
-2. Install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)** 🔥 :
+2. Install **OhMyTermux** with **[Gum](https://github.com/charmbracelet/gum)** (**recommended**🔥) :
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh --gum
 ```
 
->[!IMPORTANT]
-> [Gum](https://github.com/charmbracelet/gum) allows simplified use of CLI scripts, **_it is recommended_** to use it by adding the `--gum` or `-g` argument.
+<details>
 
-2. [ALT] Install OhMyTermux without Gum 🧊 :
+<summary>🧊 Alternative installation method</summary>
+
 ```bash
 curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
->[!NOTE]
-> It is possible to execute functions independently (and combine them) :
->
-> ```
-> --shell | -sh           # Shell selection
-> --package | -pk         # Packages installation
-> --xfce | -x             # XFCE installation
-> --proot | -pr           # Debian PRoot installation
-> --font | f              # Font selection
-> --x11 | -x              # Termux-X11 installation
-> --skip | -sk            # Skip initial configuration
-> --verbose | -v          # Detailed outputs
-> --help | -h             # Show help
-> ```
+</details>
+
+<details>
+
+<summary>✅ Functional arguments</summary>
+
+ ```
+--gum | -g              # Using Gum as Command Line Interface
+--shell | -sh           # Shell selection
+--package | -pk         # Packages installation
+--xfce | -x             # XFCE installation
+--proot | -pr           # Debian PRoot installation
+--font | f              # Font selection
+--x11 | -x              # Termux-X11 installation
+--skip | -sk            # Skip initial configuration
+--verbose | -v          # Detailed outputs
+--help | -h             # Show help
+```
+
+</details>
 
 ## About this program
 
- ![SubBanner1](assets/ohmytermux_1.jpg)
-
-### Termux
+### 🧊 **Termux**
 
 <details>
 
@@ -111,15 +109,16 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
 <summary>Fish configuration</summary>
 
-- [Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)
+- ~~[Oh-My-Fish](https://github.com/oh-my-fish/oh-my-fish)~~
 - [Fisher](https://github.com/jorgebucaran/fisher)
-- [Pure](https://github.com/pure-fish/pure)
-- [Fishline](https://github.com/0rax/fishline)
-- [Virtualfish](https://github.com/justinmayer/virtualfish)
-- [Fish Abbreviation Tips](https://github.com/gazorby/fish-abbreviation-tips)
-- [Bang-Bang](https://github.com/oh-my-fish/plugin-bang-bang)
-- [Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)
-- [Catppuccin for Fish](https://github.com/catppuccin/fish)
+- [Tide](https://github.com/IlanCosman/tide)
+- ~~[Pure](https://github.com/pure-fish/pure)~~
+- ~~[Fishline](https://github.com/0rax/fishline)~~
+- ~~[Virtualfish](https://github.com/justinmayer/virtualfish)~~
+- ~~[Fish Abbreviation Tips](https://github.com/gazorby/fish-abbreviation-tips)~~
+- ~~[Bang-Bang](https://github.com/oh-my-fish/plugin-bang-bang)~~
+- ~~[Fish You Should Use](https://github.com/paysonwallach/fish-you-should-use)~~
+- ~~[Catppuccin for Fish](https://github.com/catppuccin/fish)~~
 
 </details>
  
@@ -129,7 +128,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
 - [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) 
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
-  
+- [Oh-My-Posh](https://github.com/JanDeDobbeleer/oh-my-posh)
+- [Starship](https://github.com/starship/starship)
+
 </details>
  
 <details>
@@ -140,16 +141,16 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
   
 </details>
 
-### **XFCE**
+### 🧊 **XFCE**
 
-- Setup an [XFCE](https://wiki.termux.com/wiki/Graphical_Environment#XFCE) desktop for native Termux.
+- Setup an [XFCE](https://wiki.termux.com/wiki/Graphical_Environment#XFCE) desktop for native Termux environment.
 
-- Using [Termux-X11](https://github.com/termux/termux-x11) is preferred over VNC. The Termux-x11 server will be installed as well as the Android APK. You will receive a pop-up window allowing you to allow installations from Termux. If you do not wish to allow this, install the APK by searching for it in your Download directory.
+- Using [Termux-X11](https://github.com/termux/termux-x11) : the server as well as the APK are downloaded and then installed from Termux or manually.
 
-- 3 configurations are available :
+- ✅ 3 configurations are available :
     <details>
 
-    <summary>Minimal</summary>
+    <summary>1️⃣ Minimal</summary>
     
     Only the necessary packages :
     ```
@@ -162,7 +163,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
     <details>
 
-    <summary>Recommended</summary>
+    <summary>2️⃣ Recommended</summary>
  
     Minimal installation + following packages :
     ```
@@ -186,7 +187,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 
     <details>
  
-    <summary>Custom</summary>
+    <summary>3️⃣ Custom</summary>
     
     The contents of the Minimal installation + the choice among :
     ```
@@ -251,26 +252,16 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 - The ability to install a web browser, either [Chromium](https://www.chromium.org/) or Firefox.
 
 > [!IMPORTANT]
-> The recommended installation uses approximately **4 GB** of disk space
+> The recommended installation uses approximately **3,5 GB** of disk space
 
-### Debian
+### 🧊 **Debian**
 [Debian PRoot](https://wiki.termux.com/wiki/PRoot) installation with an [application installer](https://github.com/GiGiDKR/App-Installer) that are unavailable with Termux or Debian package managers.
 
 ## Usage
 
-🧊 Starting the desktop
+- ```start``` : start a Termux-X11 session.
 
-- To start a Termux-X11 session, use ```start```
-
-- To access the Debian PRoot installation from the terminal, use ```debian```
-
-🧊 Debain Proot
-
-- There are two scripts available for this setup :
-
-  - ```prun```  Running this followed by a command you want to run from the debian proot install will allow you to run stuff from the termux terminal without running ```debian``` to get into the proot itself.
-
-  - ```cp2menu``` Running this will pop up a window allowing you to copy .desktop files from debian proot into the termux xfce "start" menu so you won't need to launch them from terminal. A launcher is available in the System menu section.
+- ```debian``` : access Debian PRoot installation from the terminal.
 
 </details>
 
@@ -327,8 +318,6 @@ Once it connects run the fix command :
 
 &nbsp;
 
-![SubBanner2](assets/ohmytermux_6.jpg)
-
 ## 💻 Version history
 
 Version 1.0.0 :
@@ -365,4 +354,4 @@ Version 1.0.1 :
 
 https://github.com/user-attachments/assets/ec49fc8d-bc69-4b95-ade4-5ca2ae57a105
 
-![SubBanner3](assets/ohmytermux_2.jpg)
+![SubBanner](assets/ohmytermux_5.jpg)
