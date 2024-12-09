@@ -9,11 +9,15 @@ USE_GUM=false
 # Initial configuration
 EXECUTE_INITIAL_CONFIG=true
 
-# Detailed operations display
+# Detailed output
 VERBOSE=false
 
+# Variables for Debian PRoot
+PROOT_USERNAME=""
+PROOT_PASSWORD=""
+
 #------------------------------------------------------------------------------
-# MODULE SELECTORS
+# SELECTORS OF MODULES
 #------------------------------------------------------------------------------
 # Shell selection
 SHELL_CHOICE=false
@@ -23,7 +27,7 @@ PACKAGES_CHOICE=false
 
 # Custom fonts installation
 FONT_CHOICE=false
-    
+
 # XFCE environment installation
 XFCE_CHOICE=false
 
@@ -33,7 +37,7 @@ PROOT_CHOICE=false
 # Termux-X11 installation
 X11_CHOICE=false
 
-# Complete installation without interactions
+# Full installation without interactions
 FULL_INSTALL=false
 
 # Use gum for interactions
@@ -69,22 +73,26 @@ fi
 #------------------------------------------------------------------------------
 show_help() {
     clear
-    echo "OhMyTermux Help"
-    echo ""
+    echo "Help OhMyTermux"
+    echo 
     echo "Usage: $0 [OPTIONS] [username] [password]"
     echo "Options:"
     echo "  --gum | -g        Use gum for the user interface"
     echo "  --verbose | -v    Display detailed outputs"
-    echo "  --shell | -sh     Installation module for the shell"
-    echo "  --package | -pkg  Installation module for packages"
-    echo "  --font | -f       Installation module for the font"
-    echo "  --xfce | -x       Installation module for XFCE"
-    echo "  --proot | -p      Installation module for Debian Proot"
-    echo "  --x11 | -x11      Installation module for Termux-X11"
-    echo "  --skip | -sk      Ignore initial configuration"
-    echo "  --uninstall| -u   Uninstallation of Debian Proot"
-    echo "  --full | -f       Install all modules without confirmation"
+    echo "  --shell | -sh     Install shell module"
+    echo "  --package | -pk   Install packages module"
+    echo "  --font | -f       Install font module"
+    echo "  --xfce | -x       Install XFCE module"
+    echo "  --proot | -pr     Install Debian PRoot module"
+    echo "  --x11             Install Termux-X11 module"
+    echo "  --skip            Ignore initial configuration"
+    echo "  --uninstall       Uninstall Debian Proot"
+    echo "  --full            Install all modules without confirmation"
     echo "  --help | -h       Display this help message"
+    echo
+    echo "Examples:"
+    echo "  $0 --gum                     # Installation interactive with gum"
+    echo "  $0 --full user pass          # Installation complete with identifiers"
 }
 
 #------------------------------------------------------------------------------
@@ -101,12 +109,12 @@ for ARG in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --package|-pkg)
+        --package|-pk)
             PACKAGES_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
-        --font)
+        --font|-f)
             FONT_CHOICE=true
             ONLY_GUM=false
             shift
@@ -116,21 +124,21 @@ for ARG in "$@"; do
             ONLY_GUM=false
             shift
             ;;
-        --proot|-p)
+        --proot|-pr)
             PROOT_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
-        --x11|-x11)
+        --x11)
             X11_CHOICE=true
             ONLY_GUM=false
             shift
             ;;
-        --skip|-sk)
+        --skip)
             EXECUTE_INITIAL_CONFIG=false
             shift
             ;;
-        --uninstall|-u)
+        --uninstall)
             uninstall_proot
             exit 0
             ;;
@@ -156,10 +164,57 @@ for ARG in "$@"; do
             exit 0
             ;;
         *)
-            break
+            # Get the username and password if provided
+            if [ -z "$PROOT_USERNAME" ]; then
+                PROOT_USERNAME="$ARG"
+                shift
+            elif [ -z "$PROOT_PASSWORD" ]; then
+                PROOT_PASSWORD="$ARG"
+                shift
+            else
+                break
+            fi
             ;;
     esac
 done
+
+# If in FULL_INSTALL mode and identifiers are not provided, ask for them
+if $FULL_INSTALL; then
+    if [ -z "$PROOT_USERNAME" ]; then
+        if $USE_GUM; then
+            PROOT_USERNAME=$(gum input --placeholder "Enter the username for Debian PRoot")
+        else
+            printf "${COLOR_BLUE}Enter the username for Debian PRoot : ${COLOR_RESET}"
+            read -r PROOT_USERNAME
+        fi
+    fi
+    
+    if [ -z "$PROOT_PASSWORD" ]; then
+        while true; do
+            if $USE_GUM; then
+                PROOT_PASSWORD=$(gum input --password --prompt "Password: " --placeholder "Enter a password")
+                PASSWORD_CONFIRM=$(gum input --password --prompt "Confirm password: " --placeholder "Confirm the password")
+            else
+                printf "${COLOR_BLUE}Enter a password: ${COLOR_RESET}"
+                read -r -s PROOT_PASSWORD
+                echo
+                printf "${COLOR_BLUE}Confirm the password: ${COLOR_RESET}"
+                read -r -s PASSWORD_CONFIRM
+                echo
+            fi
+
+            if [ "$PROOT_PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+                break
+            else
+                if $USE_GUM; then
+                    gum style --foreground 196 "The passwords do not match. Please try again."
+                else
+                    echo -e "${COLOR_RED}The passwords do not match. Please try again.${COLOR_RESET}"
+                fi
+            fi
+        done
+    fi
+fi
 
 # Activate all modules if --gum is the only argument
 if $ONLY_GUM; then
@@ -239,7 +294,7 @@ log_error() {
 }
 
 #------------------------------------------------------------------------------
-# DYNAMIC DISPLAY OF A COMMAND RESULT
+# DYNAMIC DISPLAY OF COMMAND RESULTS
 #------------------------------------------------------------------------------
 execute_command() {
     local COMMAND="$1"
@@ -253,7 +308,7 @@ execute_command() {
             gum style "$SUCCESS_MSG" --foreground 82
         else
             ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
-            gum style "$ERROR_MSG - $ERROR_DETAILS" --foreground 196
+            gum style "$ERROR_MSG" --foreground 196
             log_error "$ERROR_DETAILS"
             return 1
         fi
@@ -269,7 +324,7 @@ execute_command() {
             tput rc
             tput el
             ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
-            error_msg "$ERROR_MSG - $ERROR_DETAILS"
+            error_msg "$ERROR_MSG"
             log_error "$ERROR_DETAILS"
             return 1
         fi
@@ -284,7 +339,7 @@ gum_confirm() {
     if $FULL_INSTALL; then
         return 0 
     else
-        gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" --selected.foreground="0" "$PROMPT"
+        gum confirm --affirmative "Oui" --negative "Non" --prompt.foreground="33" --selected.background="33" --selected.foreground="0" "$PROMPT"
     fi
 }
 
@@ -362,14 +417,14 @@ gum_choose_multi() {
 }
 
 #------------------------------------------------------------------------------
-# TEXT BANNER DISPLAY
+# TEXT MODE BANNER
 #------------------------------------------------------------------------------
 bash_banner() {
     clear
     local BANNER="
 ╔════════════════════════════════════════╗
 ║                                        ║
-║               OHMYTERMUX               ║
+║                OHMYTERMUX              ║
 ║                                        ║
 ╚════════════════════════════════════════╝"
 
@@ -397,18 +452,18 @@ finish() {
     if [ ${RET} -ne 0 ] && [ ${RET} -ne 130 ]; then
         echo
         if $USE_GUM; then
-            gum style --foreground 196 "ERROR: Installation of OhMyTermux impossible."
+            gum style --foreground 196 "ERREUR: Installation de OhMyTermux impossible."
         else
-            echo -e "${COLOR_RED}ERROR: Installation of OhMyTermux impossible.${COLOR_RESET}"
+            echo -e "${COLOR_RED}ERREUR: Installation de OhMyTermux impossible.${COLOR_RESET}"
         fi
-        echo -e "${COLOR_BLUE}Please refer to the error message(s) above.${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}Veuillez vous référer au(x) message(s) d'erreur ci-dessus.${COLOR_RESET}"
     fi
 }
 
 trap finish EXIT
 
 #------------------------------------------------------------------------------
-# GRAPHIC BANNER DISPLAY
+# GRAPHIC BANNER
 #------------------------------------------------------------------------------
 show_banner() {
     clear
@@ -427,13 +482,13 @@ show_banner() {
 }
 
 #------------------------------------------------------------------------------
-# FILES BACKUP
+# FILE BACKUP
 #------------------------------------------------------------------------------
 create_backups() {
-    local BACKUP_DIR="$HOME/.config/OhMyTermux/backup"
+    local BACKUP_DIR="$HOME/.config/OhMyTermux/backups"
     
-    # Create backup directory
-    execute_command "mkdir -p \"$BACKUP_DIR\"" "Create backup directory"
+    # Create the backup directory
+    execute_command "mkdir -p \"$BACKUP_DIR\"" "Create the backup directory"
 
     # List of files to backup
     local FILES_TO_BACKUP=(
@@ -453,519 +508,12 @@ create_backups() {
 }
 
 #------------------------------------------------------------------------------
-# REPOSITORY CHANGE
-#------------------------------------------------------------------------------
-change_repo() {
-    show_banner
-    if $USE_GUM; then
-        if gum_confirm "Change the repository mirror ?"; then
-            termux-change-repo
-        fi
-    else
-        printf "${COLOR_BLUE}Change the repository mirror ? (Y/n) : ${COLOR_RESET}"
-        read -r -e -p "" -i "y" CHOICE
-        [[ "$CHOICE" =~ ^[yY]$ ]] && termux-change-repo
-    fi
-}
-
-#------------------------------------------------------------------------------
-# STORAGE CONFIGURATION
-#------------------------------------------------------------------------------
-setup_storage() {
-    if [ ! -d "$HOME/storage" ]; then
-        show_banner
-        if $USE_GUM; then
-            if gum_confirm "Allow access to storage ?"; then
-                termux-setup-storage
-            fi
-        else
-            printf "${COLOR_BLUE}Allow access to storage ? (Y/n) : ${COLOR_RESET}"
-            read -r -e -p "" -i "y" CHOICE
-            [[ "$CHOICE" =~ ^[yY]$ ]] && termux-setup-storage
-        fi
-    fi
-}
-
-#------------------------------------------------------------------------------
-# TERMUX CONFIGURATION
-#------------------------------------------------------------------------------
-configure_termux() {
-    title_msg "❯ Termux configuration"
-    # Backup existing files
-    create_backups
-    TERMUX_DIR="$HOME/.termux"
-    # Configure colors.properties
-    FILE_PATH="$TERMUX_DIR/colors.properties"
-    if [ ! -f "$FILE_PATH" ]; then
-        execute_command "mkdir -p \"$TERMUX_DIR\" && cat > \"$FILE_PATH\" << 'EOL'
-# https://github.com/Mayccoll/Gogh/blob/master/themes/argonaut.sh
-background=#0e1019
-foreground=#fffaf4
-cursor=#fffaf4
-color0=#232323
-color1=#ff000f
-color2=#8ce10b
-color3=#ffb900
-color4=#008df8
-color5=#6d43a6
-color6=#00d8eb
-color7=#ffffff
-color8=#444444
-color9=#ff2740
-color10=#abe15b
-color11=#ffd242
-color12=#0092ff
-color13=#9a5feb
-color14=#67fff0
-color15=#ffffff
-EOL" "Installation of the Argonaut theme"
-    fi
-    # Configure termux.properties
-    FILE_PATH="$TERMUX_DIR/termux.properties"
-    if [ ! -f "$FILE_PATH" ]; then
-        execute_command "cat > \"$FILE_PATH\" << 'EOL'
-allow-external-apps = true
-use-black-ui = true
-bell-character = ignore
-fullscreen = true
-EOL" "Termux properties configuration"
-    else
-        execute_command "sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' \"$FILE_PATH\" && \
-        sed -i 's/^# use-black-ui = true/use-black-ui = true/' \"$FILE_PATH\" && \
-        sed -i 's/^# bell-character = ignore/bell-character = ignore/' \"$FILE_PATH\" && \
-        sed -i 's/^# fullscreen = true/fullscreen = true/' \"$FILE_PATH\"" "Termux configuration"
-    fi
-    # Delete login banner
-    execute_command "touch $HOME/.hushlogin" "Delete login banner"
-}
-
-#------------------------------------------------------------------------------
-# INITIAL CONFIGURATION
-#------------------------------------------------------------------------------
-initial_config() {
-    change_repo
-
-    # Update and upgrade packages preserving existing configurations
-    clear
-    show_banner
-    execute_command "pkg update -y -o Dpkg::Options::=\"--force-confold\"" "Update repositories"
-    execute_command "pkg upgrade -y -o Dpkg::Options::=\"--force-confold\"" "Upgrade packages"
-
-    setup_storage
-
-    if $USE_GUM; then
-        show_banner
-        if gum_confirm "Activate recommended configuration ?"; then
-            configure_termux
-        fi
-    else
-        show_banner
-        printf "${COLOR_BLUE}Activate recommended configuration ? (Y/n) : ${COLOR_RESET}"
-        read -r -e -p "" -i "y" CHOICE
-        # Delete previous line
-        tput cuu1  # Move up one line
-        tput el    # Erase to end of line
-        [[ "$CHOICE" =~ ^[yY]$ ]] && configure_termux
-    fi
-}
-
-#------------------------------------------------------------------------------
-# SHELL INSTALLATION
-#------------------------------------------------------------------------------
-install_shell() {
-    if $SHELL_CHOICE; then
-        title_msg "❯ Shell configuration"
-        if $USE_GUM; then
-            SHELL_CHOICE=$(gum_choose "Choose the shell to install :" --selected="zsh" --height=5 "bash" "zsh" "fish")
-        else
-            echo -e "${COLOR_BLUE}Choose the shell to install :${COLOR_RESET}"
-            echo
-            echo -e "${COLOR_BLUE}1) bash${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) zsh${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) fish${COLOR_RESET}"
-            echo
-            printf "${COLOR_GOLD}Enter the number of your choice : ${COLOR_RESET}"
-            tput setaf 3
-            read -r -e -p "" -i "2" CHOICE
-            tput sgr0
-
-            # Delete selection menu
-            tput cuu 7  # Move up 7 lines
-            tput ed     # Erase from cursor to end of screen
-
-            case $CHOICE in
-                1) SHELL_CHOICE="bash" ;;
-                2) SHELL_CHOICE="zsh" ;;
-                3) SHELL_CHOICE="fish" ;;
-                *) SHELL_CHOICE="bash" ;;
-            esac
-        fi
-
-        case $SHELL_CHOICE in
-            "bash")
-                echo -e "${COLOR_BLUE}Bash selected${COLOR_RESET}"
-                ;;
-            "zsh")
-                if ! command -v zsh &> /dev/null; then
-                    execute_command "pkg install -y zsh" "ZSH installation"
-                else
-                    success_msg="✓ Zsh already installed"
-                fi
-                # Installation de Oh My Zsh et autres configurations ZSH
-                title_msg "❯ ZSH configuration"
-                if $USE_GUM; then
-                    if gum_confirm "Install Oh-My-Zsh ?"; then
-                        execute_command "pkg install -y wget curl git unzip" "Dependencies installation"
-                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Installation de Oh-My-Zsh"
-                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
-                    fi
-                else
-                    printf "${COLOR_BLUE}Install Oh-My-Zsh ? (Y/n) : ${COLOR_RESET}"
-                    # Define default value of CHOICE variable
-                    read -r -e -p "" -i "y" CHOICE
-                    tput cuu1
-                    tput el
-                    if [[ "$CHOICE" =~ ^[yY]$ ]]; then
-                        execute_command "pkg install -y wget curl git unzip" "Dependencies installation"
-                        execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Oh-My-Zsh installation"
-                        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
-                    fi
-                fi
-
-                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/zshrc" "Default configuration" || error_msg "Default configuration impossible"
-
-                if $USE_GUM; then
-                    if gum_confirm "Install PowerLevel10k ?"; then
-                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "PowerLevel10k installation"
-                        sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
-
-                        if gum_confirm "Install custom prompt ?"; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Custom prompt installation" || error_msg "Custom prompt installation impossible"
-                            echo -e "\n# For customizing the prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
-                            echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
-                        else
-                            echo -e "${COLOR_BLUE}You can customize the prompt by running 'p10k configure' or editing ~/.p10k.zsh.${COLOR_RESET}"
-                        fi
-                    fi
-                else
-                    printf "${COLOR_BLUE}Install PowerLevel10k ? (Y/n) : ${COLOR_RESET}"
-                    read -r -e -p "" -i "y" CHOICE
-                    tput cuu1
-                    tput el
-                    if [[ "$CHOICE" =~ ^[yY]$ ]]; then
-                        execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" > /dev/null 2>&1 || true" "PowerLevel10k installation"
-                        sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
-
-                        printf "${COLOR_BLUE}Install OhMyTermux prompt ? (Y/n) : ${COLOR_RESET}"
-                        read -r -e -p "" -i "y" CHOICE
-                        tput cuu1
-                        tput el
-                        if [[ "$CHOICE" =~ ^[yY]$ ]]; then
-                            execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "OhMyTermux prompt installation" || error_msg "OhMyTermux prompt installation impossible"
-                            echo -e "\n# For customizing the prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
-                            echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
-                        else
-                            echo -e "${COLOR_BLUE}You can customize the prompt by running 'p10k configure' or editing ~/.p10k.zsh.${COLOR_RESET}"
-                        fi
-                    fi
-                fi
-
-                execute_command "(curl -fLo \"$HOME/.oh-my-zsh/custom/aliases.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/aliases.zsh && \
-                                mkdir -p $HOME/.config/OhMyTermux && \
-                                curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/help.md)" "Default configuration" || error_msg "Default configuration impossible"
-
-                if command -v zsh &> /dev/null; then
-                    install_zsh_plugins
-                else
-                    echo -e "${COLOR_RED}ZSH is not installed. Impossible to install plugins.${COLOR_RESET}"
-                fi
-                chsh -s zsh
-                ;;
-            "fish")
-                title_msg "❯ Fish configuration"
-                execute_command "pkg install -y fish" "Fish installation"
-                
-                # Fish configuration directory creation
-                #execute_command "mkdir -p $HOME/.config/fish/functions" "Fish directory creation"
-                
-                # Fisher installation without interactive session
-                #execute_command "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish -o $HOME/.config/fish/functions/fisher.fish" "Fisher download"
-                
-                # Tide installation via Fisher in non-interactive mode
-                #execute_command "fish -c 'source $HOME/.config/fish/functions/fisher.fish && fisher install IlanCosman/tide@v5'" "Tide installation"
-                
-                chsh -s fish
-                ;;
-        esac
-    fi
-}
-
-#------------------------------------------------------------------------------
-# ZSH PLUGINS SELECTION
-#------------------------------------------------------------------------------
-install_zsh_plugins() {
-    local PLUGINS_TO_INSTALL=()
-
-    subtitle_msg "❯ ZSH plugins installation"
-
-    if $USE_GUM; then
-        mapfile -t PLUGINS_TO_INSTALL < <(gum_choose_multi "Select with SPACE the plugins to install :" --height=8 --selected="Install all" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder" "Install all")
-        if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" Install all "* ]]; then
-            PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
-        fi
-    else
-        echo "Select the plugins to install (SEPARATED BY SPACES) :"
-        echo
-        info_msg "1) zsh-autosuggestions"
-        info_msg "2) zsh-syntax-highlighting"
-        info_msg "3) zsh-completions"
-        info_msg "4) you-should-use"
-        info_msg "5) zsh-alias-finder"
-        info_msg "6) Install all"
-        echo
-        printf "${COLOR_GOLD}Enter the numbers of the plugins : ${COLOR_RESET}"
-        tput setaf 3
-        read -r -e -p "" -i "6" PLUGIN_CHOICES
-        tput sgr0
-        tput cuu 10
-        tput ed
-        for CHOICE in $PLUGIN_CHOICES; do
-            case $CHOICE in
-                1) PLUGINS_TO_INSTALL+=("zsh-autosuggestions") ;;
-                2) PLUGINS_TO_INSTALL+=("zsh-syntax-highlighting") ;;
-                3) PLUGINS_TO_INSTALL+=("zsh-completions") ;;
-                4) PLUGINS_TO_INSTALL+=("you-should-use") ;;
-                5) PLUGINS_TO_INSTALL+=("zsh-alias-finder") ;;
-                6) PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
-                break
-                ;;
-            esac
-        done
-    fi
-
-    for PLUGIN in "${PLUGINS_TO_INSTALL[@]}"; do
-        install_plugin "$PLUGIN"
-    done
-
-    # Define necessary variables
-    local ZSHRC="$HOME/.zshrc"
-    local SELECTED_PLUGINS="${PLUGINS_TO_INSTALL[*]}"
-    local HAS_COMPLETIONS=false
-    local HAS_OHMYTERMIX=true
-
-    # Check if zsh-completions is installed
-    if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" zsh-completions "* ]]; then
-        HAS_COMPLETIONS=true
-    fi
-
-    update_zshrc "$ZSHRC" "$SELECTED_PLUGINS" "$HAS_COMPLETIONS" "$HAS_OHMYTERMIX"
-}
-
-#------------------------------------------------------------------------------
-# ZSH PLUGINS INSTALLATION
-#------------------------------------------------------------------------------
-install_plugin() {
-    local PLUGIN_NAME=$1
-    local PLUGIN_URL=""
-
-    case $PLUGIN_NAME in
-        "zsh-autosuggestions") PLUGIN_URL="https://github.com/zsh-users/zsh-autosuggestions.git" ;;
-        "zsh-syntax-highlighting") PLUGIN_URL="https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
-        "zsh-completions") PLUGIN_URL="https://github.com/zsh-users/zsh-completions.git" ;;
-        "you-should-use") PLUGIN_URL="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
-        "zsh-alias-finder") PLUGIN_URL="https://github.com/akash329d/zsh-alias-finder.git" ;;
-    esac
-
-    if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$PLUGIN_NAME" ]; then
-        execute_command "git clone '$PLUGIN_URL' '$HOME/.oh-my-zsh/custom/plugins/$PLUGIN_NAME' --quiet" "Installation of $PLUGIN_NAME"
-    else
-        info_msg "  $PLUGIN_NAME is already installed"
-    fi
-}
-
-#------------------------------------------------------------------------------
-# ZSH CONFIGURATION UPDATE
-#------------------------------------------------------------------------------
-update_zshrc() {
-    local ZSHRC="$1"
-    local SELECTED_PLUGINS="$2"
-    local HAS_COMPLETIONS="$3"
-    local HAS_OHMYTERMUX="$4"
-
-    # Existing configuration deletion
-    sed -i '/fpath.*zsh-completions\/src/d' "$ZSHRC"
-    sed -i '/source \$ZSH\/oh-my-zsh.sh/d' "$ZSHRC"
-    sed -i '/# For customizing the prompt/d' "$ZSHRC"
-    sed -i '/\[\[ ! -f ~\/.p10k.zsh \]\]/d' "$ZSHRC"
-    sed -i '/# Source of custom aliases/d' "$ZSHRC"
-    sed -i '/\[ -f.*aliases.*/d' "$ZSHRC"
-
-    # Plugins section content creation
-    local DEFAULT_PLUGINS="git command-not-found copyfile node npm timer vscode web-search z"
-    local FILTERED_PLUGINS=$(echo "$SELECTED_PLUGINS" | sed 's/zsh-completions//g')
-    local ALL_PLUGINS="$DEFAULT_PLUGINS $FILTERED_PLUGINS"
-
-    local PLUGINS_SECTION="plugins=(\n"
-    for PLUGIN in $ALL_PLUGINS; do
-        PLUGINS_SECTION+="    $PLUGIN\n"
-    done
-    PLUGINS_SECTION+=")\n"
-
-    # Plugins section deletion and replacement
-    sed -i '/^plugins=(/,/)/d' "$ZSHRC"
-    echo -e "$PLUGINS_SECTION" >> "$ZSHRC"
-
-    # Add the configuration by section
-    if [ "$HAS_COMPLETIONS" = "true" ]; then
-        echo -e "\n# Load zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$ZSHRC"
-    fi
-
-    echo -e "\n# Load oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
-
-    if [ "$HAS_OHMYTERMUX" = "true" ]; then
-        echo -e "\n# For customizing the prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
-    fi
-
-    # Sourcing of centralized aliases
-    echo -e "\n# Source of custom aliases\n[ -f \"$HOME/.config/OhMyTermux/aliases\" ] && . \"$HOME/.config/OhMyTermux/aliases\"" >> "$ZSHRC"
-}
-
-#------------------------------------------------------------------------------
-# ADDITIONAL PACKAGES INSTALLATION
-#------------------------------------------------------------------------------
-install_packages() {
-    if $PACKAGES_CHOICE; then
-        title_msg "❯ Additional packages configuration"
-        if $USE_GUM; then
-            PACKAGES=$(gum_choose_multi "Select with SPACE the packages to install :" --no-limit --height=18 --selected="nala,eza,bat,lf,fzf" "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" "Install all")
-        else
-            echo "Select the packages to install (separated by SPACES) :"
-            echo
-            echo -e "${COLOR_BLUE}1) nala${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) eza${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) colorls${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}4) lsd${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}5) bat${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}6) lf${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}7) fzf${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}8) glow${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}9) tmux${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}10) python${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}11) nodejs${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}12) nodejs-lts${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}13) micro${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}14) vim${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}15) neovim${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}16) lazygit${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}17) open-ssh${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}18) tsu${COLOR_RESET}"
-            echo "19) Install all"
-            echo            
-            printf "${COLOR_GOLD}Enter the numbers of the packages : ${COLOR_RESET}"
-            tput setaf 3
-            read -r -e -p "" -i "1 2 5 6 7" PACKAGE_CHOICES
-            tput sgr0
-            tput cuu 23
-            tput ed
-            PACKAGES=""
-            for CHOICE in $PACKAGE_CHOICES; do
-                case $CHOICE in
-                    1) PACKAGES+="nala " ;;
-                    2) PACKAGES+="eza " ;;
-                    3) PACKAGES+="colorsls " ;;
-                    4) PACKAGES+="lsd " ;;
-                    5) PACKAGES+="bat " ;;
-                    6) PACKAGES+="lf " ;;
-                    7) PACKAGES+="fzf " ;;
-                    8) PACKAGES+="glow " ;;
-                    9) PACKAGES+="tmux " ;;
-                    10) PACKAGES+="python " ;;
-                    11) PACKAGES+="nodejs " ;;
-                    12) PACKAGES+="nodejs-lts " ;;
-                    13) PACKAGES+="micro " ;;
-                    14) PACKAGES+="vim " ;;
-                    15) PACKAGES+="neovim " ;;
-                    16) PACKAGES+="lazygit " ;;
-                    17) PACKAGES+="open-ssh " ;;
-                    18) PACKAGES+="tsu " ;;
-                    19) PACKAGES="nala eza colorsls lsd bat lf fzf glow tmux python nodejs nodejs-lts micro vim neovim lazygit open-ssh tsu" ;;
-                esac
-            done
-        fi
-
-        if [ -n "$PACKAGES" ]; then
-            for PACKAGE in $PACKAGES; do
-                execute_command "pkg install -y $PACKAGE" "Installation of $PACKAGE"
-
-                # Add specific aliases after installation
-                case $PACKAGE in
-                    eza|bat|nala)
-                        add_aliases_to_rc "$PACKAGE"
-                        ;;
-                esac
-            done
-
-            # Reload aliases to make them immediately available
-            if [ -f "$HOME/.config/OhMyTermux/aliases" ]; then
-                source "$HOME/.config/OhMyTermux/aliases"
-            fi
-        else
-            echo -e "${COLOR_BLUE}No package selected.${COLOR_RESET}"
-        fi
-    fi
-}
-
-#------------------------------------------------------------------------------
-# SPECIFIC ALIASES CONFIGURATION
-#------------------------------------------------------------------------------
-add_aliases_to_rc() {
-    local PACKAGE=$1
-    local ALIASES_FILE="$HOME/.config/OhMyTermux/aliases"
-    
-    case $PACKAGE in
-        eza)
-            cat >> "$ALIASES_FILE" << 'EOL'
-# Alias eza
-alias l="eza --icons"
-alias ls="eza -1 --icons"
-alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
-alias la="eza --icons -lgha --group-directories-first"
-alias lt="eza --icons --tree"
-alias lta="eza --icons --tree -lgha"
-alias dir="eza -lF --icons"
-
-EOL
-            ;;
-        bat)
-            cat >> "$ALIASES_FILE" << 'EOL'
-# Alias bat
-alias cat="bat"
-
-EOL
-            ;;
-        nala)
-            cat >> "$ALIASES_FILE" << 'EOL'
-# Alias nala
-alias install="nala install -y"
-alias uninstall="nala remove -y"
-alias update="nala update"
-alias upgrade="nala upgrade -y"
-alias search="nala search"
-alias list="nala list --upgradeable"
-alias show="nala show"
-
-EOL
-            ;;
-    esac
-}
-
-#------------------------------------------------------------------------------
-# COMMON ALIASES CONFIGURATION
+# COMMON ALIAS CONFIGURATION
 #------------------------------------------------------------------------------
 common_alias() {
-    # Centralized aliases file creation
+    # Create the centralized alias file
     if [ ! -d "$HOME/.config/OhMyTermux" ]; then
-        execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Configuration folder creation"
+        execute_command "mkdir -p \"$HOME/.config/OhMyTermux\"" "Create the configuration folder"
     fi
 
     ALIASES_FILE="$HOME/.config/OhMyTermux/aliases"
@@ -977,7 +525,7 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 
-# Basic commands
+# Base commands
 alias h="history"
 alias q="exit"
 alias c="clear"
@@ -1027,35 +575,951 @@ alias location="termux-location"
 
 EOL
 
-    # Add sourcing .bashrc
+    # Add the sourcing .bashrc
     echo -e "\n# Source of custom aliases\n[ -f \"$ALIASES_FILE\" ] && . \"$ALIASES_FILE\"" >> "$BASHRC"
-    # The sourcing of .zshrc is done in update_zshrc()
+    # The sourcing .zshrc is done in update_zshrc()
 }
 
 #------------------------------------------------------------------------------
-# FONT INSTALLATION
+# DOWNLOAD AND EXECUTE FUNCTION
+#------------------------------------------------------------------------------
+download_and_execute() {
+    local URL="$1"
+    local SCRIPT_NAME=$(basename "$URL")
+    local DESCRIPTION="${2:-$SCRIPT_NAME}"
+    shift 2
+    local EXEC_ARGS="$@"
+
+    # Check if the file already exists and delete it
+    [ -f "$SCRIPT_NAME" ] && rm "$SCRIPT_NAME"
+
+    # Download with curl in silent mode but with progress bar
+    #if ! curl -L --progress-bar -o "$SCRIPT_NAME" "$URL"; then
+    if ! curl -L -o "$SCRIPT_NAME" "$URL"; then
+        error_msg "Impossible de télécharger le script $DESCRIPTION"
+        return 1
+    fi
+
+    # Check if the file has been downloaded
+    if [ ! -f "$SCRIPT_NAME" ]; then
+        error_msg "The file $SCRIPT_NAME has not been created"
+        return 1
+    fi
+
+    # Make the script executable
+    if ! chmod +x "$SCRIPT_NAME"; then
+        error_msg "Impossible to make the script $DESCRIPTION executable"
+        return 1
+    fi
+
+    # Execute the script with the arguments
+    if ! ./"$SCRIPT_NAME" $EXEC_ARGS; then
+        error_msg "Error during the execution of the script $DESCRIPTION"
+        return 1
+    fi
+
+    return 0
+}
+
+#------------------------------------------------------------------------------
+# REPOSITORY CHANGE
+#------------------------------------------------------------------------------
+change_repo() {
+    show_banner
+    if $USE_GUM; then
+        if gum_confirm "Change the repository mirror ?"; then
+            termux-change-repo
+        fi
+    else    
+        printf "${COLOR_BLUE}Change the repository mirror ? (O/n) : ${COLOR_RESET}"
+        read -r -e -p "" -i "o" CHOICE
+        [[ "$CHOICE" =~ ^[oO]$ ]] && termux-change-repo
+    fi
+}
+
+#------------------------------------------------------------------------------
+# STORAGE CONFIGURATION
+#------------------------------------------------------------------------------
+setup_storage() {
+    if [ ! -d "$HOME/storage" ]; then
+        show_banner
+        if $USE_GUM; then
+            if gum_confirm "Allow access to storage ?"; then
+                termux-setup-storage
+            fi
+        else
+            printf "${COLOR_BLUE}Allow access to storage ? (O/n) : ${COLOR_RESET}"
+            read -r -e -p "" -i "n" CHOICE
+            [[ "$CHOICE" =~ ^[oO]$ ]] && termux-setup-storage
+        fi
+    fi
+}
+
+#------------------------------------------------------------------------------
+# TERMUX CONFIGURATION
+#------------------------------------------------------------------------------
+configure_termux() {
+    title_msg "❯ Termux configuration"
+    # Backup existing files
+    create_backups
+    TERMUX_DIR="$HOME/.termux"
+    
+    # Colors.properties configuration
+    FILE_PATH="$TERMUX_DIR/colors.properties"
+    if [ ! -f "$FILE_PATH" ]; then
+        mkdir -p "$TERMUX_DIR"
+        cat > "$FILE_PATH" << 'EOL'
+# https://github.com/Mayccoll/Gogh/blob/master/themes/argonaut.sh
+background=#0e1019
+foreground=#fffaf4
+cursor=#fffaf4
+color0=#232323
+color1=#ff000f
+color2=#8ce10b
+color3=#ffb900
+color4=#008df8
+color5=#6d43a6
+color6=#00d8eb
+color7=#ffffff
+color8=#444444
+color9=#ff2740
+color10=#abe15b
+color11=#ffd242
+color12=#0092ff
+color13=#9a5feb
+color14=#67fff0
+color15=#ffffff
+EOL
+        success_msg "✓ Argonaut theme installed"
+    fi
+
+    # Common alias configuration
+    common_alias
+    
+    # Termux.properties configuration
+    FILE_PATH="$TERMUX_DIR/termux.properties"
+    if [ ! -f "$FILE_PATH" ]; then
+        execute_command "cat > \"$FILE_PATH\" << 'EOL'
+allow-external-apps = true
+use-black-ui = true
+bell-character = ignore
+fullscreen = true
+EOL" "Termux.properties configuration"
+    else
+        execute_command "sed -i 's/^# allow-external-apps = true/allow-external-apps = true/' \"$FILE_PATH\" && \
+        sed -i 's/^# use-black-ui = true/use-black-ui = true/' \"$FILE_PATH\" && \
+        sed -i 's/^# bell-character = ignore/bell-character = ignore/' \"$FILE_PATH\" && \
+        sed -i 's/^# fullscreen = true/fullscreen = true/' \"$FILE_PATH\"" "Termux configuration"
+    fi
+    # Suppression of the login banner
+    execute_command "touch $HOME/.hushlogin" "Suppression of the login banner"
+}
+
+#------------------------------------------------------------------------------
+# INITIAL CONFIGURATION
+#------------------------------------------------------------------------------
+initial_config() {
+    # Si on est en mode FULL_INSTALL, demander les identifiants au début
+    if $FULL_INSTALL; then
+        title_msg "❯ Debian PRoot configuration"
+        if [ -z "$PROOT_USERNAME" ]; then
+            if $USE_GUM; then
+                PROOT_USERNAME=$(gum input --placeholder "Enter the username for Debian PRoot")
+                PROOT_PASSWORD=$(gum input --password --placeholder "Enter the password for Debian PRoot")
+            else
+                printf "${COLOR_BLUE}Enter the username for Debian PRoot : ${COLOR_RESET}"
+                read -r PROOT_USERNAME
+                printf "${COLOR_BLUE}Enter the password for Debian PRoot : ${COLOR_RESET}"
+                read -r -s PROOT_PASSWORD
+                echo
+            fi
+        fi
+    fi
+
+    change_repo
+
+    # Update and upgrade packages preserving existing configurations
+    clear
+    show_banner
+    execute_command "pkg update -y -o Dpkg::Options::=\"--force-confold\"" "Update repositories"
+    execute_command "pkg upgrade -y -o Dpkg::Options::=\"--force-confold\"" "Upgrade packages"
+
+    setup_storage
+
+    if $USE_GUM; then
+        show_banner
+        if gum_confirm "Activate the recommended configuration ?"; then
+            configure_termux
+        fi
+    else
+        show_banner
+        printf "${COLOR_BLUE}Activate the recommended configuration ? (O/n) : ${COLOR_RESET}"
+        read -r -e -p "" -i "o" CHOICE
+        # Clear the previous line
+        tput cuu1  # Move up one line
+        tput el    # Clear to the end of the line
+        [[ "$CHOICE" =~ ^[oO]$ ]] && configure_termux
+    fi
+}
+
+#------------------------------------------------------------------------------
+# INSTALLATION OF THE SHELL
+#------------------------------------------------------------------------------
+install_shell() {
+    if $SHELL_CHOICE; then
+        title_msg "❯ Shell configuration"
+        if $USE_GUM; then
+            SHELL_CHOICE=$(gum_choose "Choose the shell to install :" --selected="zsh" --height=5 "bash" "zsh" "fish")
+        else
+            echo -e "${COLOR_BLUE}Choose the shell to install :${COLOR_RESET}"
+            echo
+            echo -e "${COLOR_BLUE}1) bash${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) zsh${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3) fish${COLOR_RESET}"
+            echo
+            printf "${COLOR_GOLD}Enter your choice (1/2/3) : ${COLOR_RESET}"
+            tput setaf 3
+            read -r -e -p "" -i "2" CHOICE
+            tput sgr0
+
+            # Clear the selection menu
+            tput cuu 7  # Move up 7 lines
+            tput ed     # Clear to the end of the screen
+
+            case $CHOICE in
+                1) SHELL_CHOICE="bash" ;;
+                2) SHELL_CHOICE="zsh" ;;
+                3) SHELL_CHOICE="fish" ;;
+                *) SHELL_CHOICE="bash" ;;
+            esac
+        fi
+
+        case $SHELL_CHOICE in
+            "bash")
+                success_msg "✓ Bash selected"
+                install_prompt
+                ;;
+            "zsh")
+                if ! command -v zsh &> /dev/null; then
+                    execute_command "pkg install -y zsh" "ZSH installation"
+                else
+                    success_msg "✓ Zsh already installed"
+                fi
+                # Installation de Oh My Zsh et autres configurations ZSH
+                title_msg "❯ ZSH configuration"
+                if [ ! -d "$HOME/.oh-my-zsh" ]; then
+                    if $USE_GUM; then
+                        if gum_confirm "Install Oh-My-Zsh ?"; then
+                            execute_command "pkg install -y wget curl git unzip" "Dependencies installation"
+                            execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Oh-My-Zsh installation"
+                            cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        fi
+                    else
+                        printf "${COLOR_BLUE}Installer Oh-My-Zsh ? (O/n) : ${COLOR_RESET}"
+                        read -r -e -p "" -i "o" CHOICE
+                        tput cuu1
+                        tput el
+                        if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                            execute_command "pkg install -y wget curl git unzip" "Dependencies installation"
+                            execute_command "git clone https://github.com/ohmyzsh/ohmyzsh.git \"$HOME/.oh-my-zsh\"" "Oh-My-Zsh installation"
+                            cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$ZSHRC"
+                        fi
+                    fi
+                else
+                    success_msg "✓ Oh-My-Zsh already installed"
+                fi
+
+                execute_command "curl -fLo \"$ZSHRC\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/src/zshrc" "Default configuration" || error_msg "Default configuration impossible"
+
+                if command -v zsh &> /dev/null; then
+                    install_zsh_plugins
+                    install_prompt
+                else
+                    echo -e "${COLOR_RED}ZSH is not installed. Impossible to install plugins.${COLOR_RESET}"
+                fi
+                chsh -s zsh
+                ;;
+            "fish")
+                title_msg "❯ Fish configuration"
+                execute_command "pkg install -y fish" "Fish installation"
+                execute_command "mkdir -p $HOME/.config/fish/functions" "Create the fish directory"
+                # Installation of Fisher in non-interactive mode
+                execute_command "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish -o $HOME/.config/fish/functions/fisher.fish" "Download Fisher"
+                # Installation of Tide via Fisher in non-interactive mode
+                execute_command "fish -c 'source $HOME/.config/fish/functions/fisher.fish && fisher install IlanCosman/tide@v5'" "Tide installation"
+                chsh -s fish
+                ;;
+        esac
+    fi
+}
+
+#------------------------------------------------------------------------------
+# INSTALLATION OF THE PROMPT
+#------------------------------------------------------------------------------
+install_prompt() {
+    local PROMPT_CHOICE
+    local CURRENT_SHELL="${SHELL_CHOICE:-zsh}"
+    
+    if [ "$CURRENT_SHELL" = "bash" ]; then
+        if $USE_GUM; then
+            PROMPT_CHOICE=$(gum_choose "Choose the prompt to install :" --height=4 --selected="Oh-My-Posh" "Oh-My-Posh" "Starship")
+        else
+            echo -e "${COLOR_BLUE}Choose the prompt to install :${COLOR_RESET}"
+            echo
+            echo -e "${COLOR_BLUE}1) Oh-My-Posh${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) Starship${COLOR_RESET}"
+            echo
+            printf "${COLOR_GOLD}Enter your choice (1/2) : ${COLOR_RESET}"
+            tput setaf 3
+            read -r -e -p "" -i "1" CHOICE
+            tput sgr0
+            tput cuu 5
+            tput ed
+            
+            case $CHOICE in
+                1) PROMPT_CHOICE="Oh-My-Posh" ;;
+                2) PROMPT_CHOICE="Starship" ;;
+                *) PROMPT_CHOICE="Oh-My-Posh" ;;
+            esac
+        fi
+    else
+        if $USE_GUM; then
+            PROMPT_CHOICE=$(gum_choose "Choose the prompt to install :" --height=5 --selected="PowerLevel10k" "PowerLevel10k" "Oh-My-Posh" "Starship")
+        else
+            echo -e "${COLOR_BLUE}Choose the prompt to install :${COLOR_RESET}"
+            echo
+            echo -e "${COLOR_BLUE}1) PowerLevel10k${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2) Oh-My-Posh${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3) Starship${COLOR_RESET}"
+            echo
+            printf "${COLOR_GOLD}Enter your choice (1/2/3) : ${COLOR_RESET}"
+            tput setaf 3
+            read -r -e -p "" -i "1" CHOICE
+            tput sgr0
+            tput cuu 7
+            tput ed
+            
+            case $CHOICE in
+                1) PROMPT_CHOICE="PowerLevel10k" ;;
+                2) PROMPT_CHOICE="Oh-My-Posh" ;;
+                3) PROMPT_CHOICE="Starship" ;;
+                *) PROMPT_CHOICE="PowerLevel10k" ;;
+            esac
+        fi
+    fi
+
+    case $PROMPT_CHOICE in
+        "PowerLevel10k")
+            if $USE_GUM; then
+                if gum_confirm "Install PowerLevel10k ?"; then
+                    execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" || true" "Installation de PowerLevel10k"
+                    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
+
+                    if gum_confirm "Install the custom prompt ?"; then
+                        execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation of the custom prompt" || error_msg "Impossible to install the custom prompt"
+                        echo -e "\n# To customize the prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
+                    else
+                        echo -e "${COLOR_BLUE}You can customize the prompt by running 'p10k configure'.${COLOR_RESET}"
+                    fi
+                fi
+            else
+                printf "${COLOR_BLUE}Install PowerLevel10k ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                tput cuu1
+                tput el
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    execute_command "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \"$HOME/.oh-my-zsh/custom/themes/powerlevel10k\" > /dev/null 2>&1 || true" "Installation de PowerLevel10k"
+                    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
+
+                    printf "${COLOR_BLUE}Install the custom prompt ? (O/n) : ${COLOR_RESET}"
+                    read -r -e -p "" -i "o" CHOICE
+                    tput cuu1
+                    tput el
+                    if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                        execute_command "curl -fLo \"$HOME/.p10k.zsh\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/src/p10k.zsh" "Installation of the custom prompt" || error_msg "Impossible to install the custom prompt"
+                        echo -e "\n# To customize the prompt, run \`p10k configure\` or edit ~/.p10k.zsh." >> "$ZSHRC"
+                        echo "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> "$ZSHRC"
+                    else
+                        echo -e "${COLOR_BLUE}You can customize the prompt by running 'p10k configure'.${COLOR_RESET}"
+                    fi
+                fi
+            fi
+            ;;
+            
+        "Oh-My-Posh")
+            execute_command "pkg install -y oh-my-posh" "Installation of Oh-My-Posh"
+
+            # Optional installation of a Nerd font
+            if [ ! -f "$HOME/.termux/font.ttf" ]; then
+                execute_command "curl -fLo \"$HOME/.termux/font.ttf\" --create-dirs https://raw.githubusercontent.com/termux/termux-styling/master/app/src/main/assets/fonts/DejaVu-Sans-Mono.ttf" "Installation of the Nerd font"
+            fi
+            
+            # Retrieving the complete list of themes
+            THEMES_DIR="/data/data/com.termux/files/usr/share/oh-my-posh/themes"
+            if [ -d "$THEMES_DIR" ]; then
+                # Creating an array with all available themes
+                mapfile -t AVAILABLE_THEMES < <(find "$THEMES_DIR" -name "*.omp.json" -exec basename {} .omp.json \; | sort)
+            else
+                error_msg "Oh-My-Posh themes directory not found"
+                return 1
+            fi
+
+            # Theme selection
+            if $USE_GUM; then
+                THEME=$(printf '%s\n' "${AVAILABLE_THEMES[@]}" | gum_choose \
+                    "Choose an Oh-My-Posh theme :" \
+                    --height=25)
+            else
+                # Displaying the numbered list of themes
+                echo -e "${COLOR_BLUE}Choose an Oh-My-Posh theme :${COLOR_RESET}"
+                echo
+                for i in "${!AVAILABLE_THEMES[@]}"; do
+                    # Formatting the number for alignment (3 characters)
+                    NUM=$(printf "%3d" $((i+1)))
+                    if [ "${AVAILABLE_THEMES[$i]}" = "jandedobbeleer" ]; then
+                        echo -e "${COLOR_BLUE}${NUM}) ${AVAILABLE_THEMES[$i]} (default)${COLOR_RESET}"
+                    else
+                        echo -e "${COLOR_BLUE}${NUM}) ${AVAILABLE_THEMES[$i]}${COLOR_RESET}"
+                    fi
+                done
+                echo
+                # Calculating the number of lines to clear (number of themes + 3 lines for additional text)
+                LINES_TO_CLEAR=$((${#AVAILABLE_THEMES[@]}+3))
+                printf "${COLOR_GOLD}Enter your choice (1/2/3) : ${COLOR_RESET}"
+                tput setaf 3
+                read -r -e -p "" -i "1" CHOICE
+                tput sgr0
+                # Clearing the menu
+                tput cuu $LINES_TO_CLEAR
+                tput ed
+
+                # Validating the choice
+                if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [ "$CHOICE" -ge 1 ] && [ "$CHOICE" -le "${#AVAILABLE_THEMES[@]}" ]; then
+                    THEME="${AVAILABLE_THEMES[$((CHOICE-1))]}"
+                else
+                    THEME="jandedobbeleer"
+                fi
+            fi
+
+            # Configuration for ZSH
+            if [ ! -f "$ZSHRC" ]; then
+                touch "$ZSHRC"
+            fi
+            sed -i '/# Initialize oh-my-posh/d' "$ZSHRC"
+            sed -i '/eval "$(oh-my-posh init/d' "$ZSHRC"
+            cat >> "$ZSHRC" << EOF
+
+# Initialize oh-my-posh
+eval "\$(oh-my-posh init zsh --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/${THEME}.omp.json)"
+EOF
+
+            # Configuration for Bash
+            if [ ! -f "$HOME/.bashrc" ]; then
+                touch "$HOME/.bashrc"
+            fi
+            sed -i '/# Initialize oh-my-posh/d' "$HOME/.bashrc"
+            sed -i '/eval "$(oh-my-posh init/d' "$HOME/.bashrc"
+            cat >> "$HOME/.bashrc" << EOF
+
+# Initialize oh-my-posh
+eval "\$(oh-my-posh init bash --config /data/data/com.termux/files/usr/share/oh-my-posh/themes/${THEME}.omp.json)"
+EOF
+            ;;
+        "Starship")
+            execute_command "pkg install -y starship" "Installation of Starship"
+            
+            # Optional installation of a Nerd font
+            if [ ! -f "$HOME/.termux/font.ttf" ]; then
+                execute_command "curl -fLo \"$HOME/.termux/font.ttf\" --create-dirs https://raw.githubusercontent.com/termux/termux-styling/master/app/src/main/assets/fonts/DejaVu-Sans-Mono.ttf" "Installation of the Nerd font"
+            fi
+
+            # Creating the configuration directory if it doesn't exist
+            mkdir -p "$HOME/.config"
+
+            # Preset selection
+            if $USE_GUM; then
+                PRESET=$(gum_choose "Choose a Starship preset :" --height=15 --selected="Custom" \
+                    "Custom" \
+                    "Nerd Font Symbols" \
+                    "Bracketed Segments" \
+                    "No Empty Icons" \
+                    "No Runtime Versions" \
+                    "Plain Text Symbols" \
+                    "Pastel Powerline" \
+                    "Tokyo Night" \
+                    "Pure Preset" \
+                    "Gruvbox Rainbow" \
+                    "Jetpack" \
+                    "No Nerd Font" \
+                    "Rice" \
+                    "Solarized")
+            else
+                echo -e "${COLOR_BLUE}Choose a Starship preset :${COLOR_RESET}"
+                echo
+                echo -e "${COLOR_BLUE}1)  Custom${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}2)  Nerd Font Symbols${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}3)  Bracketed Segments${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}4)  No Empty Icons${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}5)  No Runtime Versions${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}6)  Plain Text Symbols${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}7)  Pastel Powerline${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}8)  Tokyo Night${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}9)  Pure Preset${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}10) Gruvbox Rainbow${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}11) Jetpack${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}12) No Nerd Font${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}13) Rice${COLOR_RESET}"
+                echo -e "${COLOR_BLUE}14) Solarized${COLOR_RESET}"
+                echo
+                printf "${COLOR_GOLD}Enter your choice (1/2/3) : ${COLOR_RESET}"
+                tput setaf 3
+                read -r -e -p "" -i "1" CHOICE
+                tput sgr0
+                tput cuu 18
+                tput ed
+                
+                case $CHOICE in
+                    1) PRESET="Custom" ;;
+                    2) PRESET="Nerd Font Symbols" ;;
+                    3) PRESET="Bracketed Segments" ;;
+                    4) PRESET="No Empty Icons" ;;
+                    5) PRESET="No Runtime Versions" ;;
+                    6) PRESET="Plain Text Symbols" ;;
+                    7) PRESET="Pastel Powerline" ;;
+                    8) PRESET="Tokyo Night" ;;
+                    9) PRESET="Pure Preset" ;;
+                    10) PRESET="Gruvbox Rainbow" ;;
+                    11) PRESET="Jetpack" ;;
+                    12) PRESET="No Nerd Font" ;;
+                    13) PRESET="Rice" ;;
+                    14) PRESET="Solarized" ;;
+                    *) PRESET="Custom" ;;
+                esac
+            fi
+
+            case $PRESET in
+                "Nerd Font Symbols")
+                    starship preset nerd-font-symbols -o "$HOME/.config/starship.toml"
+                    ;;
+                "Bracketed Segments") 
+                    starship preset bracketed-segments -o "$HOME/.config/starship.toml"
+                    ;;
+                "No Empty Icons")
+                    starship preset no-empty-icons -o "$HOME/.config/starship.toml"
+                    ;;
+                "No Runtime Versions")
+                    starship preset no-runtime-versions -o "$HOME/.config/starship.toml"
+                    ;;
+                "Plain Text Symbols")
+                    starship preset plain-text-symbols -o "$HOME/.config/starship.toml"
+                    ;;
+                "Pastel Powerline")
+                    starship preset pastel-powerline -o "$HOME/.config/starship.toml"
+                    ;;
+                "Tokyo Night")
+                    starship preset tokyo-night -o "$HOME/.config/starship.toml"
+                    ;;
+                "Pure Preset")
+                    starship preset pure -o "$HOME/.config/starship.toml"
+                    ;;
+                "Gruvbox Rainbow")
+                    starship preset gruvbox-rainbow -o "$HOME/.config/starship.toml"
+                    ;;
+                "Jetpack")
+                    starship preset jetpack -o "$HOME/.config/starship.toml"
+                    ;;
+                "No Nerd Font")
+                    starship preset no-nerd-font -o "$HOME/.config/starship.toml"
+                    ;;
+                "Rice")
+                    starship preset rice -o "$HOME/.config/starship.toml"
+                    ;;
+                "Solarized")
+                    starship preset solarized -o "$HOME/.config/starship.toml"
+                    ;;
+                *)
+                    # Default custom configuration
+                    cat > "$HOME/.config/starship.toml" << 'EOF'
+# Get help on configuration: https://starship.rs/config/
+format = """$username$hostname$directory$git_branch$git_status$cmd_duration$line_break$character"""
+
+# Disable default new line
+add_newline = false
+
+[directory]
+style = "blue bold"
+truncation_length = 3
+truncate_to_repo = true
+
+[character]
+success_symbol = "[❯](purple bold)"
+error_symbol = "[❯](red bold)"
+vimcmd_symbol = "[❮](green bold)"
+
+[git_branch]
+format = "[$branch]($style)"
+style = "bright-black"
+
+[git_status]
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+style = "cyan"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
+
+[python]
+format = "[$virtualenv]($style) "
+style = "bright-black"
+
+[username]
+style_user = "white bold"
+style_root = "black bold"
+format = "[$user]($style) "
+disabled = false
+show_always = true
+
+[hostname]
+ssh_only = false
+format = "on [$hostname](bold red) "
+disabled = false
+EOF
+                    ;;
+            esac
+
+            # ZSH configuration
+            if [ ! -f "$ZSHRC" ]; then
+                touch "$ZSHRC"
+            fi
+            sed -i '/# Initialize Starship/d' "$ZSHRC"
+            sed -i '/eval "$(starship init/d' "$ZSHRC"
+            echo -e "\n# Initialize Starship\neval \"\$(starship init zsh)\"" >> "$ZSHRC"
+
+            # Bash configuration
+            if [ ! -f "$HOME/.bashrc" ]; then
+                touch "$HOME/.bashrc"
+            fi
+            sed -i '/# Initialize Starship/d' "$HOME/.bashrc"
+            sed -i '/eval "$(starship init/d' "$HOME/.bashrc"
+            echo -e "\n# Initialize Starship\neval \"\$(starship init bash)\"" >> "$HOME/.bashrc"
+            ;;
+    esac
+}
+
+#------------------------------------------------------------------------------
+# ZSH PLUGINS SELECTION
+#------------------------------------------------------------------------------
+install_zsh_plugins() {
+    local PLUGINS_TO_INSTALL=()
+
+    subtitle_msg "❯ Installation of plugins"
+
+    if $USE_GUM; then
+        mapfile -t PLUGINS_TO_INSTALL < <(gum_choose_multi "Select with SPACE the plugins to install :" --height=8 --selected="All install" "zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder" "All install")
+        if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" All install "* ]]; then
+            PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
+        fi
+    else
+        echo "Select the plugins to install (SEPARATED BY SPACES) :"
+        echo
+        info_msg "1) zsh-autosuggestions"
+        info_msg "2) zsh-syntax-highlighting"
+        info_msg "3) zsh-completions"
+        info_msg "4) you-should-use"
+        info_msg "5) zsh-alias-finder"
+        info_msg "6) All install"
+        echo
+        printf "${COLOR_GOLD}Enter the plugins numbers : ${COLOR_RESET}"
+        tput setaf 3
+        read -r -e -p "" -i "6" PLUGIN_CHOICES
+        tput sgr0
+        tput cuu 10
+        tput ed
+        for CHOICE in $PLUGIN_CHOICES; do
+            case $CHOICE in
+                1) PLUGINS_TO_INSTALL+=("zsh-autosuggestions") ;;
+                2) PLUGINS_TO_INSTALL+=("zsh-syntax-highlighting") ;;
+                3) PLUGINS_TO_INSTALL+=("zsh-completions") ;;
+                4) PLUGINS_TO_INSTALL+=("you-should-use") ;;
+                5) PLUGINS_TO_INSTALL+=("zsh-alias-finder") ;;
+                6) PLUGINS_TO_INSTALL=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-completions" "you-should-use" "zsh-alias-finder")
+                break
+                ;;
+            esac
+        done
+    fi
+
+    for PLUGIN in "${PLUGINS_TO_INSTALL[@]}"; do
+        install_plugin "$PLUGIN"
+    done
+
+    # Define necessary variables
+    local ZSHRC="$HOME/.zshrc"
+    local SELECTED_PLUGINS="${PLUGINS_TO_INSTALL[*]}"
+    local HAS_COMPLETIONS=false
+    local HAS_OHMYTERMIX=true
+
+    # Check if zsh-completions is installed
+    if [[ " ${PLUGINS_TO_INSTALL[*]} " == *" zsh-completions "* ]]; then
+        HAS_COMPLETIONS=true
+    fi
+
+    update_zshrc "$ZSHRC" "$SELECTED_PLUGINS" "$HAS_COMPLETIONS" "$HAS_OHMYTERMIX"
+}
+
+#------------------------------------------------------------------------------
+# INSTALLATION OF ZSH PLUGINS
+#------------------------------------------------------------------------------
+install_plugin() {
+    local PLUGIN_NAME=$1
+    local PLUGIN_URL=""
+
+    case $PLUGIN_NAME in
+        "zsh-autosuggestions") PLUGIN_URL="https://github.com/zsh-users/zsh-autosuggestions.git" ;;
+        "zsh-syntax-highlighting") PLUGIN_URL="https://github.com/zsh-users/zsh-syntax-highlighting.git" ;;
+        "zsh-completions") PLUGIN_URL="https://github.com/zsh-users/zsh-completions.git" ;;
+        "you-should-use") PLUGIN_URL="https://github.com/MichaelAquilina/zsh-you-should-use.git" ;;
+        "zsh-alias-finder") PLUGIN_URL="https://github.com/akash329d/zsh-alias-finder.git" ;;
+    esac
+
+    if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/$PLUGIN_NAME" ]; then
+        execute_command "git clone '$PLUGIN_URL' '$HOME/.oh-my-zsh/custom/plugins/$PLUGIN_NAME' --quiet" "Installation of $PLUGIN_NAME"
+    else
+        info_msg "  $PLUGIN_NAME is already installed"
+    fi
+}
+
+#------------------------------------------------------------------------------
+# UPDATE OF ZSH CONFIGURATION
+#------------------------------------------------------------------------------
+update_zshrc() {
+    local ZSHRC="$1"
+    local SELECTED_PLUGINS="$2"
+    local HAS_COMPLETIONS="$3"
+
+    # Delete existing configuration
+    sed -i '/fpath.*zsh-completions\/src/d' "$ZSHRC"
+    sed -i '/source \$ZSH\/oh-my-zsh.sh/d' "$ZSHRC"
+    sed -i '/# Source defined aliases/d' "$ZSHRC"
+    sed -i '/\[ -f.*aliases.*/d' "$ZSHRC"
+
+    # Création du contenu de la section plugins
+    local DEFAULT_PLUGINS="git command-not-found copyfile node npm timer vscode web-search z"
+    local FILTERED_PLUGINS=$(echo "$SELECTED_PLUGINS" | sed 's/zsh-completions//g')
+    local ALL_PLUGINS="$DEFAULT_PLUGINS $FILTERED_PLUGINS"
+
+    local PLUGINS_SECTION="plugins=(\n"
+    for PLUGIN in $ALL_PLUGINS; do
+        PLUGINS_SECTION+="    $PLUGIN\n"
+    done
+    PLUGINS_SECTION+=")\n"
+
+    # Delete and replace the plugins section
+    sed -i '/^plugins=(/,/)/d' "$ZSHRC"
+    echo -e "$PLUGINS_SECTION" >> "$ZSHRC"
+
+    # Add configuration by section
+    if [ "$HAS_COMPLETIONS" = "true" ]; then
+        echo -e "\n# Initialize zsh-completions\nfpath+=\${ZSH_CUSTOM:-\${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src" >> "$ZSHRC"
+    fi
+
+    echo -e "\n# Initialize oh-my-zsh\nsource \$ZSH/oh-my-zsh.sh" >> "$ZSHRC"
+
+    # Sourcing defined aliases
+    echo -e "\n# Source defined aliases\n[ -f \"$HOME/.config/OhMyTermux/aliases\" ] && . \"$HOME/.config/OhMyTermux/aliases\"" >> "$ZSHRC"
+}
+
+#------------------------------------------------------------------------------
+# INSTALLATION OF ADDITIONAL PACKAGES
+#------------------------------------------------------------------------------
+install_packages() {
+    if $PACKAGES_CHOICE; then
+        title_msg "❯ Configuration of packages"
+        local DEFAULT_PACKAGES=("nala" "eza" "bat" "lf" "fzf")
+        
+        if $USE_GUM; then
+            if $FULL_INSTALL; then
+                PACKAGES=("${DEFAULT_PACKAGES[@]}")
+            else
+                # Convert output of gum to array
+                IFS=$'\n' read -r -d '' -a PACKAGES < <(gum choose --no-limit \
+                    --selected.foreground="33" \
+                    --header.foreground="33" \
+                    --cursor.foreground="33" \
+                    --height=18 \
+                    --header="Select with space the packages to install :" \
+                    --selected="nala" --selected="eza" --selected="bat" --selected="lf" --selected="fzf" \
+                    "nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                    "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu" \
+                    "All install")
+
+                if [[ " ${PACKAGES[*]} " == *" All install "* ]]; then
+                    PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                            "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+                fi
+            fi
+        else
+            echo "Select the packages to install (separated by spaces) :"
+            echo
+            echo -e "${COLOR_BLUE}1)  nala${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2)  eza${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3)  colorls${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4)  lsd${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}5)  bat${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}6)  lf${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}7)  fzf${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}8)  glow${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}9)  tmux${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}10) python${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}11) nodejs${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}12) nodejs-lts${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}13) micro${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}14) vim${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}15) neovim${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}16) lazygit${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}17) open-ssh${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}18) tsu${COLOR_RESET}"
+            echo "19) All install"
+            echo            
+            printf "${COLOR_GOLD}Enter the packages numbers : ${COLOR_RESET}"
+            tput setaf 3
+            read -r -e -p "" -i "1 2 5 6 7" PACKAGE_CHOICES
+            tput sgr0
+            tput cuu 23
+            tput ed
+            
+            if [[ "$PACKAGE_CHOICES" == *"19"* ]]; then
+                PACKAGES=("nala" "eza" "colorls" "lsd" "bat" "lf" "fzf" "glow" "tmux" "python" \
+                        "nodejs" "nodejs-lts" "micro" "vim" "neovim" "lazygit" "open-ssh" "tsu")
+            else
+                PACKAGES=()
+                for CHOICE in $PACKAGE_CHOICES; do
+                    case $CHOICE in
+                        1) PACKAGES+=("nala") ;;
+                        2) PACKAGES+=("eza") ;;
+                        3) PACKAGES+=("colorls") ;;
+                        4) PACKAGES+=("lsd") ;;
+                        5) PACKAGES+=("bat") ;;
+                        6) PACKAGES+=("lf") ;;
+                        7) PACKAGES+=("fzf") ;;
+                        8) PACKAGES+=("glow") ;;
+                        9) PACKAGES+=("tmux") ;;
+                        10) PACKAGES+=("python") ;;
+                        11) PACKAGES+=("nodejs") ;;
+                        12) PACKAGES+=("nodejs-lts") ;;
+                        13) PACKAGES+=("micro") ;;
+                        14) PACKAGES+=("vim") ;;
+                        15) PACKAGES+=("neovim") ;;
+                        16) PACKAGES+=("lazygit") ;;
+                        17) PACKAGES+=("open-ssh") ;;
+                        18) PACKAGES+=("tsu") ;;
+                    esac
+                done
+            fi
+        fi
+
+        if [ ${#PACKAGES[@]} -gt 0 ]; then
+            for PACKAGE in "${PACKAGES[@]}"; do
+                execute_command "pkg install -y $PACKAGE" "Installation of $PACKAGE"
+
+                # Add specific aliases after installation
+                case $PACKAGE in
+                    eza|bat|nala)
+                        add_aliases_to_rc "$PACKAGE"
+                        ;;
+                esac
+            done
+
+            # Reload aliases to make them available immediately
+            if [ -f "$HOME/.config/OhMyTermux/aliases" ]; then
+                source "$HOME/.config/OhMyTermux/aliases"
+            fi
+        else
+            echo -e "${COLOR_BLUE}No package selected.${COLOR_RESET}"
+        fi
+    fi
+}
+
+#------------------------------------------------------------------------------
+# CONFIGURATION OF SPECIFIC ALIASES
+#------------------------------------------------------------------------------
+add_aliases_to_rc() {
+    local PACKAGE=$1
+    local ALIASES_FILE="$HOME/.config/OhMyTermux/aliases"
+    
+    case $PACKAGE in
+        eza)
+            cat >> "$ALIASES_FILE" << 'EOL'
+# Alias eza
+alias l="eza --icons"
+alias ls="eza -1 --icons"
+alias ll="eza -lF -a --icons --total-size --no-permissions --no-time --no-user"
+alias la="eza --icons -lgha --group-directories-first"
+alias lt="eza --icons --tree"
+alias lta="eza --icons --tree -lgha"
+alias dir="eza -lF --icons"
+
+EOL
+            ;;
+        bat)
+            cat >> "$ALIASES_FILE" << 'EOL'
+# Alias bat
+alias cat="bat"
+
+EOL
+            ;;
+        nala)
+            cat >> "$ALIASES_FILE" << 'EOL'
+# Alias nala
+alias install="nala install -y"
+alias uninstall="nala remove -y"
+alias update="nala update"
+alias upgrade="nala upgrade -y"
+alias search="nala search"
+alias list="nala list --upgradeable"
+alias show="nala show"
+
+EOL
+            ;;
+    esac
+}
+
+#------------------------------------------------------------------------------
+# INSTALLATION OF THE FONT
 #------------------------------------------------------------------------------
 install_font() {
     if $FONT_CHOICE; then
-        title_msg "❯ Font configuration"
+        title_msg "❯ Configuration of the font"
         if $USE_GUM; then
             FONT=$(gum_choose "Select the font to install :" --height=13 --selected="Default font" "Default font" "CaskaydiaCove Nerd Font" "FiraMono Nerd Font" "JetBrainsMono Nerd Font" "Mononoki Nerd Font" "VictorMono Nerd Font" "RobotoMono Nerd Font" "DejaVuSansMono Nerd Font" "UbuntuMono Nerd Font" "AnonymousPro Nerd Font" "Terminus Nerd Font")
         else
             echo "Select the font to install :"
             echo
-            echo -e "${COLOR_BLUE}1) Default font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}2) CaskaydiaCove Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}3) FiraCode Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}4) Hack Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}5) JetBrainsMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}6) Meslo Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}7) RobotoMono Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}8) SourceCodePro Nerd Font${COLOR_RESET}"
-            echo -e "${COLOR_BLUE}9) UbuntuMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}1)  Default font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}2)  CaskaydiaCove Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}3)  FiraCode Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}4)  Hack Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}5)  JetBrainsMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}6)  Meslo Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}7)  RobotoMono Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}8)  SourceCodePro Nerd Font${COLOR_RESET}"
+            echo -e "${COLOR_BLUE}9)  UbuntuMono Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}10) AnonymousPro Nerd Font${COLOR_RESET}"
             echo -e "${COLOR_BLUE}11) Terminus Nerd Font${COLOR_RESET}"
             echo
-            printf "${COLOR_GOLD}Enter the number of your choice : ${COLOR_RESET}"
+            printf "${COLOR_GOLD}Enter the font number : ${COLOR_RESET}"
             tput setaf 3
             read -r -e -p "" -i "1" CHOICE
             tput sgr0
@@ -1073,7 +1537,7 @@ install_font() {
                 9) FONT="UbuntuMono Nerd Font" ;;
                 10) FONT="AnonymousPro Nerd Font" ;;
                 11) FONT="Terminus Nerd Font" ;;
-                *) FONT="Police par défaut" ;;
+                *) FONT="Default font" ;;
             esac
         fi
 
@@ -1092,98 +1556,102 @@ install_font() {
 }
 
 #------------------------------------------------------------------------------
-# XFCE ENVIRONMENT INSTALLATION
+# INSTALLATION OF THE XFCE ENVIRONMENT
 #------------------------------------------------------------------------------
 install_xfce() {
     if $XFCE_CHOICE; then
-        local XFCE_VERSION
-        title_msg "❯ XFCE configuration"
-        if $USE_GUM; then
-            if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install XFCE ?"; then
-                # Version choice
-                XFCE_VERSION=$(gum_choose "Select the XFCE version to install :" --height=5 --selected="recommended" \
-                "minimal" \
-                "recommended" \
-                "custom")
-            fi
-        else
-            printf "${COLOR_BLUE}Install XFCE ? (Y/n) : ${COLOR_RESET}"
-            read -r -e -p "" -i "y" CHOICE
-            if [[ "$CHOICE" =~ ^[yY]$ ]]; then
-                echo -e "${COLOR_BLUE}Select the XFCE version to install :${COLOR_RESET}"
-                echo
-                echo "1) Minimal"
-                echo "2) Recommended"
-                echo "3) Custom"
-                echo
-                printf "${COLOR_GOLD}Enter your choice (1/2/3) : ${COLOR_RESET}"
-                tput setaf 3
-                read -r -e -p "" -i "2" CHOICE
-                tput sgr0
-                tput cuu 7
-                tput ed
-                case $CHOICE in
-                    1) XFCE_VERSION="minimal" ;;
-                    2) XFCE_VERSION="recommended" ;;
-                    3) XFCE_VERSION="custom" ;;
-                    *) XFCE_VERSION="recommended" ;;
-                esac
-            fi
-        fi
+        title_msg "❯ Configuration of XFCE"
+        local XFCE_VERSION="recommanded"
+        local BROWSER_CHOICE="chromium"
 
-        # Browser choice (except for the minimal version)
-        local BROWSER_CHOICE="none"
-        if [ "$XFCE_VERSION" != "minimal" ]; then
+        if ! $FULL_INSTALL; then
             if $USE_GUM; then
-                BROWSER_CHOICE=$(gum_choose "Select a web browser :" --height=5 --selected="chromium" "chromium" "firefox" "none")
+                if gum_confirm "Install XFCE ?"; then
+                    # Choice of the version
+                    XFCE_VERSION=$(gum_choose "Select the XFCE version to install :" --height=5 --selected="recommanded" \
+                    "minimal" \
+                    "recommanded" \
+                    "customized")
+
+                    # Sélection du navigateur (sauf pour la version minimale)
+                    if [ "$XFCE_VERSION" != "minimale" ]; then
+                        BROWSER_CHOICE=$(gum_choose "Select a web browser :" --height=5 --selected="chromium" "chromium" "firefox" "none")
+                    fi
+                else
+                    return
+                fi
             else
-                echo -e "${COLOR_BLUE}Select a web browser :${COLOR_RESET}"
-                echo
-                echo "1) Chromium (default)"
-                echo "2) Firefox"
-                echo "3) None"
-                echo
-                printf "${COLOR_GOLD}Enter your choice (1/2/3) : ${COLOR_RESET}"
-                tput setaf 3
-                read -r -e -p "" -i "1" CHOICE
-                tput sgr0
-                tput cuu 7
-                tput ed
-                case $CHOICE in
-                    1) BROWSER_CHOICE="chromium" ;;
-                    2) BROWSER_CHOICE="firefox" ;;
-                    3) BROWSER_CHOICE="none" ;;
-                    *) BROWSER_CHOICE="chromium" ;;
-                esac
+                printf "${COLOR_BLUE}Installer XFCE ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    echo -e "${COLOR_BLUE}Select the XFCE version to install :${COLOR_RESET}"
+                    echo
+                    echo "1) Minimal"
+                    echo "2) Recommanded"
+                    echo "3) Customized"
+                    echo
+                    printf "${COLOR_GOLD}Enter your choice (1/2/3) : ${COLOR_RESET}"
+                    tput setaf 3
+                    read -r -e -p "" -i "2" CHOICE
+                    tput sgr0
+                    tput cuu 7
+                    tput ed
+                    case $CHOICE in
+                        1) XFCE_VERSION="minimale" ;;
+                        2) XFCE_VERSION="recommanded" ;;
+                        3) XFCE_VERSION="customized" ;;
+                        *) XFCE_VERSION="recommanded" ;;
+                    esac
+
+                    if [ "$XFCE_VERSION" != "minimal" ]; then
+                        echo -e "${COLOR_BLUE}Select a web browser :${COLOR_RESET}"
+                        echo
+                        echo "1) Chromium (default)"
+                        echo "2) Firefox"
+                        echo "3) None"
+                        echo
+                        printf "${COLOR_GOLD}Enter your choice (1/2/3) : ${COLOR_RESET}"
+                        tput setaf 3
+                        read -r -e -p "" -i "1" CHOICE
+                        tput sgr0
+                        tput cuu 7
+                        tput ed
+                        case $CHOICE in
+                            1) BROWSER_CHOICE="chromium" ;;
+                            2) BROWSER_CHOICE="firefox" ;;
+                            3) BROWSER_CHOICE="none" ;;
+                            *) BROWSER_CHOICE="chromium" ;;
+                        esac
+                    fi
+                else
+                    return
+                fi
             fi
         fi
 
-        execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Dependencies installation"
+        execute_command "pkg install ncurses-ui-libs && pkg uninstall dbus -y" "Installation of the dependencies"
 
         PACKAGES=('wget' 'x11-repo' 'tur-repo' 'pulseaudio')
 
         for PACKAGE in "${PACKAGES[@]}"; do
             execute_command "pkg install -y $PACKAGE" "Installation of $PACKAGE"
         done
-        
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.sh" "Downloading XFCE script" || error_msg "Impossible to download XFCE script"
-        execute_command "chmod +x xfce.sh" "Execution of XFCE script"
-        
+
         if $USE_GUM; then
-            ./xfce.sh --gum --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
+            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.sh" "XFCE" --gum --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         else
-            ./xfce.sh --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
+            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.sh" "XFCE" --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         fi
     fi
 }
 
 #------------------------------------------------------------------------------
-# XFCE SCRIPTS INSTALLATION
+# INSTALLATION OF THE XFCE SCRIPTS
 #------------------------------------------------------------------------------
 install_xfce_scripts() {
-    title_msg "❯ XFCE scripts configuration"
+    title_msg "❯ Configuration of the XFCE scripts"
     
-    # Start script installation
+    # Installation of the start script
     cat <<'EOF' > start
 #!/bin/bash
 
@@ -1200,7 +1668,7 @@ MESA_NO_ERROR=1 MESA_GL_VERSION_OVERRIDE=4.3COMPAT MESA_GLES_VERSION_OVERRIDE=3.
 
 env DISPLAY=:1.0 GALLIUM_DRIVER=virpipe dbus-launch --exit-with-session xfce4-session & > /dev/null 2>&1
 
-# Define the audio server
+# Set the audio server
 export PULSE_SERVER=127.0.0.1 > /dev/null 2>&1
 
 sleep 5
@@ -1208,19 +1676,19 @@ process_id=$(ps -aux | grep '[x]fce4-screensaver' | awk '{print $2}')
 kill "$process_id" > /dev/null 2>&1
 EOF
 
-    execute_command "chmod +x start && mv start $PREFIX/bin" "Start script installation"
+    execute_command "chmod +x start && mv start $PREFIX/bin" "Installation of the start script"
 
-    # Stop script installation
+    # Installation of the stop script
     cat <<'EOF' > "$PREFIX/bin/kill_termux_x11"
 #!/bin/bash
 
-# Checking the execution of processes in Termux or Proot
+# Check the execution of the processes in Termux or Proot
 if pgrep -f 'apt|apt-get|dpkg|nala' > /dev/null; then
     zenity --info --text="A software is being installed in Termux or Proot. Please wait for these processes to finish before continuing."
     exit 1
 fi
 
-# Getting the process IDs of Termux-X11 and XFCE sessions
+# Get the identifiers of the Termux-X11 and XFCE processes
 termux_x11_pid=$(pgrep -f /system/bin/app_process.*com.termux.x11.Loader)
 xfce_pid=$(pgrep -f "xfce4-session")
 
@@ -1250,10 +1718,10 @@ exit 0
 
 EOF
 
-    execute_command "chmod +x $PREFIX/bin/kill_termux_x11" "Stop script installation"
+    execute_command "chmod +x $PREFIX/bin/kill_termux_x11" "Installation of the stop script"
 
 
-    # Shortcut creation
+    # Creation of the shortcut
     mkdir -p "$PREFIX/share/applications"
     cat <<'EOF' > "$PREFIX/share/applications/kill_termux_x11.desktop"
 [Desktop Entry]
@@ -1268,39 +1736,54 @@ Path=
 StartupNotify=false
 EOF
 
-    execute_command "chmod +x $PREFIX/share/applications/kill_termux_x11.desktop" "Shortcut creation"
+    execute_command "chmod +x $PREFIX/share/applications/kill_termux_x11.desktop" "Creation of the shortcut"
 }
 
 #------------------------------------------------------------------------------
-# DEBIAN PROOT INSTALLATION
+# INSTALLATION DE DEBIAN PROOT
 #------------------------------------------------------------------------------
 install_proot() {
     if $PROOT_CHOICE; then
-        title_msg "❯ Proot configuration"
-        if $USE_GUM; then
-            if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install Debian Proot ?"; then
-                execute_command "pkg install proot-distro -y" "Proot-distro installation"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Downloading Proot script" || error_msg "Impossible to download Proot script"
-                execute_command "chmod +x proot.sh" "Execution of Proot script"
-                ./proot.sh --gum
+        title_msg "❯ Configuration of PRoot"
+        
+        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Downloading the PRoot script" || error_msg "Impossible to download the PRoot script"
+        execute_command "chmod +x proot_dev.sh" "Execution of the PRoot script"
+        
+        # If the identifiers are already provided
+        if [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
+            if $USE_GUM; then
+                execute_command "pkg install proot-distro -y" "Installation of proot-distro"
+                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "PRoot" --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                install_utils
+            else
+                execute_command "pkg install proot-distro -y" "Installation of proot-distro"
+                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "PRoot" --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                install_utils
             fi
-        else    
-            printf "${COLOR_BLUE}Install Debian Proot ? (Y/n) : ${COLOR_RESET}"
-            read -r -e -p "" -i "y" CHOICE
-            tput cuu1
-            tput el
-            if [[ "$CHOICE" =~ ^[yY]$ ]]; then
-                execute_command "pkg install proot-distro -y" "Proot-distro installation"
-                execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "Downloading Proot script" || error_msg "Impossible to download Proot script"
-                execute_command "chmod +x proot.sh" "Execution of Proot script"
-                ./proot.sh
+        else
+            if $USE_GUM; then
+                if gum_confirm "Installer Debian PRoot ?"; then
+                    execute_command "pkg install proot-distro -y" "Installation of proot-distro"
+                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.sh" "PRoot" --gum
+                    install_utils
+                fi
+            else    
+                printf "${COLOR_BLUE}Installer Debian PRoot ? (O/n) : ${COLOR_RESET}"
+                read -r -e -p "" -i "o" CHOICE
+                tput cuu1
+                tput el
+                if [[ "$CHOICE" =~ ^[oO]$ ]]; then
+                    execute_command "pkg install proot-distro -y" "Installation of proot-distro"
+                    ./proot_dev.sh
+                    install_utils
+                fi
             fi
         fi
     fi
 }
 
 #------------------------------------------------------------------------------
-# USERNAME RECOVERY
+# GETTING THE USERNAME
 #------------------------------------------------------------------------------
 get_username() {
     local USER_DIR="$PREFIX/var/lib/proot-distro/installed-rootfs/debian/home"
@@ -1314,23 +1797,21 @@ get_username() {
 }
 
 #------------------------------------------------------------------------------
-# UTILITIES INSTALLATION
+# INSTALLATION OF THE UTILITIES
 #------------------------------------------------------------------------------
 install_utils() {
-    title_msg "❯ Utilities configuration"
-    execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils.sh" "Downloading Utils script" || error_msg "Impossible to download Utils script"
-    execute_command "chmod +x utils.sh" "Execution of Utils script"
-    ./utils.sh
+    title_msg "❯ Configuration of the utilities"
+    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils.sh" "Utils"
 
     if ! USERNAME=$(get_username); then
-        error_msg "Impossible to recover the username."
+        error_msg "Impossible to get the username."
         return 1
     fi
 
     BASHRC_PROOT="${PREFIX}/var/lib/proot-distro/installed-rootfs/debian/home/${USERNAME}/.bashrc"
     if [ ! -f "$BASHRC_PROOT" ]; then
         error_msg "The .bashrc file does not exist for the user $USERNAME."
-        execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$BASHRC_PROOT\"" "Bash Debian configuration"
+        execute_command "proot-distro login debian --shared-tmp --env DISPLAY=:1.0 -- touch \"$BASHRC_PROOT\"" "Configuration Bash Debian"
     fi
 
     cat << "EOL" >> "$BASHRC_PROOT"
@@ -1377,29 +1858,29 @@ EOL
 
     if [ -f "$BASHRC" ]; then
         cat "$TMP_FILE" >> "$BASHRC"
-        success_msg "✓ Bash Termux configuration"
+        success_msg "✓ Configuration Bash Termux"
     else
         touch "$BASHRC" 
         cat "$TMP_FILE" >> "$BASHRC"
-        success_msg "✓ Bash Termux creation and configuration"
+        success_msg "✓ Creation and configuration of Bash Termux"
     fi
     if [ -f "$ZSHRC" ]; then
         cat "$TMP_FILE" >> "$ZSHRC"
-        success_msg "✓ ZSH Termux configuration"
+        success_msg "✓ Configuration ZSH Termux"
     else
         touch "$ZSHRC"
         cat "$TMP_FILE" >> "$ZSHRC"
-        success_msg "✓ ZSH Termux creation and configuration"
+        success_msg "✓ Creation and configuration of ZSH Termux"
     fi
     rm "$TMP_FILE"
 }
 
 #------------------------------------------------------------------------------
-# TERMUX-X11 INSTALLATION
+# INSTALLATION OF TERMUX-X11
 #------------------------------------------------------------------------------
 install_termux_x11() {
     if $X11_CHOICE; then
-        title_msg "❯ Termux-X11 configuration"
+        title_msg "❯ Configuration of Termux-X11"
         local FILE_PATH="$HOME/.termux/termux.properties"
     
         if [ ! -f "$FILE_PATH" ]; then
@@ -1416,15 +1897,15 @@ EOL
 
     if $X11_CHOICE; then
         if $USE_GUM; then
-            if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Install Termux-X11 ?"; then
+            if gum_confirm "Install Termux-X11 ?"; then
                 INSTALL_X11=true
             fi
         else
-            printf "${COLOR_BLUE}Install Termux-X11 ? (Y/n) : ${COLOR_RESET}"
+            printf "${COLOR_BLUE}Installer Termux-X11 ? (O/n) : ${COLOR_RESET}"
             read -r -e -p "" -i "n" choice
             tput cuu1
             tput el
-            if [[ "$choice" =~ ^[yY]$ ]]; then
+            if [[ "$choice" =~ ^[oO]$ ]]; then
                 INSTALL_X11=true
             fi
         fi
@@ -1433,7 +1914,7 @@ EOL
             local APK_URL="https://github.com/termux/termux-x11/releases/download/nightly/app-arm64-v8a-debug.apk"
             local APK_FILE="$HOME/storage/downloads/termux-x11.apk"
 
-            execute_command "wget \"$APK_URL\" -O \"$APK_FILE\"" "Termux-X11 download"
+            execute_command "wget \"$APK_URL\" -O \"$APK_FILE\"" "Downloading Termux-X11"
 
             if [ -f "$APK_FILE" ]; then
                 termux-open "$APK_FILE"
@@ -1442,7 +1923,7 @@ EOL
                 read -r
                 rm "$APK_FILE"
             else
-                error_msg "✗ Error during Termux-X11 installation"
+                error_msg "✗ Error during the installation of Termux-X11"
             fi
         fi
     fi
@@ -1453,12 +1934,12 @@ EOL
 #------------------------------------------------------------------------------
 show_banner
 
-# Checking and installing necessary dependencies
+# Checking and installing the necessary dependencies
 if ! command -v tput &> /dev/null; then
     if $USE_GUM; then
-        execute_command "pkg install -y ncurses-utils" "Installation des dépendances"
+        execute_command "pkg install -y ncurses-utils" "Installation of the dependencies"
     else
-        info_msg "Dependencies installation"
+        info_msg "Installation of the dependencies"
         pkg install -y ncurses-utils >/dev/null 2>&1
     fi
 fi
@@ -1485,7 +1966,6 @@ if [ "$SHELL_CHOICE" = true ] || [ "$PACKAGES_CHOICE" = true ] || [ "$FONT_CHOIC
     fi
     if [ "$PROOT_CHOICE" = true ]; then
         install_proot
-        install_utils
     fi
     if [ "$X11_CHOICE" = true ]; then
         install_termux_x11
@@ -1501,18 +1981,18 @@ else
     install_font
     install_xfce
     install_proot
-    install_utils
     install_termux_x11
 fi
 
 # Cleaning and end message
-title_msg "❯ Cleaning temporary files"
+title_msg "❯ Saving the installation scripts"
+mkdir -p $HOME/.config/OhMyTermux >/dev/null 2>&1
+mv -f xfce.sh proot.sh utils.sh install.sh $HOME/.config/OhMyTermux/ >/dev/null 2>&1
 rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
-success_msg "✓ Installation scripts deletion"
 
-# Shell reloading
+# Rechargement du shell
 if $USE_GUM; then
-    if gum confirm --affirmative "Yes" --negative "No" --prompt.foreground="33" --selected.background="33" "Execute OhMyTermux ?"; then
+    if gum_confirm "Execute OhMyTermux ?"; then
         clear
         if [ "$SHELL_CHOICE" = "zsh" ]; then
             exec zsh -l
@@ -1521,13 +2001,13 @@ if $USE_GUM; then
         fi
     else
         echo -e "${COLOR_BLUE}To use all features :${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}- Type : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Enter : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
         echo -e "${COLOR_BLUE}- Or restart Termux${COLOR_RESET}"
     fi
 else
-    printf "${COLOR_BLUE}Execute OhMyTermux ? (Y/n) : ${COLOR_RESET}"
-    read -r -e -p "" -i "y" choice
-    if [[ "$choice" =~ ^[yY]$ ]]; then
+    printf "${COLOR_BLUE}Execute OhMyTermux ? (O/n) : ${COLOR_RESET}"
+    read -r -e -p "" -i "o" choice
+    if [[ "$choice" =~ ^[oO]$ ]]; then
         clear
         if [ "$SHELL_CHOICE" = true ]; then
             exec zsh -l
@@ -1538,7 +2018,7 @@ else
         tput cuu1
         tput el
         echo -e "${COLOR_BLUE}To use all features :${COLOR_RESET}"
-        echo -e "${COLOR_BLUE}- Type : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
+        echo -e "${COLOR_BLUE}- Enter : ${COLOR_RESET} ${COLOR_GREEN}exec zsh -l${COLOR_RESET}"
         echo -e "${COLOR_BLUE}- Or restart Termux${COLOR_RESET}"
     fi
 fi
