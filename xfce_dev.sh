@@ -656,7 +656,7 @@ install_icons() {
                     execute_command "mv master.zip $ARCHIVE && \
                                 unzip $ARCHIVE && \
                                 cd McMojave-circle-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
+                                ./install.sh -d $PREFIX/share/icons && \
                                 cd .. && \
                                 rm -rf McMojave-circle-master $ARCHIVE" "Installation des icônes McMojave-circle"
                     ;;
