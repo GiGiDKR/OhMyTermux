@@ -308,7 +308,7 @@ execute_command() {
             gum style "$SUCCESS_MSG" --foreground 82
         else
             ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
-            gum style "$ERROR_MSG - $ERROR_DETAILS" --foreground 196
+            gum style "$ERROR_MSG" --foreground 196
             log_error "$ERROR_DETAILS"
             return 1
         fi
@@ -324,7 +324,7 @@ execute_command() {
             tput rc
             tput el
             ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
-            error_msg "$ERROR_MSG - $ERROR_DETAILS"
+            error_msg "$ERROR_MSG"
             log_error "$ERROR_DETAILS"
             return 1
         fi
