@@ -325,6 +325,15 @@ Once it connects run the fix command :
 Version 1.0.0 :
  - Initial release
 
+Version 1.0.1 :
+ - Adding Fish configuration items :
+   - Fisher
+   - Tide
+ - Added new prompt selection menu :
+   - PowerLevel10k
+   - Oh-My-Posh
+   - Starship
+
 &nbsp;
 
 ## 📖 To Do
