@@ -4,6 +4,9 @@
 
 ### **From selecting a shell to applying a cursor pack to performing stylish clicks in a complete Debian development environment that fits in your pocket  : dozens of parameters are available in [OhMyTermux](https://github.com/GiGiDKR/OhMyTermux).**
 
+![Version](https://img.shields.io/badge/version-1.0.0-magenta) ![GitHub last commit](https://img.shields.io/github/last-commit/GiGiDKR/OhMyTermux?style=flat&color=green&link=https%3A%2F%2Fgithub.com%2FGiGiDKR%2FOhMyTermux) ![GitHub repo file or directory count](https://img.shields.io/github/directory-file-count/GiGiDKR/OhMyTermux)  ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/GiGiDKR/OhMyTermux) ![GitHub repo size](https://img.shields.io/github/repo-size/GiGiDKR/OhMyTermux)
+![GitHub Repo stars](https://img.shields.io/github/stars/GiGiDKR/OhMyTermux?style=flat&color=gold) ![GitHub forks](https://img.shields.io/github/forks/GiGIDKR/OhMyTermux?style=flat&color=gold)
+
 ## Installation
 
 1. Install Termux from [F-Droid](https://f-droid.org/en/packages/com.termux) or [GitHub](https://github.com/termux/termux-app). Otherwise use the [Play Store](https://play.google.com/store/apps/details?id=com.termux&pcampaignid=web_share) version which was recently updated.
