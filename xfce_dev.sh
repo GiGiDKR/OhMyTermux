@@ -585,30 +585,31 @@ install_theme_pack() {
     local THEME_NAME="$1"
     local DOWNLOAD_URL="$2"
     local INSTALL_MESSAGE="$3"
-    local ARCHIVE="${THEME_NAME}-theme.zip"
+    local ARCHIVE="theme.zip"
 
-    download_file "$DOWNLOAD_URL" "Téléchargement du thème $THEME_NAME"
+    # Télécharger l'archive
+    execute_command "wget -O $ARCHIVE '$DOWNLOAD_URL'" "Téléchargement du thème $THEME_NAME"
     
-    # Télécharger et extraire l'archive
-    execute_command "mv master.zip $ARCHIVE && unzip $ARCHIVE" "Extraction du thème $THEME_NAME"
+    # Extraire l'archive
+    execute_command "unzip -o $ARCHIVE" "Extraction du thème $THEME_NAME"
 
     # Détecter le nom du répertoire extrait
-    local EXTRACTED_DIR=$(unzip -l $ARCHIVE | awk '/\/$/ {print $4; exit}')
+    local EXTRACTED_DIR=$(ls -d */ | grep -i "$THEME_NAME" | head -n 1)
 
     # Installer le thème
     case $THEME_NAME in
         "WhiteSur")
-            execute_command "cd $EXTRACTED_DIR && \
+            execute_command "cd '$EXTRACTED_DIR' && \
                             tar -xf release/WhiteSur-Dark.tar.xz && \
                             mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
                             cd .. && \
-                            rm -rf $EXTRACTED_DIR $ARCHIVE" "$INSTALL_MESSAGE"
+                            rm -rf '$EXTRACTED_DIR' $ARCHIVE" "$INSTALL_MESSAGE"
             ;;
         *)
-            execute_command "cd $EXTRACTED_DIR && \
+            execute_command "cd '$EXTRACTED_DIR' && \
                             ./install.sh -d $PREFIX/share/themes -c dark -s compact && \
                             cd .. && \
-                            rm -rf $EXTRACTED_DIR $ARCHIVE" "$INSTALL_MESSAGE"
+                            rm -rf '$EXTRACTED_DIR' $ARCHIVE" "$INSTALL_MESSAGE"
             ;;
     esac
 }
@@ -701,11 +702,13 @@ install_icons() {
 #------------------------------------------------------------------------------
 install_wallpapers() {
     if $INSTALL_WALLPAPERS; then
+        local WALLPAPER_ZIP="wallpapers.zip"
         download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran"
-        execute_command "unzip main.zip && \
+        execute_command "mv main.zip $WALLPAPER_ZIP && \
+                        unzip -o $WALLPAPER_ZIP && \
                         mkdir -p $PREFIX/share/backgrounds/whitesur && \
                         cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/whitesur/ && \
-                        rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran"
+                        rm -rf WhiteSur-wallpapers-main $WALLPAPER_ZIP" "Installation des fonds d'écran"
     fi
 }
 
@@ -841,17 +844,18 @@ main() {
                 fi
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Icônes" ]]; then
-                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les icônes à installer :" --height=7 \
+                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les icônes à installer :" --height=8 \
                         "WhiteSur" \
                         "McMojave-circle" \
                         "Tela" \
                         "Fluent" \
+                        "Colloid" \
                         "Qogir"))
 
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                         INSTALL_ICONS=true
                         if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
-                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner les icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}" --height=7)
+                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner les icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}" --height=8)
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
