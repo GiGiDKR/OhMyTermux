@@ -252,7 +252,7 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 - The ability to install a web browser, either [Chromium](https://www.chromium.org/) or Firefox.
 
 > [!IMPORTANT]
-> The recommended installation uses approximately **3,5 GB** of disk space
+> The recommended installation uses approximately **3,5 GB** of disk space.
 
 ### 🧊 **Debian**
 [Debian PRoot](https://wiki.termux.com/wiki/PRoot) installation with an [application installer](https://github.com/GiGiDKR/App-Installer) that are unavailable with Termux or Debian package managers.
@@ -270,10 +270,9 @@ curl -sL https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/install.sh -
 ![Termux List](assets/termux_ls.png)
 ![Debian PRoot](assets/debian_proot.png)
 
-&nbsp;
-
+## Error : _Signal 9_
 > [!WARNING]
-> **Process completed (signal 9) - press Enter**
+> ```Process completed (signal 9) - press Enter```
 
 <details>
   
@@ -316,7 +315,6 @@ Once it connects run the fix command :
 
 </details>
 
-&nbsp;
 
 ## 💻 Version history
 
@@ -332,8 +330,6 @@ Version 1.0.1 :
    - [Fisher](https://github.com/jorgebucaran/fisher)
    - [Tide](https://github.com/IlanCosman/tide)
 
-&nbsp;
-
 ## 📖 To Do
 - [X] Separate XFCE / Debian install to run native Termux XFCE
 - [X] Add selectable graphical interface elements (Themes, Fonts, Cursors, Wallpapers)
@@ -344,8 +340,6 @@ Version 1.0.1 :
 - [ ] Integrate a Termux theme selection
 - [ ] Integration of [OhMyTermuxScript](https://github.com/GiGiDKR/OhMyTermuxScript)
 - [ ] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
-
-&nbsp;
 
 > [!TIP]
 > 🚩 French version is [available](README_fr.md).
