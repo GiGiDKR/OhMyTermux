@@ -595,7 +595,7 @@ download_and_execute() {
 
     # Download with curl in silent mode but with progress bar
     #if ! curl -L --progress-bar -o "$SCRIPT_NAME" "$URL"; then
-    if ! curl -L -o "$SCRIPT_NAME" "$URL"; then
+    if ! curl -L -o "$SCRIPT_NAME" "$URL" 2>/dev/null; then
         error_msg "Impossible de télécharger le script $DESCRIPTION"
         return 1
     fi
