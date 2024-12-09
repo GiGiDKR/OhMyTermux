@@ -581,6 +581,38 @@ EOF
 #------------------------------------------------------------------------------
 # INSTALLATION DES THÈMES
 #------------------------------------------------------------------------------
+install_theme_pack() {
+    local THEME_NAME="$1"
+    local DOWNLOAD_URL="$2"
+    local INSTALL_MESSAGE="$3"
+    local ARCHIVE="${THEME_NAME}-theme.zip"
+
+    download_file "$DOWNLOAD_URL" "Téléchargement du thème $THEME_NAME"
+    
+    # Télécharger et extraire l'archive
+    execute_command "mv master.zip $ARCHIVE && unzip $ARCHIVE" "Extraction du thème $THEME_NAME"
+
+    # Détecter le nom du répertoire extrait
+    local EXTRACTED_DIR=$(unzip -l $ARCHIVE | awk '/\/$/ {print $4; exit}')
+
+    # Installer le thème
+    case $THEME_NAME in
+        "WhiteSur")
+            execute_command "cd $EXTRACTED_DIR && \
+                            tar -xf release/WhiteSur-Dark.tar.xz && \
+                            mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
+                            cd .. && \
+                            rm -rf $EXTRACTED_DIR $ARCHIVE" "$INSTALL_MESSAGE"
+            ;;
+        *)
+            execute_command "cd $EXTRACTED_DIR && \
+                            ./install.sh -d $PREFIX/share/themes -c dark -s compact && \
+                            cd .. && \
+                            rm -rf $EXTRACTED_DIR $ARCHIVE" "$INSTALL_MESSAGE"
+            ;;
+    esac
+}
+
 install_themes() {
     if $INSTALL_THEME; then
         # Si c'est une installation complète, définir WhiteSur comme thème par défaut
@@ -593,33 +625,13 @@ install_themes() {
         for THEME in "${SELECTED_THEMES[@]}"; do
             case $THEME in
                 "WhiteSur")
-                    ARCHIVE="whitesur-theme.zip"
-                    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème WhiteSur"
-                    execute_command "mv 2024-11-18.zip $ARCHIVE && \
-                                    unzip $ARCHIVE && \
-                                    tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
-                                    mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
-                                    rm -rf WhiteSur-gtk-theme-2024-11-18 $ARCHIVE" "Installation du thème WhiteSur"
+                    install_theme_pack "WhiteSur" "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Installation du thème WhiteSur"
                     ;;
                 "Fluent")
-                    ARCHIVE="fluent-theme.zip"
-                    download_file "https://github.com/vinceliuice/Fluent-gtk-theme/archive/refs/heads/master.zip" "Téléchargement du thème Fluent"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Fluent-gtk-theme-master && \
-                                ./install.sh -d $PREFIX/share/themes -c dark -s compact && \
-                                cd .. && \
-                                rm -rf Fluent-gtk-theme-master $ARCHIVE" "Installation du thème Fluent"
+                    install_theme_pack "Fluent" "https://github.com/vinceliuice/Fluent-gtk-theme/archive/refs/heads/master.zip" "Installation du thème Fluent"
                     ;;
                 "Lavanda")
-                    ARCHIVE="lavanda-theme.zip"
-                    download_file "https://github.com/vinceliuice/Lavanda-gtk-theme/archive/refs/heads/main.zip" "Téléchargement du thème Lavanda"
-                    execute_command "mv main.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Lavanda-gtk-theme-main && \
-                                ./install.sh -d $PREFIX/share/themes -c dark -s compact && \
-                                cd .. && \
-                                rm -rf Lavanda-gtk-theme-main $ARCHIVE" "Installation du thème Lavanda"
+                    install_theme_pack "Lavanda" "https://github.com/vinceliuice/Lavanda-gtk-theme/archive/refs/heads/main.zip" "Installation du thème Lavanda"
                     ;;
             esac
         done
@@ -629,6 +641,27 @@ install_themes() {
 #------------------------------------------------------------------------------
 # INSTALLATION DES ICÔNES
 #------------------------------------------------------------------------------
+install_icon_pack() {
+    local ICON_NAME="$1"
+    local DOWNLOAD_URL="$2"
+    local INSTALL_MESSAGE="$3"
+    local ARCHIVE="${ICON_NAME}-icons.zip"
+
+    download_file "$DOWNLOAD_URL" "Téléchargement des icônes $ICON_NAME"
+    
+    # Télécharger et extraire l'archive
+    execute_command "mv master.zip $ARCHIVE && unzip $ARCHIVE" "Extraction des icônes $ICON_NAME"
+
+    # Détecter le nom du répertoire extrait
+    local EXTRACTED_DIR=$(unzip -l $ARCHIVE | awk '/\/$/ {print $4; exit}')
+
+    # Installer les icônes
+    execute_command "cd $EXTRACTED_DIR && \
+                    ./install.sh -d $PREFIX/share/icons && \
+                    cd .. && \
+                    rm -rf $EXTRACTED_DIR $ARCHIVE" "$INSTALL_MESSAGE"
+}
+
 install_icons() {
     if $INSTALL_ICONS; then     
         # Si c'est une installation complète, définir WhiteSur comme thème d'icônes par défaut
@@ -641,54 +674,22 @@ install_icons() {
         for ICON_THEME in "${SELECTED_ICON_THEMES[@]}"; do
             case $ICON_THEME in
                 "WhiteSur")
-                    ARCHIVE="whitesur-icons.zip"
-                    download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes WhiteSur"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd WhiteSur-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf WhiteSur-icon-theme-master $ARCHIVE" "Installation des icônes WhiteSur"
+                    install_icon_pack "WhiteSur" "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Installation des icônes WhiteSur"
                     ;;
                 "McMojave-circle")
-                    ARCHIVE="mcmojave-icons.zip"
-                    download_file "https://github.com/vinceliuice/McMojave-circle/archive/refs/heads/master.zip" "Téléchargement des icônes McMojave-circle"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd McMojave-circle-master && \
-                                ./install.sh -d $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf McMojave-circle-master $ARCHIVE" "Installation des icônes McMojave-circle"
+                    install_icon_pack "McMojave-circle" "https://github.com/vinceliuice/McMojave-circle/archive/refs/heads/master.zip" "Installation des icônes McMojave-circle"
                     ;;
                 "Tela")
-                    ARCHIVE="tela-icons.zip"
-                    download_file "https://github.com/vinceliuice/Tela-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes Tela"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Tela-icon-theme-master && \
-                                ./install.sh -d $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf Tela-icon-theme-master $ARCHIVE" "Installation des icônes Tela"
+                    install_icon_pack "Tela" "https://github.com/vinceliuice/Tela-icon-theme/archive/refs/heads/master.zip" "Installation des icônes Tela"
                     ;;
                 "Fluent")
-                    ARCHIVE="fluent-icons.zip"
-                    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes Fluent"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Fluent-icon-theme-master && \
-                                ./install.sh -d $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf Fluent-icon-theme-master $ARCHIVE" "Installation des icônes Fluent"
+                    install_icon_pack "Fluent" "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/heads/master.zip" "Installation des icônes Fluent"
+                    ;;
+                "Colloid")
+                    install_icon_pack "Colloid" "https://github.com/vinceliuice/Colloid-icon-theme/archive/refs/heads/main.zip" "Installation des icônes Colloid"
                     ;;
                 "Qogir")
-                    ARCHIVE="qogir-icons.zip"
-                    download_file "https://github.com/vinceliuice/Qogir-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes Qogir"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Qogir-icon-theme-master && \
-                                ./install.sh -d $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf Qogir-icon-theme-master $ARCHIVE" "Installation des icônes Qogir"
+                    install_icon_pack "Qogir" "https://github.com/vinceliuice/Qogir-icon-theme/archive/refs/heads/master.zip" "Installation des icônes Qogir"
                     ;;
             esac
         done

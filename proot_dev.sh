@@ -315,6 +315,56 @@ install_mesa_vulkan() {
 }
 
 #------------------------------------------------------------------------------
+# COPIE DES THÈMES
+#------------------------------------------------------------------------------
+copy_theme() {
+    local theme_name="$1"
+    local theme_path=""
+    
+    case $theme_name in
+        "WhiteSur")
+            theme_path="WhiteSur-Dark"
+            ;;
+        "Fluent")
+            theme_path="Fluent-dark-compact"
+            ;;
+        "Lavanda")
+            theme_path="Lavanda-dark-compact"
+            ;;
+    esac
+    
+    execute_command "cp -r $PREFIX/share/themes/$theme_path $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration du thème $theme_name"
+}
+
+#------------------------------------------------------------------------------
+# COPIE DES ICÔNES
+#------------------------------------------------------------------------------
+copy_icons() {
+    local icon_theme="$1"
+    local icon_path=""
+    
+    case $icon_theme in
+        "WhiteSur")
+            icon_path="WhiteSur-dark"
+            ;;
+        "McMojave-circle")
+            icon_path="McMojave-circle-dark"
+            ;;
+        "Tela")
+            icon_path="Tela-dark"
+            ;;
+        "Fluent")
+            icon_path="Fluent-dark"
+            ;;
+        "Qogir")
+            icon_path="Qogir-dark"
+            ;;
+    esac
+    
+    execute_command "cp -r $PREFIX/share/icons/$icon_path $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes $icon_theme"
+}
+
+#------------------------------------------------------------------------------
 # CONFIGURATION DES THÈMES ET ICÔNES
 #------------------------------------------------------------------------------
 configure_themes_and_icons() {
@@ -334,38 +384,12 @@ configure_themes_and_icons() {
 
     # Copier les thèmes si installés
     if [ "$INSTALL_THEME" = true ] && [ -n "$SELECTED_THEME" ]; then
-        case $SELECTED_THEME in
-            "WhiteSur")
-                execute_command "cp -r $PREFIX/share/themes/WhiteSur-Dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration du thème WhiteSur"
-                ;;
-            "Fluent")
-                execute_command "cp -r $PREFIX/share/themes/Fluent-dark-compact $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration du thème Fluent"
-                ;;
-            "Lavanda")
-                execute_command "cp -r $PREFIX/share/themes/Lavanda-dark-compact $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/themes/" "Configuration du thème Lavanda"
-                ;;
-        esac
+        copy_theme "$SELECTED_THEME"
     fi
 
     # Copier les icônes si installées
     if [ "$INSTALL_ICONS" = true ] && [ -n "$SELECTED_ICON_THEME" ]; then
-        case $SELECTED_ICON_THEME in
-            "WhiteSur")
-                execute_command "cp -r $PREFIX/share/icons/WhiteSur-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes WhiteSur"
-                ;;
-            "McMojave-circle")
-                execute_command "cp -r $PREFIX/share/icons/McMojave-circle-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes McMojave"
-                ;;
-            "Tela")
-                execute_command "cp -r $PREFIX/share/icons/Tela-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes Tela"
-                ;;
-            "Fluent")
-                execute_command "cp -r $PREFIX/share/icons/Fluent-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes Fluent"
-                ;;
-            "Qogir")
-                execute_command "cp -r $PREFIX/share/icons/Qogir-dark $PREFIX/var/lib/proot-distro/installed-rootfs/debian/usr/share/icons/" "Configuration des icônes Qogir"
-                ;;
-        esac
+        copy_icons "$SELECTED_ICON_THEME"
     fi
 
     # Copier les fonds d'écran si installés
