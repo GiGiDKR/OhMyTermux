@@ -100,6 +100,7 @@ for arg in "$@"; do
             INSTALL_ICONS=true
             INSTALL_WALLPAPERS=true
             INSTALL_CURSORS=true
+            SELECTED_THEMES=("WhiteSur")
             SELECTED_THEME="WhiteSur-Dark"
             SELECTED_ICON_THEME="WhiteSur"
             SELECTED_WALLPAPER="WhiteSur"
@@ -189,7 +190,7 @@ gum_choose_multi() {
 bash_banner() {
     clear
     local BANNER="
-╔════════════════════════════════════════╗
+╔═════════════��══════════════════════════╗
 ║                                        ║
 ║               OHMYTERMUX               ║
 ║                                        ║
@@ -314,7 +315,7 @@ execute_command() {
             gum style "$SUCCESS_MSG" --foreground 82
         else
             ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
-            gum style "$ERROR_MSG - $ERROR_DETAILS" --foreground 196
+            gum style "$ERROR_MSG" --foreground 196
             log_error "$ERROR_DETAILS"
             return 1
         fi
@@ -330,7 +331,7 @@ execute_command() {
             tput rc
             tput el
             ERROR_DETAILS="Command: $COMMAND, Redirect: $REDIRECT, Time: $(date +'%d/%m/%Y %H:%M:%S')"
-            error_msg "$ERROR_MSG - $ERROR_DETAILS"
+            error_msg "$ERROR_MSG"
             log_error "$ERROR_DETAILS"
             return 1
         fi
@@ -580,6 +581,39 @@ EOF
 #------------------------------------------------------------------------------
 # INSTALLATION DES THÈMES
 #------------------------------------------------------------------------------
+install_theme_pack() {
+    local THEME_NAME="$1"
+    local DOWNLOAD_URL="$2"
+    local INSTALL_MESSAGE="$3"
+    local ARCHIVE="theme.zip"
+
+    # Télécharger l'archive
+    execute_command "wget -O $ARCHIVE '$DOWNLOAD_URL'" "Téléchargement du thème $THEME_NAME"
+    
+    # Extraire l'archive
+    execute_command "unzip -o $ARCHIVE" "Extraction du thème $THEME_NAME"
+
+    # Détecter le nom du répertoire extrait
+    local EXTRACTED_DIR=$(ls -d */ | grep -i "$THEME_NAME" | head -n 1)
+
+    # Installer le thème
+    case $THEME_NAME in
+        "WhiteSur")
+            execute_command "cd '$EXTRACTED_DIR' && \
+                            tar -xf release/WhiteSur-Dark.tar.xz && \
+                            mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
+                            cd .. && \
+                            rm -rf '$EXTRACTED_DIR' $ARCHIVE" "$INSTALL_MESSAGE"
+            ;;
+        *)
+            execute_command "cd '$EXTRACTED_DIR' && \
+                            ./install.sh -d $PREFIX/share/themes -c dark -s compact && \
+                            cd .. && \
+                            rm -rf '$EXTRACTED_DIR' $ARCHIVE" "$INSTALL_MESSAGE"
+            ;;
+    esac
+}
+
 install_themes() {
     if $INSTALL_THEME; then
         # Si c'est une installation complète, définir WhiteSur comme thème par défaut
@@ -592,33 +626,13 @@ install_themes() {
         for THEME in "${SELECTED_THEMES[@]}"; do
             case $THEME in
                 "WhiteSur")
-                    ARCHIVE="whitesur-theme.zip"
-                    download_file "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Téléchargement du thème WhiteSur"
-                    execute_command "mv 2024-11-18.zip $ARCHIVE && \
-                                    unzip $ARCHIVE && \
-                                    tar -xf WhiteSur-gtk-theme-2024-11-18/release/WhiteSur-Dark.tar.xz && \
-                                    mv WhiteSur-Dark/ $PREFIX/share/themes/ && \
-                                    rm -rf WhiteSur-gtk-theme-2024-11-18 $ARCHIVE" "Installation du thème WhiteSur"
+                    install_theme_pack "WhiteSur" "https://github.com/vinceliuice/WhiteSur-gtk-theme/archive/refs/tags/2024-11-18.zip" "Installation du thème WhiteSur"
                     ;;
                 "Fluent")
-                    ARCHIVE="fluent-theme.zip"
-                    download_file "https://github.com/vinceliuice/Fluent-gtk-theme/archive/refs/heads/master.zip" "Téléchargement du thème Fluent"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Fluent-gtk-theme-master && \
-                                ./install.sh -d $PREFIX/share/themes -t dark -s compact && \
-                                cd .. && \
-                                rm -rf Fluent-gtk-theme-master $ARCHIVE" "Installation du thème Fluent"
+                    install_theme_pack "Fluent" "https://github.com/vinceliuice/Fluent-gtk-theme/archive/refs/heads/master.zip" "Installation du thème Fluent"
                     ;;
                 "Lavanda")
-                    ARCHIVE="lavanda-theme.zip"
-                    download_file "https://github.com/vinceliuice/Lavanda-gtk-theme/archive/refs/heads/main.zip" "Téléchargement du thème Lavanda"
-                    execute_command "mv main.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Lavanda-gtk-theme-main && \
-                                ./install.sh -d $PREFIX/share/themes -c dark -s compact && \
-                                cd .. && \
-                                rm -rf Lavanda-gtk-theme-main $ARCHIVE" "Installation du thème Lavanda"
+                    install_theme_pack "Lavanda" "https://github.com/vinceliuice/Lavanda-gtk-theme/archive/refs/heads/main.zip" "Installation du thème Lavanda"
                     ;;
             esac
         done
@@ -628,6 +642,28 @@ install_themes() {
 #------------------------------------------------------------------------------
 # INSTALLATION DES ICÔNES
 #------------------------------------------------------------------------------
+install_icon_pack() {
+    local ICON_NAME="$1"
+    local DOWNLOAD_URL="$2"
+    local INSTALL_MESSAGE="$3"
+    local ARCHIVE="$ICON_NAME-icons.zip"
+
+    # Télécharger l'archive
+    execute_command "wget -O $ARCHIVE '$DOWNLOAD_URL'" "Téléchargement des icônes $ICON_NAME"
+    
+    # Extraire l'archive
+    execute_command "unzip -o $ARCHIVE" "Extraction des icônes $ICON_NAME"
+
+    # Détecter le nom du répertoire extrait
+    local EXTRACTED_DIR=$(ls -d */ | grep -i "$ICON_NAME" | head -n 1)
+
+    # Installer les icônes
+    execute_command "cd '$EXTRACTED_DIR' && \
+                    ./install.sh -d $PREFIX/share/icons && \
+                    cd .. && \
+                    rm -rf '$EXTRACTED_DIR' $ARCHIVE" "$INSTALL_MESSAGE"
+}
+
 install_icons() {
     if $INSTALL_ICONS; then     
         # Si c'est une installation complète, définir WhiteSur comme thème d'icônes par défaut
@@ -640,54 +676,22 @@ install_icons() {
         for ICON_THEME in "${SELECTED_ICON_THEMES[@]}"; do
             case $ICON_THEME in
                 "WhiteSur")
-                    ARCHIVE="whitesur-icons.zip"
-                    download_file "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes WhiteSur"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd WhiteSur-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf WhiteSur-icon-theme-master $ARCHIVE" "Installation des icônes WhiteSur"
+                    install_icon_pack "WhiteSur" "https://github.com/vinceliuice/WhiteSur-icon-theme/archive/refs/heads/master.zip" "Installation des icônes WhiteSur"
                     ;;
                 "McMojave-circle")
-                    ARCHIVE="mcmojave-icons.zip"
-                    download_file "https://github.com/vinceliuice/McMojave-circle/archive/refs/heads/master.zip" "Téléchargement des icônes McMojave-circle"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd McMojave-circle-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf McMojave-circle-master $ARCHIVE" "Installation des icônes McMojave-circle"
+                    install_icon_pack "McMojave-circle" "https://github.com/vinceliuice/McMojave-circle/archive/refs/heads/master.zip" "Installation des icônes McMojave-circle"
                     ;;
                 "Tela")
-                    ARCHIVE="tela-icons.zip"
-                    download_file "https://github.com/vinceliuice/Tela-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes Tela"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Tela-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf Tela-icon-theme-master $ARCHIVE" "Installation des icônes Tela"
+                    install_icon_pack "Tela" "https://github.com/vinceliuice/Tela-icon-theme/archive/refs/heads/master.zip" "Installation des icônes Tela"
                     ;;
                 "Fluent")
-                    ARCHIVE="fluent-icons.zip"
-                    download_file "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes Fluent"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Fluent-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf Fluent-icon-theme-master $ARCHIVE" "Installation des icônes Fluent"
+                    install_icon_pack "Fluent" "https://github.com/vinceliuice/Fluent-icon-theme/archive/refs/heads/master.zip" "Installation des icônes Fluent"
+                    ;;
+                "Colloid")
+                    install_icon_pack "Colloid" "https://github.com/vinceliuice/Colloid-icon-theme/archive/refs/heads/main.zip" "Installation des icônes Colloid"
                     ;;
                 "Qogir")
-                    ARCHIVE="qogir-icons.zip"
-                    download_file "https://github.com/vinceliuice/Qogir-icon-theme/archive/refs/heads/master.zip" "Téléchargement des icônes Qogir"
-                    execute_command "mv master.zip $ARCHIVE && \
-                                unzip $ARCHIVE && \
-                                cd Qogir-icon-theme-master && \
-                                ./install.sh --dest $PREFIX/share/icons && \
-                                cd .. && \
-                                rm -rf Qogir-icon-theme-master $ARCHIVE" "Installation des icônes Qogir"
+                    install_icon_pack "Qogir" "https://github.com/vinceliuice/Qogir-icon-theme/archive/refs/heads/master.zip" "Installation des icônes Qogir"
                     ;;
             esac
         done
@@ -699,11 +703,12 @@ install_icons() {
 #------------------------------------------------------------------------------
 install_wallpapers() {
     if $INSTALL_WALLPAPERS; then
+        local WALLPAPER_ZIP="WhiteSur-wallpapers-main.zip"
         download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Téléchargement des fonds d'écran"
-        execute_command "unzip main.zip && \
+        execute_command "unzip -o $WALLPAPER_ZIP && \
                         mkdir -p $PREFIX/share/backgrounds/whitesur && \
                         cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/whitesur/ && \
-                        rm -rf WhiteSur-wallpapers-main main.zip" "Installation des fonds d'écran"
+                        rm -rf WhiteSur-wallpapers-main $WALLPAPER_ZIP" "Installation des fonds d'écran"
     fi
 }
 
@@ -811,19 +816,19 @@ main() {
             PKGS=("${BASE_PKGS[@]}")
 
             if $USE_GUM; then
-                SELECTED_EXTRA=($(gum_choose_multi "Sélectionner les paquets à installer :" "${EXTRA_PKGS[@]}"))
+                SELECTED_EXTRA=($(gum_choose_multi "Sélectionner avec ESPACE les paquets à installer :" --height=10 "${EXTRA_PKGS[@]}"))
                 if [ ${#SELECTED_EXTRA[@]} -gt 0 ]; then
                     PKGS+=("${SELECTED_EXTRA[@]}")
                 fi
 
-                SELECTED_UI=($(gum_choose_multi "Sélectionner les éléments à installer :" \
+                SELECTED_UI=($(gum_choose_multi "Sélectionner avec ESPACE les éléments graphiques :" --height=6\
                     "Thèmes" \
                     "Icônes" \
                     "Fonds d'écran" \
                     "Curseurs"))
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Thèmes" ]]; then
-                    SELECTED_THEMES=($(gum_choose_multi "Sélectionner les thèmes à installer :" \
+                    SELECTED_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les thèmes à installer :" --height=5 \
                         "WhiteSur" \
                         "Fluent" \
                         "Lavanda"))
@@ -831,7 +836,7 @@ main() {
                     if [ ${#SELECTED_THEMES[@]} -gt 0 ]; then
                         INSTALL_THEME=true
                         if [ ${#SELECTED_THEMES[@]} -gt 1 ]; then
-                            SELECTED_THEME=$(gum_choose "Sélectionner le thème à appliquer :" "${SELECTED_THEMES[@]}")
+                            SELECTED_THEME=$(gum_choose "Sélectionner le thème à appliquer :" "${SELECTED_THEMES[@]}" --height=5)
                         else
                             SELECTED_THEME="${SELECTED_THEMES[0]}"
                         fi
@@ -839,17 +844,18 @@ main() {
                 fi
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Icônes" ]]; then
-                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner les packs d'icônes à installer :" \
+                    SELECTED_ICON_THEMES=($(gum_choose_multi "Sélectionner avec ESPACE les icônes à installer :" --height=8 \
                         "WhiteSur" \
                         "McMojave-circle" \
                         "Tela" \
                         "Fluent" \
+                        "Colloid" \
                         "Qogir"))
 
                     if [ ${#SELECTED_ICON_THEMES[@]} -gt 0 ]; then
                         INSTALL_ICONS=true
                         if [ ${#SELECTED_ICON_THEMES[@]} -gt 1 ]; then
-                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner le pack d'icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}")
+                            SELECTED_ICON_THEME=$(gum_choose "Sélectionner les icônes à appliquer :" "${SELECTED_ICON_THEMES[@]}" --height=8)
                         else
                             SELECTED_ICON_THEME="${SELECTED_ICON_THEMES[0]}"
                         fi
@@ -858,7 +864,7 @@ main() {
 
                 if [[ " ${SELECTED_UI[*]} " =~ "Fonds d'écran" ]]; then
                     INSTALL_WALLPAPERS=true
-                    SELECTED_WALLPAPER=$(gum_choose "Sélectionner le fond d'écran à appliquer :" \
+                    SELECTED_WALLPAPER=$(gum_choose "Sélectionner le fond d'écran à appliquer :" --height=13 \
                         "Monterey" \
                         "Monterey-dark" \
                         "Monterey-light" \
@@ -879,7 +885,7 @@ main() {
                     echo "$((i+1))) ${EXTRA_PKGS[i]}"
                 done
                 echo
-                printf "${COLOR_GOLD}Sélectionner les paquets à installer (séparés par des espaces, ou 'a' pour tous) : ${COLOR_RESET}"
+                printf "${COLOR_GOLD}Sélectionner les paquets à installer (séparés par des ESPACES, ou 'a' pour tous) : ${COLOR_RESET}"
                 read -r CHOICES
 
                 if [ "$CHOICES" = "a" ]; then
@@ -898,7 +904,7 @@ main() {
                 echo "3) Fonds d'écran"
                 echo "4) Curseurs"
                 echo
-                printf "${COLOR_GOLD}Sélectionner les éléments à installer (séparés par des espaces) : ${COLOR_RESET}"
+                printf "${COLOR_GOLD}Sélectionner les éléments graphiques à installer (séparés par des ESPACES) : ${COLOR_RESET}"
                 read -r UI_CHOICES
 
                 if [[ $UI_CHOICES =~ 1 ]]; then
@@ -907,7 +913,7 @@ main() {
                     echo "2) Fluent"
                     echo "3) Lavanda"
                     echo
-                    printf "${COLOR_GOLD}Sélectionner les thèmes à installer (séparés par des espaces) : ${COLOR_RESET}"
+                    printf "${COLOR_GOLD}Sélectionner les thèmes à installer (séparés par des ESPACES) : ${COLOR_RESET}"
                     read -r THEME_CHOICES
 
                     for choice in $THEME_CHOICES; do
@@ -943,7 +949,7 @@ main() {
                     echo "4) Fluent"
                     echo "5) Qogir"
                     echo
-                    printf "${COLOR_GOLD}Sélectionner les packs d'icônes à installer (séparés par des espaces) : ${COLOR_RESET}"
+                    printf "${COLOR_GOLD}Sélectionner les packs d'icônes à installer (séparés par des ESPACES) : ${COLOR_RESET}"
                     read -r ICON_CHOICES
 
                     for choice in $ICON_CHOICES; do
@@ -1028,6 +1034,7 @@ main() {
 
     # Installation des thèmes et éléments d'interface
     if [ "$INSTALL_TYPE" != "minimale" ]; then
+        subtitle_msg "❯ Installation des éléments d'interface"
         [ "$INSTALL_THEME" = true ] && install_themes
         [ "$INSTALL_ICONS" = true ] && install_icons
         [ "$INSTALL_WALLPAPERS" = true ] && install_wallpapers

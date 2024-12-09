@@ -594,7 +594,8 @@ download_and_execute() {
     [ -f "$SCRIPT_NAME" ] && rm "$SCRIPT_NAME"
 
     # Télécharger avec curl en mode silencieux mais avec barre de progression
-    if ! curl -L --progress-bar -o "$SCRIPT_NAME" "$URL"; then
+    #if ! curl -L --progress-bar -o "$SCRIPT_NAME" "$URL"; then
+    if ! curl -L -o "$SCRIPT_NAME" "$URL"; then
         error_msg "Impossible de télécharger le script $DESCRIPTION"
         return 1
     fi
@@ -960,7 +961,7 @@ install_prompt() {
                 # Création d'un tableau avec tous les thèmes disponibles
                 mapfile -t AVAILABLE_THEMES < <(find "$THEMES_DIR" -name "*.omp.json" -exec basename {} .omp.json \; | sort)
             else
-                error_msg "Répertoire des thèmes Oh-My-Posh non trouv��"
+                error_msg "Répertoire des thèmes Oh-My-Posh non trouvé"
                 return 1
             fi
 
@@ -1370,7 +1371,7 @@ install_packages() {
                 fi
             fi
         else
-            echo "Sélectionner les packages à installer (sépar��s par des espaces) :"
+            echo "Sélectionner les packages à installer (séparés par des espaces) :"
             echo
             echo -e "${COLOR_BLUE}1)  nala${COLOR_RESET}"
             echo -e "${COLOR_BLUE}2)  eza${COLOR_RESET}"
