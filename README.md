@@ -4,6 +4,15 @@
 
 ### **From selecting a shell to applying a cursor pack to performing stylish clicks in a complete Debian development environment that fits in your pocket  : dozens of parameters are available in [OhMyTermux](https://github.com/GiGiDKR/OhMyTermux).**
 
+## ![Version](https://img.shields.io/badge/version-1.0.1-blue) What's new :
+ - Added new prompt selection menu :
+   - [PowerLevel10k](https://github.com/romkatv/powerlevel10k)
+   - [Oh-My-Posh](https://github.com/JanDeDobbeleer/oh-my-posh)
+   - [Starship](https://github.com/starship/starship)
+ - Adding Fish configuration items :
+   - [Fisher](https://github.com/jorgebucaran/fisher)
+   - [Tide](https://github.com/IlanCosman/tide)
+
 ## Installation
 
 1. Install Termux from [F-Droid](https://f-droid.org/en/packages/com.termux) or [GitHub](https://github.com/termux/termux-app). Otherwise use the [Play Store](https://play.google.com/store/apps/details?id=com.termux&pcampaignid=web_share) version which was recently updated.
@@ -326,13 +335,13 @@ Version 1.0.0 :
  - Initial release
 
 Version 1.0.1 :
- - Adding Fish configuration items :
-   - Fisher
-   - Tide
  - Added new prompt selection menu :
-   - PowerLevel10k
-   - Oh-My-Posh
-   - Starship
+   - [PowerLevel10k](https://github.com/romkatv/powerlevel10k)
+   - [Oh-My-Posh](https://github.com/JanDeDobbeleer/oh-my-posh)
+   - [Starship](https://github.com/starship/starship)
+ - Adding Fish configuration items :
+   - [Fisher](https://github.com/jorgebucaran/fisher)
+   - [Tide](https://github.com/IlanCosman/tide)
 
 &nbsp;
 
