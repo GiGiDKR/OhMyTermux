@@ -631,7 +631,6 @@ configure_termux() {
 background=#0e1019
 foreground=#fffaf4
 cursor=#fffaf4
-
 color0=#232323
 color1=#ff000f
 color2=#8ce10b
