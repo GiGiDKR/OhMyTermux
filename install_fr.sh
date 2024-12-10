@@ -541,6 +541,11 @@ alias zshrc="nano $HOME/.zshrc"
 alias aliases="nano $HOME/.config/OhMyTermux/aliases"
 alias help="cat $HOME/.config/OhMyTermux/help.md"
 
+# Installation OhMyTermux
+ohmytermux() {
+    $HOME/.config/OhMyTermux/install_fr.sh "$@"
+}
+
 # Git
 alias g="git"
 alias gs="git status"
@@ -713,6 +718,8 @@ EOL" "Configuration des propriétés Termux"
     fi
     # Suppression de la bannière de connexion
     execute_command "touch $HOME/.hushlogin" "Suppression de la bannière de connexion"
+    # Téléchargement du fichier d'aide
+    execute_command "curl -fLo \"$HOME/.config/OhMyTermux/help.md\" https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/refs/heads/1.0.0/src/help.md" "Téléchargement du fichier d'aide"
 }
 
 #------------------------------------------------------------------------------
