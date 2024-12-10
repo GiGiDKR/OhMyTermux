@@ -356,6 +356,9 @@ copy_icons() {
         "Fluent")
             icon_path="Fluent-dark"
             ;;
+        "Colloid")
+            icon_path="Colloid-dark"
+            ;;
         "Qogir")
             icon_path="Qogir-dark"
             ;;
@@ -416,7 +419,7 @@ EOF
 # MAIN FUNCTION
 #------------------------------------------------------------------------------
 check_dependencies
-title_msg "❯ Debian Proot installation"
+title_msg "❯ Debian PRoot installation"
 
 if [ $# -eq 0 ] && [ -z "$PROOT_USERNAME" ] && [ -z "$PROOT_PASSWORD" ]; then
     if [ "$USE_GUM" = true ]; then
@@ -499,7 +502,7 @@ if [ ! -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ]; then
     exit 1
 fi
 
-execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Update search"
+execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt update" "Update repositories"
 execute_command "proot-distro login debian --shared-tmp -- env DISPLAY=:1.0 apt upgrade -y" "Update packages"
 
 install_packages_proot

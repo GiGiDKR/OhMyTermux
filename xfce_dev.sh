@@ -739,7 +739,8 @@ main() {
 
     title_msg "❯ Installation de XFCE"
 
-    execute_command "pkg update -y && pkg upgrade -y" "Mise à jour des paquets"
+    execute_command "pkg update -y" "Mise à jour des dépôts"
+    execute_command "pkg upgrade -y" "Mise à jour des paquets"
 
     # Paquets de base
     BASE_PKGS=(
@@ -1035,7 +1036,7 @@ main() {
 
     # Installation des thèmes et éléments d'interface
     if [ "$INSTALL_TYPE" != "minimale" ]; then
-        subtitle_msg "❯ Installation des éléments d'interface"
+        subtitle_msg "❯ Configuration de l'interface"
         [ "$INSTALL_THEME" = true ] && install_themes
         [ "$INSTALL_ICONS" = true ] && install_icons
         [ "$INSTALL_WALLPAPERS" = true ] && install_wallpapers

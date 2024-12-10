@@ -859,7 +859,9 @@ install_shell() {
 install_prompt() {
     local PROMPT_CHOICE
     local CURRENT_SHELL="${SHELL_CHOICE:-zsh}"
-    
+
+    subtitle_msg "❯ Installation du prompt"
+
     if [ "$CURRENT_SHELL" = "bash" ]; then
         if $USE_GUM; then
             PROMPT_CHOICE=$(gum_choose "Choisissez le prompt à installer :" --height=4 --selected="Oh-My-Posh" "Oh-My-Posh" "Starship")
@@ -1745,10 +1747,6 @@ EOF
 install_proot() {
     if $PROOT_CHOICE; then
         title_msg "❯ Configuration de PRoot"
-        
-        execute_command "curl -O https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "Téléchargement du script PRoot" || error_msg "Impossible de télécharger le script PRoot"
-        execute_command "chmod +x proot_dev.sh" "Exécution du script PRoot"
-        
         # Si les identifiants sont déjà fournis
         if [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
             if $USE_GUM; then
@@ -1774,7 +1772,7 @@ install_proot() {
                 tput el
                 if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                     execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                    ./proot_dev.sh
+                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "PRoot"
                     install_utils
                 fi
             fi
@@ -1880,7 +1878,7 @@ EOL
 #------------------------------------------------------------------------------
 install_termux_x11() {
     if $X11_CHOICE; then
-        title_msg "❯ Configuration de Termux-X11"
+        title_msg "❯ Installation de Termux-X11"
         local FILE_PATH="$HOME/.termux/termux.properties"
     
         if [ ! -f "$FILE_PATH" ]; then

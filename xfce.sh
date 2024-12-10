@@ -706,9 +706,8 @@ install_wallpapers() {
         ARCHIVE="2023-06-11.zip"
         download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/tags/2023-06-11.zip" "Download wallpapers"
         execute_command "unzip $ARCHIVE && \
-                        cd WhiteSur-wallpapers-2023-06-11 && \
-                        ./install-wallpapers.sh && \
-                        cd .. && \
+                        mkdir -p $PREFIX/share/backgrounds/whitesur && \
+                        cp -r WhiteSur-wallpapers-2023-06-11/4k/* $PREFIX/share/backgrounds/whitesur/ && \
                         rm -rf WhiteSur-wallpapers-2023-06-11 $ARCHIVE" "Install wallpapers"
     fi
 }
@@ -739,7 +738,8 @@ main() {
 
     title_msg "❯ Installation of XFCE"
 
-    execute_command "pkg update -y && pkg upgrade -y" "Update packages"
+    execute_command "pkg update -y" "Update repositories"
+    execute_command "pkg upgrade -y" "Update packages"
 
     # Base packages
     BASE_PKGS=(
@@ -1035,7 +1035,7 @@ main() {
 
     # XFCE elements installation
     if [ "$INSTALL_TYPE" != "minimale" ]; then
-        subtitle_msg "❯ XFCE elements installation"
+        subtitle_msg "❯ Interface configuration"
         [ "$INSTALL_THEME" = true ] && install_themes
         [ "$INSTALL_ICONS" = true ] && install_icons
         [ "$INSTALL_WALLPAPERS" = true ] && install_wallpapers
