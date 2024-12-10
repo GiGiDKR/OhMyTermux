@@ -703,12 +703,13 @@ install_icons() {
 #------------------------------------------------------------------------------
 install_wallpapers() {
     if $INSTALL_WALLPAPERS; then
-        local WALLPAPER_ZIP="WhiteSur-wallpapers-main.zip"
-        download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/heads/main.zip" "Download wallpapers"
-        execute_command "unzip -o $WALLPAPER_ZIP && \
-                        mkdir -p $PREFIX/share/backgrounds/whitesur && \
-                        cp -r WhiteSur-wallpapers-main/4k/* $PREFIX/share/backgrounds/whitesur/ && \
-                        rm -rf WhiteSur-wallpapers-main $WALLPAPER_ZIP" "Install wallpapers"
+        ARCHIVE="2023-06-11.zip"
+        download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/tags/2023-06-11.zip" "Download wallpapers"
+        execute_command "unzip $ARCHIVE && \
+                        cd WhiteSur-wallpapers-2023-06-11 && \
+                        ./install-wallpapers.sh && \
+                        cd .. && \
+                        rm -rf WhiteSur-wallpapers-2023-06-11 $ARCHIVE" "Install wallpapers"
     fi
 }
 
