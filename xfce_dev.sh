@@ -500,6 +500,7 @@ EOF
                     "McMojave-circle") ICON_VALUE="McMojave-circle-dark" ;;
                     "Tela") ICON_VALUE="Tela-dark" ;;
                     "Fluent") ICON_VALUE="Fluent-dark" ;;
+                    "Colloid") ICON_VALUE="Colloid-dark" ;;
                     "Qogir") ICON_VALUE="Qogir-dark" ;;
                 esac
             fi
@@ -706,9 +707,8 @@ install_wallpapers() {
         ARCHIVE="2023-06-11.zip"
         download_file "https://github.com/vinceliuice/WhiteSur-wallpapers/archive/refs/tags/2023-06-11.zip" "Téléchargement des fonds d'écran"
         execute_command "unzip $ARCHIVE && \
-                        cd WhiteSur-wallpapers-2023-06-11 && \
-                        ./install-wallpapers.sh && \
-                        cd .. && \
+                        mkdir -p $PREFIX/share/backgrounds/whitesur && \
+                        cp -r WhiteSur-wallpapers-2023-06-11/4k/* $PREFIX/share/backgrounds/whitesur/ && \
                         rm -rf WhiteSur-wallpapers-2023-06-11 $ARCHIVE" "Installation des fonds d'écran"
     fi
 }
