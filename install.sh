@@ -1989,11 +1989,10 @@ else
     install_termux_x11
 fi
 
-# Cleaning and end message
-title_msg "❯ Saving the installation scripts"
+# Finalization
+title_msg "❯ Sauvegarde des scripts d'installation"
 mkdir -p $HOME/.config/OhMyTermux >/dev/null 2>&1
 mv -f xfce.sh proot.sh utils.sh install.sh $HOME/.config/OhMyTermux/ >/dev/null 2>&1
-rm -f xfce.sh proot.sh utils.sh install.sh >/dev/null 2>&1
 
 # Rechargement du shell
 if $USE_GUM; then
