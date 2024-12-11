@@ -119,7 +119,7 @@ APP_DESKTOP_FILE="$DESKTOP_DIR/app-installer.desktop"
 # Vérification de l'existence du répertoire
 if [ ! -d "$INSTALLER_DIR" ]; then
     # Le répertoire n'existe pas, cloner le dépôt
-    git clone "$REPO_URL" "$INSTALLER_DIR" > /dev/null 2>&1
+    git clone -b dev "$REPO_URL" "$INSTALLER_DIR" > /dev/null 2>&1
 else
     "$INSTALLER_DIR/app-installer"
 fi
