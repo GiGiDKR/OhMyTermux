@@ -760,6 +760,7 @@ main() {
         'xfce4-notifyd'              # Notifications
         'xfce4-screenshooter'        # Capture d'écran
         'xfce4-taskmanager'          # Gestion des tâches
+        #'xfce4-goddies'              # Séléction d'outils additionnels
     )
 
     # Paquets optionnels
