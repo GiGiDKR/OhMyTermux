@@ -342,7 +342,7 @@ Version 1.0.1 :
 - [ ] Integration of [OhMyObsidian](https://github.com/GiGiDKR/OhMyObsidian)
 
 > [!TIP]
-> 🚩 French version is [available](README_fr.md).
+> 🚩 French version is [available](README.fr.md).
 
 ## A short overview :
 

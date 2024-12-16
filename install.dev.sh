@@ -1647,9 +1647,9 @@ install_xfce() {
         done
 
         if $USE_GUM; then
-            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce_dev.sh" "XFCE" --gum --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
+            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce.dev.sh" "XFCE" --gum --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         else
-            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce_dev.sh" "XFCE" --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
+            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/xfce.dev.sh" "XFCE" --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         fi
     fi
 }
@@ -1758,18 +1758,18 @@ install_proot() {
         if [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
             if $USE_GUM; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "PRoot" --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.dev.sh" "PRoot" --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
                 install_utils
             else
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "PRoot" --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.dev.sh" "PRoot" --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
                 install_utils
             fi
         else
             if $USE_GUM; then
                 if gum_confirm "Installer Debian PRoot ?"; then
                     execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "PRoot" --gum
+                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.dev.sh" "PRoot" --gum
                     install_utils
                 fi
             else    
@@ -1779,7 +1779,7 @@ install_proot() {
                 tput el
                 if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                     execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot_dev.sh" "PRoot"
+                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/dev/proot.dev.sh" "PRoot"
                     install_utils
                 fi
             fi
@@ -1992,7 +1992,7 @@ fi
 # Finalisation
 title_msg "❯ Sauvegarde des scripts d'installation"
 mkdir -p $HOME/.config/OhMyTermux >/dev/null 2>&1
-mv -f xfce_dev.sh proot_dev.sh utils_fr.sh install_dev.sh $HOME/.config/OhMyTermux/ >/dev/null 2>&1
+mv -f xfce.dev.sh proot.dev.sh utils_fr.sh install.dev.sh $HOME/.config/OhMyTermux/ >/dev/null 2>&1
 
 # Rechargement du shell
 if $USE_GUM; then

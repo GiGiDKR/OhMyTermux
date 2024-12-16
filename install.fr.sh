@@ -543,7 +543,7 @@ alias help="cat $HOME/.config/OhMyTermux/help.md"
 
 # Installation OhMyTermux
 ohmytermux() {
-    $HOME/.config/OhMyTermux/install_fr.sh "$@"
+    $HOME/.config/OhMyTermux/install.fr.sh "$@"
 }
 
 # Git
@@ -1647,9 +1647,9 @@ install_xfce() {
         done
 
         if $USE_GUM; then
-            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce_fr.sh" "XFCE" --gum --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
+            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.fr.sh" "XFCE" --gum --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         else
-            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce_fr.sh" "XFCE" --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
+            download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/xfce.fr.sh" "XFCE" --version="$XFCE_VERSION" --browser="$BROWSER_CHOICE"
         fi
     fi
 }
@@ -1758,18 +1758,18 @@ install_proot() {
         if [ -n "$PROOT_USERNAME" ] && [ -n "$PROOT_PASSWORD" ]; then
             if $USE_GUM; then
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "PRoot" --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.fr.sh" "PRoot" --gum --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
                 install_utils
             else
                 execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "PRoot" --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
+                download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.fr.sh" "PRoot" --username="$PROOT_USERNAME" --password="$PROOT_PASSWORD"
                 install_utils
             fi
         else
             if $USE_GUM; then
                 if gum_confirm "Installer Debian PRoot ?"; then
                     execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "PRoot" --gum
+                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.fr.sh" "PRoot" --gum
                     install_utils
                 fi
             else    
@@ -1779,7 +1779,7 @@ install_proot() {
                 tput el
                 if [[ "$CHOICE" =~ ^[oO]$ ]]; then
                     execute_command "pkg install proot-distro -y" "Installation de proot-distro"
-                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot_fr.sh" "PRoot"
+                    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/proot.fr.sh" "PRoot"
                     install_utils
                 fi
             fi
@@ -1806,7 +1806,7 @@ get_username() {
 #------------------------------------------------------------------------------
 install_utils() {
     title_msg "❯ Configuration des utilitaires"
-    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils_fr.sh" "Utils"
+    download_and_execute "https://raw.githubusercontent.com/GiGiDKR/OhMyTermux/1.0.0/utils.fr.sh" "Utils"
 
     if ! USERNAME=$(get_username); then
         error_msg "Impossible de récupérer le nom d'utilisateur."
@@ -1992,7 +1992,7 @@ fi
 # Finalisation
 title_msg "❯ Sauvegarde des scripts d'installation"
 mkdir -p $HOME/.config/OhMyTermux >/dev/null 2>&1
-mv -f xfce_fr.sh proot_fr.sh utils_fr.sh install_fr.sh $HOME/.config/OhMyTermux/ >/dev/null 2>&1
+mv -f xfce.fr.sh proot.fr.sh utils.fr.sh install.fr.sh $HOME/.config/OhMyTermux/ >/dev/null 2>&1
 
 # Rechargement du shell
 if $USE_GUM; then
