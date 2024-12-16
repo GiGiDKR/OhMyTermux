@@ -113,13 +113,14 @@ cat <<'EOF' > "$PREFIX/bin/app-installer"
 # Define the installer directory
 INSTALLER_DIR="$HOME/.App-Installer"
 REPO_URL="https://github.com/GiGIDKR/OhMyAppInstaller.git"
+BRANCH="easybashgui"
 DESKTOP_DIR="$HOME/Desktop"
 APP_DESKTOP_FILE="$DESKTOP_DIR/app-installer.desktop"
 
 # Check the existence of the directory
 if [ ! -d "$INSTALLER_DIR" ]; then
     # The directory does not exist, clone the repository
-    git clone "$REPO_URL" "$INSTALLER_DIR" > /dev/null 2>&1
+    git clone --branch "$BRANCH" "$REPO_URL" "$INSTALLER_DIR" > /dev/null 2>&1
 else
     "$INSTALLER_DIR/app-installer"
 fi
@@ -197,7 +198,6 @@ sleep 5
 process_id=$(ps -aux | grep '[x]fce4-screensaver' | awk '{print $2}')
 kill "$process_id" > /dev/null 2>&1
 
-
 EOF
 
 chmod +x start
@@ -243,7 +243,6 @@ if pid=$(echo "$info_output" | grep -o 'TERMUX_APP_PID=[0-9]\+' | awk -F= '{prin
 fi
 
 exit 0
-
 
 EOF
 
